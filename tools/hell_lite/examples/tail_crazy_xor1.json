@@ -1,0 +1,7 @@
+{
+  "name": "xor1_tail_crazy_codex005",
+  "kind": "tail_crazy",
+  "crazy_start": 12,
+  "tail_operands": [123, 80, 79],
+  "diagnostic_target": "xor1"
+}

@@ -1,0 +1,33 @@
+{
+  "name": "layout_echo1",
+  "notes": [
+    "Phase 2 labeled layout for the classic one-byte echo fixture.",
+    "This is a straight-line CODE-only sketch and should compile to ubO."
+  ],
+  "sections": [
+    {
+      "code": [
+        {
+          "comment": "Read one byte into A.",
+          "label": "read_byte",
+          "op": "IN"
+        },
+        {
+          "comment": "Emit A mod 256.",
+          "label": "emit_byte",
+          "op": "OUT"
+        },
+        {
+          "comment": "Stop before any further output.",
+          "label": "halt",
+          "op": "HALT"
+        }
+      ],
+      "kind": "CODE",
+      "name": "main"
+    }
+  ],
+  "target": {
+    "name": "echo1"
+  }
+}

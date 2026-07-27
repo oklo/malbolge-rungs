@@ -1,0 +1,6 @@
+{
+  "name": "echo1",
+  "kind": "linear",
+  "ops": ["IN", "OUT", "HALT"],
+  "diagnostic_target": "echo1"
+}

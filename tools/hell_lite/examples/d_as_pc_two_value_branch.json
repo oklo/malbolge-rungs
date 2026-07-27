@@ -1,0 +1,24 @@
+{
+  "kind": "two-value-branch",
+  "notes": [
+    "Planning-only D-as-PC sketch for a two-arm finite-map route.",
+    "This is not a runnable Malbolge program."
+  ],
+  "program": {
+    "compile_status": "planning_only",
+    "missing_pieces": [
+      "No compiler for input-conditioned route_ref_by_input yet.",
+      "No restore/fixup placement for reusable JUMP/output cells yet."
+    ],
+    "name": "two-value-branch",
+    "required_data_cells": [
+      "route_ref_by_input",
+      "arm_a_ref",
+      "arm_b_ref"
+    ],
+    "target_minus_one_refs": [
+      "arm_a_ref",
+      "arm_b_ref"
+    ]
+  }
+}

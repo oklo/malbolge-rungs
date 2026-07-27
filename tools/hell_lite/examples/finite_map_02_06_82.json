@@ -1,0 +1,22 @@
+{
+  "name": "finite_map_02_06_82",
+  "notes": [
+    "Three-value xor1 finite-map target that includes the visible 0x82 -> 0xd3 case.",
+    "Phase 3 should emit an honest planning report if it cannot compile this map."
+  ],
+  "pairs": [
+    {
+      "input": "02",
+      "output": "53"
+    },
+    {
+      "input": "06",
+      "output": "57"
+    },
+    {
+      "input": "82",
+      "output": "d3"
+    }
+  ],
+  "target": "finite-map"
+}

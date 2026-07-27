@@ -1,0 +1,22 @@
+[package]
+name = "harness"
+version = "0.1.0"
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "MAL-51 rung registry + native-VM verification harness and leaderboard."
+
+[[bin]]
+name = "malbolge-rungs"
+path = "src/main.rs"
+
+[dependencies]
+classic_malbolge = { path = "../classic_malbolge" }
+anyhow.workspace = true
+bincode.workspace = true
+clap.workspace = true
+hex.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+thiserror.workspace = true

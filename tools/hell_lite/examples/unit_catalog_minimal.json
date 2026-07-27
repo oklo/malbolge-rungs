@@ -1,0 +1,29 @@
+{
+  "notes": [
+    "Minimal Phase 3 operation-unit catalog example.",
+    "Only the linear units are executable in Phase 3; branch and jump units remain planning artifacts."
+  ],
+  "units": [
+    {
+      "entry_label": "input_op",
+      "executable_phase3": true,
+      "exit_label": "input_op",
+      "intended_op": "IN",
+      "name": "linear_input_unit"
+    },
+    {
+      "entry_label": "output_op",
+      "executable_phase3": true,
+      "exit_label": "output_op",
+      "intended_op": "OUT",
+      "name": "linear_output_unit"
+    },
+    {
+      "entry_label": "route",
+      "executable_phase3": false,
+      "exit_label": "route",
+      "intended_op": "BRANCH_PLACEHOLDER",
+      "name": "branch_placeholder_unit"
+    }
+  ]
+}

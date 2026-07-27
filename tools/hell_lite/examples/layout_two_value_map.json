@@ -1,0 +1,42 @@
+{
+  "name": "layout_two_value_map",
+  "notes": [
+    "Diagnostic finite-map target inspired by xor4096 source-tail artifacts.",
+    "This sketch records a target relation; it is not yet a compilable router."
+  ],
+  "sections": [
+    {
+      "code": [
+        {
+          "comment": "A real Phase 3 router would read input before branching.",
+          "label": "read_byte",
+          "op": "IN"
+        },
+        {
+          "comment": "Placeholder halt; finite-map routing is not compiled in Phase 2.",
+          "label": "halt_placeholder",
+          "op": "HALT"
+        }
+      ],
+      "kind": "CODE",
+      "name": "router_placeholder"
+    },
+    {
+      "kind": "META",
+      "name": "notes"
+    }
+  ],
+  "target": {
+    "name": "finite-map",
+    "pairs": [
+      {
+        "input": "09",
+        "output": "58"
+      },
+      {
+        "input": "30",
+        "output": "61"
+      }
+    ]
+  }
+}

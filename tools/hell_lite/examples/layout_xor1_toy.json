@@ -1,0 +1,43 @@
+{
+  "name": "layout_xor1_toy",
+  "notes": [
+    "Toy labeled sketch for xor1 diagnostics, not a full byte-wide solution.",
+    "Use this for layout validation, target reporting, and future route sketches."
+  ],
+  "sections": [
+    {
+      "code": [
+        {
+          "comment": "Read candidate input byte.",
+          "label": "read_byte",
+          "op": "IN"
+        },
+        {
+          "comment": "Placeholder data transform; true XOR routing is unsupported in Phase 2.",
+          "label": "transform_placeholder",
+          "op": "NOP"
+        },
+        {
+          "comment": "Emit transformed A if a future layout fills in the transform.",
+          "label": "emit_byte",
+          "op": "OUT"
+        },
+        {
+          "comment": "Stop.",
+          "label": "halt",
+          "op": "HALT"
+        }
+      ],
+      "kind": "CODE",
+      "name": "toy"
+    }
+  ],
+  "target": {
+    "inputs": [
+      "09",
+      "30",
+      "82"
+    ],
+    "name": "xor1"
+  }
+}

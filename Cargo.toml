@@ -1,0 +1,21 @@
+[workspace]
+members = [
+    "crates/classic_malbolge",
+    "crates/harness",
+]
+resolver = "2"
+
+[workspace.package]
+edition = "2021"
+authors = ["oklo"]
+license = "MIT"
+
+[workspace.dependencies]
+anyhow = "1.0"
+bincode = "1.3"
+clap = { version = "4.5", features = ["derive"] }
+hex = "0.4"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+sha2 = "0.10"
+thiserror = "1.0"

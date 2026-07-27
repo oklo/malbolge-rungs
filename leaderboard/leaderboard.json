@@ -1,0 +1,263 @@
+[
+  {
+    "rung_id": "L0.R0.hello-world-genesis",
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "open"
+  },
+  {
+    "rung_id": "L0.R1.echo-1-demo",
+    "status": "solved",
+    "best_program": "solutions/echo/echo-first-byte.mal",
+    "solver": "canonical IN/OUT/HALT (ubO)",
+    "date": "2026-07-27",
+    "metric": "1/1 case, verified across multiple seeds",
+    "note": "Same minimal `ubO` echo program; L0 demo slot for the 1-byte echo."
+  },
+  {
+    "rung_id": "L1.R0.echo-1",
+    "status": "solved",
+    "best_program": "solutions/echo/echo-first-byte.mal",
+    "solver": "canonical IN/OUT/HALT (ubO)",
+    "date": "2026-07-27",
+    "metric": "1/1 case, verified across multiple seeds",
+    "note": "Minimal 3-instruction classic-Malbolge program `ubO` (IN, OUT, HALT): reads one byte, echoes it, halts."
+  },
+  {
+    "rung_id": "L1.R1.echo-2",
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "open"
+  },
+  {
+    "rung_id": "L1.R2.echo-4",
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "open"
+  },
+  {
+    "rung_id": "L1.R3.echo-2-multicase",
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "open"
+  },
+  {
+    "rung_id": "L2.R0.xor-1",
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "open frontier \u2014 general single-byte XOR, 256B cap; unsolved by any agent"
+  },
+  {
+    "rung_id": "L2.R0d.xor-1-len4096",
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "open frontier \u2014 general XOR, 4096B cap; best known coverage 27/256, no full solve"
+  },
+  {
+    "rung_id": "L2.R0c.crazy-mask-1",
+    "status": "unverified",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "Designed to be solvable (output = crazy(input,0x51), a single native CRAZY op) but no verified program exists yet."
+  },
+  {
+    "rung_id": "L2.FM0.xor51-map2",
+    "status": "solved",
+    "best_program": "solutions/fm0/fm0-map2.mal",
+    "solver": "hell_lite (codex-007 specimen)",
+    "date": "2026-07-27",
+    "metric": "2/2 cases",
+    "note": "Synthesized by tools/hell_lite compile-finite-map."
+  },
+  {
+    "rung_id": "L2.FM1.xor51-map4",
+    "status": "solved",
+    "best_program": "solutions/fm1/fm1-map4-codex.mal",
+    "solver": "Codex",
+    "date": "2026-05-12",
+    "metric": "4/4 cases",
+    "note": "Archived internal-match winner (220 bytes)."
+  },
+  {
+    "rung_id": "L2.FM1b.xor51-map6",
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "open \u2014 single-dispatch proven capped at honest 3/6 lanes; needs multi-stage dispatch"
+  },
+  {
+    "rung_id": "L2.FM2.xor51-map8",
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "open"
+  },
+  {
+    "rung_id": "L2.FM2h.xor51-map12-hi",
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "open"
+  },
+  {
+    "rung_id": "L2.FM2l.xor51-map12-low",
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "open"
+  },
+  {
+    "rung_id": "L2.FM3.xor51-map16",
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "open"
+  },
+  {
+    "rung_id": "L2.C0.xor51-cov32",
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "open \u2014 best known all-256 coverage 20/256 (256B) / 27/256 (4096B), below 32 threshold"
+  },
+  {
+    "rung_id": "L2.C1.xor51-cov64",
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "open \u2014 below 64 threshold (best known 27/256)"
+  },
+  {
+    "rung_id": "L2.R1.reverse-1",
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "open"
+  },
+  {
+    "rung_id": "L2.R2.rotate-1",
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "open"
+  },
+  {
+    "rung_id": "L2.R3.xor-2-multicase",
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "open"
+  },
+  {
+    "rung_id": "L3.R0.reverse-2-multicase",
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "open"
+  },
+  {
+    "rung_id": "L3.R1.xor-4-length-cap",
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "open"
+  },
+  {
+    "rung_id": "L3.R2.mixed-transform-small",
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "open"
+  },
+  {
+    "rung_id": "L4.R0.hash-prefix-1",
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "open"
+  },
+  {
+    "rung_id": "L4.R1.hash-prefix-1-multicase",
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "open"
+  },
+  {
+    "rung_id": "L4.R2.hash-prefix-length-pressure",
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "open"
+  },
+  {
+    "rung_id": "L5.R0.future-transform",
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "open"
+  },
+  {
+    "rung_id": "L5.R1.future-hash-prefix",
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "open"
+  }
+]

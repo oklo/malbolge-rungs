@@ -1,0 +1,45 @@
+{
+  "name": "codex012_repair_f0",
+  "kind": "trace-guided-branch-repair-target",
+  "match_id": "mal51-internal-xor4096-20260430-133753",
+  "rung_id": "L2.R0d.xor-1-len4096",
+  "seed_specimen": "012-codex",
+  "seed_candidate": "rungs/L2.R0d.xor-1-len4096/turns/012-codex/candidate.mal",
+  "preserve_pairs": [
+    {"input_hex": "82", "expected_hex": "d3", "source": "visible"},
+    {"input_hex": "c02fbf047cf03c0222e1ef2099dfc1d4", "expected_hex": "91", "source": "codex008-blocks1"},
+    {"input_hex": "c5ae1598ef66b4db1b2059bffd14118e", "expected_hex": "94", "source": "codex008-blocks1"},
+    {"input_hex": "6f4332bc4d38bf6ba8f21ec295e0f82a", "expected_hex": "3e", "source": "codex008-blocks1"},
+    {"input_hex": "4a4e33e46f9aee3d6ba55dcc84792f0e", "expected_hex": "1b", "source": "codex008-blocks1"},
+    {"input_hex": "8758435181c6d5e7dafecc8faf9d4c45", "expected_hex": "d6", "source": "codex008-blocks1"},
+    {"input_hex": "1cdfa9de5fd84895919db0b05319a7f1", "expected_hex": "4d", "source": "codex008-blocks3-first"},
+    {"input_hex": "f663070cda00f82bf2a6f8026601463a", "expected_hex": "a7", "source": "codex009-retry"},
+    {"input_hex": "a7dde0fcd5b40a3018ff2276d96a0895", "expected_hex": "f6", "source": "codex009"},
+    {"input_hex": "02bcb453499707c6688d5e17d3e34148f5b87a8b93638117b2436474e0bb8028", "expected_hex": "53", "source": "codex012"}
+  ],
+  "add_target": {
+    "input_hex": "f05d2f200c7f3ab2a2f6469685a205509cf662eb4204cc40eaf2517d24b83ef8",
+    "expected_hex": "a1",
+    "actual_hex": "dd",
+    "status": "file-backed-failed",
+    "source": "turns/012-codex/notes.md and diagnostics/derived-holdout-012-blocks3-cases.json"
+  },
+  "next_target": {
+    "input_hex": "2dca80a5c87f556e31eca951c97a6d2f9d4946139c3ca5659f53844f5ed4f454",
+    "expected_hex": "7c",
+    "status": "file-backed-derived-not-reached",
+    "source": "turns/012-codex/diagnostics/derived-holdout-012-blocks3-cases.json"
+  },
+  "intended_workflow": [
+    "extract-match-map",
+    "route-surgeon",
+    "patch-enum",
+    "repair-branch"
+  ],
+  "compile_status": "planning_only",
+  "notes": [
+    "This example is a repair target description, not a compiled candidate.",
+    "The first byte determines the xor output, but full official input vectors are preserved.",
+    "Official MAL-51 success still requires Rust runner or sweep reports."
+  ]
+}
