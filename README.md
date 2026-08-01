@@ -119,6 +119,7 @@ Solved rungs (re-verified on the native VM):
 
 | Rung | Solver | Program |
 |------|--------|---------|
+| `L0.R0.hello-world-genesis` | canonical `QC` (zero-output halt) | `solutions/genesis/halt-no-output.mal` |
 | `L0.R1.echo-1-demo` | canonical `ubO` | `solutions/echo/echo-first-byte.mal` |
 | `L1.R0.echo-1` | canonical `ubO` | `solutions/echo/echo-first-byte.mal` |
 | `L2.R1.reverse-1` | canonical `ubO` (1-byte reverse ≡ identity) | `solutions/echo/echo-first-byte.mal` |

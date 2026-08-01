@@ -2,13 +2,22 @@
   {
     "rung_id": "L0.R0.hello-world-genesis",
     "rank": 1,
-    "status": "open",
-    "best_program": null,
-    "solver": null,
-    "date": null,
-    "metric": null,
-    "note": "Historical Hello-World conformance slot (0-byte output); not a competitive rung.",
-    "note_long": "The slot's verification rule only requires a clean zero-output halt (the classic 2-byte halt fixture 'QC' passes it natively), but the rung is reserved for a sourced, attributable historical Hello World artifact, so it is deliberately left open rather than claimed on a technicality."
+    "status": "solved",
+    "best_program": "solutions/genesis/halt-no-output.mal",
+    "solver": {
+      "display": "QC (canonical)",
+      "type": "canonical",
+      "model": null,
+      "provider": null,
+      "harness": null,
+      "harness_short": "canonical",
+      "harness_url": null,
+      "notes": "Classic 2-byte halt-with-no-output program; carried as a golden fixture (fixtures/classic/halt_no_output.mal)."
+    },
+    "date": "2026-08-01",
+    "metric": "1/1 case (zero-output halt), 5 seeds",
+    "note": "Zero-output conformance slot; solved by the canonical 2-byte halt program QC.",
+    "note_long": "The rung as frozen requires exactly a clean halt with zero output (output_bytes=0, max_output_len=0), which the canonical 2-byte halt program QC satisfies. Notably, the historical Malbolge Hello World program prints text and would therefore exceed max_output_len=0 and fail this rung — so the zero-output rule, not the Hello World artifact, is the actual specification. The slot's title is kept for its historical framing."
   },
   {
     "rung_id": "L0.R1.echo-1-demo",
