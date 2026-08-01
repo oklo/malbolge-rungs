@@ -1,8 +1,9 @@
 //! Static leaderboard-site generator.
 //!
 //! `malbolge-rungs site --out <dir>` renders the leaderboard as a small static
-//! website: an index table plus one detail page per solved rung showing the
-//! winning program, its hash, and a verification transcript.
+//! website: an index table (ladder order, easiest to hardest) plus one detail
+//! page per rung. Solved rungs additionally show the winning program, granular
+//! solver attribution, the program hash, and a verification transcript.
 //!
 //! The transcript is not copied from the leaderboard record — it is produced by
 //! actually re-running every claimed solution on the native VM during
@@ -57,14 +58,19 @@ th {
   white-space: nowrap;
 }
 td { padding: .34em .7em .34em 0; border-bottom: 1px solid var(--line);
-     vertical-align: baseline; }
+     vertical-align: baseline; white-space: nowrap; }
 td.note { color: var(--muted); }
+td.note .txt {
+  display: inline-block; max-width: 19rem; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom;
+}
 td.num { text-align: right; font-variant-numeric: tabular-nums; }
 th.num { text-align: right; }
 .solved { color: var(--green); }
 .open { color: var(--faint); }
 .unverified { color: var(--amber); }
 .dim { color: var(--faint); }
+p.long { color: var(--fg); max-width: 58rem; }
 pre {
   background: var(--pre-bg); border: 1px solid var(--line);
   padding: .8rem .9rem; overflow-x: auto; white-space: pre-wrap;
@@ -101,8 +107,6 @@ fn page(title: &str, depth: usize, body: &str) -> String {
 }
 
 struct SolvedEntry {
-    record: LeaderboardRecord,
-    rung: Rung,
     program: Vec<u8>,
     outcome: VerifyOutcome,
 }
@@ -113,7 +117,7 @@ pub fn generate_site(out_dir: &Path, epochs: u32) -> Result<()> {
 
     // Re-verify every solved record first; refuse to render a site that would
     // publish an unverified claim.
-    let mut solved = Vec::new();
+    let mut solved: Vec<(String, SolvedEntry)> = Vec::new();
     for record in &records {
         if record.status != Status::Solved {
             continue;
@@ -138,12 +142,7 @@ pub fn generate_site(out_dir: &Path, epochs: u32) -> Result<()> {
                 record.rung_id
             );
         }
-        solved.push(SolvedEntry {
-            record: record.clone(),
-            rung,
-            program,
-            outcome,
-        });
+        solved.push((record.rung_id.clone(), SolvedEntry { program, outcome }));
     }
 
     std::fs::create_dir_all(out_dir.join("s"))?;
@@ -153,10 +152,20 @@ pub fn generate_site(out_dir: &Path, epochs: u32) -> Result<()> {
         out_dir.join("index.html"),
         page("malbolge-rungs", 0, &index_body(&records, &solved, &generated)),
     )?;
-    for entry in &solved {
+    for record in &records {
+        let rung = find_rung(&record.rung_id)
+            .with_context(|| format!("{}: rung not in registry", record.rung_id))?;
+        let entry = solved
+            .iter()
+            .find(|(id, _)| *id == record.rung_id)
+            .map(|(_, e)| e);
         std::fs::write(
-            out_dir.join("s").join(format!("{}.html", entry.record.rung_id)),
-            page(&entry.record.rung_id, 1, &detail_body(entry, &generated)),
+            out_dir.join("s").join(format!("{}.html", record.rung_id)),
+            page(
+                &record.rung_id,
+                1,
+                &detail_body(record, &rung, entry, &generated),
+            ),
         )?;
     }
     println!(
@@ -194,7 +203,7 @@ fn status_cell(record: &LeaderboardRecord) -> &'static str {
 
 fn index_body(
     records: &[LeaderboardRecord],
-    solved: &[SolvedEntry],
+    solved: &[(String, SolvedEntry)],
     generated: &str,
 ) -> String {
     let mut b = String::new();
@@ -204,51 +213,57 @@ fn index_body(
         "<p class=\"sub\">A ladder of classic-Malbolge programming challenges, \
          adjudicated by a single deterministic ground-truth VM \
          (<a href=\"{REPO_URL}/blob/main/docs/classic-malbolge-51-v0.md\">Classic-Malbolge-51 v0</a>). \
-         Every <span class=\"solved\">solved</span> entry links to the winning program and was \
-         re-verified on the native evaluator when this page was generated. \
-         {} of {} rungs solved.</p>",
+         Rungs are ordered easiest → hardest (rank is a best-evidence estimate; levels L0–L5 \
+         are the registry's coarse tiers). Every <span class=\"solved\">solved</span> entry \
+         links to the winning program and was re-verified on the native evaluator when this \
+         page was generated. {} of {} rungs solved.</p>",
         solved.len(),
         records.len()
     );
 
     let _ = writeln!(
         b,
-        "<table>\n<tr><th>rung</th><th>status</th><th>solver</th>\
+        "<table>\n<tr><th class=\"num\">#</th><th>rung</th><th>status</th><th>solver</th>\
          <th>date</th><th class=\"num\">bytes</th><th>notes</th></tr>"
     );
     for record in records {
-        let (rung_cell, bytes_cell, solver_cell, date_cell) = if record.status == Status::Solved {
-            let entry = solved
-                .iter()
-                .find(|e| e.record.rung_id == record.rung_id)
-                .expect("solved entry present");
-            (
-                format!(
-                    "<a href=\"s/{0}.html\">{0}</a>",
-                    esc(&record.rung_id)
-                ),
-                format!("{}", entry.program.len()),
-                esc(record.solver.as_deref().unwrap_or("—")),
-                esc(record.date.as_deref().unwrap_or("—")),
+        let entry = solved
+            .iter()
+            .find(|(id, _)| *id == record.rung_id)
+            .map(|(_, e)| e);
+        let bytes_cell = entry
+            .map(|e| e.program.len().to_string())
+            .unwrap_or_else(|| "—".to_string());
+        let solver_cell = record
+            .solver
+            .as_ref()
+            .map(|s| esc(&s.display))
+            .unwrap_or_else(|| "—".to_string());
+        let date_cell = esc(record.date.as_deref().unwrap_or("—"));
+        let note = record.note.as_deref().unwrap_or("");
+        let more = if record.note_long.is_some() {
+            format!(
+                " <a href=\"s/{}.html\">more</a>",
+                esc(&record.rung_id)
             )
         } else {
-            (
-                esc(&record.rung_id),
-                "—".to_string(),
-                "—".to_string(),
-                "—".to_string(),
-            )
+            String::new()
         };
         let _ = writeln!(
             b,
-            "<tr><td>{}</td><td>{}</td><td>{}</td><td class=\"dim\">{}</td>\
-             <td class=\"num\">{}</td><td class=\"note\">{}</td></tr>",
-            rung_cell,
+            "<tr><td class=\"num dim\">{0}</td>\
+             <td><a href=\"s/{1}.html\">{1}</a></td><td>{2}</td><td>{3}</td>\
+             <td class=\"dim\">{4}</td><td class=\"num\">{5}</td>\
+             <td class=\"note\"><span class=\"txt\" title=\"{6}\">{7}</span>{8}</td></tr>",
+            record.rank.map(|r| r.to_string()).unwrap_or_default(),
+            esc(&record.rung_id),
             status_cell(record),
             solver_cell,
             date_cell,
             bytes_cell,
-            esc(record.note.as_deref().unwrap_or("")),
+            esc(note),
+            esc(note),
+            more,
         );
     }
     let _ = writeln!(b, "</table>");
@@ -265,90 +280,164 @@ fn index_body(
     b
 }
 
-fn detail_body(entry: &SolvedEntry, generated: &str) -> String {
-    let record = &entry.record;
-    let rung = &entry.rung;
-    let source = String::from_utf8_lossy(&entry.program);
-    let sha = hex::encode(Sha256::digest(&entry.program));
-
+fn detail_body(
+    record: &LeaderboardRecord,
+    rung: &Rung,
+    entry: Option<&SolvedEntry>,
+    generated: &str,
+) -> String {
     let mut b = String::new();
     let _ = writeln!(b, "<h1>{}</h1>", esc(&record.rung_id));
-    let _ = writeln!(b, "<p class=\"sub\">{}</p>", esc(&rung.title));
+    let _ = writeln!(
+        b,
+        "<p class=\"sub\">{} · {}</p>",
+        esc(&rung.title),
+        status_cell(record)
+            .replace("<span", "<span style=\"font-weight:600\"")
+    );
 
-    let _ = writeln!(b, "<h2>Record</h2>\n<dl>");
-    let _ = writeln!(
-        b,
-        "<dt>solver</dt><dd>{}</dd>",
-        esc(record.solver.as_deref().unwrap_or("—"))
-    );
-    let _ = writeln!(
-        b,
-        "<dt>date</dt><dd>{}</dd>",
-        esc(record.date.as_deref().unwrap_or("—"))
-    );
-    let _ = writeln!(
-        b,
-        "<dt>challenge</dt><dd>{:?} / {:?}, {} case(s), max program {} bytes</dd>",
-        rung.family, rung.transform, rung.cases, rung.max_program_len
-    );
-    if let Some(note) = &record.note {
-        let _ = writeln!(b, "<dt>note</dt><dd>{}</dd>", esc(note));
+    let _ = writeln!(b, "<h2>Challenge</h2>\n<dl>");
+    if let Some(rank) = record.rank {
+        let _ = writeln!(b, "<dt>ladder rank</dt><dd>#{rank} (level L{})</dd>", rung.level);
     }
     let _ = writeln!(
         b,
-        "<dt>program</dt><dd><a href=\"{REPO_URL}/blob/main/{0}\">{0}</a> \
-         ({1} bytes)</dd>",
-        esc(record.best_program.as_deref().unwrap_or("")),
-        entry.program.len()
+        "<dt>family / transform</dt><dd>{:?} / {:?}</dd>",
+        rung.family, rung.transform
     );
-    let _ = writeln!(b, "<dt>sha256</dt><dd>{sha}</dd>");
+    let _ = writeln!(
+        b,
+        "<dt>cases</dt><dd>{} case(s), {} output byte(s)</dd>",
+        rung.cases, rung.output_bytes
+    );
+    if !rung.finite_map_inputs.is_empty() {
+        let _ = writeln!(
+            b,
+            "<dt>finite-map inputs</dt><dd>{}</dd>",
+            rung.finite_map_inputs
+                .iter()
+                .map(|x| format!("{x:02x}"))
+                .collect::<Vec<_>>()
+                .join(" ")
+        );
+    }
+    if let Some(m) = rung.min_correct_cases {
+        let _ = writeln!(b, "<dt>pass threshold</dt><dd>≥ {m} of {} correct</dd>", rung.cases);
+    }
+    let _ = writeln!(
+        b,
+        "<dt>limits</dt><dd>program ≤ {} bytes, ≤ {} steps/case</dd>",
+        rung.max_program_len, rung.max_steps_per_case
+    );
+    if !rung.purpose.is_empty() {
+        let _ = writeln!(b, "<dt>purpose</dt><dd>{}</dd>", esc(&rung.purpose));
+    }
     let _ = writeln!(b, "</dl>");
 
-    let _ = writeln!(b, "<h2>Program</h2>\n<pre>{}</pre>", esc(&source));
-
-    let _ = writeln!(
-        b,
-        "<h2>Verification transcript (native VM, {} epoch(s))</h2>",
-        entry.outcome.epochs.len()
-    );
-    for ep in &entry.outcome.epochs {
-        let _ = writeln!(
-            b,
-            "<p class=\"dim\">epoch {} · seed {}… · {}/{} cases</p>",
-            ep.epoch,
-            &ep.seed_hex[..12],
-            ep.correct_cases,
-            ep.total_cases
-        );
-        let _ = writeln!(
-            b,
-            "<table>\n<tr><th class=\"num\">case</th><th>input</th>\
-             <th>expected</th><th>observed</th><th>status</th></tr>"
-        );
-        for c in &ep.cases {
-            let _ = writeln!(
-                b,
-                "<tr><td class=\"num\">{}</td><td>{}</td><td>{}</td><td>{}</td>\
-                 <td class=\"{}\">{}</td></tr>",
-                c.index,
-                esc(&truncate_hex(&c.input_hex)),
-                esc(&c.expected_hex),
-                esc(c.observed_hex.as_deref().unwrap_or("—")),
-                if c.correct { "solved" } else { "unverified" },
-                if c.correct { "ok" } else { "MISS" },
-            );
+    if record.note.is_some() || record.note_long.is_some() {
+        let _ = writeln!(b, "<h2>Notes</h2>");
+        if let Some(note) = &record.note {
+            let _ = writeln!(b, "<p class=\"long\">{}</p>", esc(note));
         }
-        let _ = writeln!(b, "</table>");
+        if let Some(long) = &record.note_long {
+            let _ = writeln!(b, "<p class=\"long\">{}</p>", esc(long));
+        }
     }
 
-    let _ = writeln!(
-        b,
-        "<h2>Reproduce</h2>\n<pre>git clone {REPO_URL}\n\
-         cargo run -p harness -- verify --rung {} --program {} --epochs {} --verbose</pre>",
-        esc(&record.rung_id),
-        esc(record.best_program.as_deref().unwrap_or("")),
-        entry.outcome.epochs.len()
-    );
+    if let Some(entry) = entry {
+        let source = String::from_utf8_lossy(&entry.program);
+        let sha = hex::encode(Sha256::digest(&entry.program));
+
+        if let Some(solver) = &record.solver {
+            let _ = writeln!(b, "<h2>Solver</h2>\n<dl>");
+            let _ = writeln!(b, "<dt>name</dt><dd>{}</dd>", esc(&solver.display));
+            if let Some(kind) = &solver.kind {
+                let _ = writeln!(b, "<dt>type</dt><dd>{}</dd>", esc(kind));
+            }
+            if let Some(model) = &solver.model {
+                let _ = writeln!(b, "<dt>model</dt><dd>{}</dd>", esc(model));
+            }
+            if let Some(provider) = &solver.provider {
+                let _ = writeln!(b, "<dt>provider</dt><dd>{}</dd>", esc(provider));
+            }
+            if let Some(harness) = &solver.harness {
+                let _ = writeln!(b, "<dt>harness</dt><dd>{}</dd>", esc(harness));
+            }
+            if let Some(date) = &record.date {
+                let _ = writeln!(b, "<dt>date</dt><dd>{}</dd>", esc(date));
+            }
+            if let Some(metric) = &record.metric {
+                let _ = writeln!(b, "<dt>metric</dt><dd>{}</dd>", esc(metric));
+            }
+            if let Some(notes) = &solver.notes {
+                let _ = writeln!(b, "<dt>attribution notes</dt><dd>{}</dd>", esc(notes));
+            }
+            let _ = writeln!(b, "</dl>");
+        }
+
+        let _ = writeln!(b, "<h2>Winning program</h2>");
+        let _ = writeln!(
+            b,
+            "<p class=\"dim\"><a href=\"{REPO_URL}/blob/main/{0}\">{0}</a> · {1} bytes · \
+             sha256 {2}</p>",
+            esc(record.best_program.as_deref().unwrap_or("")),
+            entry.program.len(),
+            sha
+        );
+        let _ = writeln!(b, "<pre>{}</pre>", esc(&source));
+
+        let _ = writeln!(
+            b,
+            "<h2>Verification transcript (native VM, {} epoch(s))</h2>",
+            entry.outcome.epochs.len()
+        );
+        for ep in &entry.outcome.epochs {
+            let _ = writeln!(
+                b,
+                "<p class=\"dim\">epoch {} · seed {}… · {}/{} cases</p>",
+                ep.epoch,
+                &ep.seed_hex[..12],
+                ep.correct_cases,
+                ep.total_cases
+            );
+            let _ = writeln!(
+                b,
+                "<table>\n<tr><th class=\"num\">case</th><th>input</th>\
+                 <th>expected</th><th>observed</th><th>status</th></tr>"
+            );
+            for c in &ep.cases {
+                let _ = writeln!(
+                    b,
+                    "<tr><td class=\"num\">{}</td><td>{}</td><td>{}</td><td>{}</td>\
+                     <td class=\"{}\">{}</td></tr>",
+                    c.index,
+                    esc(&truncate_hex(&c.input_hex)),
+                    esc(&c.expected_hex),
+                    esc(c.observed_hex.as_deref().unwrap_or("—")),
+                    if c.correct { "solved" } else { "unverified" },
+                    if c.correct { "ok" } else { "MISS" },
+                );
+            }
+            let _ = writeln!(b, "</table>");
+        }
+
+        let _ = writeln!(
+            b,
+            "<h2>Reproduce</h2>\n<pre>git clone {REPO_URL}\n\
+             cargo run -p harness -- verify --rung {} --program {} --epochs {} --verbose</pre>",
+            esc(&record.rung_id),
+            esc(record.best_program.as_deref().unwrap_or("")),
+            entry.outcome.epochs.len()
+        );
+    } else {
+        let _ = writeln!(
+            b,
+            "<h2>Attempt it</h2>\n<pre>git clone {REPO_URL}\n\
+             # author a candidate (see tools/hell_lite), then:\n\
+             cargo run -p harness -- verify --rung {} --program your-candidate.mal --verbose</pre>",
+            esc(&record.rung_id)
+        );
+    }
 
     let _ = writeln!(b, "<footer>Generated {}.</footer>", esc(generated));
     b

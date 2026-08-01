@@ -277,10 +277,10 @@ fn cmd_leaderboard(render: Option<&str>) {
                     Status::Unverified => "unverified",
                 };
                 println!(
-                    "{:<32} {:<11} {:<8} {}",
+                    "{:<32} {:<11} {:<20} {}",
                     r.rung_id,
                     status,
-                    r.solver.as_deref().unwrap_or("—"),
+                    r.solver.as_ref().map(|s| s.display.as_str()).unwrap_or("—"),
                     r.metric.as_deref().unwrap_or("—"),
                 );
             }

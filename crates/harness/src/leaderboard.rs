@@ -27,32 +27,66 @@ pub enum Status {
     Unverified,
 }
 
+/// Granular attribution for whoever produced the winning program, with the
+/// fields benchmarking sites conventionally record. Only evidenced values are
+/// populated; unknown fields stay null rather than being guessed.
+#[derive(Clone, Debug, Deserialize)]
+pub struct Solver {
+    /// Short display name for the leaderboard table, e.g. "GPT-5.5 (Codex)".
+    pub display: String,
+    /// "llm-agent" | "tool" | "human" | "canonical".
+    #[serde(default, rename = "type")]
+    pub kind: Option<String>,
+    /// Exact model name as recorded in the original evaluation report.
+    #[serde(default)]
+    pub model: Option<String>,
+    #[serde(default)]
+    pub provider: Option<String>,
+    /// Harness / scaffold the model ran in.
+    #[serde(default)]
+    pub harness: Option<String>,
+    #[serde(default)]
+    pub notes: Option<String>,
+}
+
 #[derive(Clone, Debug, Deserialize)]
 pub struct LeaderboardRecord {
     pub rung_id: String,
+    /// Ladder position, easiest -> hardest (best-evidence estimate; the site
+    /// sorts by this).
+    #[serde(default)]
+    pub rank: Option<u32>,
     pub status: Status,
     /// Path (relative to repo root) of the shipped solution, for `solved` rungs.
     #[serde(default)]
     pub best_program: Option<String>,
     #[serde(default)]
-    pub solver: Option<String>,
+    pub solver: Option<Solver>,
     #[serde(default)]
     pub date: Option<String>,
     /// Human-readable verification metric, e.g. "4/4 cases" or "27/256 (best
     /// known, below 32 threshold)".
     #[serde(default)]
     pub metric: Option<String>,
+    /// One-line note shown in the leaderboard table.
     #[serde(default)]
     pub note: Option<String>,
+    /// Extended discussion shown on the rung's detail page.
+    #[serde(default)]
+    pub note_long: Option<String>,
 }
 
 /// Load the leaderboard from `leaderboard/leaderboard.json` at runtime, so
 /// editing the data is reflected immediately by a re-run (no rebuild needed).
+/// Records are returned in ladder order (ascending `rank`).
 pub fn load_leaderboard() -> Vec<LeaderboardRecord> {
     let path = PathBuf::from(REPO_ROOT).join("leaderboard/leaderboard.json");
     let text = std::fs::read_to_string(&path)
         .unwrap_or_else(|err| panic!("reading {}: {err}", path.display()));
-    serde_json::from_str(&text).expect("leaderboard.json is valid")
+    let mut records: Vec<LeaderboardRecord> =
+        serde_json::from_str(&text).expect("leaderboard.json is valid");
+    records.sort_by_key(|r| r.rank.unwrap_or(u32::MAX));
+    records
 }
 
 fn resolve(path: &str) -> PathBuf {
@@ -165,7 +199,11 @@ pub fn render_markdown() -> String {
             "| `{}` | {} | {} | {} | {} | {} |\n",
             record.rung_id,
             status,
-            record.solver.as_deref().unwrap_or("—"),
+            record
+                .solver
+                .as_ref()
+                .map(|s| s.display.as_str())
+                .unwrap_or("—"),
             record.metric.as_deref().unwrap_or("—"),
             record
                 .best_program

@@ -1,263 +1,356 @@
 [
   {
     "rung_id": "L0.R0.hello-world-genesis",
+    "rank": 1,
     "status": "open",
     "best_program": null,
     "solver": null,
     "date": null,
     "metric": null,
-    "note": "open"
+    "note": "Historical Hello-World conformance slot (0-byte output); not a competitive rung.",
+    "note_long": null
   },
   {
     "rung_id": "L0.R1.echo-1-demo",
+    "rank": 2,
     "status": "solved",
     "best_program": "solutions/echo/echo-first-byte.mal",
-    "solver": "canonical IN/OUT/HALT (ubO)",
+    "solver": {
+      "display": "ubO (canonical)",
+      "type": "canonical",
+      "model": null,
+      "provider": null,
+      "harness": null,
+      "notes": "Minimal 3-instruction classic-Malbolge program (IN, OUT, HALT); long predates this project."
+    },
     "date": "2026-07-27",
-    "metric": "1/1 case, verified across multiple seeds",
-    "note": "Same minimal `ubO` echo program; L0 demo slot for the 1-byte echo."
+    "metric": "1/1 case, multiple seeds",
+    "note": "1-byte echo demo slot; solved by the canonical ubO program.",
+    "note_long": null
   },
   {
     "rung_id": "L1.R0.echo-1",
+    "rank": 3,
     "status": "solved",
     "best_program": "solutions/echo/echo-first-byte.mal",
-    "solver": "canonical IN/OUT/HALT (ubO)",
+    "solver": {
+      "display": "ubO (canonical)",
+      "type": "canonical",
+      "model": null,
+      "provider": null,
+      "harness": null,
+      "notes": "Minimal 3-instruction classic-Malbolge program (IN, OUT, HALT); long predates this project."
+    },
     "date": "2026-07-27",
-    "metric": "1/1 case, verified across multiple seeds",
-    "note": "Minimal 3-instruction classic-Malbolge program `ubO` (IN, OUT, HALT): reads one byte, echoes it, halts."
+    "metric": "1/1 case, multiple seeds",
+    "note": "Read one byte, echo it, halt.",
+    "note_long": null
+  },
+  {
+    "rung_id": "L2.R1.reverse-1",
+    "rank": 4,
+    "status": "solved",
+    "best_program": "solutions/echo/echo-first-byte.mal",
+    "solver": {
+      "display": "ubO (canonical)",
+      "type": "canonical",
+      "model": null,
+      "provider": null,
+      "harness": null,
+      "notes": "Minimal 3-instruction classic-Malbolge program (IN, OUT, HALT); long predates this project."
+    },
+    "date": "2026-08-01",
+    "metric": "1/1 case, 5 seeds",
+    "note": "1-byte reverse is the identity, so ubO passes; the registry marks this a transform-family sanity check.",
+    "note_long": null
   },
   {
     "rung_id": "L1.R1.echo-2",
+    "rank": 5,
     "status": "open",
     "best_program": null,
     "solver": null,
     "date": null,
     "metric": null,
-    "note": "open"
+    "note": "Echo the first 2 input bytes.",
+    "note_long": null
   },
   {
     "rung_id": "L1.R2.echo-4",
+    "rank": 6,
     "status": "open",
     "best_program": null,
     "solver": null,
     "date": null,
     "metric": null,
-    "note": "open"
+    "note": "Echo the first 4 input bytes.",
+    "note_long": null
   },
   {
     "rung_id": "L1.R3.echo-2-multicase",
+    "rank": 7,
     "status": "open",
     "best_program": null,
     "solver": null,
     "date": null,
     "metric": null,
-    "note": "open"
+    "note": "Echo 2 bytes across 2 independent cases.",
+    "note_long": null
   },
   {
-    "rung_id": "L2.R0.xor-1",
-    "status": "open",
-    "best_program": null,
-    "solver": null,
-    "date": null,
-    "metric": null,
-    "note": "open frontier \u2014 general single-byte XOR, 256B cap; unsolved by any agent"
+    "rung_id": "L2.FM0.xor51-map2",
+    "rank": 8,
+    "status": "solved",
+    "best_program": "solutions/fm0/fm0-map2.mal",
+    "solver": {
+      "display": "HeLL-Lite (tool)",
+      "type": "tool",
+      "model": null,
+      "provider": null,
+      "harness": "tools/hell_lite compile-finite-map (deterministic compiler)",
+      "notes": "Reuses the two-input JUMP/routing specimen found by the Codex agent (turn 007, internal xor4096 match, 2026-05; model name unrecorded in the archive)."
+    },
+    "date": "2026-07-27",
+    "metric": "2/2 cases",
+    "note": "Two-input finite map (02→53, 06→57), synthesized by HeLL-Lite.",
+    "note_long": null
   },
   {
-    "rung_id": "L2.R0d.xor-1-len4096",
+    "rung_id": "L2.FM1.xor51-map4",
+    "rank": 9,
+    "status": "solved",
+    "best_program": "solutions/fm1/fm1-map4-codex.mal",
+    "solver": {
+      "display": "GPT-5.5 (Codex)",
+      "type": "llm-agent",
+      "model": "GPT-5.5",
+      "provider": "OpenAI",
+      "harness": "Codex CLI agent, MAL-51 internal match (iterative turns, native-evaluator feedback)",
+      "notes": "Official match report records harness_name=codex, model_name=GPT-5.5 (provider/version/temperature unrecorded)."
+    },
+    "date": "2026-05-12",
+    "metric": "4/4 cases",
+    "note": "Four-input finite map; won in an internal agent match.",
+    "note_long": "Solved in the internal FM1 match of 2026-05-12. Turn 001 (Claude, harness claude-code) produced a structural near-miss: a four-lane routing design crazy(crazy(input,69),49) that landed all four published inputs on correct first output bytes, but two lanes emitted a second byte and failed the official max_output_len=1 rule (OutputLimitExceeded). Turn 002 (GPT-5.5 via Codex) resolved the termination conflict at the shared HALT cell so all four lanes emit exactly one byte and halt — the 220-byte official winner shipped here. The archived report and a 5/5 sanity sweep back the result."
+  },
+  {
+    "rung_id": "L2.FM1b.xor51-map6",
+    "rank": 10,
     "status": "open",
     "best_program": null,
     "solver": null,
     "date": null,
     "metric": null,
-    "note": "open frontier \u2014 general XOR, 4096B cap; best known coverage 27/256, no full solve"
+    "note": "Six-input finite map; single-dispatch constructions proven capped at 3/6 lanes.",
+    "note_long": "map4 plus inputs 0x82 and 0x6f. A genuine step up from FM1: exhaustive per-lane tail search over the single-dispatch architecture (bare crazy chains, MOVD-relocated chains, ROT-escapes, runtime-mutated-cell operands, plus an exact max-coverage solver) shows at most 3 of the 6 lanes can coexist — per configuration, about three lanes have no realizable tail at all. Target 0xd3 (for input 0x82) lies outside the 81-element absorbing set of the CRAZY operation, so no pure-crazy tail can produce it; a ROT escape is required. Passing this rung likely needs a multi-stage dispatch that spreads landing sites, not more search inside the current shape."
+  },
+  {
+    "rung_id": "L2.FM2.xor51-map8",
+    "rank": 11,
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "Eight-input finite map; open.",
+    "note_long": null
+  },
+  {
+    "rung_id": "L2.FM2h.xor51-map12-hi",
+    "rank": 12,
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "Twelve high-byte inputs (0x80–0xff); open.",
+    "note_long": null
+  },
+  {
+    "rung_id": "L2.FM2l.xor51-map12-low",
+    "rank": 13,
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "Twelve low-byte inputs (0x00–0x40); open.",
+    "note_long": null
+  },
+  {
+    "rung_id": "L2.FM3.xor51-map16",
+    "rank": 14,
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "Sixteen-input finite map; open.",
+    "note_long": null
+  },
+  {
+    "rung_id": "L2.C0.xor51-cov32",
+    "rank": 15,
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "Partial-credit XOR: ≥32 of 256 bytes correct. Best known 27/256.",
+    "note_long": "Coverage rungs make partial generality measurable: the 256 cases enumerate every input byte, and the rung passes at ≥32 correct. The best known candidate (identity dispatch J(x)=x via crazy(crazy(x,121),121), a shared six-op station, and per-lane pointer cells; 4096 bytes) reaches 27/256 — five short of the threshold. Structural analysis suggests the shared-station pool caps out near ~30 lanes, so clearing 32 probably needs a new construction rather than better packing."
+  },
+  {
+    "rung_id": "L2.C1.xor51-cov64",
+    "rank": 16,
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "Partial-credit XOR: ≥64 of 256 bytes correct. Best known 27/256.",
+    "note_long": null
   },
   {
     "rung_id": "L2.R0c.crazy-mask-1",
+    "rank": 17,
     "status": "unverified",
     "best_program": null,
     "solver": null,
     "date": null,
     "metric": null,
-    "note": "Designed to be solvable (output = crazy(input,0x51), a single native CRAZY op) but no verified program exists yet."
-  },
-  {
-    "rung_id": "L2.FM0.xor51-map2",
-    "status": "solved",
-    "best_program": "solutions/fm0/fm0-map2.mal",
-    "solver": "hell_lite (codex-007 specimen)",
-    "date": "2026-07-27",
-    "metric": "2/2 cases",
-    "note": "Synthesized by tools/hell_lite compile-finite-map."
-  },
-  {
-    "rung_id": "L2.FM1.xor51-map4",
-    "status": "solved",
-    "best_program": "solutions/fm1/fm1-map4-codex.mal",
-    "solver": "Codex",
-    "date": "2026-05-12",
-    "metric": "4/4 cases",
-    "note": "Archived internal-match winner (220 bytes)."
-  },
-  {
-    "rung_id": "L2.FM1b.xor51-map6",
-    "status": "open",
-    "best_program": null,
-    "solver": null,
-    "date": null,
-    "metric": null,
-    "note": "open \u2014 single-dispatch proven capped at honest 3/6 lanes; needs multi-stage dispatch"
-  },
-  {
-    "rung_id": "L2.FM2.xor51-map8",
-    "status": "open",
-    "best_program": null,
-    "solver": null,
-    "date": null,
-    "metric": null,
-    "note": "open"
-  },
-  {
-    "rung_id": "L2.FM2h.xor51-map12-hi",
-    "status": "open",
-    "best_program": null,
-    "solver": null,
-    "date": null,
-    "metric": null,
-    "note": "open"
-  },
-  {
-    "rung_id": "L2.FM2l.xor51-map12-low",
-    "status": "open",
-    "best_program": null,
-    "solver": null,
-    "date": null,
-    "metric": null,
-    "note": "open"
-  },
-  {
-    "rung_id": "L2.FM3.xor51-map16",
-    "status": "open",
-    "best_program": null,
-    "solver": null,
-    "date": null,
-    "metric": null,
-    "note": "open"
-  },
-  {
-    "rung_id": "L2.C0.xor51-cov32",
-    "status": "open",
-    "best_program": null,
-    "solver": null,
-    "date": null,
-    "metric": null,
-    "note": "open \u2014 best known all-256 coverage 20/256 (256B) / 27/256 (4096B), below 32 threshold"
-  },
-  {
-    "rung_id": "L2.C1.xor51-cov64",
-    "status": "open",
-    "best_program": null,
-    "solver": null,
-    "date": null,
-    "metric": null,
-    "note": "open \u2014 below 64 threshold (best known 27/256)"
-  },
-  {
-    "rung_id": "L2.R1.reverse-1",
-    "status": "open",
-    "best_program": null,
-    "solver": null,
-    "date": null,
-    "metric": null,
-    "note": "open"
+    "note": "Output = crazy(input, 0x51) mod 256; designed solvable, no verified program yet.",
+    "note_long": "The transform is a single native CRAZY operation and per-trit realizable, so this rung demands totality over all 256 inputs without XOR's binary-carry obstruction. It sits between the finite-map rungs and full xor-1. Test vectors: 00→54, 12→4b, 51→03, ff→55."
   },
   {
     "rung_id": "L2.R2.rotate-1",
+    "rank": 18,
     "status": "open",
     "best_program": null,
     "solver": null,
     "date": null,
     "metric": null,
-    "note": "open"
+    "note": "Rotate the input byte left by one bit; totality over 256 required.",
+    "note_long": null
+  },
+  {
+    "rung_id": "L2.R0d.xor-1-len4096",
+    "rank": 19,
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "General XOR with a 4096-byte cap; best known coverage 27/256.",
+    "note_long": "Same task as xor-1 with a relaxed length cap. Deep attempts established the identity-dispatch architecture (byte 121 — all-1 trits — is loader-valid only at cells 35 and 41, reached by MOVD pointers) and a shared station with per-lane private pointer cells, reaching 27/256 verified coverage. Structural ceilings: MOVD pointer bytes are printable ≤126, so operand freedom lives in a ~96-cell pool (≈ 30-lane cap); cells behind a lane's walk are executed and byte-forced; three-CRAZY chains reach only ~81 of 256 outputs; and XOR cannot live in the dispatch itself (≤41/256 for any per-trit map)."
+  },
+  {
+    "rung_id": "L2.R0.xor-1",
+    "rank": 20,
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "The open frontier: output = input XOR 0x51 for any byte, 256-byte cap.",
+    "note_long": "Unsolved by any agent or human to date. The input byte is hash-derived per seed, so the program must be total over all 256 inputs — constant-output overfits fail. Known obstructions: the crazy-dispatch J = crz(crz(x,t1),t2) is non-injective and bounded below 243, so 256 private code paths are impossible; identity dispatch needs operand byte 121, which is not loader-valid at any reachable operand cell in a fixed prefix; and dense landing sites force shared tails whose pointer cells fall inside NOP-forced executed regions. Best known all-256 coverage at this cap: 20/256."
   },
   {
     "rung_id": "L2.R3.xor-2-multicase",
+    "rank": 21,
     "status": "open",
     "best_program": null,
     "solver": null,
     "date": null,
     "metric": null,
-    "note": "open"
+    "note": "2-byte XOR across 2 cases; strictly harder than xor-1.",
+    "note_long": null
   },
   {
     "rung_id": "L3.R0.reverse-2-multicase",
+    "rank": 22,
     "status": "open",
     "best_program": null,
     "solver": null,
     "date": null,
     "metric": null,
-    "note": "open"
+    "note": "Reverse 2 bytes across 3 cases.",
+    "note_long": null
   },
   {
     "rung_id": "L3.R1.xor-4-length-cap",
+    "rank": 23,
     "status": "open",
     "best_program": null,
     "solver": null,
     "date": null,
     "metric": null,
-    "note": "open"
+    "note": "4-byte XOR under a tight 256-byte cap.",
+    "note_long": null
   },
   {
     "rung_id": "L3.R2.mixed-transform-small",
+    "rank": 24,
     "status": "open",
     "best_program": null,
     "solver": null,
     "date": null,
     "metric": null,
-    "note": "open"
+    "note": "Nibble-swap over 3 cases.",
+    "note_long": null
   },
   {
     "rung_id": "L4.R0.hash-prefix-1",
+    "rank": 25,
     "status": "open",
     "best_program": null,
     "solver": null,
     "date": null,
     "metric": null,
-    "note": "open"
+    "note": "Output a 1-byte SHA-256-derived value; no known approach.",
+    "note_long": null
   },
   {
     "rung_id": "L4.R1.hash-prefix-1-multicase",
+    "rank": 26,
     "status": "open",
     "best_program": null,
     "solver": null,
     "date": null,
     "metric": null,
-    "note": "open"
+    "note": "Hash prefix across 3 cases.",
+    "note_long": null
   },
   {
     "rung_id": "L4.R2.hash-prefix-length-pressure",
+    "rank": 27,
     "status": "open",
     "best_program": null,
     "solver": null,
     "date": null,
     "metric": null,
-    "note": "open"
+    "note": "Hash prefix under length pressure.",
+    "note_long": null
   },
   {
     "rung_id": "L5.R0.future-transform",
+    "rank": 28,
     "status": "open",
     "best_program": null,
     "solver": null,
     "date": null,
     "metric": null,
-    "note": "open"
+    "note": "Reserved future rung (nibble map, 4 cases).",
+    "note_long": null
   },
   {
     "rung_id": "L5.R1.future-hash-prefix",
+    "rank": 29,
     "status": "open",
     "best_program": null,
     "solver": null,
     "date": null,
     "metric": null,
-    "note": "open"
+    "note": "Reserved future rung (hash prefix, 4 cases).",
+    "note_long": null
   }
 ]
