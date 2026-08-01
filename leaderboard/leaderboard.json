@@ -14,7 +14,7 @@
       "harness_url": null,
       "notes": "Classic 2-byte halt-with-no-output program; carried as a golden fixture (fixtures/classic/halt_no_output.mal)."
     },
-    "date": "2026-08-01",
+    "date": null,
     "metric": "1/1 case (zero-output halt), 5 seeds",
     "note": "Zero-output conformance slot; solved by the canonical 2-byte halt program QC.",
     "note_long": "The rung as frozen requires exactly a clean halt with zero output (output_bytes=0, max_output_len=0), which the canonical 2-byte halt program QC satisfies. Notably, the historical Malbolge Hello World program prints text and would therefore exceed max_output_len=0 and fail this rung — so the zero-output rule, not the Hello World artifact, is the actual specification. The slot's title is kept for its historical framing."
@@ -34,7 +34,7 @@
       "harness_url": null,
       "notes": "Minimal 3-instruction classic-Malbolge program (IN, OUT, HALT); long predates this project."
     },
-    "date": "2026-07-27",
+    "date": null,
     "metric": "1/1 case, multiple seeds",
     "note": "1-byte echo demo slot; solved by the canonical ubO program.",
     "note_long": null
@@ -54,7 +54,7 @@
       "harness_url": null,
       "notes": "Minimal 3-instruction classic-Malbolge program (IN, OUT, HALT); long predates this project."
     },
-    "date": "2026-07-27",
+    "date": null,
     "metric": "1/1 case, multiple seeds",
     "note": "Read one byte, echo it, halt.",
     "note_long": null
@@ -74,7 +74,7 @@
       "harness_url": null,
       "notes": "Minimal 3-instruction classic-Malbolge program (IN, OUT, HALT); long predates this project."
     },
-    "date": "2026-08-01",
+    "date": null,
     "metric": "1/1 case, 5 seeds",
     "note": "1-byte reverse is the identity, so ubO passes; the registry marks this a transform-family sanity check.",
     "note_long": null
@@ -94,7 +94,7 @@
       "harness_url": "https://github.com/oklo/malbolge-rungs/tree/main/tools/hell_lite",
       "notes": "First-use opcode encoding of the straight-line IN/OUT sequence; each address has exactly one printable byte per opcode."
     },
-    "date": "2026-08-01",
+    "date": null,
     "metric": "1/1 case, 5 seeds",
     "note": "Echo the first 2 input bytes; 5-byte straight-line program.",
     "note_long": null
@@ -114,7 +114,7 @@
       "harness_url": "https://github.com/oklo/malbolge-rungs/tree/main/tools/hell_lite",
       "notes": "First-use opcode encoding of the straight-line IN/OUT sequence; each address has exactly one printable byte per opcode."
     },
-    "date": "2026-08-01",
+    "date": null,
     "metric": "1/1 case, 5 seeds",
     "note": "Echo the first 4 input bytes; 9-byte straight-line program.",
     "note_long": null
@@ -134,7 +134,7 @@
       "harness_url": "https://github.com/oklo/malbolge-rungs/tree/main/tools/hell_lite",
       "notes": "First-use opcode encoding of the straight-line IN/OUT sequence; each address has exactly one printable byte per opcode."
     },
-    "date": "2026-08-01",
+    "date": null,
     "metric": "2/2 cases, 5 seeds",
     "note": "Same 5-byte echo-2 program; fresh VM per case.",
     "note_long": null
@@ -154,7 +154,7 @@
       "harness_short": "hell_lite",
       "harness_url": "https://github.com/oklo/malbolge-rungs/tree/main/tools/hell_lite"
     },
-    "date": "2026-07-27",
+    "date": null,
     "metric": "2/2 cases",
     "note": "Two-input finite map (02→53, 06→57), synthesized by HeLL-Lite.",
     "note_long": null
