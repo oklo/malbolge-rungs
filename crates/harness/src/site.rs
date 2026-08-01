@@ -61,7 +61,7 @@ td { padding: .34em .7em .34em 0; border-bottom: 1px solid var(--line);
      vertical-align: baseline; white-space: nowrap; }
 td.note { color: var(--muted); }
 td.note .txt {
-  display: inline-block; max-width: 19rem; overflow: hidden;
+  display: inline-block; max-width: 11rem; overflow: hidden;
   text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom;
 }
 td.num { text-align: right; font-variant-numeric: tabular-nums; }
@@ -223,8 +223,8 @@ fn index_body(
 
     let _ = writeln!(
         b,
-        "<table>\n<tr><th class=\"num\">#</th><th>rung</th><th>status</th><th>solver</th>\
-         <th>date</th><th class=\"num\">bytes</th><th>notes</th></tr>"
+        "<table>\n<tr><th class=\"num\">#</th><th>rung</th><th>status</th><th>model</th>\
+         <th>harness</th><th>date</th><th class=\"num\">bytes</th><th>notes</th></tr>"
     );
     for record in records {
         let entry = solved
@@ -234,34 +234,44 @@ fn index_body(
         let bytes_cell = entry
             .map(|e| e.program.len().to_string())
             .unwrap_or_else(|| "—".to_string());
-        let solver_cell = record
-            .solver
-            .as_ref()
-            .map(|s| esc(&s.display))
-            .unwrap_or_else(|| "—".to_string());
+        // Model links to the rung's solver block (the in-repo provenance record);
+        // harness links to its public home when one exists.
+        let model_cell = match record.solver.as_ref().and_then(|s| s.model.as_ref()) {
+            Some(model) => format!(
+                "<a href=\"s/{}.html#solver\">{}</a>",
+                esc(&record.rung_id),
+                esc(model)
+            ),
+            None => "—".to_string(),
+        };
+        let harness_cell = match record.solver.as_ref().and_then(|s| s.harness_short.as_ref()) {
+            Some(short) => match record.solver.as_ref().and_then(|s| s.harness_url.as_ref()) {
+                Some(url) => format!("<a href=\"{}\">{}</a>", esc(url), esc(short)),
+                None => esc(short),
+            },
+            None => "—".to_string(),
+        };
         let date_cell = esc(record.date.as_deref().unwrap_or("—"));
         let note = record.note.as_deref().unwrap_or("");
-        let more = if record.note_long.is_some() {
-            format!(
-                " <a href=\"s/{}.html\">more</a>",
-                esc(&record.rung_id)
-            )
+        // Link out whenever there is more to read than the compressed cell shows.
+        let more = if record.note_long.is_some() || note.len() > 40 {
+            format!(" <a href=\"s/{}.html\">more</a>", esc(&record.rung_id))
         } else {
             String::new()
         };
         let _ = writeln!(
             b,
             "<tr><td class=\"num dim\">{0}</td>\
-             <td><a href=\"s/{1}.html\">{1}</a></td><td>{2}</td><td>{3}</td>\
-             <td class=\"dim\">{4}</td><td class=\"num\">{5}</td>\
-             <td class=\"note\"><span class=\"txt\" title=\"{6}\">{7}</span>{8}</td></tr>",
+             <td><a href=\"s/{1}.html\">{1}</a></td><td>{2}</td><td>{3}</td><td>{4}</td>\
+             <td class=\"dim\">{5}</td><td class=\"num\">{6}</td>\
+             <td class=\"note\"><span class=\"txt\">{7}</span>{8}</td></tr>",
             record.rank.map(|r| r.to_string()).unwrap_or_default(),
             esc(&record.rung_id),
             status_cell(record),
-            solver_cell,
+            model_cell,
+            harness_cell,
             date_cell,
             bytes_cell,
-            esc(note),
             esc(note),
             more,
         );
@@ -349,7 +359,7 @@ fn detail_body(
         let sha = hex::encode(Sha256::digest(&entry.program));
 
         if let Some(solver) = &record.solver {
-            let _ = writeln!(b, "<h2>Solver</h2>\n<dl>");
+            let _ = writeln!(b, "<h2 id=\"solver\">Solver</h2>\n<dl>");
             let _ = writeln!(b, "<dt>name</dt><dd>{}</dd>", esc(&solver.display));
             if let Some(kind) = &solver.kind {
                 let _ = writeln!(b, "<dt>type</dt><dd>{}</dd>", esc(kind));

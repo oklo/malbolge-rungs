@@ -122,13 +122,16 @@ Solved rungs (re-verified on the native VM):
 | `L0.R1.echo-1-demo` | canonical `ubO` | `solutions/echo/echo-first-byte.mal` |
 | `L1.R0.echo-1` | canonical `ubO` | `solutions/echo/echo-first-byte.mal` |
 | `L2.R1.reverse-1` | canonical `ubO` (1-byte reverse ≡ identity) | `solutions/echo/echo-first-byte.mal` |
+| `L1.R1.echo-2` | HeLL-Lite (tool) | `solutions/echo/echo-2.mal` |
+| `L1.R2.echo-4` | HeLL-Lite (tool) | `solutions/echo/echo-4.mal` |
+| `L1.R3.echo-2-multicase` | HeLL-Lite (tool) | `solutions/echo/echo-2.mal` |
 | `L2.FM0.xor51-map2` | HeLL-Lite (tool) | `solutions/fm0/fm0-map2.mal` |
 | `L2.FM1.xor51-map4` | GPT-5.5 (Codex) | `solutions/fm1/fm1-map4-codex.mal` |
+| `L2.R0c.crazy-mask-1` | Fable 5 (Claude Code) | `solutions/crazy/crazy-mask-1.mal` |
 
-Everything else is **open** (honestly: most of L2 and all of L3–L5 are unsolved),
-with one **unverified** rung (`L2.R0c.crazy-mask-1`, designed to be solvable but
-without a shipped program yet). The general single-byte XOR frontier
-(`L2.R0.xor-1`) and the map6+ finite maps are genuinely hard and unsolved. Run
+Everything else is **open** (honestly: most of L2 and all of L3–L5 are
+unsolved). The general single-byte XOR frontier (`L2.R0.xor-1`) and the map6+
+finite maps are genuinely hard and unsolved. Run
 `malbolge-rungs leaderboard --render md` for the current full table with notes.
 
 Leaderboard records carry granular, evidence-backed solver attribution (model

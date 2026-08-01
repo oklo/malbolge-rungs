@@ -8,7 +8,7 @@
     "date": null,
     "metric": null,
     "note": "Historical Hello-World conformance slot (0-byte output); not a competitive rung.",
-    "note_long": null
+    "note_long": "The slot's verification rule only requires a clean zero-output halt (the classic 2-byte halt fixture 'QC' passes it natively), but the rung is reserved for a sourced, attributable historical Hello World artifact, so it is deliberately left open rather than claimed on a technicality."
   },
   {
     "rung_id": "L0.R1.echo-1-demo",
@@ -21,6 +21,8 @@
       "model": null,
       "provider": null,
       "harness": null,
+      "harness_short": "canonical",
+      "harness_url": null,
       "notes": "Minimal 3-instruction classic-Malbolge program (IN, OUT, HALT); long predates this project."
     },
     "date": "2026-07-27",
@@ -39,6 +41,8 @@
       "model": null,
       "provider": null,
       "harness": null,
+      "harness_short": "canonical",
+      "harness_url": null,
       "notes": "Minimal 3-instruction classic-Malbolge program (IN, OUT, HALT); long predates this project."
     },
     "date": "2026-07-27",
@@ -57,6 +61,8 @@
       "model": null,
       "provider": null,
       "harness": null,
+      "harness_short": "canonical",
+      "harness_url": null,
       "notes": "Minimal 3-instruction classic-Malbolge program (IN, OUT, HALT); long predates this project."
     },
     "date": "2026-08-01",
@@ -67,34 +73,61 @@
   {
     "rung_id": "L1.R1.echo-2",
     "rank": 5,
-    "status": "open",
-    "best_program": null,
-    "solver": null,
-    "date": null,
-    "metric": null,
-    "note": "Echo the first 2 input bytes.",
+    "status": "solved",
+    "best_program": "solutions/echo/echo-2.mal",
+    "solver": {
+      "display": "HeLL-Lite (tool)",
+      "type": "tool",
+      "model": null,
+      "provider": null,
+      "harness": "tools/hell_lite compile-linear (deterministic straight-line template)",
+      "harness_short": "hell_lite",
+      "harness_url": "https://github.com/oklo/malbolge-rungs/tree/main/tools/hell_lite",
+      "notes": "First-use opcode encoding of the straight-line IN/OUT sequence; each address has exactly one printable byte per opcode."
+    },
+    "date": "2026-08-01",
+    "metric": "1/1 case, 5 seeds",
+    "note": "Echo the first 2 input bytes; 5-byte straight-line program.",
     "note_long": null
   },
   {
     "rung_id": "L1.R2.echo-4",
     "rank": 6,
-    "status": "open",
-    "best_program": null,
-    "solver": null,
-    "date": null,
-    "metric": null,
-    "note": "Echo the first 4 input bytes.",
+    "status": "solved",
+    "best_program": "solutions/echo/echo-4.mal",
+    "solver": {
+      "display": "HeLL-Lite (tool)",
+      "type": "tool",
+      "model": null,
+      "provider": null,
+      "harness": "tools/hell_lite compile-linear (deterministic straight-line template)",
+      "harness_short": "hell_lite",
+      "harness_url": "https://github.com/oklo/malbolge-rungs/tree/main/tools/hell_lite",
+      "notes": "First-use opcode encoding of the straight-line IN/OUT sequence; each address has exactly one printable byte per opcode."
+    },
+    "date": "2026-08-01",
+    "metric": "1/1 case, 5 seeds",
+    "note": "Echo the first 4 input bytes; 9-byte straight-line program.",
     "note_long": null
   },
   {
     "rung_id": "L1.R3.echo-2-multicase",
     "rank": 7,
-    "status": "open",
-    "best_program": null,
-    "solver": null,
-    "date": null,
-    "metric": null,
-    "note": "Echo 2 bytes across 2 independent cases.",
+    "status": "solved",
+    "best_program": "solutions/echo/echo-2.mal",
+    "solver": {
+      "display": "HeLL-Lite (tool)",
+      "type": "tool",
+      "model": null,
+      "provider": null,
+      "harness": "tools/hell_lite compile-linear (deterministic straight-line template)",
+      "harness_short": "hell_lite",
+      "harness_url": "https://github.com/oklo/malbolge-rungs/tree/main/tools/hell_lite",
+      "notes": "First-use opcode encoding of the straight-line IN/OUT sequence; each address has exactly one printable byte per opcode."
+    },
+    "date": "2026-08-01",
+    "metric": "2/2 cases, 5 seeds",
+    "note": "Same 5-byte echo-2 program; fresh VM per case.",
     "note_long": null
   },
   {
@@ -108,7 +141,9 @@
       "model": null,
       "provider": null,
       "harness": "tools/hell_lite compile-finite-map (deterministic compiler)",
-      "notes": "Reuses the two-input JUMP/routing specimen found by the Codex agent (turn 007, internal xor4096 match, 2026-05; model name unrecorded in the archive)."
+      "notes": "Reuses the two-input JUMP/routing specimen found by the Codex agent (turn 007, internal xor4096 match, 2026-05; model name unrecorded in the archive).",
+      "harness_short": "hell_lite",
+      "harness_url": "https://github.com/oklo/malbolge-rungs/tree/main/tools/hell_lite"
     },
     "date": "2026-07-27",
     "metric": "2/2 cases",
@@ -126,7 +161,9 @@
       "model": "GPT-5.5",
       "provider": "OpenAI",
       "harness": "Codex CLI agent, MAL-51 internal match (iterative turns, native-evaluator feedback)",
-      "notes": "Official match report records harness_name=codex, model_name=GPT-5.5 (provider/version/temperature unrecorded)."
+      "notes": "Official match report records harness_name=codex, model_name=GPT-5.5 (provider/version/temperature unrecorded).",
+      "harness_short": "codex",
+      "harness_url": "https://github.com/openai/codex"
     },
     "date": "2026-05-12",
     "metric": "4/4 cases",
@@ -134,8 +171,28 @@
     "note_long": "Solved in the internal FM1 match of 2026-05-12. Turn 001 (Claude, harness claude-code) produced a structural near-miss: a four-lane routing design crazy(crazy(input,69),49) that landed all four published inputs on correct first output bytes, but two lanes emitted a second byte and failed the official max_output_len=1 rule (OutputLimitExceeded). Turn 002 (GPT-5.5 via Codex) resolved the termination conflict at the shared HALT cell so all four lanes emit exactly one byte and halt — the 220-byte official winner shipped here. The archived report and a 5/5 sanity sweep back the result."
   },
   {
-    "rung_id": "L2.FM1b.xor51-map6",
+    "rung_id": "L2.R0c.crazy-mask-1",
     "rank": 10,
+    "status": "solved",
+    "best_program": "solutions/crazy/crazy-mask-1.mal",
+    "solver": {
+      "display": "Fable 5 (Claude Code)",
+      "type": "llm-agent",
+      "model": "Fable 5",
+      "provider": "Anthropic",
+      "harness": "Claude Code CLI (interactive session; analytical construction from the pinned VM semantics, no program search)",
+      "harness_short": "claude-code",
+      "harness_url": "https://claude.com/claude-code",
+      "notes": "Model id claude-fable-5. Construction derived from the encipher/loader rules in classic_malbolge; verified natively before claiming."
+    },
+    "date": "2026-08-01",
+    "metric": "1/1 case x 20 seeds; exhaustive 256/256 input sweep, native",
+    "note": "Output = crazy(input, 0x51) mod 256; total over all 256 inputs. First real-transform solve.",
+    "note_long": "Solved by analytical construction, not search. The 82-byte program is a NOP walk with IN at address 53, MOVD at 54, CRAZY at 55, OUT at 56, HALT at 57, and the operand byte 0x51 ('Q') parked at address 81. Two coincidences of the encoding make it work: (1) the unique printable MOVD byte at address 54 is 'P' = 80, which as a pointer sends d to exactly 81 (MOVD sets d = mem[d], then increments), so the instruction is its own pointer; (2) byte 0x51 at address 81 decodes to NOP ((81+81) mod 94 = 68), so the operand cell is loader-valid. Decoupling d from c matters because CRAZY writes its result back to mem[d], and the pinned profile rejects enciphering a non-printable executed cell — a self-referential CRAZY (its own byte as operand, address 75) fails for most inputs for exactly that reason. Verified: 20 official epochs plus an exhaustive native sweep of all 256 inputs."
+  },
+  {
+    "rung_id": "L2.FM1b.xor51-map6",
+    "rank": 11,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -146,7 +203,7 @@
   },
   {
     "rung_id": "L2.FM2.xor51-map8",
-    "rank": 11,
+    "rank": 12,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -157,7 +214,7 @@
   },
   {
     "rung_id": "L2.FM2h.xor51-map12-hi",
-    "rank": 12,
+    "rank": 13,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -168,7 +225,7 @@
   },
   {
     "rung_id": "L2.FM2l.xor51-map12-low",
-    "rank": 13,
+    "rank": 14,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -179,7 +236,7 @@
   },
   {
     "rung_id": "L2.FM3.xor51-map16",
-    "rank": 14,
+    "rank": 15,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -190,7 +247,7 @@
   },
   {
     "rung_id": "L2.C0.xor51-cov32",
-    "rank": 15,
+    "rank": 16,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -201,7 +258,7 @@
   },
   {
     "rung_id": "L2.C1.xor51-cov64",
-    "rank": 16,
+    "rank": 17,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -209,17 +266,6 @@
     "metric": null,
     "note": "Partial-credit XOR: ≥64 of 256 bytes correct. Best known 27/256.",
     "note_long": null
-  },
-  {
-    "rung_id": "L2.R0c.crazy-mask-1",
-    "rank": 17,
-    "status": "unverified",
-    "best_program": null,
-    "solver": null,
-    "date": null,
-    "metric": null,
-    "note": "Output = crazy(input, 0x51) mod 256; designed solvable, no verified program yet.",
-    "note_long": "The transform is a single native CRAZY operation and per-trit realizable, so this rung demands totality over all 256 inputs without XOR's binary-carry obstruction. It sits between the finite-map rungs and full xor-1. Test vectors: 00→54, 12→4b, 51→03, ff→55."
   },
   {
     "rung_id": "L2.R2.rotate-1",

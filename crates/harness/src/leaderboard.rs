@@ -42,9 +42,15 @@ pub struct Solver {
     pub model: Option<String>,
     #[serde(default)]
     pub provider: Option<String>,
-    /// Harness / scaffold the model ran in.
+    /// Harness / scaffold the model ran in (long form, for detail pages).
     #[serde(default)]
     pub harness: Option<String>,
+    /// Short harness name for the leaderboard table column.
+    #[serde(default)]
+    pub harness_short: Option<String>,
+    /// Public provenance URL for the harness (repo, product page).
+    #[serde(default)]
+    pub harness_url: Option<String>,
     #[serde(default)]
     pub notes: Option<String>,
 }
