@@ -48,13 +48,13 @@ a { color: var(--link); text-decoration: none; }
 a:hover { text-decoration: underline; }
 h1 { font-size: 15px; font-weight: 600; margin: 0 0 .25rem; }
 img.hero {
-  display: block; width: 100%; height: auto;
+  display: block; width: 100%; max-width: 58rem; height: auto;
   border: 1px solid var(--line); margin: .6rem 0 1.4rem;
 }
 p.intro { max-width: 58rem; margin: 0 0 1.1rem; text-align: justify; }
 h2 { font-size: 12.5px; font-weight: 600; margin: 2.2rem 0 .6rem;
      text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
-.sub { color: var(--muted); margin: 0 0 2rem; text-align: justify; }
+.sub { color: var(--muted); margin: 0 0 2rem; text-align: justify; max-width: 58rem; }
 table { border-collapse: collapse; width: 100%; }
 th {
   text-align: left; font-weight: 600; font-size: 10.5px;
