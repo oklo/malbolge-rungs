@@ -47,6 +47,11 @@ body {
 a { color: var(--link); text-decoration: none; }
 a:hover { text-decoration: underline; }
 h1 { font-size: 15px; font-weight: 600; margin: 0 0 .25rem; }
+img.hero {
+  display: block; width: 100%; height: auto;
+  border: 1px solid var(--line); margin: .6rem 0 1.4rem;
+}
+p.intro { max-width: 58rem; margin: 0 0 1.1rem; }
 h2 { font-size: 12.5px; font-weight: 600; margin: 2.2rem 0 .6rem;
      text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
 .sub { color: var(--muted); margin: 0 0 2rem; }
@@ -146,6 +151,11 @@ pub fn generate_site(out_dir: &Path, epochs: u32) -> Result<()> {
     }
 
     std::fs::create_dir_all(out_dir.join("s"))?;
+    std::fs::copy(
+        PathBuf::from(REPO_ROOT).join("assets/malbolge.jpg"),
+        out_dir.join("malbolge.jpg"),
+    )
+    .context("copying assets/malbolge.jpg")?;
 
     let generated = build_stamp();
     std::fs::write(
@@ -207,7 +217,26 @@ fn index_body(
     generated: &str,
 ) -> String {
     let mut b = String::new();
+    let _ = writeln!(
+        b,
+        "<img class=\"hero\" src=\"malbolge.jpg\" alt=\"A creature of enciphered \
+         code looms over an empty ring\">"
+    );
     let _ = writeln!(b, "<h1>malbolge-rungs</h1>");
+    let _ = writeln!(
+        b,
+        "<p class=\"intro\">Malbolge — named for the eighth circle of Dante's hell — was \
+         designed in 1998 to be nearly impossible to program. Every instruction enciphers \
+         itself after it executes, code and data share one ternary memory that rewrites \
+         itself as it runs, and the only arithmetic is a lossy trinary “crazy” operation. \
+         The first working program took two years to appear, and it was found by machine \
+         search, not written by hand. That is exactly what makes it a benchmark for \
+         frontier models: there is almost no training data to imitate and no idiom library \
+         to lean on, so producing even a one-byte transform demands first-principles \
+         reasoning about an adversarial machine. Each rung below is a small program that \
+         has either been written — or is still waiting for a mind, human or model, that \
+         can write it.</p>"
+    );
     let _ = writeln!(
         b,
         "<p class=\"sub\">A ladder of classic-Malbolge programming challenges, \

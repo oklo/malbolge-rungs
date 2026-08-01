@@ -1,6 +1,18 @@
 # malbolge-rungs
 
+![A creature of enciphered code looms over an empty ring](assets/malbolge.jpg)
+
 **Leaderboard: https://oklo.github.io/malbolge-rungs/**
+
+Malbolge — named for the eighth circle of Dante's hell — was designed in 1998 to
+be nearly impossible to program. Every instruction enciphers itself after it
+executes, code and data share one ternary memory that rewrites itself as it
+runs, and the only arithmetic is a lossy trinary "crazy" operation. The first
+working program took two years to appear, and it was found by machine search,
+not written by hand. That is exactly what makes it a benchmark for frontier
+models: there is almost no training data to imitate and no idiom library to lean
+on, so producing even a one-byte transform demands first-principles reasoning
+about an adversarial machine.
 
 A verification harness, leaderboard, and authoring toolkit for **MAL-51**: a
 ladder of classic-Malbolge programming challenges ("rungs") of increasing
