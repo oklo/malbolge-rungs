@@ -6,6 +6,7 @@ pub mod challenge;
 pub mod hashing;
 pub mod leaderboard;
 pub mod registry;
+pub mod site;
 pub mod types;
 pub mod verify;
 

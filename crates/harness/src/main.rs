@@ -65,6 +65,15 @@ enum Command {
         #[arg(long, default_value_t = 1)]
         epochs: u32,
     },
+    /// Generate the static leaderboard website (re-verifies every claimed
+    /// solution natively first; fails rather than publish a stale claim).
+    Site {
+        /// Output directory for the generated site.
+        #[arg(long, default_value = "_site")]
+        out: String,
+        #[arg(long, default_value_t = 3)]
+        epochs: u32,
+    },
 }
 
 #[derive(Subcommand)]
@@ -110,6 +119,10 @@ fn run() -> Result<ExitCode> {
             Ok(ExitCode::SUCCESS)
         }
         Command::VerifyLeaderboard { epochs } => cmd_verify_leaderboard(epochs),
+        Command::Site { out, epochs } => {
+            harness::site::generate_site(std::path::Path::new(&out), epochs)?;
+            Ok(ExitCode::SUCCESS)
+        }
     }
 }
 
