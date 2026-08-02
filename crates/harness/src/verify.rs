@@ -21,7 +21,7 @@ use classic_malbolge::{
 use crate::challenge::{derive_cases, derive_seed};
 use crate::types::Rung;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, serde::Serialize)]
 pub struct CaseResult {
     pub index: u32,
     pub input_hex: String,
@@ -31,7 +31,7 @@ pub struct CaseResult {
     pub correct: bool,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, serde::Serialize)]
 pub struct EpochResult {
     pub epoch: u32,
     pub seed_hex: String,
@@ -43,7 +43,7 @@ pub struct EpochResult {
     pub cases: Vec<CaseResult>,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, serde::Serialize)]
 pub struct VerifyOutcome {
     pub rung_id: String,
     pub passed: bool,

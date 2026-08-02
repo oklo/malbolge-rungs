@@ -310,6 +310,9 @@ fn index_body(
          Each solved rung ships its <code>.mal</code> program in the repo, and this page \
          is generated only after every one of them re-passes its rung on the native VM. \
          Reproduce locally: <code>cargo run -p harness -- verify-leaderboard</code>. \
+         Using the rungs as an RL / eval substrate (reward oracle, procedural instance \
+         generation, contamination policy): \
+         <a href=\"{REPO_URL}/blob/main/ENVIRONMENT.md\">ENVIRONMENT.md</a>. \
          Generated {}.</footer>",
         esc(generated)
     );

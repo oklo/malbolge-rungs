@@ -4,11 +4,11 @@
 //! verification harness needs are modeled; any extra fields present in the JSON
 //! are ignored by serde.
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// The five challenge families. Each derives its per-case inputs and expected
 /// outputs differently (see `challenge.rs`).
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]
 pub enum Family {
     /// Output = first `output_bytes` of the (hash-derived) input.
     EchoPrefix,
@@ -25,7 +25,7 @@ pub enum Family {
 
 /// Per-byte transforms applied by the `Transform` / `FiniteMap` /
 /// `CoverageTransform` families.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]
 pub enum Transform {
     Identity,
     Reverse,
@@ -36,8 +36,10 @@ pub enum Transform {
     NibbleMap,
 }
 
-/// One rung of the MAL-51 ladder.
-#[derive(Clone, Debug, Deserialize)]
+/// One rung of the MAL-51 ladder. Serializes to the same JSON shape it
+/// deserializes from, so a generated rung file is directly loadable by
+/// `verify --rung-file`.
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Rung {
     pub id: String,
     pub title: String,
@@ -45,18 +47,18 @@ pub struct Rung {
     pub status: String,
     pub family: Family,
     pub transform: Transform,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub finite_map_inputs: Vec<u8>,
     pub output_bytes: u32,
     pub cases: u32,
     /// Only present for `CoverageTransform` rungs.
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub min_correct_cases: Option<u32>,
     pub max_program_len: u64,
     pub max_steps_per_case: u64,
     pub max_output_len: u64,
     pub max_memory_cells: u64,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "String::is_empty")]
     pub purpose: String,
 }
 

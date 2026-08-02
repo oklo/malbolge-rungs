@@ -220,8 +220,30 @@
     "note_long": "Background for readers new to Malbolge: a program is a string of ASCII bytes, and what a byte means depends on where it sits — the interpreter computes (byte + address) mod 94, and only eight results are instructions. The loader rejects any byte that doesn't decode to one of the eight at its own address, so each address has roughly eight legal bytes. After every step, the instruction just executed is rewritten in place through a fixed substitution table: code is self-modifying whether you want it or not. There are three registers — a code pointer c, a data pointer d, and an accumulator a — and c and d both advance by one after every instruction. The instructions used here: IN reads a byte into a; OUT emits a mod 256; JMP sets c to the value stored at address d; MOVD sets d to the value stored at address d; ROT rotates the base-3 word at address d into a; CRAZY combines a with the word at address d through a ternary lookup table; NOP; HALT. The rung: read one byte x, output x XOR 0x51, halt — for the six inputs 02, 06, 09, 30, 82, 6f, with a hard cap of one output byte (a correct byte followed by a second OUT still fails).\n\nAttempt history. The rung was added 2026-06-13 as a step between the solved 4-input map and the open full-XOR rung. All prior work — two Opus 4.8 sessions on 2026-06-14, then an automated search that ran through 2026-06-20 and covered ~22,000 configurations — used a single-dispatch design: a fixed prelude reads x, applies CRAZY twice with constants t1 and t2, and jumps to the result, so each input starts executing at its own address J(x) = crazy(crazy(x,t1),t2). That work ended in negative results rather than a program. First, chains of CRAZY over legal operand bytes can only ever produce 81 of the 256 output values, and 0xd3 — the required answer for input 0x82 — is not among them, so at least one lane needs a ROT. Second, the six landing addresses always cluster tightly, and per configuration about three of the six lanes have no workable instruction tail at all: 3 of 6 inputs is the ceiling for the whole design, not a search shortfall. The recorded conclusion was that the rung needed a second dispatch stage, not more search.\n\nThis program is that second stage. Stage 1 is the same prelude (t1=57, t2=49), landing the six inputs at addresses 73/74/76/79/157/158 — clustered, as always, into three groups. The new part: just past each group sits a two-instruction station, MOVD then JMP. Because d advances in lockstep with c, a lane that walks from its landing to the station arrives with d = station + 49 - J(x): a different address for every lane. Each of those addresses lands in a stretch of the program that no input ever executes, so the byte stored there is freely choosable among its ~8 legal values. That byte is the lane's private pointer: MOVD loads it into d, JMP jumps through it, and the lane lands in its own private stretch of never-executed program space with both its code and its operands chosen independently of the other five — the freedom the single-dispatch design could not provide. Every lane ends with its own OUT and HALT (two lanes ended up sharing their final instructions, reading different operands through different d values). Input 0x82 gets its required ROT: its lane parks d at address 115, where byte 41 is legal, and rotating 41 in base 3 gives 39379 = 0xd3 mod 256. 166 bytes, at most 29 steps per input. The build order: enumerate candidate pointer/target/tail plans per lane, then backtrack over joint byte assignments (one byte per address must serve every lane that touches it), validate on a diagnostic VM, confirm on the native evaluator. The first configuration tried produced the solution."
   },
   {
-    "rung_id": "L2.FM2.xor51-map8",
+    "rung_id": "L2.FM1c.xor51-map7a",
     "rank": 12,
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "Seven inputs: map8 minus 0xc0. The gentle half of the map6→map8 cliff.",
+    "note_long": "This rung and map7b split the jump between the solved six-input map and the open eight-input map into measured steps. The measure: how many configurations of the standard dispatch prelude — an even-length chain of CRAZY operations over loader-legal constants — give every input its own landing address (`malbolge-rungs feasibility --rung <id>` reproduces the numbers). The six map6 inputs admit 1,261 separating configurations; adding 0xa7 (this rung) leaves 539; adding 0xc0 instead (map7b) leaves 50; map8, with both, leaves 39. Separation is necessary but not sufficient — map6 fell only when a second dispatch stage gave every lane private code — so these counts order the rungs; they do not price them exactly."
+  },
+  {
+    "rung_id": "L2.FM1d.xor51-map7b",
+    "rank": 13,
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "Seven inputs: map8 minus 0xa7. 0xc0 is what makes map8 hard.",
+    "note_long": "The steep half of the map6→map8 split: the map6 bytes plus 0xc0 alone. Of the two bytes map8 adds, 0xc0 is the one that collapses dispatch separation — 1,261 configurations for map6 against 50 here (map7a's notes describe the method). A program that clears this rung has dealt with the scarcity that makes map8 hard; map8 then adds one more lane in the same tight band."
+  },
+  {
+    "rung_id": "L2.FM2.xor51-map8",
+    "rank": 14,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -232,7 +254,7 @@
   },
   {
     "rung_id": "L2.FM2h.xor51-map12-hi",
-    "rank": 13,
+    "rank": 15,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -243,7 +265,7 @@
   },
   {
     "rung_id": "L2.FM2l.xor51-map12-low",
-    "rank": 14,
+    "rank": 16,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -254,7 +276,7 @@
   },
   {
     "rung_id": "L2.FM3.xor51-map16",
-    "rank": 15,
+    "rank": 17,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -265,7 +287,7 @@
   },
   {
     "rung_id": "L2.C0.xor51-cov32",
-    "rank": 16,
+    "rank": 18,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -275,8 +297,41 @@
     "note_long": "Coverage rungs make partial generality measurable: the 256 cases enumerate every input byte, and the rung passes at ≥32 correct. The best known candidate (identity dispatch J(x)=x via crazy(crazy(x,121),121), a shared six-op station, and per-lane pointer cells; 4096 bytes) reaches 27/256 — five short of the threshold. Structural analysis suggests the shared-station pool caps out near ~30 lanes, so clearing 32 probably needs a new construction rather than better packing."
   },
   {
+    "rung_id": "L2.C0b.xor51-cov36",
+    "rank": 19,
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "Partial-credit XOR: ≥36 of 256 bytes correct. Best known 27/256.",
+    "note_long": "Ladder step between cov32 and cov64: the same all-256 enumeration with the threshold at 36. The coverage ladder (32, 36, 40, 48, 64) turns \"how general is your program\" into graded, deterministic targets; the best known program reaches 27/256."
+  },
+  {
+    "rung_id": "L2.C0c.xor51-cov40",
+    "rank": 20,
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "Partial-credit XOR: ≥40 of 256 bytes correct.",
+    "note_long": null
+  },
+  {
+    "rung_id": "L2.C0d.xor51-cov48",
+    "rank": 21,
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "Partial-credit XOR: ≥48 of 256 bytes correct.",
+    "note_long": null
+  },
+  {
     "rung_id": "L2.C1.xor51-cov64",
-    "rank": 17,
+    "rank": 22,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -287,7 +342,7 @@
   },
   {
     "rung_id": "L2.R2.rotate-1",
-    "rank": 18,
+    "rank": 23,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -298,7 +353,7 @@
   },
   {
     "rung_id": "L2.R0d.xor-1-len4096",
-    "rank": 19,
+    "rank": 24,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -309,7 +364,7 @@
   },
   {
     "rung_id": "L2.R0.xor-1",
-    "rank": 20,
+    "rank": 25,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -320,7 +375,7 @@
   },
   {
     "rung_id": "L2.R3.xor-2-multicase",
-    "rank": 21,
+    "rank": 26,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -331,7 +386,7 @@
   },
   {
     "rung_id": "L3.R0.reverse-2-multicase",
-    "rank": 22,
+    "rank": 27,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -342,7 +397,7 @@
   },
   {
     "rung_id": "L3.R1.xor-4-length-cap",
-    "rank": 23,
+    "rank": 28,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -353,7 +408,7 @@
   },
   {
     "rung_id": "L3.R2.mixed-transform-small",
-    "rank": 24,
+    "rank": 29,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -364,7 +419,7 @@
   },
   {
     "rung_id": "L4.R0.hash-prefix-1",
-    "rank": 25,
+    "rank": 30,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -375,7 +430,7 @@
   },
   {
     "rung_id": "L4.R1.hash-prefix-1-multicase",
-    "rank": 26,
+    "rank": 31,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -386,7 +441,7 @@
   },
   {
     "rung_id": "L4.R2.hash-prefix-length-pressure",
-    "rank": 27,
+    "rank": 32,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -397,7 +452,7 @@
   },
   {
     "rung_id": "L5.R0.future-transform",
-    "rank": 28,
+    "rank": 33,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -408,7 +463,7 @@
   },
   {
     "rung_id": "L5.R1.future-hash-prefix",
-    "rank": 29,
+    "rank": 34,
     "status": "open",
     "best_program": null,
     "solver": null,

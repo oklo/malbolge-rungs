@@ -36,3 +36,40 @@ fn wrong_program_fails_rung() {
     let outcome = verify_rung(&fm1, &fm0_prog, 1);
     assert!(!outcome.passed, "FM0 program must not pass FM1");
 }
+
+#[test]
+fn generated_rung_verifies_end_to_end_on_native_vm() {
+    // Mint an identity finite map, round-trip it through its JSON form (the
+    // `--rung-file` path), and check the canonical echo program solves it on
+    // the native VM — the full generate → serialize → load → verify pipeline.
+    use harness::generate::{generate_finite_map, RangeClass, TransformArg};
+
+    let generated =
+        generate_finite_map(6, RangeClass::Mixed, 7, TransformArg::Identity, None, 2048, true)
+            .unwrap();
+    let json = serde_json::to_string(&generated).unwrap();
+    let rung: harness::types::Rung = serde_json::from_str(&json).unwrap();
+
+    let root = concat!(env!("CARGO_MANIFEST_DIR"), "/../..");
+    let echo = std::fs::read(format!("{root}/solutions/echo/echo-first-byte.mal")).unwrap();
+    let outcome = verify_rung(&rung, &echo, 2);
+    assert!(outcome.passed, "echo must solve a generated identity finite map");
+
+    // Same instance under xor51 must NOT pass with the echo program.
+    let generated =
+        generate_finite_map(6, RangeClass::Mixed, 7, TransformArg::Xor51, None, 2048, true)
+            .unwrap();
+    let outcome = verify_rung(&generated.rung, &echo, 1);
+    assert!(!outcome.passed, "echo must not solve a xor51 finite map");
+}
+
+#[test]
+fn generation_is_deterministic_across_calls() {
+    use harness::generate::{generate_finite_map, RangeClass, TransformArg};
+    let a = generate_finite_map(12, RangeClass::High, 3, TransformArg::Xor51, None, 2048, true)
+        .unwrap();
+    let b = generate_finite_map(12, RangeClass::High, 3, TransformArg::Xor51, None, 2048, true)
+        .unwrap();
+    assert_eq!(a.rung.finite_map_inputs, b.rung.finite_map_inputs);
+    assert_eq!(a.rung.id, b.rung.id);
+}

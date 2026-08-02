@@ -9,9 +9,19 @@ use clap::{Parser, Subcommand};
 use classic_malbolge::{
     ClassicExecutionLimits, ClassicMalbolge51Profile, ClassicMalbolgeExecutor, NativeClassicBackend,
 };
+use sha2::Digest as _;
+
+use harness::dispatch::feasibility;
+use harness::generate::{generate_coverage, generate_finite_map, RangeClass, TransformArg};
 use harness::leaderboard::{load_leaderboard, render_markdown, verify_leaderboard, Status};
 use harness::registry::{find_rung, load_registry};
+use harness::types::Rung;
 use harness::verify::verify_rung;
+
+/// Stable schema tag on `verify --json` output.
+const VERIFY_SCHEMA: &str = "malbolge-rungs.verify.v1";
+/// Stable schema tag on `feasibility --json` output.
+const FEASIBILITY_SCHEMA: &str = "malbolge-rungs.feasibility.v1";
 
 #[derive(Parser)]
 #[command(
@@ -39,20 +49,49 @@ enum Command {
         #[arg(long, default_value = "")]
         input_hex: String,
     },
-    /// Verify a candidate program against a rung on the native VM.
+    /// Verify candidate program(s) against a rung on the native VM.
     Verify {
-        /// Rung id, e.g. L2.FM1.xor51-map4.
+        /// Rung id from the registry, e.g. L2.FM1.xor51-map4.
+        #[arg(long, conflicts_with = "rung_file")]
+        rung: Option<String>,
+        /// Path to a rung JSON file (e.g. produced by `generate-rung`).
         #[arg(long)]
-        rung: String,
-        /// Path to the candidate classic-Malbolge program.
-        #[arg(long)]
-        program: String,
+        rung_file: Option<String>,
+        /// Path(s) to candidate classic-Malbolge program(s). Repeat the flag
+        /// to verify a batch in one invocation.
+        #[arg(long, required = true, num_args = 1)]
+        program: Vec<String>,
         /// Number of deterministic seed epochs to run (all must pass).
         #[arg(long, default_value_t = 1)]
         epochs: u32,
         /// Print every case, not just the summary.
         #[arg(long)]
         verbose: bool,
+        /// Emit the full outcome as stable JSON (schema malbolge-rungs.verify.v1)
+        /// instead of human-readable text.
+        #[arg(long)]
+        json: bool,
+    },
+    /// Mint a procedural rung instance as JSON (loadable via `verify --rung-file`).
+    GenerateRung {
+        #[command(subcommand)]
+        what: GenerateCmd,
+    },
+    /// Score an input set's dispatch feasibility (a cheap difficulty estimate
+    /// for finite-map instances).
+    Feasibility {
+        /// Comma-separated input bytes as hex, e.g. `02,06,09,30`.
+        #[arg(long, conflicts_with_all = ["rung", "rung_file"])]
+        inputs: Option<String>,
+        /// Score a registry rung's finite-map inputs.
+        #[arg(long)]
+        rung: Option<String>,
+        /// Score a rung JSON file's finite-map inputs.
+        #[arg(long, conflicts_with = "rung")]
+        rung_file: Option<String>,
+        /// Emit JSON (schema malbolge-rungs.feasibility.v1).
+        #[arg(long)]
+        json: bool,
     },
     /// Show the leaderboard.
     Leaderboard {
@@ -73,6 +112,55 @@ enum Command {
         out: String,
         #[arg(long, default_value_t = 3)]
         epochs: u32,
+    },
+}
+
+#[derive(Subcommand)]
+enum GenerateCmd {
+    /// A finite-map instance: k distinct seeded input bytes, one output byte each.
+    FiniteMap {
+        /// Number of input bytes (2..=32).
+        #[arg(long)]
+        k: usize,
+        /// Byte-range class. Low-byte sets are structurally harder for
+        /// crz-dispatch than high-byte sets.
+        #[arg(long, value_enum, default_value_t = RangeClass::Mixed)]
+        range: RangeClass,
+        /// Generator seed; the same seed always yields the same instance.
+        #[arg(long, default_value_t = 0)]
+        seed: u64,
+        /// Per-byte transform the program must compute.
+        #[arg(long, value_enum, default_value_t = TransformArg::Xor51)]
+        transform: TransformArg,
+        /// Program-length cap in bytes (default scales with k: 256·k, clamped
+        /// to 512..=4096, matching the registry ladder).
+        #[arg(long)]
+        max_program_len: Option<u64>,
+        /// Step cap per case.
+        #[arg(long, default_value_t = 2048)]
+        max_steps_per_case: u64,
+        /// Skip the dispatch-feasibility difficulty estimate.
+        #[arg(long)]
+        skip_feasibility: bool,
+        /// Write the rung JSON here instead of stdout.
+        #[arg(long)]
+        out: Option<String>,
+    },
+    /// A coverage instance: all 256 single-byte inputs, pass at a threshold.
+    Coverage {
+        /// Minimum correct cases out of 256 required to pass.
+        #[arg(long)]
+        threshold: u32,
+        /// Per-byte transform the program must compute.
+        #[arg(long, value_enum, default_value_t = TransformArg::Xor51)]
+        transform: TransformArg,
+        #[arg(long, default_value_t = 4096)]
+        max_program_len: u64,
+        #[arg(long, default_value_t = 2048)]
+        max_steps_per_case: u64,
+        /// Write the rung JSON here instead of stdout.
+        #[arg(long)]
+        out: Option<String>,
     },
 }
 
@@ -110,10 +198,19 @@ fn run() -> Result<ExitCode> {
         } => cmd_execute(&program, &input_hex),
         Command::Verify {
             rung,
+            rung_file,
             program,
             epochs,
             verbose,
-        } => cmd_verify(&rung, &program, epochs, verbose),
+            json,
+        } => cmd_verify(rung.as_deref(), rung_file.as_deref(), &program, epochs, verbose, json),
+        Command::GenerateRung { what } => cmd_generate(what),
+        Command::Feasibility {
+            inputs,
+            rung,
+            rung_file,
+            json,
+        } => cmd_feasibility(inputs.as_deref(), rung.as_deref(), rung_file.as_deref(), json),
         Command::Leaderboard { render } => {
             cmd_leaderboard(render.as_deref());
             Ok(ExitCode::SUCCESS)
@@ -210,60 +307,213 @@ fn cmd_execute(program: &str, input_hex: &str) -> Result<ExitCode> {
     Ok(ExitCode::SUCCESS)
 }
 
-fn cmd_verify(rung_id: &str, program: &str, epochs: u32, verbose: bool) -> Result<ExitCode> {
-    let rung = find_rung(rung_id).with_context(|| format!("unknown rung: {rung_id}"))?;
-    let bytes = std::fs::read(program).with_context(|| format!("reading program {program}"))?;
-    let outcome = verify_rung(&rung, &bytes, epochs);
+/// Resolve the rung either from the embedded registry (`--rung`) or from a
+/// JSON rung file (`--rung-file`, e.g. minted by `generate-rung`).
+fn load_rung_arg(rung_id: Option<&str>, rung_file: Option<&str>) -> Result<Rung> {
+    match (rung_id, rung_file) {
+        (Some(id), None) => find_rung(id).with_context(|| format!("unknown rung: {id}")),
+        (None, Some(path)) => {
+            let text = std::fs::read_to_string(path)
+                .with_context(|| format!("reading rung file {path}"))?;
+            serde_json::from_str(&text).with_context(|| format!("parsing rung file {path}"))
+        }
+        _ => anyhow::bail!("pass exactly one of --rung or --rung-file"),
+    }
+}
 
-    println!(
-        "rung: {}  ({:?} / {:?})",
-        outcome.rung_id, rung.family, rung.transform
-    );
-    for ep in &outcome.epochs {
-        if outcome.coverage {
-            println!(
-                "  epoch {} seed={}…  {}/{} correct (>= {} required)  {}",
-                ep.epoch,
-                &ep.seed_hex[..8],
-                ep.correct_cases,
-                ep.total_cases,
-                outcome.required_correct,
-                if ep.passed { "PASS" } else { "FAIL" }
-            );
-        } else {
-            println!(
-                "  epoch {} seed={}…  {}/{} cases  {}",
-                ep.epoch,
-                &ep.seed_hex[..8],
-                ep.correct_cases,
-                ep.total_cases,
-                if ep.passed { "PASS" } else { "FAIL" }
-            );
+fn cmd_verify(
+    rung_id: Option<&str>,
+    rung_file: Option<&str>,
+    programs: &[String],
+    epochs: u32,
+    verbose: bool,
+    json: bool,
+) -> Result<ExitCode> {
+    let rung = load_rung_arg(rung_id, rung_file)?;
+    let mut all_passed = true;
+    let mut json_results = Vec::new();
+
+    for program in programs {
+        let bytes =
+            std::fs::read(program).with_context(|| format!("reading program {program}"))?;
+        let outcome = verify_rung(&rung, &bytes, epochs);
+        all_passed &= outcome.passed;
+
+        if json {
+            json_results.push(serde_json::json!({
+                "program": program,
+                "program_sha256": hex::encode(sha2::Sha256::digest(&bytes)),
+                "program_len": bytes.len(),
+                "outcome": outcome,
+            }));
+            continue;
         }
-        if let Some(f) = &ep.failure {
-            println!("    reason: {f}");
-        }
-        if verbose {
-            for c in &ep.cases {
+
+        println!(
+            "rung: {}  ({:?} / {:?})  program: {}",
+            outcome.rung_id, rung.family, rung.transform, program
+        );
+        for ep in &outcome.epochs {
+            if outcome.coverage {
                 println!(
-                    "    case {:>3}: in={} exp={} got={} [{}] {}",
-                    c.index,
-                    c.input_hex,
-                    c.expected_hex,
-                    c.observed_hex.as_deref().unwrap_or("<none>"),
-                    c.status,
-                    if c.correct { "ok" } else { "MISS" }
+                    "  epoch {} seed={}…  {}/{} correct (>= {} required)  {}",
+                    ep.epoch,
+                    &ep.seed_hex[..8],
+                    ep.correct_cases,
+                    ep.total_cases,
+                    outcome.required_correct,
+                    if ep.passed { "PASS" } else { "FAIL" }
+                );
+            } else {
+                println!(
+                    "  epoch {} seed={}…  {}/{} cases  {}",
+                    ep.epoch,
+                    &ep.seed_hex[..8],
+                    ep.correct_cases,
+                    ep.total_cases,
+                    if ep.passed { "PASS" } else { "FAIL" }
                 );
             }
+            if let Some(f) = &ep.failure {
+                println!("    reason: {f}");
+            }
+            if verbose {
+                for c in &ep.cases {
+                    println!(
+                        "    case {:>3}: in={} exp={} got={} [{}] {}",
+                        c.index,
+                        c.input_hex,
+                        c.expected_hex,
+                        c.observed_hex.as_deref().unwrap_or("<none>"),
+                        c.status,
+                        if c.correct { "ok" } else { "MISS" }
+                    );
+                }
+            }
         }
+        println!(
+            "RESULT: {} (native evaluator)",
+            if outcome.passed { "PASS" } else { "FAIL" }
+        );
     }
-    if outcome.passed {
-        println!("RESULT: PASS ({} epoch(s), native evaluator)", outcome.epochs.len());
-        Ok(ExitCode::SUCCESS)
+
+    if json {
+        let envelope = serde_json::json!({
+            "schema": VERIFY_SCHEMA,
+            "rung_id": rung.id,
+            "epochs": epochs,
+            "all_passed": all_passed,
+            "results": json_results,
+        });
+        println!("{}", serde_json::to_string_pretty(&envelope)?);
+    }
+    Ok(if all_passed {
+        ExitCode::SUCCESS
     } else {
-        println!("RESULT: FAIL");
-        Ok(ExitCode::FAILURE)
+        ExitCode::FAILURE
+    })
+}
+
+fn write_generated(json: String, out: Option<&str>) -> Result<()> {
+    match out {
+        Some(path) => {
+            std::fs::write(path, json.as_bytes()).with_context(|| format!("writing {path}"))?;
+            eprintln!("wrote {path}");
+        }
+        None => println!("{json}"),
     }
+    Ok(())
+}
+
+fn cmd_generate(what: GenerateCmd) -> Result<ExitCode> {
+    let (generated, out) = match what {
+        GenerateCmd::FiniteMap {
+            k,
+            range,
+            seed,
+            transform,
+            max_program_len,
+            max_steps_per_case,
+            skip_feasibility,
+            out,
+        } => (
+            generate_finite_map(
+                k,
+                range,
+                seed,
+                transform,
+                max_program_len,
+                max_steps_per_case,
+                skip_feasibility,
+            )?,
+            out,
+        ),
+        GenerateCmd::Coverage {
+            threshold,
+            transform,
+            max_program_len,
+            max_steps_per_case,
+            out,
+        } => (
+            generate_coverage(threshold, transform, max_program_len, max_steps_per_case)?,
+            out,
+        ),
+    };
+    let json = serde_json::to_string_pretty(&generated)?;
+    write_generated(json, out.as_deref())?;
+    Ok(ExitCode::SUCCESS)
+}
+
+fn cmd_feasibility(
+    inputs: Option<&str>,
+    rung_id: Option<&str>,
+    rung_file: Option<&str>,
+    json: bool,
+) -> Result<ExitCode> {
+    let bytes: Vec<u8> = if let Some(list) = inputs {
+        list.split(',')
+            .map(|s| u8::from_str_radix(s.trim(), 16).with_context(|| format!("bad hex byte {s}")))
+            .collect::<Result<_>>()?
+    } else {
+        let rung = load_rung_arg(rung_id, rung_file)?;
+        anyhow::ensure!(
+            !rung.finite_map_inputs.is_empty(),
+            "{} has no finite-map inputs; feasibility scoring applies to FiniteMap rungs",
+            rung.id
+        );
+        rung.finite_map_inputs.clone()
+    };
+    anyhow::ensure!(bytes.len() >= 2, "need at least two input bytes");
+
+    let report = feasibility(&bytes);
+    if json {
+        let envelope = serde_json::json!({
+            "schema": FEASIBILITY_SCHEMA,
+            "report": report,
+            "difficulty_class": report.difficulty_class(),
+        });
+        println!("{}", serde_json::to_string_pretty(&envelope)?);
+    } else {
+        println!(
+            "inputs: {}",
+            report
+                .inputs
+                .iter()
+                .map(|b| format!("{b:02x}"))
+                .collect::<Vec<_>>()
+                .join(",")
+        );
+        println!("dispatch configs enumerated: {}", report.configs_enumerated);
+        println!("separating configs:          {}", report.separating_configs);
+        if let Some(g) = report.best_min_gap {
+            println!("best min landing gap:        {g}");
+        }
+        if let Some(s) = report.widest_spread {
+            println!("widest landing spread:       {s}");
+        }
+        println!("difficulty class:            {}", report.difficulty_class());
+    }
+    Ok(ExitCode::SUCCESS)
 }
 
 fn cmd_leaderboard(render: Option<&str>) {

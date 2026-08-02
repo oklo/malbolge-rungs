@@ -3,6 +3,8 @@
 //! project without any of its chain/coin machinery.
 
 pub mod challenge;
+pub mod dispatch;
+pub mod generate;
 pub mod hashing;
 pub mod leaderboard;
 pub mod registry;

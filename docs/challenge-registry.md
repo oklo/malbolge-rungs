@@ -6,10 +6,17 @@ of increasing difficulty. Each **rung** defines a challenge *family*, a per-byte
 list of input bytes or a coverage threshold.
 
 The canonical machine-readable ladder is
-[`crates/harness/registry.json`](../crates/harness/registry.json), dumped
-verbatim from the source MAL-51 project so the rungs, families, transforms,
-finite-map inputs, coverage thresholds, and resource limits here are identical
-to that project's registry. The harness loads it directly.
+[`crates/harness/registry.json`](../crates/harness/registry.json). The original
+29 rungs are dumped verbatim from the source MAL-51 project; the
+difficulty-smoothing rungs added since (map7a, map7b, cov36, cov40, cov48) are
+minted in this repo and marked as such in their `purpose` fields. Published
+rungs are frozen — additions are only ever additive. The harness loads the
+file directly.
+
+Beyond the fixed ladder, `malbolge-rungs generate-rung` mints unlimited
+procedural instances in the seed-independent families (FiniteMap,
+CoverageTransform) using the same JSON schema; see
+[ENVIRONMENT.md](../ENVIRONMENT.md).
 
 ## Challenge families
 
@@ -81,11 +88,16 @@ echo/transform checks against single-input overfitting.
 | `L2.FM0.xor51-map2` | 2 | FiniteMap | XorMask | 2 | 512 | inputs 02,06 |
 | `L2.FM1.xor51-map4` | 2 | FiniteMap | XorMask | 4 | 1024 | inputs 02,06,09,30 |
 | `L2.FM1b.xor51-map6` | 2 | FiniteMap | XorMask | 6 | 1536 | inputs 02,06,09,30,82,6f |
+| `L2.FM1c.xor51-map7a` | 2 | FiniteMap | XorMask | 7 | 1792 | map8 minus 0xc0 |
+| `L2.FM1d.xor51-map7b` | 2 | FiniteMap | XorMask | 7 | 1792 | map8 minus 0xa7 |
 | `L2.FM2.xor51-map8` | 2 | FiniteMap | XorMask | 8 | 2048 | 8 inputs |
 | `L2.FM2h.xor51-map12-hi` | 2 | FiniteMap | XorMask | 12 | 4096 | 12 high-byte inputs |
 | `L2.FM2l.xor51-map12-low` | 2 | FiniteMap | XorMask | 12 | 4096 | 12 low-byte inputs |
 | `L2.FM3.xor51-map16` | 2 | FiniteMap | XorMask | 16 | 4096 | 16 inputs |
 | `L2.C0.xor51-cov32` | 2 | CoverageTransform | XorMask | 256 | 4096 | ≥ 32/256 correct |
+| `L2.C0b.xor51-cov36` | 2 | CoverageTransform | XorMask | 256 | 4096 | ≥ 36/256 correct |
+| `L2.C0c.xor51-cov40` | 2 | CoverageTransform | XorMask | 256 | 4096 | ≥ 40/256 correct |
+| `L2.C0d.xor51-cov48` | 2 | CoverageTransform | XorMask | 256 | 4096 | ≥ 48/256 correct |
 | `L2.C1.xor51-cov64` | 2 | CoverageTransform | XorMask | 256 | 4096 | ≥ 64/256 correct |
 | `L2.R1.reverse-1` | 2 | Transform | Reverse | 1 | 256 | |
 | `L2.R2.rotate-1` | 2 | Transform | RotateLeft | 1 | 256 | |
@@ -104,16 +116,21 @@ The finite-map input bytes and exact resource limits for every rung are in
 
 ## Difficulty landscape
 
-The finite-map rungs (FM0 → FM1 → FM1b → FM2 → FM3) and the coverage rungs
-(C0/C1) form a measurable ladder between "solvable small finite map" and "general
-byte-wide XOR". Empirically:
+The finite-map rungs (FM0 → FM1 → FM1b → map7a/map7b → FM2 → FM3) and the
+coverage rungs (cov32 → cov64) form a measurable ladder between "solvable small
+finite map" and "general byte-wide XOR". Empirically:
 
-- **FM0 / FM1** are solved (see the leaderboard).
-- **FM1b (map6)** is a genuine step up: single-dispatch constructions are capped
-  at an honest 3 of 6 coexisting lanes; passing it needs a multi-stage dispatch.
+- **FM0 / FM1 / FM1b (map6)** are solved (see the leaderboard). map6 required a
+  two-stage dispatch; single-dispatch constructions cap at 3 of its 6 lanes.
+- **map7a and map7b** split the map6→map8 difficulty cliff into measured steps.
+  The measure is dispatch feasibility — how many prelude configurations give
+  every input a distinct landing address (`malbolge-rungs feasibility`): map6
+  admits 1,261 separating configs, map7a 539, map7b 50, map8 39, and the
+  map12-low/map16 input sets zero (that dispatch family cannot separate them at
+  all).
 - **General single-byte XOR** (`L2.R0.xor-1`, `L2.R0d`) is an open frontier; the
-  coverage rungs make partial progress measurable (best known all-256 coverage is
-  well below the 32/64 thresholds).
+  coverage rungs make partial progress measurable in graded steps
+  (32/36/40/48/64; best known all-256 coverage is 27).
 
 See [`docs/classic-malbolge-51-v0.md`](classic-malbolge-51-v0.md) for the pinned
 VM semantics that make all of this deterministic.
