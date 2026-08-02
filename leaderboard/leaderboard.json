@@ -202,13 +202,22 @@
   {
     "rung_id": "L2.FM1b.xor51-map6",
     "rank": 11,
-    "status": "open",
-    "best_program": null,
-    "solver": null,
-    "date": null,
-    "metric": null,
-    "note": "Six-input finite map; single-dispatch constructions proven capped at 3/6 lanes.",
-    "note_long": "map4 plus inputs 0x82 and 0x6f. A genuine step up from FM1: exhaustive per-lane tail search over the single-dispatch architecture (bare crazy chains, MOVD-relocated chains, ROT-escapes, runtime-mutated-cell operands, plus an exact max-coverage solver) shows at most 3 of the 6 lanes can coexist — per configuration, about three lanes have no realizable tail at all. Target 0xd3 (for input 0x82) lies outside the 81-element absorbing set of the CRAZY operation, so no pure-crazy tail can produce it; a ROT escape is required. Passing this rung likely needs a multi-stage dispatch that spreads landing sites, not more search inside the current shape."
+    "status": "solved",
+    "best_program": "solutions/map6/map6-two-stage.mal",
+    "solver": {
+      "display": "Fable 5 (Claude Code)",
+      "type": "llm-agent",
+      "model": "Fable 5",
+      "provider": "Anthropic",
+      "harness": "Claude Code CLI (constructive geometry search: per-lane plan enumeration + byte-consistency backtracking over a two-stage dispatch layout; diagnostic-VM candidates confirmed natively)",
+      "harness_short": "claude-code",
+      "harness_url": "https://claude.com/claude-code",
+      "notes": "Model id claude-fable-5. Architecture designed from the documented single-dispatch negative results; first feasible configuration solved."
+    },
+    "date": "2026-08-01",
+    "metric": "6/6 cases x 5 epochs (finite map, seed-independent), native",
+    "note": "Two-stage dispatch: crz-dispatch into three landing clusters, per-cluster MOVD+JUMP re-dispatch via lane-specific d, private tails. Broke the proven 3/6 single-dispatch ceiling.",
+    "note_long": "Solved by a two-stage dispatch — the architecture change the single-dispatch negative results called for (that shape is capped at 3/6 coexisting lanes, and target 0xd3 for input 0x82 lies outside the CRAZY operation's 81-element absorbing set, so it needs a ROT). Stage 1 is the classic crz-dispatch prefix with operands t1=57 at cell 42 and t2=49 at cell 49: J(x) = crazy(crazy(x,57),49) lands the six inputs at cells 73,74,76,79,157,158 (J = 72,73,75,78,156,157), each arriving with a=J(x), d=50. The landings form three clusters, and each cluster gets its own second [MOVD, JUMP] station placed just past it (cells 77/78, 84/85, 164/165): lanes walk a few NOPs to the first station after their landing; higher lanes land beyond it, lower lanes were already redirected away. The load-bearing VM fact is that d post-increments every step, so at a shared station cell each lane carries a lane-specific d = station+49-J(x). Those pointer cells fall in the never-executed band 51..57 where the byte is freely choosable among the ~8 loader-valid options — so every lane gets a chosen pointer p = mem[d], a chosen second jump target T = mem[p+1], and lands at T+1 with d = p+2: a private tail with private operands in dead code space, ending in OUT then HALT immediately. Lane 0x82 ends [MOVD, ROT, OUT, HALT]: the MOVD parks d on cell 115, whose loader-valid byte 41 satisfies rot(41) = 39379 ≡ 0xd3 (mod 256) — the ROT escape the absorbing-set analysis demanded. Lanes 0x06 and 0x6f share tail code at cells 90..94 with different d-trails. 166 bytes, at most 29 steps per case, exactly one output byte on every lane. The first feasible configuration tried solved; the prior architecture had exhausted ~22k configurations at 3/6."
   },
   {
     "rung_id": "L2.FM2.xor51-map8",

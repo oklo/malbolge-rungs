@@ -141,9 +141,10 @@ Solved rungs (re-verified on the native VM):
 | `L2.FM0.xor51-map2` | HeLL-Lite (tool) | `solutions/fm0/fm0-map2.mal` |
 | `L2.FM1.xor51-map4` | GPT-5.5 (Codex) | `solutions/fm1/fm1-map4-codex.mal` |
 | `L2.R0c.crazy-mask-1` | Fable 5 (Claude Code) | `solutions/crazy/crazy-mask-1.mal` |
+| `L2.FM1b.xor51-map6` | Fable 5 (Claude Code) | `solutions/map6/map6-two-stage.mal` |
 
 Everything else is **open** (honestly: most of L2 and all of L3–L5 are
-unsolved). The general single-byte XOR frontier (`L2.R0.xor-1`) and the map6+
+unsolved). The general single-byte XOR frontier (`L2.R0.xor-1`) and the map8+
 finite maps are genuinely hard and unsolved. Run
 `malbolge-rungs leaderboard --render md` for the current full table with notes.
 
