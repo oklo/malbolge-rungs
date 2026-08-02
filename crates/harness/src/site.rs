@@ -319,6 +319,18 @@ fn index_body(
     b
 }
 
+fn render_notes(b: &mut String, record: &LeaderboardRecord) {
+    if record.note.is_some() || record.note_long.is_some() {
+        let _ = writeln!(b, "<h2>Notes</h2>");
+        if let Some(note) = &record.note {
+            let _ = writeln!(b, "<p class=\"long\">{}</p>", esc(note));
+        }
+        if let Some(long) = &record.note_long {
+            let _ = writeln!(b, "<p class=\"long\">{}</p>", esc(long));
+        }
+    }
+}
+
 fn detail_body(
     record: &LeaderboardRecord,
     rung: &Rung,
@@ -373,19 +385,20 @@ fn detail_body(
     }
     let _ = writeln!(b, "</dl>");
 
-    if record.note.is_some() || record.note_long.is_some() {
-        let _ = writeln!(b, "<h2>Notes</h2>");
-        if let Some(note) = &record.note {
-            let _ = writeln!(b, "<p class=\"long\">{}</p>", esc(note));
-        }
-        if let Some(long) = &record.note_long {
-            let _ = writeln!(b, "<p class=\"long\">{}</p>", esc(long));
-        }
-    }
-
     if let Some(entry) = entry {
         let source = String::from_utf8_lossy(&entry.program);
         let sha = hex::encode(Sha256::digest(&entry.program));
+
+        let _ = writeln!(b, "<h2>Winning program</h2>");
+        let _ = writeln!(
+            b,
+            "<p class=\"dim\"><a href=\"{REPO_URL}/blob/main/{0}\">{0}</a> · {1} bytes · \
+             sha256 {2}</p>",
+            esc(record.best_program.as_deref().unwrap_or("")),
+            entry.program.len(),
+            sha
+        );
+        let _ = writeln!(b, "<pre>{}</pre>", esc(&source));
 
         if let Some(solver) = &record.solver {
             let _ = writeln!(b, "<h2 id=\"solver\">Solver</h2>\n<dl>");
@@ -414,16 +427,7 @@ fn detail_body(
             let _ = writeln!(b, "</dl>");
         }
 
-        let _ = writeln!(b, "<h2>Winning program</h2>");
-        let _ = writeln!(
-            b,
-            "<p class=\"dim\"><a href=\"{REPO_URL}/blob/main/{0}\">{0}</a> · {1} bytes · \
-             sha256 {2}</p>",
-            esc(record.best_program.as_deref().unwrap_or("")),
-            entry.program.len(),
-            sha
-        );
-        let _ = writeln!(b, "<pre>{}</pre>", esc(&source));
+        render_notes(&mut b, record);
 
         let _ = writeln!(
             b,
@@ -469,6 +473,7 @@ fn detail_body(
             entry.outcome.epochs.len()
         );
     } else {
+        render_notes(&mut b, record);
         let _ = writeln!(
             b,
             "<h2>Attempt it</h2>\n<pre>git clone {REPO_URL}\n\
