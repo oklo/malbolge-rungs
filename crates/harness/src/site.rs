@@ -238,15 +238,13 @@ fn index_body(
     );
     let _ = writeln!(
         b,
-        "<p class=\"sub\">A ladder of classic-Malbolge programming challenges, \
+        "<p class=\"sub\">A ladder of Malbolge programming challenges, \
          adjudicated by a single deterministic ground-truth VM \
          (<a href=\"{REPO_URL}/blob/main/docs/classic-malbolge-51-v0.md\">Classic-Malbolge-51 v0</a>). \
          Unsolved rungs are believed to be ordered easiest → hardest (rank is a best-evidence estimate; levels L0–L5 \
          are the registry's coarse tiers). Every <span class=\"solved\">solved</span> entry \
          links to the winning program and was re-verified on the native evaluator when this \
-         page was generated. {} of {} rungs solved.</p>",
-        solved.len(),
-        records.len()
+         page was generated.</p>"
     );
 
     let _ = writeln!(
