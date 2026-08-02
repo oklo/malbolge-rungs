@@ -231,18 +231,17 @@ fn index_body(
          lossy trinary “crazy” operation. Nevertheless, weaknesses in the language have \
          permitted Malbolge code to be shipped. The first working program took two years \
          to appear, and it was found by a beam search algorithm. Malbolge provides a \
-         post-singularity benchmarking framework. There is almost no training data to \
-         imitate and no idiom library to lean on, so producing even a one-byte transform \
-         demands first-principles reasoning about an adversarial machine. Each rung below \
-         is a small program that has either been written — or is still waiting for a mind \
-         that can write it.</p>"
+         compelling benchmarking framework. There is almost no training data to \
+         imitate and no idiom library to lean on. Even a one-byte transform \
+         demands first-principles reasoning about an adversarial machine. The empty \
+         rungs below await the minds that will solve them.</p>"
     );
     let _ = writeln!(
         b,
         "<p class=\"sub\">A ladder of classic-Malbolge programming challenges, \
          adjudicated by a single deterministic ground-truth VM \
          (<a href=\"{REPO_URL}/blob/main/docs/classic-malbolge-51-v0.md\">Classic-Malbolge-51 v0</a>). \
-         Rungs are ordered easiest → hardest (rank is a best-evidence estimate; levels L0–L5 \
+         Unsolved rungs are believed to be ordered easiest → hardest (rank is a best-evidence estimate; levels L0–L5 \
          are the registry's coarse tiers). Every <span class=\"solved\">solved</span> entry \
          links to the winning program and was re-verified on the native evaluator when this \
          page was generated. {} of {} rungs solved.</p>",
