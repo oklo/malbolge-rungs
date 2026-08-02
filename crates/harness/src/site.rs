@@ -224,13 +224,13 @@ fn index_body(
     );
     let _ = writeln!(
         b,
-        "<p class=\"intro\">Malbolge — named for the eighth circle of Dante's hell — is a \
+        "<p class=\"intro\"><strong>Malbolge</strong> — named for the eighth circle of Dante's hell — is a \
          public-domain programming language designed to be nearly impossible to program \
          in. Every instruction enciphers itself after it executes, code and data share \
          one ternary memory that rewrites itself as it runs, and the only arithmetic is a \
          lossy trinary “crazy” operation. Nevertheless, weaknesses in the language have \
-         permitted Malbolge code to be shipped. The first working program took two years \
-         to appear, and it was found by a beam search algorithm. Malbolge provides a \
+         permitted Malbolge code to be shipped. The first verified program was discovered \
+         via beam search two years after the language specs were released. Malbolge provides a \
          compelling benchmarking framework. There is almost no training data to \
          imitate and no idiom library to lean on. Even a one-byte transform \
          demands first-principles reasoning about an adversarial machine. The empty \
