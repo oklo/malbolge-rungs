@@ -242,13 +242,22 @@
   {
     "rung_id": "L2.FM1d.xor51-map7b",
     "rank": 13,
-    "status": "open",
-    "best_program": null,
-    "solver": null,
-    "date": null,
-    "metric": null,
-    "note": "Seven inputs: map8 minus 0xa7. 0xc0 is what makes map8 hard.",
-    "note_long": "The steep half of the map6→map8 split: the map6 bytes plus 0xc0 alone. Of the two bytes map8 adds, 0xc0 is the one that collapses dispatch separation — 1,261 configurations for map6 against 50 here (map7a's notes describe the method). A program that clears this rung has dealt with the scarcity that makes map8 hard; map8 then adds one more lane in the same tight band."
+    "status": "solved",
+    "best_program": "solutions/map7b/map7b-merged-cluster.mal",
+    "solver": {
+      "display": "Fable 5 (Claude Code)",
+      "type": "llm-agent",
+      "model": "Fable 5",
+      "provider": "Anthropic",
+      "harness": "Claude Code CLI (two-stage builder with cluster-boundary enumeration: the stock per-landing-station rule failed all 50 dispatch configs; merging the five jammed lanes behind one shared station solved three configs concurrently in a 6-worker parallel sweep; native-confirmed)",
+      "harness_short": "claude-code",
+      "harness_url": "https://claude.com/claude-code",
+      "notes": "Model id claude-fable-5. Stock map6 geometry exhaustively failed (0/50, all on joint byte-assignment); the merged-cluster variant was designed from that failure signature and solved configs 3, 4 and 5 within minutes."
+    },
+    "date": "2026-08-07",
+    "metric": "7/7 cases x 5 epochs (finite map, seed-independent), native",
+    "note": "Fell to a geometric fix: merge the jammed lanes behind one station. Stations should shrink when separation is scarce.",
+    "note_long": "map7b was minted alongside map7a on 2026-08-02 to split the map6-to-map8 difficulty cliff, and it is the steep half: adding 0xc0 to the map6 inputs collapses the number of separating dispatch configurations from 1,261 to 50, and in every one of the 50 the dispatch lands five of the seven inputs in a band twelve cells wide, with gaps of two or three. The construction that solved map6 and map7a failed here across all 50 configurations - not for lack of per-lane options (every lane always had a workable tail) but in the joint byte assignment. That builder places a private re-dispatch station immediately after every landing separated by a gap of three or more, and on this rung's uniform gap-3 band the rule produces five adjacent single-lane stations whose pointer cells collide. The fix was geometric, not architectural: merge the five jammed lanes behind one station past the band. Each lane then walks a different distance to the same station, so the station's MOVD reads a different cell for each lane - five distinct pointer cells, five private tails, exactly the shape that won map6. With that one change, three of the 50 configurations solved within minutes of each other in a parallel sweep; the shipped program is a four-CRAZY dispatch (constants 112, 111, 85, 68) landing the inputs at 56/59/62/65/68 and 140/149, with 0xc0 - the input that makes this rung hard - jammed mid-band at 59. 166 bytes, at most 42 steps per input. The lesson this leaves for map8: when dispatch separation is scarce the number of stations should shrink, not grow - walk distance to a shared station is itself a lane-splitting resource, and it is the cheapest one available."
   },
   {
     "rung_id": "L2.FM2.xor51-map8",
