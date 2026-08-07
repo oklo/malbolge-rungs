@@ -222,13 +222,22 @@
   {
     "rung_id": "L2.FM1c.xor51-map7a",
     "rank": 12,
-    "status": "open",
-    "best_program": null,
-    "solver": null,
-    "date": null,
-    "metric": null,
-    "note": "Seven inputs: map8 minus 0xc0. The gentle half of the map6→map8 cliff.",
-    "note_long": "This rung and map7b split the jump between the solved six-input map and the open eight-input map into measured steps. The measure: how many configurations of the standard dispatch prelude — an even-length chain of CRAZY operations over loader-legal constants — give every input its own landing address (`malbolge-rungs feasibility --rung <id>` reproduces the numbers). The six map6 inputs admit 1,261 separating configurations; adding 0xa7 (this rung) leaves 539; adding 0xc0 instead (map7b) leaves 50; map8, with both, leaves 39. Separation is necessary but not sufficient — map6 fell only when a second dispatch stage gave every lane private code — so these counts order the rungs; they do not price them exactly."
+    "status": "solved",
+    "best_program": "solutions/map7a/map7a-two-stage.mal",
+    "solver": {
+      "display": "Fable 5 (Claude Code)",
+      "type": "llm-agent",
+      "model": "Fable 5",
+      "provider": "Anthropic",
+      "harness": "Claude Code CLI (the map6 two-stage builder re-run with the seventh input added; per-lane plan enumeration + byte-consistency backtracking, diagnostic-VM candidates confirmed natively)",
+      "harness_short": "claude-code",
+      "harness_url": "https://claude.com/claude-code",
+      "notes": "Model id claude-fable-5. Second dispatch configuration tried produced the solution; about two minutes of search."
+    },
+    "date": "2026-08-06",
+    "metric": "7/7 cases x 5 epochs (finite map, seed-independent), native",
+    "note": "map6 two-stage architecture generalizes to 7 lanes unchanged. Fell as feasibility predicted.",
+    "note_long": "This rung was minted on 2026-08-02 as the measured gentle half of the map6-to-map8 difficulty cliff: the six map6 bytes plus 0xa7, chosen because the dispatch-feasibility count stays high (539 separating configurations against map6's 1,261 and map8's 39). It fell four days later to the same two-stage construction that solved map6, with no change beyond adding the seventh input to the builder. Stage 1 reads x and applies two CRAZY operations with constants 70 and 50, landing the seven inputs at addresses 71/74/79/80 and 152/160/161 - two clusters. A two-instruction MOVD+JUMP station past each cluster turns each lane's walk distance into a private data-pointer address (d = station + 49 - J(x)) in never-executed program space, and through it a private tail; the second configuration enumerated was solvable. 170 bytes, at most 26 steps per input. The new lane is the interesting one: input 0xa7 must output 0xf6 = 246, and no chain of CRAZY operations over legal operands can produce a value above 242, so the lane has to end with a ROT - and among the 94 printable bytes exactly one, 58, rotates to 246 mod 256. The builder parked that lane's pointer on a cell holding byte 58 (it is loader-legal only at addresses in eight residue classes mod 94; cells 98 and 104 in this program carry it) - the same move that gave map6's 0x82 lane its 0xd3. The solve is also a calibration point: the feasibility estimator ordered map7a as the easy step and it behaved exactly that way, which is evidence the count is measuring the right thing. The open question it sharpens: map7b (50 configurations) and map8 (39) are next, where separation is scarce and the same builder previously failed on joint byte-assignment - packing, not architecture."
   },
   {
     "rung_id": "L2.FM1d.xor51-map7b",
