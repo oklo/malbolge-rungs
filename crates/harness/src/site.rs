@@ -103,6 +103,11 @@ th.num { text-align: right; }
 .unverified { color: var(--amber); }
 .dim { color: var(--faint); }
 p.long { max-width: 45rem; margin: 0 0 1.25em; }
+code {
+  font-family: var(--mono); font-size: .8em;
+  background: var(--code-bg); padding: .12em .32em; border-radius: 3px;
+}
+pre code { font-size: 1em; padding: 0; background: none; }
 pre {
   font-family: var(--mono); background: var(--code-bg);
   padding: 1.1em 1.3em; border-radius: 6px; overflow-x: auto;
