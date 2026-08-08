@@ -55,7 +55,7 @@ a { color: var(--accent); text-decoration: none; }
 a:hover { color: var(--accent-hover); text-decoration: underline;
           text-underline-offset: .15em; }
 h1 {
-  font-family: var(--sans); font-size: 1.55rem; font-weight: 700;
+  font-family: var(--serif); font-size: 1.55rem; font-weight: 700;
   letter-spacing: -0.01em; margin: 0 0 .4rem;
 }
 h1.board-title {
