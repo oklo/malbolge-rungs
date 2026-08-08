@@ -322,8 +322,15 @@ fn index_body(
             .iter()
             .find(|(id, _)| *id == record.rung_id)
             .map(|(_, e)| e);
+        // Canonical length: the identity the evaluator judges (outer
+        // whitespace trimmed), not the on-disk file length.
         let bytes_cell = entry
-            .map(|e| e.program.len().to_string())
+            .map(|e| {
+                classic_malbolge::canonicalize_fixture_source(&e.program)
+                    .map(|c| c.len())
+                    .unwrap_or(e.program.len())
+                    .to_string()
+            })
             .unwrap_or_else(|| "—".to_string());
         // Model links to the rung's solver block (the in-repo provenance record);
         // harness links to its public home when one exists.
@@ -479,13 +486,22 @@ fn attempt_body(generated: &str) -> String {
     let _ = writeln!(b, "<h2>Submit</h2>");
     let _ = writeln!(
         b,
-        "<p class=\"long\">1. Verify natively with <code>--epochs 5</code>. \
+        "<p class=\"long\">1. Verify natively. One epoch is definitive for finite-map and \
+         coverage rungs; run <code>--epochs 5</code> on transform and hash rungs to prove \
+         generality across seeds. \
          2. Add your <code>.mal</code> file under <code>solutions/&lt;rung&gt;/</code>. \
          3. Flip the rung's record in <code>leaderboard/leaderboard.json</code> to \
          <code>solved</code> with the program path and honest attribution — solver, model, \
          and harness fields you can evidence; unknown fields stay null rather than \
-         guessed. 4. <code>cargo test</code> and <code>malbolge-rungs verify-leaderboard</code> \
-         must pass. 5. Open a pull request at \
+         guessed. Include a <code>manifest</code> object with whatever run provenance you \
+         can attest: exact model version, harness and version, token count, wall time, \
+         evaluator invocations. It renders on the rung's page. \
+         4. Add an attempt report at \
+         <code>docs/attempts/YYYY-MM-DD-&lt;solver&gt;-&lt;rung&gt;.md</code> — method, \
+         search budget, per-case results. Reports of failed attempts are welcome through \
+         the same path; consumed budgets and dead ends are part of the record. \
+         5. <code>cargo test</code> and <code>malbolge-rungs verify-leaderboard</code> \
+         must pass. 6. Open a pull request at \
          <a href=\"{REPO_URL}\">{REPO_URL}</a>. CI re-runs every claimed solution on the \
          native evaluator and the site cannot deploy with a claim the VM does not \
          confirm — a submission that passes locally passes everywhere.</p>"
@@ -563,17 +579,36 @@ fn detail_body(
 
     if let Some(entry) = entry {
         let source = String::from_utf8_lossy(&entry.program);
-        let sha = hex::encode(Sha256::digest(&entry.program));
+        // The evaluator canonicalizes source (newline normalization, outer
+        // whitespace trim) before loading; report the identity it judges, and
+        // the on-disk identity too when the two differ.
+        let canonical = classic_malbolge::canonicalize_fixture_source(&entry.program)
+            .unwrap_or_else(|_| entry.program.clone());
+        let canon_sha = hex::encode(Sha256::digest(&canonical));
 
         let _ = writeln!(b, "<h2>Winning program</h2>");
-        let _ = writeln!(
-            b,
-            "<p class=\"dim\"><a href=\"{REPO_URL}/blob/main/{0}\">{0}</a> · {1} bytes · \
-             sha256 {2}</p>",
-            esc(record.best_program.as_deref().unwrap_or("")),
-            entry.program.len(),
-            sha
-        );
+        if canonical == entry.program {
+            let _ = writeln!(
+                b,
+                "<p class=\"dim\"><a href=\"{REPO_URL}/blob/main/{0}\">{0}</a> · {1} bytes · \
+                 sha256 {2}</p>",
+                esc(record.best_program.as_deref().unwrap_or("")),
+                canonical.len(),
+                canon_sha
+            );
+        } else {
+            let file_sha = hex::encode(Sha256::digest(&entry.program));
+            let _ = writeln!(
+                b,
+                "<p class=\"dim\"><a href=\"{REPO_URL}/blob/main/{0}\">{0}</a> · {1} bytes \
+                 canonical ({2} on disk) · sha256 canonical {3} · file {4}</p>",
+                esc(record.best_program.as_deref().unwrap_or("")),
+                canonical.len(),
+                entry.program.len(),
+                canon_sha,
+                file_sha
+            );
+        }
         let _ = writeln!(b, "<pre>{}</pre>", esc(&source));
 
         if let Some(solver) = &record.solver {
@@ -599,6 +634,18 @@ fn detail_body(
             }
             if let Some(notes) = &solver.notes {
                 let _ = writeln!(b, "<dt>attribution notes</dt><dd>{}</dd>", esc(notes));
+            }
+            let _ = writeln!(b, "</dl>");
+        }
+
+        if let Some(manifest) = &record.manifest {
+            let _ = writeln!(b, "<h2>Run manifest</h2>\n<dl>");
+            for (key, value) in manifest {
+                let shown = match value {
+                    serde_json::Value::String(s) => s.clone(),
+                    other => other.to_string(),
+                };
+                let _ = writeln!(b, "<dt>{}</dt><dd>{}</dd>", esc(key), esc(&shown));
             }
             let _ = writeln!(b, "</dl>");
         }

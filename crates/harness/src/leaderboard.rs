@@ -80,6 +80,11 @@ pub struct LeaderboardRecord {
     /// Extended discussion shown on the rung's detail page.
     #[serde(default)]
     pub note_long: Option<String>,
+    /// Optional run manifest for the winning attempt (free-form key/value:
+    /// exact model version, harness version, token count, wall time, evaluator
+    /// invocations, ...). Rendered verbatim on the rung's detail page.
+    #[serde(default)]
+    pub manifest: Option<serde_json::Map<String, serde_json::Value>>,
 }
 
 /// Load the leaderboard from `leaderboard/leaderboard.json` at runtime, so

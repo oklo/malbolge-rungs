@@ -145,6 +145,26 @@ Policy, stated so nobody has to guess:
 - Registry rungs are frozen once published: existing ids never change meaning.
   New rungs are only ever additive.
 
+### Sealed evaluation protocol
+
+For runs you intend to report as a benchmark rather than an experiment:
+
+1. **Fresh sandbox.** Run the agent in a clean container with a fresh clone at
+   a pinned commit. Agents on shared machines find prior campaigns' scratch
+   files — builders, logs, half-finished searches — and gain an advantage a
+   remote model does not have. This has happened in practice.
+2. **Private instances.** Evaluate on `generate-rung` instances from seeds you
+   keep private, not on board rungs, whose solutions and construction notes
+   are public by policy.
+3. **Record a run manifest.** Exact model version, harness and version, token
+   count, wall time, and number of evaluator invocations. Board submissions
+   carry this as a `manifest` object on the leaderboard record.
+4. **Epochs.** One epoch is definitive for finite-map and coverage instances
+   (seed-independent); use multiple epochs only on seed-dependent families.
+5. **Report failures.** Attempts that did not solve, with their consumed
+   budgets, belong in the record (`docs/attempts/` for board rungs) — a board
+   of wins alone overstates every method it lists.
+
 ## A curriculum that matches the measured difficulty ladder
 
 Empirically grounded ordering, easiest to hardest, for XOR-family training:
