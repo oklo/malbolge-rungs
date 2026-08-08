@@ -2,6 +2,7 @@
 //! derivation, and native-VM verification, extracted from the source MAL-51
 //! project without any of its chain/coin machinery.
 
+pub mod attempts;
 pub mod challenge;
 pub mod dispatch;
 pub mod generate;

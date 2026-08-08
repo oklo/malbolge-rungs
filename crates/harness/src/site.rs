@@ -16,6 +16,7 @@ use std::path::{Path, PathBuf};
 use anyhow::{bail, Context, Result};
 use sha2::{Digest, Sha256};
 
+use crate::attempts::{load_attempts, AttemptRecord};
 use crate::leaderboard::{load_leaderboard, LeaderboardRecord, Status};
 use crate::registry::find_rung;
 use crate::types::Rung;
@@ -232,6 +233,7 @@ pub fn generate_site(out_dir: &Path, epochs: u32) -> Result<()> {
         out_dir.join("attempt.html"),
         page("attempt a rung", 0, &attempt_body(&generated)),
     )?;
+    let attempts = load_attempts();
     for record in &records {
         let rung = find_rung(&record.rung_id)
             .with_context(|| format!("{}: rung not in registry", record.rung_id))?;
@@ -239,12 +241,16 @@ pub fn generate_site(out_dir: &Path, epochs: u32) -> Result<()> {
             .iter()
             .find(|(id, _)| *id == record.rung_id)
             .map(|(_, e)| e);
+        let rung_attempts: Vec<&AttemptRecord> = attempts
+            .iter()
+            .filter(|a| a.rung_id == record.rung_id)
+            .collect();
         std::fs::write(
             out_dir.join("s").join(format!("{}.html", record.rung_id)),
             page(
                 &record.rung_id,
                 1,
-                &detail_body(record, &rung, entry, &generated),
+                &detail_body(record, &rung, entry, &rung_attempts, &generated),
             ),
         )?;
     }
@@ -506,6 +512,26 @@ fn attempt_body(generated: &str) -> String {
          native evaluator and the site cannot deploy with a claim the VM does not \
          confirm — a submission that passes locally passes everywhere.</p>"
     );
+    let _ = writeln!(b, "<h2>Log an unsuccessful attempt</h2>");
+    let _ = writeln!(
+        b,
+        "<p class=\"long\">Attempts that do not solve are submitted through the same pull \
+         request path, minus the leaderboard change: a structured record at \
+         <code>docs/attempts/YYYY-MM-DD-&lt;solver&gt;-&lt;rung&gt;.json</code> (schema \
+         <code>malbolge-rungs.attempt.v1</code> — \
+         <a href=\"{REPO_URL}/blob/main/docs/attempts/README.md\">docs/attempts/README.md</a> \
+         has the field reference), an optional narrative report, and any artifacts worth \
+         keeping: the best candidate program, search code, logs. If the record claims a \
+         best-candidate score, check the program file in too — CI re-runs it on the \
+         native evaluator and rejects the record unless the observed score matches the \
+         claim exactly. Verified traces of failure, with methods and consumed budgets, \
+         render on the rung's page and accumulate into a corpus the wins alone cannot \
+         provide. Validate before opening the pull request:</p>"
+    );
+    let _ = writeln!(
+        b,
+        "<pre>./target/release/malbolge-rungs attempts validate</pre>"
+    );
 
     let _ = writeln!(b, "<footer>Generated {}.</footer>", esc(generated));
     b
@@ -523,10 +549,47 @@ fn render_notes(b: &mut String, record: &LeaderboardRecord) {
     }
 }
 
+fn render_attempts(b: &mut String, attempts: &[&AttemptRecord]) {
+    if attempts.is_empty() {
+        return;
+    }
+    let _ = writeln!(b, "<h2>Recorded attempts</h2>");
+    let _ = writeln!(
+        b,
+        "<table>\n<tr><th>date</th><th>solver</th><th>outcome</th>\
+         <th>best (native)</th><th>record</th></tr>"
+    );
+    for a in attempts {
+        let best = a
+            .best_candidate
+            .as_ref()
+            .map(|c| format!("{}/{}", c.claimed_correct_cases, c.claimed_total_cases))
+            .unwrap_or_else(|| "—".to_string());
+        let mut links = format!(
+            "<a href=\"{REPO_URL}/blob/main/{}\">json</a>",
+            esc(&a.path)
+        );
+        if let Some(report) = &a.report {
+            let _ = write!(links, " · <a href=\"{REPO_URL}/blob/main/{}\">report</a>", esc(report));
+        }
+        let _ = writeln!(
+            b,
+            "<tr><td class=\"dim\">{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>",
+            esc(&a.date),
+            esc(a.solver.as_ref().map(|s| s.display.as_str()).unwrap_or("—")),
+            a.outcome,
+            best,
+            links,
+        );
+    }
+    let _ = writeln!(b, "</table>");
+}
+
 fn detail_body(
     record: &LeaderboardRecord,
     rung: &Rung,
     entry: Option<&SolvedEntry>,
+    attempts: &[&AttemptRecord],
     generated: &str,
 ) -> String {
     let mut b = String::new();
@@ -695,8 +758,10 @@ fn detail_body(
             esc(record.best_program.as_deref().unwrap_or("")),
             entry.outcome.epochs.len()
         );
+        render_attempts(&mut b, attempts);
     } else {
         render_notes(&mut b, record);
+        render_attempts(&mut b, attempts);
         let _ = writeln!(
             b,
             "<h2>Attempt it</h2>\n<pre>git clone {REPO_URL}\n\

@@ -1,0 +1,28 @@
+{
+  "schema": "malbolge-rungs.attempt.v1",
+  "rung_id": "L2.FM2.xor51-map8",
+  "date": "2026-08-07",
+  "outcome": "solved",
+  "solver": {
+    "display": "GPT-5.6-sol (Codex)",
+    "type": "llm-agent",
+    "model": "gpt-5.6-sol",
+    "provider": "OpenAI",
+    "harness_short": "codex",
+    "harness_url": "https://github.com/openai/codex"
+  },
+  "summary": "Diagnosed the 0xa7/0xc0 dispatch collision in the map7b program, swept all 39 eight-way-separating preludes at zero splits without a joint byte assignment, then solved with one station split in the high landing cluster.",
+  "budget": {
+    "separating_configurations": 39,
+    "zero_split_backtracking_nodes_per_config": 60000
+  },
+  "best_candidate": {
+    "program": "solutions/map8/map8-one-split.mal",
+    "claimed_correct_cases": 8,
+    "claimed_total_cases": 8
+  },
+  "report": "docs/attempts/2026-08-07-codex-map8.md",
+  "artifacts": [
+    "research/map8_search.py"
+  ]
+}

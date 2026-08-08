@@ -73,3 +73,16 @@ fn generation_is_deterministic_across_calls() {
     assert_eq!(a.rung.finite_map_inputs, b.rung.finite_map_inputs);
     assert_eq!(a.rung.id, b.rung.id);
 }
+
+#[test]
+fn every_attempt_record_validates() {
+    // Structured attempt records (docs/attempts/*.json) must parse, reference
+    // real files, and — when they claim a best-candidate score — match a
+    // fresh native run exactly. Keeps the negative-trace corpus as
+    // trustworthy as the leaderboard.
+    let (results, all_ok) = harness::attempts::validate_attempts();
+    for r in &results {
+        assert!(r.ok, "{}: {}", r.file, r.detail);
+    }
+    assert!(all_ok || results.is_empty());
+}

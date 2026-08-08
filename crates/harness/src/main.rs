@@ -11,6 +11,7 @@ use classic_malbolge::{
 };
 use sha2::Digest as _;
 
+use harness::attempts::{load_attempts, validate_attempts};
 use harness::dispatch::feasibility;
 use harness::generate::{generate_coverage, generate_finite_map, RangeClass, TransformArg};
 use harness::leaderboard::{load_leaderboard, render_markdown, verify_leaderboard, Status};
@@ -72,6 +73,11 @@ enum Command {
         #[arg(long)]
         json: bool,
     },
+    /// List or validate the structured attempt records in docs/attempts/.
+    Attempts {
+        #[command(subcommand)]
+        what: AttemptsCmd,
+    },
     /// Mint a procedural rung instance as JSON (loadable via `verify --rung-file`).
     GenerateRung {
         #[command(subcommand)]
@@ -113,6 +119,14 @@ enum Command {
         #[arg(long, default_value_t = 3)]
         epochs: u32,
     },
+}
+
+#[derive(Subcommand)]
+enum AttemptsCmd {
+    /// List every attempt record.
+    List,
+    /// Validate every record; re-runs claimed best candidates natively.
+    Validate,
 }
 
 #[derive(Subcommand)]
@@ -204,6 +218,7 @@ fn run() -> Result<ExitCode> {
             verbose,
             json,
         } => cmd_verify(rung.as_deref(), rung_file.as_deref(), &program, epochs, verbose, json),
+        Command::Attempts { what } => cmd_attempts(what),
         Command::GenerateRung { what } => cmd_generate(what),
         Command::Feasibility {
             inputs,
@@ -423,6 +438,33 @@ fn write_generated(json: String, out: Option<&str>) -> Result<()> {
         None => println!("{json}"),
     }
     Ok(())
+}
+
+fn cmd_attempts(what: AttemptsCmd) -> Result<ExitCode> {
+    match what {
+        AttemptsCmd::List => {
+            for a in load_attempts() {
+                println!(
+                    "{:<12} {:<32} {:<9} {}",
+                    a.date,
+                    a.rung_id,
+                    a.outcome,
+                    a.solver.as_ref().map(|s| s.display.as_str()).unwrap_or("—"),
+                );
+            }
+            Ok(ExitCode::SUCCESS)
+        }
+        AttemptsCmd::Validate => {
+            let (results, all_ok) = validate_attempts();
+            if results.is_empty() {
+                println!("no attempt records");
+            }
+            for r in &results {
+                println!("[{}] {}  ({})", if r.ok { "PASS" } else { "FAIL" }, r.file, r.detail);
+            }
+            Ok(if all_ok { ExitCode::SUCCESS } else { ExitCode::FAILURE })
+        }
+    }
 }
 
 fn cmd_generate(what: GenerateCmd) -> Result<ExitCode> {
