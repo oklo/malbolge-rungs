@@ -32,7 +32,7 @@ const CSS: &str = r#"
 :root {
   --bg: #ffffff; --text: #1c1e21; --text-soft: #55595f; --faint: #a5a29c;
   --rule: #e3e1dc; --accent: #b8481c; --accent-hover: #8f3411;
-  --code-bg: #f4f2ee; --green: #2e7d3a; --amber: #a06a12;
+  --code-bg: #f4f2ee; --solved: #7d6f5b; --amber: #a06a12;
   --serif: "Charter", "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
   --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
@@ -41,7 +41,7 @@ const CSS: &str = r#"
   :root {
     --bg: #101214; --text: #d6d3cd; --text-soft: #8f8d88; --faint: #6d6b66;
     --rule: #2a2d31; --accent: #e06a35; --accent-hover: #f08a55;
-    --code-bg: #1a1d20; --green: #7fb069; --amber: #d4a017;
+    --code-bg: #1a1d20; --solved: #d6c5ac; --amber: #d4a017;
   }
 }
 * { box-sizing: border-box; }
@@ -98,7 +98,7 @@ td.note .txt {
 }
 td.num { text-align: right; font-variant-numeric: tabular-nums; }
 th.num { text-align: right; }
-.solved { color: var(--green); }
+.solved { color: var(--solved); }
 .open { color: var(--faint); }
 .unverified { color: var(--amber); }
 .dim { color: var(--faint); }
