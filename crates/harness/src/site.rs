@@ -118,6 +118,12 @@ footer {
 }
 footer a { color: inherit; }
 footer a:hover { color: var(--accent); }
+p.back {
+  font-family: var(--sans); font-size: .78rem; letter-spacing: .08em;
+  text-transform: uppercase; margin: 0 0 1.6rem;
+}
+p.back a { color: var(--text-soft); }
+p.back a:hover { color: var(--accent); }
 @media (max-width: 44rem) {
   body { margin-top: 1.5rem; }
   td.note .txt { max-width: 7rem; }
@@ -132,13 +138,22 @@ fn esc(s: &str) -> String {
 }
 
 fn page(title: &str, depth: usize, body: &str) -> String {
-    let _ = depth;
+    // Subpages get a minimal way back to the board; the index stays clean.
+    let back = if title != "malbolge-rungs" {
+        format!(
+            "<p class=\"back\"><a href=\"{}index.html\">&larr; board</a></p>\n",
+            "../".repeat(depth)
+        )
+    } else {
+        String::new()
+    };
     format!(
         "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n\
          <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n\
-         <title>{}</title>\n<style>{}</style>\n</head>\n<body>\n{}\n</body>\n</html>\n",
+         <title>{}</title>\n<style>{}</style>\n</head>\n<body>\n{}{}\n</body>\n</html>\n",
         esc(title),
         CSS,
+        back,
         body
     )
 }
