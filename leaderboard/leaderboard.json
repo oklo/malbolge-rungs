@@ -262,13 +262,22 @@
   {
     "rung_id": "L2.FM2.xor51-map8",
     "rank": 14,
-    "status": "open",
-    "best_program": null,
-    "solver": null,
-    "date": null,
-    "metric": null,
-    "note": "Eight-input finite map; open.",
-    "note_long": null
+    "status": "solved",
+    "best_program": "solutions/map8/map8-one-split.mal",
+    "solver": {
+      "display": "Codex (OpenAI)",
+      "type": "llm-agent",
+      "model": null,
+      "provider": "OpenAI",
+      "harness": "Codex agent (interactive session; analytical diagnosis, adaptation of the map7b builder, bounded eight-worker geometry search, native-evaluator confirmation)",
+      "harness_short": "codex",
+      "harness_url": "https://github.com/openai/codex",
+      "notes": "The runtime identified the assistant as Codex based on GPT-5 but did not expose an exact model/version, so the model field is left null rather than guessed. The construction search adapts the Fable 5 (Claude Code) map7b builder and architecture."
+    },
+    "date": "2026-08-07",
+    "metric": "8/8 cases x 5 epochs (finite map, seed-independent), native; 160 canonical bytes; <=38 steps/case",
+    "note": "One split in the high landing cluster separates 0x6f and 0x82; all eight lanes fit in 160 bytes.",
+    "note_long": "The map7b winner scores 7/8 here because 0xa7 and 0xc0 collapse to the same post-dispatch state, proving that no tail-only repair can work. The search therefore enumerated all 39 eight-way-separating CRAZY preludes. A bounded zero-split pass (60,000 backtracking nodes per configuration) found no complete joint byte assignment despite hundreds of legal per-lane tails. The winning one-split search uses four CRAZY instructions at prelude positions 3/4/7/9 with legal operands 113/37/86/68, producing landings 0x02->55, 0x06->56, 0xa7->58, 0xc0->59, 0x09->65, 0x30->68, 0x6f->140 and 0x82->149. Six low lanes share the MOVD+JUMP station at 70; splitting the high cluster gives 0x6f and 0x82 separate stations at 148 and 158. Lane-specific d values then select private second jumps and tails. The 0xa7 target 0xf6 and 0x82 target 0xd3 require ROT-bearing tails. The deterministic search is preserved in research/map8_search.py and research/map8/."
   },
   {
     "rung_id": "L2.FM2h.xor51-map12-hi",

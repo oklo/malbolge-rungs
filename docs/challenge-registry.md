@@ -128,6 +128,10 @@ finite map" and "general byte-wide XOR". Empirically:
   admits 1,261 separating configs, map7a 539, map7b 50, map8 39, and the
   map12-low/map16 input sets zero (that dispatch family cannot separate them at
   all).
+- **map8** is solved by a four-CRAZY, two-stage dispatch with one extra station
+  split inside the high landing cluster. A zero-split sweep found no joint
+  eight-lane byte assignment even though all 39 preludes separate the inputs;
+  landing separation is therefore a useful but incomplete difficulty proxy.
 - **General single-byte XOR** (`L2.R0.xor-1`, `L2.R0d`) is an open frontier; the
   coverage rungs make partial progress measurable in graded steps
   (32/36/40/48/64; best known all-256 coverage is 27).

@@ -153,9 +153,12 @@ Solved rungs (re-verified on the native VM):
 | `L2.FM1.xor51-map4` | GPT-5.5 (Codex) | `solutions/fm1/fm1-map4-codex.mal` |
 | `L2.R0c.crazy-mask-1` | Fable 5 (Claude Code) | `solutions/crazy/crazy-mask-1.mal` |
 | `L2.FM1b.xor51-map6` | Fable 5 (Claude Code) | `solutions/map6/map6-two-stage.mal` |
+| `L2.FM1c.xor51-map7a` | Fable 5 (Claude Code) | `solutions/map7a/map7a-two-stage.mal` |
+| `L2.FM1d.xor51-map7b` | Fable 5 (Claude Code) | `solutions/map7b/map7b-merged-cluster.mal` |
+| `L2.FM2.xor51-map8` | Codex (OpenAI) | `solutions/map8/map8-one-split.mal` |
 
 Everything else is **open** (honestly: most of L2 and all of L3–L5 are
-unsolved). The general single-byte XOR frontier (`L2.R0.xor-1`) and the map8+
+unsolved). The general single-byte XOR frontier (`L2.R0.xor-1`) and the map12+
 finite maps are genuinely hard and unsolved. Run
 `malbolge-rungs leaderboard --render md` for the current full table with notes.
 
@@ -174,6 +177,9 @@ estimate and revisable).
   codex-007 finite-map specimen).
 - `solutions/fm1/fm1-map4-codex.mal` — authored by Codex in an internal MAL-51
   match; preserved here as a computational artifact (220 bytes).
+- `solutions/map8/map8-one-split.mal` — authored by Codex with the reproducible
+  bounded [geometry search](research/map8_search.py) (160 canonical bytes); see
+  the [attempt report](docs/attempts/2026-08-07-codex-map8.md).
 
 The original 29 rungs in the registry (`crates/harness/registry.json`) are
 dumped verbatim from the source MAL-51 project. Difficulty-smoothing rungs

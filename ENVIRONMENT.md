@@ -124,7 +124,7 @@ it) scoring the instance with the same estimator exposed as
 `malbolge-rungs feasibility`: it counts the dispatch-prelude configurations
 that give every input a distinct usable landing address. Calibration against
 the hand-built ladder: map6 (solved) has 1,261 separating configs; map7a 539;
-map7b 50; map8 39 (all open); the map12-low and map16 input sets have **zero**,
+map7b 50; map8 39 (all solved); the map12-low and map16 input sets have **zero**,
 meaning that whole dispatch family cannot start on them. Separation is
 necessary, not sufficient — treat the count as an ordering signal, not a price.
 
@@ -152,7 +152,7 @@ Empirically grounded ordering, easiest to hardest, for XOR-family training:
 1. `id` finite maps (echo suffices — floor check for the harness wiring),
 2. `crazy` transform (per-trit realizable, no carry obstruction),
 3. `xor51` finite maps at k=2,4 (solved by models),
-4. k=6..8 mixed/high range (k=6 solved; the first open frontier),
+4. k=6..8 mixed/high range (solved on the public ladder),
 5. low-range finite maps and k≥12 (dispatch separation collapses),
 6. coverage thresholds 32→36→40→48→64 (graded generality),
 7. full single-byte XOR (`L2.R0.xor-1`) — open, with proven structural
