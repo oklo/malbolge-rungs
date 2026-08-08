@@ -58,6 +58,10 @@ h1 {
   font-family: var(--sans); font-size: 1.55rem; font-weight: 700;
   letter-spacing: -0.01em; margin: 0 0 .4rem;
 }
+h1.board-title {
+  /* mirrors the oklo theme's .entry-title, in the reading column */
+  font-size: 2rem; line-height: 1.2; max-width: 45rem; margin: 0 auto 1.1rem;
+}
 img.hero {
   display: block; width: 100%; max-width: 45rem; height: auto;
   border: 1px solid var(--rule); border-radius: 6px; margin: .6rem auto 1.6rem;
@@ -126,6 +130,7 @@ p.back a { color: var(--text-soft); }
 p.back a:hover { color: var(--accent); }
 @media (max-width: 44rem) {
   body { margin-top: 1.5rem; }
+  h1.board-title { font-size: 1.55rem; }
   td.note .txt { max-width: 7rem; }
 }
 "#;
@@ -268,6 +273,7 @@ fn index_body(
     generated: &str,
 ) -> String {
     let mut b = String::new();
+    let _ = writeln!(b, "<h1 class=\"board-title\">malbolge</h1>");
     let _ = writeln!(
         b,
         "<img class=\"hero\" src=\"malbolge.jpg\" alt=\"A creature of enciphered \
