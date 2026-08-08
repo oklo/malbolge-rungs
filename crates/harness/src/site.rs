@@ -24,47 +24,70 @@ use crate::verify::{verify_rung, VerifyOutcome};
 const REPO_ROOT: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/../..");
 const REPO_URL: &str = "https://github.com/oklo/malbolge-rungs";
 
+// Design tokens mirror the oklo.org theme (wp-content/themes/oklo/style.css)
+// so the board reads as native when embedded at oklo.org/malbolge/. The
+// prefers-color-scheme block must stay in sync with the theme's, or the
+// iframe clashes for dark-mode visitors.
 const CSS: &str = r#"
 :root {
-  --fg: #1c1c1c; --muted: #737373; --faint: #a3a3a3; --line: #e6e6e6;
-  --bg: #ffffff; --pre-bg: #f7f7f7; --green: #0a7d33; --amber: #96690a;
-  --link: #1d4ed8;
+  --bg: #ffffff; --text: #1c1e21; --text-soft: #55595f; --faint: #a5a29c;
+  --rule: #e3e1dc; --accent: #b8481c; --accent-hover: #8f3411;
+  --code-bg: #f4f2ee; --green: #2e7d3a; --amber: #a06a12;
+  --serif: "Charter", "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --fg: #d6d6d6; --muted: #8a8a8a; --faint: #6b6b6b; --line: #2a2a2a;
-    --bg: #121212; --pre-bg: #1b1b1b; --green: #4fbf74; --amber: #d4a017;
-    --link: #7ea6f4;
+    --bg: #101214; --text: #d6d3cd; --text-soft: #8f8d88; --faint: #6d6b66;
+    --rule: #2a2d31; --accent: #e06a35; --accent-hover: #f08a55;
+    --code-bg: #1a1d20; --green: #7fb069; --amber: #d4a017;
   }
 }
 * { box-sizing: border-box; }
 body {
-  font: 12.5px/1.6 ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas,
-    "Liberation Mono", monospace;
-  color: var(--fg); background: var(--bg);
-  max-width: 66rem; margin: 3rem auto 5rem; padding: 0 1.25rem;
+  margin: 2.5rem auto 4rem; padding: 0 1.5rem; max-width: 66rem;
+  background: var(--bg); color: var(--text);
+  font-family: var(--serif); font-size: 1rem; line-height: 1.6;
+  text-rendering: optimizeLegibility; font-kerning: normal;
 }
-a { color: var(--link); text-decoration: none; }
-a:hover { text-decoration: underline; }
-h1 { font-size: 15px; font-weight: 600; margin: 0 0 .25rem; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-hover); text-decoration: underline;
+          text-underline-offset: .15em; }
+h1 {
+  font-family: var(--sans); font-size: 1.55rem; font-weight: 700;
+  letter-spacing: -0.01em; margin: 0 0 .4rem;
+}
 img.hero {
   display: block; width: 100%; max-width: 58rem; height: auto;
-  border: 1px solid var(--line); margin: .6rem 0 1.4rem;
+  border: 1px solid var(--rule); border-radius: 6px; margin: .6rem auto 1.6rem;
 }
-p.intro { max-width: 58rem; margin: 0 0 1.1rem; text-align: justify; }
-h2 { font-size: 12.5px; font-weight: 600; margin: 2.2rem 0 .6rem;
-     text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
-.sub { color: var(--muted); margin: 0 0 2rem; text-align: justify; max-width: 58rem; }
+p.intro {
+  font-size: 1.0625rem; line-height: 1.65; max-width: 45rem;
+  margin: 0 auto 1.2rem;
+}
+h2 {
+  font-family: var(--sans); font-size: .8rem; font-weight: 600;
+  margin: 2.4rem 0 .7rem; text-transform: uppercase;
+  letter-spacing: .08em; color: var(--text-soft);
+}
+.sub {
+  color: var(--text-soft); max-width: 45rem; margin: 0 auto 2.2rem;
+  font-size: .95rem; line-height: 1.6;
+}
 table { border-collapse: collapse; width: 100%; }
 th {
-  text-align: left; font-weight: 600; font-size: 10.5px;
-  text-transform: uppercase; letter-spacing: .07em; color: var(--muted);
-  padding: .3em .7em .4em 0; border-bottom: 1px solid var(--fg);
-  white-space: nowrap;
+  text-align: left; font-family: var(--sans); font-weight: 600;
+  font-size: .68rem; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--text-soft); padding: .35em .75em .45em 0;
+  border-bottom: 1px solid var(--rule); white-space: nowrap;
 }
-td { padding: .34em .7em .34em 0; border-bottom: 1px solid var(--line);
-     vertical-align: baseline; white-space: nowrap; }
-td.note { color: var(--muted); }
+td {
+  font-family: var(--mono); font-size: .78rem;
+  padding: .4em .75em .4em 0; border-bottom: 1px solid var(--rule);
+  vertical-align: baseline; white-space: nowrap;
+}
+td.note { color: var(--text-soft); }
 td.note .txt {
   display: inline-block; max-width: 11rem; overflow: hidden;
   text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom;
@@ -75,17 +98,36 @@ th.num { text-align: right; }
 .open { color: var(--faint); }
 .unverified { color: var(--amber); }
 .dim { color: var(--faint); }
-p.long { color: var(--fg); max-width: 58rem; }
+p.long { max-width: 45rem; margin: 0 0 1.25em; }
 pre {
-  background: var(--pre-bg); border: 1px solid var(--line);
-  padding: .8rem .9rem; overflow-x: auto; white-space: pre-wrap;
-  word-break: break-all; font-size: 12px; line-height: 1.5;
+  font-family: var(--mono); background: var(--code-bg);
+  padding: 1.1em 1.3em; border-radius: 6px; overflow-x: auto;
+  white-space: pre-wrap; word-break: break-all;
+  font-size: .78rem; line-height: 1.5;
 }
-dl { margin: 0; }
-dt { float: left; clear: left; width: 11rem; color: var(--muted); }
-dd { margin: 0 0 .2rem 11.5rem; }
-footer { margin-top: 3.5rem; padding-top: .8rem; border-top: 1px solid var(--line);
-         color: var(--faint); font-size: 11.5px; }
+dl { margin: 0; font-size: .95rem; }
+dt {
+  float: left; clear: left; width: 11rem;
+  font-family: var(--sans); font-size: .72rem; text-transform: uppercase;
+  letter-spacing: .06em; color: var(--text-soft); padding-top: .18em;
+}
+dd { margin: 0 0 .25rem 11.5rem; }
+footer {
+  margin-top: 3.5rem; padding-top: 1.1rem; border-top: 1px solid var(--rule);
+  font-family: var(--sans); font-size: .8rem; color: var(--text-soft);
+}
+footer a { color: inherit; }
+footer a:hover { color: var(--accent); }
+body > p.dim:first-child {
+  font-family: var(--sans); font-size: .78rem; letter-spacing: .08em;
+  text-transform: uppercase;
+}
+body > p.dim:first-child a { color: var(--text-soft); }
+body > p.dim:first-child a:hover { color: var(--accent); }
+@media (max-width: 44rem) {
+  body { margin-top: 1.5rem; }
+  td.note .txt { max-width: 7rem; }
+}
 "#;
 
 fn esc(s: &str) -> String {
