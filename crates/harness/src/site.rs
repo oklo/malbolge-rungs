@@ -287,7 +287,7 @@ fn index_body(
     generated: &str,
 ) -> String {
     let mut b = String::new();
-    let _ = writeln!(b, "<h1 class=\"board-title\">malbolge</h1>");
+    let _ = writeln!(b, "<h1 class=\"board-title\">the malbolge board</h1>");
     let _ = writeln!(
         b,
         "<img class=\"hero\" src=\"malbolge.jpg\" alt=\"A creature of enciphered \
