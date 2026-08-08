@@ -1,0 +1,22 @@
+name: verify-pr
+
+# Native verification for submissions. Every claimed solution in the PR is
+# re-run on the native VM; the check fails if any claim does not pass.
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Tests
+        run: cargo test
+      - name: Re-verify every claimed solution (native VM, 5 epochs)
+        run: cargo run --release -p harness -- verify-leaderboard --epochs 5
