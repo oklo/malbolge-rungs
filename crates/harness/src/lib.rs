@@ -9,6 +9,7 @@ pub mod hashing;
 pub mod leaderboard;
 pub mod registry;
 pub mod site;
+pub mod trace;
 pub mod types;
 pub mod verify;
 

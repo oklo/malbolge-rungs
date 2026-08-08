@@ -12,6 +12,7 @@ use classic_malbolge::{
 use sha2::Digest as _;
 
 use harness::attempts::{load_attempts, validate_attempts};
+use harness::trace;
 use harness::dispatch::feasibility;
 use harness::generate::{generate_coverage, generate_finite_map, RangeClass, TransformArg};
 use harness::leaderboard::{load_leaderboard, render_markdown, verify_leaderboard, Status};
@@ -73,6 +74,13 @@ enum Command {
         #[arg(long)]
         json: bool,
     },
+    /// Bundle or submit a capture of this session's evaluator calls.
+    /// Enable capture by setting MALBOLGE_RUNGS_TRACE_DIR before running
+    /// verify/execute; see ENVIRONMENT.md ("Leave a trace").
+    Trace {
+        #[command(subcommand)]
+        what: TraceCmd,
+    },
     /// List or validate the structured attempt records in docs/attempts/.
     Attempts {
         #[command(subcommand)]
@@ -118,6 +126,31 @@ enum Command {
         out: String,
         #[arg(long, default_value_t = 3)]
         epochs: u32,
+    },
+}
+
+#[derive(Subcommand)]
+enum TraceCmd {
+    /// Pack the oracle log, an optional transcript, and manifest key=value
+    /// pairs into one submittable JSON bundle.
+    Bundle {
+        /// Trace directory (defaults to $MALBOLGE_RUNGS_TRACE_DIR).
+        #[arg(long)]
+        dir: Option<String>,
+        /// Session transcript file to embed (strongly encouraged — it is the
+        /// reasoning half of the trace).
+        #[arg(long)]
+        transcript: Option<String>,
+        /// Free-form provenance, repeatable: --manifest model=... --manifest tokens=...
+        #[arg(long = "manifest")]
+        manifest: Vec<String>,
+        #[arg(long, default_value = "trace-bundle.json")]
+        out: String,
+    },
+    /// Submit a bundle to the board's private intake.
+    Submit {
+        #[arg(long, default_value = "trace-bundle.json")]
+        bundle: String,
     },
 }
 
@@ -218,6 +251,7 @@ fn run() -> Result<ExitCode> {
             verbose,
             json,
         } => cmd_verify(rung.as_deref(), rung_file.as_deref(), &program, epochs, verbose, json),
+        Command::Trace { what } => cmd_trace(what),
         Command::Attempts { what } => cmd_attempts(what),
         Command::GenerateRung { what } => cmd_generate(what),
         Command::Feasibility {
@@ -318,6 +352,17 @@ fn cmd_execute(program: &str, input_hex: &str) -> Result<ExitCode> {
         "status": format!("{:?}", report.status),
         "backend_kind": format!("{:?}", report.backend_kind),
     });
+    trace::log_oracle_call(serde_json::json!({
+        "cmd": "execute",
+        "input_hex": input_hex.trim(),
+        "program_hex": hex::encode(&bytes),
+        "canonical_sha256": hex::encode(sha2::Sha256::digest(
+            classic_malbolge::canonicalize_fixture_source(&bytes)
+                .unwrap_or_else(|_| bytes.clone()))),
+        "steps": report.steps,
+        "status": format!("{:?}", report.status),
+        "output_hex": hex::encode(&report.output),
+    }));
     println!("{}", serde_json::to_string_pretty(&json)?);
     Ok(ExitCode::SUCCESS)
 }
@@ -353,6 +398,18 @@ fn cmd_verify(
             std::fs::read(program).with_context(|| format!("reading program {program}"))?;
         let outcome = verify_rung(&rung, &bytes, epochs);
         all_passed &= outcome.passed;
+        trace::log_oracle_call(serde_json::json!({
+            "cmd": "verify",
+            "rung": rung.id,
+            "program_hex": hex::encode(&bytes),
+            "canonical_sha256": hex::encode(sha2::Sha256::digest(
+                classic_malbolge::canonicalize_fixture_source(&bytes)
+                    .unwrap_or_else(|_| bytes.clone()))),
+            "epochs": epochs,
+            "passed": outcome.passed,
+            "correct": outcome.epochs.iter().map(|e| e.correct_cases).min(),
+            "total": outcome.epochs.first().map(|e| e.total_cases),
+        }));
 
         if json {
             json_results.push(serde_json::json!({
@@ -438,6 +495,27 @@ fn write_generated(json: String, out: Option<&str>) -> Result<()> {
         None => println!("{json}"),
     }
     Ok(())
+}
+
+fn cmd_trace(what: TraceCmd) -> Result<ExitCode> {
+    match what {
+        TraceCmd::Bundle { dir, transcript, manifest, out } => {
+            let dir = dir
+                .or_else(|| std::env::var(harness::trace::TRACE_DIR_ENV).ok())
+                .context("pass --dir or set MALBOLGE_RUNGS_TRACE_DIR")?;
+            trace::bundle(
+                std::path::Path::new(&dir),
+                transcript.as_deref().map(std::path::Path::new),
+                &manifest,
+                std::path::Path::new(&out),
+            )?;
+            Ok(ExitCode::SUCCESS)
+        }
+        TraceCmd::Submit { bundle } => {
+            let ok = trace::submit(std::path::Path::new(&bundle))?;
+            Ok(if ok { ExitCode::SUCCESS } else { ExitCode::FAILURE })
+        }
+    }
 }
 
 fn cmd_attempts(what: AttemptsCmd) -> Result<ExitCode> {

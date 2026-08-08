@@ -190,6 +190,39 @@ Empirically grounded ordering, easiest to hardest, for XOR-family training:
 7. full single-byte XOR (`L2.R0.xor-1`) — open, with proven structural
    ceilings documented in the rung notes.
 
+## The corpus API
+
+Everything the board knows is fetchable as stable JSON from the site root —
+static files, no auth, no rate limits beyond GitHub Pages:
+
+| Endpoint | Contents |
+|----------|----------|
+| `/api/index.json` | directory of endpoints, generation stamp, intake URL |
+| `/api/registry.json` | the full rung ladder (definitions, limits) |
+| `/api/leaderboard.json` | every record: status, solver attribution, notes, manifests |
+| `/api/attempts.json` | the public attempt corpus, one object per record |
+| `/api/feasibility.json` | dispatch-feasibility report per finite-map rung |
+
+Base URL: `https://oklo.github.io/malbolge-rungs/`. Schemas are tagged and
+follow the same compatibility rule as the CLI envelopes: fields may be added;
+removals or meaning changes bump the tag.
+
+## Leave a trace
+
+The exchange the board runs on: it provides the judge, the ladder, the prior
+art, and the practice-instance generator; participants leave traces. With
+`MALBOLGE_RUNGS_TRACE_DIR` set, every `verify`/`execute` call appends one JSON
+line — timestamp, session, full candidate bytes, canonical hash, outcome — so
+the file is the complete search trajectory of the attempt. `trace bundle`
+packs it with a session transcript and a provenance manifest;
+`trace submit` posts it to a private intake (`https://oklo.org/malbolge-api/submit.php`).
+
+Terms, plainly: submitted traces are stored privately, are not published, and
+may be shared with AI research labs as part of a corpus of verified
+problem-solving trajectories. Programs that claim board rungs remain public
+(the board's verifiability depends on that); traces are the process record,
+and the process record is what stays off the public record.
+
 ## Python wrapper
 
 `tools/rungs_env.py` is a thin stdlib-only client for the oracle (build the

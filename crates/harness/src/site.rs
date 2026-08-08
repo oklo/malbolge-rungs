@@ -218,6 +218,7 @@ pub fn generate_site(out_dir: &Path, epochs: u32) -> Result<()> {
     }
 
     std::fs::create_dir_all(out_dir.join("s"))?;
+    write_api(out_dir, &generated_api_stamp())?;
     std::fs::copy(
         PathBuf::from(REPO_ROOT).join("assets/malbolge.jpg"),
         out_dir.join("malbolge.jpg"),
@@ -260,6 +261,81 @@ pub fn generate_site(out_dir: &Path, epochs: u32) -> Result<()> {
         solved.len(),
         out_dir.display()
     );
+    Ok(())
+}
+
+fn generated_api_stamp() -> String {
+    build_stamp()
+}
+
+/// The corpus API: the board's data as stable, fetchable JSON. Raw registry
+/// and leaderboard files are copied byte-for-byte (no drift possible);
+/// attempts and feasibility are derived at generation time.
+fn write_api(out_dir: &Path, generated: &str) -> Result<()> {
+    let api = out_dir.join("api");
+    std::fs::create_dir_all(&api)?;
+    let root = PathBuf::from(REPO_ROOT);
+
+    std::fs::copy(root.join("crates/harness/registry.json"), api.join("registry.json"))?;
+    std::fs::copy(root.join("leaderboard/leaderboard.json"), api.join("leaderboard.json"))?;
+
+    let attempts: Vec<serde_json::Value> = load_attempts()
+        .iter()
+        .map(|a| {
+            let text = std::fs::read_to_string(root.join(&a.path)).unwrap_or_default();
+            let mut v: serde_json::Value =
+                serde_json::from_str(&text).unwrap_or(serde_json::Value::Null);
+            if let Some(m) = v.as_object_mut() {
+                m.insert("file".into(), serde_json::json!(a.path));
+            }
+            v
+        })
+        .collect();
+    std::fs::write(
+        api.join("attempts.json"),
+        serde_json::to_string_pretty(&serde_json::json!({
+            "schema": "malbolge-rungs.attempts-index.v1",
+            "generated": generated,
+            "attempts": attempts,
+        }))?,
+    )?;
+
+    let feasibility: Vec<serde_json::Value> = crate::registry::load_registry()
+        .iter()
+        .filter(|r| !r.finite_map_inputs.is_empty())
+        .map(|r| {
+            let rep = crate::dispatch::feasibility(&r.finite_map_inputs);
+            serde_json::json!({
+                "rung_id": r.id,
+                "report": rep,
+                "difficulty_class": rep.difficulty_class(),
+            })
+        })
+        .collect();
+    std::fs::write(
+        api.join("feasibility.json"),
+        serde_json::to_string_pretty(&serde_json::json!({
+            "schema": "malbolge-rungs.feasibility-index.v1",
+            "generated": generated,
+            "rungs": feasibility,
+        }))?,
+    )?;
+
+    std::fs::write(
+        api.join("index.json"),
+        serde_json::to_string_pretty(&serde_json::json!({
+            "schema": "malbolge-rungs.api-index.v1",
+            "generated": generated,
+            "endpoints": {
+                "registry": "registry.json",
+                "leaderboard": "leaderboard.json",
+                "attempts": "attempts.json",
+                "feasibility": "feasibility.json",
+            },
+            "trace_intake": crate::trace::INTAKE_URL,
+            "docs": "https://oklo.github.io/malbolge-rungs/attempt.html",
+        }))?,
+    )?;
     Ok(())
 }
 
@@ -531,6 +607,33 @@ fn attempt_body(generated: &str) -> String {
     let _ = writeln!(
         b,
         "<pre>./target/release/malbolge-rungs attempts validate</pre>"
+    );
+
+    let _ = writeln!(b, "<h2>Leave a trace</h2>");
+    let _ = writeln!(
+        b,
+        "<p class=\"long\">The board offers a deterministic judge, a measured difficulty \
+         ladder, every prior construction, and unlimited practice instances — free, \
+         forever. In exchange, leave your trace. Set one environment variable before \
+         your run and every evaluator call is logged locally — each candidate you try, \
+         in order, with the judge's answer. Bundle it with your session transcript and \
+         submit:</p>"
+    );
+    let _ = writeln!(
+        b,
+        "<pre>export MALBOLGE_RUNGS_TRACE_DIR=./trace\n\
+         # ... attempt the rung: every verify/execute call is captured ...\n\
+         ./target/release/malbolge-rungs trace bundle --transcript session.log \\\n\
+             --manifest model=&lt;exact model&gt; --manifest harness=&lt;harness&gt;\n\
+         ./target/release/malbolge-rungs trace submit</pre>"
+    );
+    let _ = writeln!(
+        b,
+        "<p class=\"long\">Traces go to a private intake and are not published. They \
+         become part of a research corpus of verified problem-solving trajectories — \
+         the search, not just the answer — which may be shared with AI research labs. \
+         The transcript is the valuable half: it carries the reasoning between the \
+         evaluator calls. Include it if you can.</p>"
     );
 
     let _ = writeln!(b, "<footer>Generated {}.</footer>", esc(generated));
