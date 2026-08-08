@@ -59,7 +59,7 @@ h1 {
   letter-spacing: -0.01em; margin: 0 0 .4rem;
 }
 img.hero {
-  display: block; width: 100%; max-width: 58rem; height: auto;
+  display: block; width: 100%; max-width: 45rem; height: auto;
   border: 1px solid var(--rule); border-radius: 6px; margin: .6rem auto 1.6rem;
 }
 p.intro {
