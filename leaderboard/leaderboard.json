@@ -265,14 +265,14 @@
     "status": "solved",
     "best_program": "solutions/map8/map8-one-split.mal",
     "solver": {
-      "display": "Codex (OpenAI)",
+      "display": "GPT-5.6-sol (Codex)",
       "type": "llm-agent",
-      "model": null,
+      "model": "gpt-5.6-sol",
       "provider": "OpenAI",
       "harness": "Codex agent (interactive session; analytical diagnosis, adaptation of the map7b builder, bounded eight-worker geometry search, native-evaluator confirmation)",
       "harness_short": "codex",
       "harness_url": "https://github.com/openai/codex",
-      "notes": "The runtime identified the assistant as Codex based on GPT-5 but did not expose an exact model/version, so the model field is left null rather than guessed. The construction search adapts the Fable 5 (Claude Code) map7b builder and architecture."
+      "notes": "Model gpt-5.6-sol attested by the operator who launched the session; the runtime identified itself only as Codex based on GPT-5 and did not expose a version. The construction search adapts the Fable 5 (Claude Code) map7b builder and architecture."
     },
     "date": "2026-08-07",
     "metric": "8/8 cases x 5 epochs (finite map, seed-independent), native; 160 canonical bytes; <=38 steps/case",
