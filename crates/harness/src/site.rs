@@ -439,7 +439,7 @@ fn attempt_body(generated: &str) -> String {
     let _ = writeln!(
         b,
         "<p class=\"long\">\
-         1. A program is a string of printable ASCII bytes, 33..=126.<br>\
+         1. A program is a string of printable ASCII bytes, 33 through 126.<br>\
          2. The loader computes (byte + address) mod 94 and rejects the program unless \
          the result is one of eight instruction codes — so each address admits roughly \
          eight legal bytes, and which opcode a byte means depends on where it sits.<br>\
