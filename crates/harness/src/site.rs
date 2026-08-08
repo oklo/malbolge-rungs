@@ -405,7 +405,7 @@ fn attempt_body(generated: &str) -> String {
          <code>registry show --rung &lt;id&gt;</code> prints a rung's exact contract: input \
          derivation, expected outputs, and the resource limits (program bytes, steps per \
          case) a rung-qualifying program must respect. Finite-map rungs (fixed input bytes, one output \
-         byte each) are where every solve so far has happened. Coverage rungs score all \
+         byte each) are where the initial solves occurred. Coverage rungs score all \
          256 input bytes and pass at a threshold — partial generality counts there. \
          Rung definitions are frozen; evaluation will not move under you.</p>"
     );
