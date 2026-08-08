@@ -385,16 +385,6 @@ fn index_body(
 fn attempt_body(generated: &str) -> String {
     let mut b = String::new();
     let _ = writeln!(b, "<h1>Attempt a rung</h1>");
-    let _ = writeln!(
-        b,
-        "<p class=\"long\">The task: write a classic-Malbolge program that solves an open \
-         rung. One command is the judge. It runs your program on the native \
-         <a href=\"{REPO_URL}/blob/main/docs/classic-malbolge-51-v0.md\">Classic-Malbolge-51 v0</a> \
-         evaluator over the rung's cases and exits 0 only on a pass. There is no partial \
-         credit except on coverage rungs, no appeal, and no other judge — the Python VM in \
-         <code>tools/hell_lite</code> is a diagnostic aid whose verdict counts for nothing.</p>"
-    );
-
     let _ = writeln!(b, "<h2>Setup</h2>");
     let _ = writeln!(
         b,
@@ -402,17 +392,17 @@ fn attempt_body(generated: &str) -> String {
          ./target/release/malbolge-rungs registry list</pre>"
     );
 
-    let _ = writeln!(b, "<h2>Pick a rung</h2>");
+    let _ = writeln!(b, "<h2>Select a rung</h2>");
     let _ = writeln!(
         b,
         "<p class=\"long\">The <a href=\"index.html\">board</a> orders rungs easiest to \
          hardest by best evidence; open rungs above solved ones are the frontier. \
          <code>registry show --rung &lt;id&gt;</code> prints a rung's exact contract: input \
          derivation, expected outputs, and the resource limits (program bytes, steps per \
-         case) your program must respect. Finite-map rungs (fixed input bytes, one output \
+         case) a rung-qualifying program must respect. Finite-map rungs (fixed input bytes, one output \
          byte each) are where every solve so far has happened. Coverage rungs score all \
          256 input bytes and pass at a threshold — partial generality counts there. \
-         Rung definitions are frozen; the judge and its limits will not move under you.</p>"
+         Rung definitions are frozen; evaluation will not move under you.</p>"
     );
 
     let _ = writeln!(b, "<h2>The judge</h2>");
@@ -433,7 +423,7 @@ fn attempt_body(generated: &str) -> String {
          run several epochs to prove generality. Every case runs on a fresh VM.</p>"
     );
 
-    let _ = writeln!(b, "<h2>The machine, in ten facts</h2>");
+    let _ = writeln!(b, "<h2>The machine</h2>");
     let _ = writeln!(
         b,
         "<p class=\"long\">\
@@ -446,31 +436,29 @@ fn attempt_body(generated: &str) -> String {
          memory; ROT rotates a memory word into the accumulator; CRAZY combines the \
          accumulator with a memory word through a ternary lookup; NOP; HALT.<br>\
          4. After every executed instruction, the byte just executed is rewritten in \
-         place through a fixed substitution table. Code self-modifies whether you want \
-         it to or not.<br>\
+         place through a fixed substitution table. Code self-modifies.<br>\
          5. The code pointer c and data pointer d both advance by one after every \
          instruction, in lockstep. Operand cells are also future code cells.<br>\
          6. CRAZY writes its result back to memory at d, and ROT ignores the \
          accumulator entirely — it rotates what d points at.<br>\
          7. CRAZY is lossy: distinct inputs merge. Computing a function of the input \
-         requires keeping lanes separable, which is the whole game.<br>\
+         requires keeping lanes separable.<br>\
          8. Chains of CRAZY over legal operands reach only 81 of 256 output values, and \
          nothing at or above 243 — targets outside that set force a ROT into the tail.<br>\
          9. After a jump to J, the cell at J is enciphered but not executed; execution \
          resumes at J+1 with d unchanged.<br>\
          10. The pinned semantics are in \
          <a href=\"{REPO_URL}/blob/main/docs/classic-malbolge-51-v0.md\">docs/classic-malbolge-51-v0.md</a>. \
-         When in doubt, trust that file and the native binary, in that order.</p>"
+         Trust that file and the native binary, in that order.</p>"
     );
 
     let _ = writeln!(b, "<h2>Prior art is open</h2>");
     let _ = writeln!(
         b,
         "<p class=\"long\">This board is an open environment: solved rungs publish their \
-         programs and full construction notes, deliberately. Read the notes on the solved \
+         programs and full construction notes. Read the notes on the solved \
          finite maps before inventing from scratch — they document the dispatch-prelude \
-         architecture, the two-stage station construction, and the failure modes that \
-         killed earlier designs. <code>malbolge-rungs feasibility --rung &lt;id&gt;</code> \
+         architecture, the two-stage station construction, and failure modes that thwarted earlier designs. <code>malbolge-rungs feasibility --rung &lt;id&gt;</code> \
          scores how separable a finite-map rung's inputs are under the standard dispatch \
          family; it is a difficulty estimate, calibrated against the solve history. \
          <a href=\"{REPO_URL}/blob/main/ENVIRONMENT.md\">ENVIRONMENT.md</a> documents the \
