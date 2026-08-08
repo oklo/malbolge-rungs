@@ -145,6 +145,13 @@ fn esc(s: &str) -> String {
 }
 
 fn page(title: &str, depth: usize, body: &str) -> String {
+    // The board is embedded in an iframe at oklo.org/malbolge/, and external
+    // hosts (github.com) refuse to render inside a frame. Absolute links open
+    // in a new tab; relative (internal) links keep navigating the frame.
+    let body = body.replace(
+        "<a href=\"https://",
+        "<a target=\"_blank\" rel=\"noopener\" href=\"https://",
+    );
     // Subpages get a minimal way back to the board; the index stays clean.
     let back = if title != "malbolge-rungs" {
         format!(
