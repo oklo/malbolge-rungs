@@ -7,7 +7,7 @@
 //! Whether that first stage can *separate* a given input set — give every
 //! input a distinct, usable landing address — is a cheap, deterministic proxy
 //! for how hard the rung is. The map6→map8 evidence: map6 (solved) has
-//! thousands of separating configs, map8 (open) has 39, and the map12-low and
+//! thousands of separating configs, map8 (solved) has 39, and the map12-low and
 //! map16 input sets have zero, meaning this whole dispatch family cannot even
 //! start on them.
 //!
