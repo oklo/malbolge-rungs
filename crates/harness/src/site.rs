@@ -204,6 +204,10 @@ pub fn generate_site(out_dir: &Path, epochs: u32) -> Result<()> {
         out_dir.join("index.html"),
         page("malbolge-rungs", 0, &index_body(&records, &solved, &generated)),
     )?;
+    std::fs::write(
+        out_dir.join("attempt.html"),
+        page("attempt a rung", 0, &attempt_body(&generated)),
+    )?;
     for record in &records {
         let rung = find_rung(&record.rung_id)
             .with_context(|| format!("{}: rung not in registry", record.rung_id))?;
@@ -279,13 +283,7 @@ fn index_body(
     );
     let _ = writeln!(
         b,
-        "<p class=\"sub\">A ladder of Malbolge programming challenges, \
-         adjudicated by a single deterministic ground-truth VM \
-         (<a href=\"{REPO_URL}/blob/main/docs/classic-malbolge-51-v0.md\">Classic-Malbolge-51 v0</a>). \
-         Unsolved rungs are believed to be ordered easiest → hardest (rank is a best-evidence estimate; levels L0–L5 \
-         are the registry's coarse tiers). Every <span class=\"solved\">solved</span> entry \
-         links to the winning program and was re-verified on the native evaluator when this \
-         page was generated.</p>"
+        "<p class=\"sub\"><a href=\"attempt.html\">Attempt a rung.</a></p>"
     );
 
     let _ = writeln!(
@@ -357,6 +355,129 @@ fn index_body(
          Generated {}.</footer>",
         esc(generated)
     );
+    b
+}
+
+/// The instructions page, written for an agent (or person) attempting a
+/// solution: contract first, exact commands, the load-bearing machine facts,
+/// pointers to prior art, and the submission protocol.
+fn attempt_body(generated: &str) -> String {
+    let mut b = String::new();
+    let _ = writeln!(b, "<h1>Attempt a rung</h1>");
+    let _ = writeln!(
+        b,
+        "<p class=\"long\">The task: write a classic-Malbolge program that solves an open \
+         rung. One command is the judge. It runs your program on the native \
+         <a href=\"{REPO_URL}/blob/main/docs/classic-malbolge-51-v0.md\">Classic-Malbolge-51 v0</a> \
+         evaluator over the rung's cases and exits 0 only on a pass. There is no partial \
+         credit except on coverage rungs, no appeal, and no other judge — the Python VM in \
+         <code>tools/hell_lite</code> is a diagnostic aid whose verdict counts for nothing.</p>"
+    );
+
+    let _ = writeln!(b, "<h2>Setup</h2>");
+    let _ = writeln!(
+        b,
+        "<pre>git clone {REPO_URL}\ncd malbolge-rungs\ncargo build --release\n\
+         ./target/release/malbolge-rungs registry list</pre>"
+    );
+
+    let _ = writeln!(b, "<h2>Pick a rung</h2>");
+    let _ = writeln!(
+        b,
+        "<p class=\"long\">The <a href=\"index.html\">board</a> orders rungs easiest to \
+         hardest by best evidence; open rungs above solved ones are the frontier. \
+         <code>registry show --rung &lt;id&gt;</code> prints a rung's exact contract: input \
+         derivation, expected outputs, and the resource limits (program bytes, steps per \
+         case) your program must respect. Finite-map rungs (fixed input bytes, one output \
+         byte each) are where every solve so far has happened. Coverage rungs score all \
+         256 input bytes and pass at a threshold — partial generality counts there. \
+         Rung definitions are frozen; the judge and its limits will not move under you.</p>"
+    );
+
+    let _ = writeln!(b, "<h2>The judge</h2>");
+    let _ = writeln!(
+        b,
+        "<pre># verdict for a rung (exit code 0 = PASS)\n\
+         ./target/release/malbolge-rungs verify --rung &lt;id&gt; --program your.mal --epochs 5\n\n\
+         # machine-readable per-case detail (schema malbolge-rungs.verify.v1)\n\
+         ./target/release/malbolge-rungs verify --rung &lt;id&gt; --program your.mal --json\n\n\
+         # raw single execution, no rung rule\n\
+         ./target/release/malbolge-rungs execute --program your.mal --input-hex 02</pre>"
+    );
+    let _ = writeln!(
+        b,
+        "<p class=\"long\">Finite-map and coverage rungs derive their cases from the rung \
+         definition alone, so one epoch is definitive. Transform rungs hash their input \
+         bytes per case and per epoch — a program that prints a constant cannot pass; \
+         run several epochs to prove generality. Every case runs on a fresh VM.</p>"
+    );
+
+    let _ = writeln!(b, "<h2>The machine, in ten facts</h2>");
+    let _ = writeln!(
+        b,
+        "<p class=\"long\">\
+         1. A program is a string of printable ASCII bytes, 33..=126.<br>\
+         2. The loader computes (byte + address) mod 94 and rejects the program unless \
+         the result is one of eight instruction codes — so each address admits roughly \
+         eight legal bytes, and which opcode a byte means depends on where it sits.<br>\
+         3. The eight instructions: IN reads a byte into the accumulator; OUT emits it \
+         mod 256; JMP sets the code pointer from memory; MOVD sets the data pointer from \
+         memory; ROT rotates a memory word into the accumulator; CRAZY combines the \
+         accumulator with a memory word through a ternary lookup; NOP; HALT.<br>\
+         4. After every executed instruction, the byte just executed is rewritten in \
+         place through a fixed substitution table. Code self-modifies whether you want \
+         it to or not.<br>\
+         5. The code pointer c and data pointer d both advance by one after every \
+         instruction, in lockstep. Operand cells are also future code cells.<br>\
+         6. CRAZY writes its result back to memory at d, and ROT ignores the \
+         accumulator entirely — it rotates what d points at.<br>\
+         7. CRAZY is lossy: distinct inputs merge. Computing a function of the input \
+         requires keeping lanes separable, which is the whole game.<br>\
+         8. Chains of CRAZY over legal operands reach only 81 of 256 output values, and \
+         nothing at or above 243 — targets outside that set force a ROT into the tail.<br>\
+         9. After a jump to J, the cell at J is enciphered but not executed; execution \
+         resumes at J+1 with d unchanged.<br>\
+         10. The pinned semantics are in \
+         <a href=\"{REPO_URL}/blob/main/docs/classic-malbolge-51-v0.md\">docs/classic-malbolge-51-v0.md</a>. \
+         When in doubt, trust that file and the native binary, in that order.</p>"
+    );
+
+    let _ = writeln!(b, "<h2>Prior art is open</h2>");
+    let _ = writeln!(
+        b,
+        "<p class=\"long\">This board is an open environment: solved rungs publish their \
+         programs and full construction notes, deliberately. Read the notes on the solved \
+         finite maps before inventing from scratch — they document the dispatch-prelude \
+         architecture, the two-stage station construction, and the failure modes that \
+         killed earlier designs. <code>malbolge-rungs feasibility --rung &lt;id&gt;</code> \
+         scores how separable a finite-map rung's inputs are under the standard dispatch \
+         family; it is a difficulty estimate, calibrated against the solve history. \
+         <a href=\"{REPO_URL}/blob/main/ENVIRONMENT.md\">ENVIRONMENT.md</a> documents the \
+         full machine interface, including procedural practice instances:</p>"
+    );
+    let _ = writeln!(
+        b,
+        "<pre># unlimited off-board practice targets, deterministic in the seed\n\
+         ./target/release/malbolge-rungs generate-rung finite-map --k 4 --range mixed --seed 1\n\
+         ./target/release/malbolge-rungs verify --rung-file inst.json --program your.mal</pre>"
+    );
+
+    let _ = writeln!(b, "<h2>Submit</h2>");
+    let _ = writeln!(
+        b,
+        "<p class=\"long\">1. Verify natively with <code>--epochs 5</code>. \
+         2. Add your <code>.mal</code> file under <code>solutions/&lt;rung&gt;/</code>. \
+         3. Flip the rung's record in <code>leaderboard/leaderboard.json</code> to \
+         <code>solved</code> with the program path and honest attribution — solver, model, \
+         and harness fields you can evidence; unknown fields stay null rather than \
+         guessed. 4. <code>cargo test</code> and <code>malbolge-rungs verify-leaderboard</code> \
+         must pass. 5. Open a pull request at \
+         <a href=\"{REPO_URL}\">{REPO_URL}</a>. CI re-runs every claimed solution on the \
+         native evaluator and the site cannot deploy with a claim the VM does not \
+         confirm — a submission that passes locally passes everywhere.</p>"
+    );
+
+    let _ = writeln!(b, "<footer>Generated {}.</footer>", esc(generated));
     b
 }
 
