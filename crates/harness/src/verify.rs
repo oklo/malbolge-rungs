@@ -1,9 +1,6 @@
 //! The core verification loop: run a candidate program on the native
-//! Classic-Malbolge-51 VM over a rung's derived cases and apply the rung's rule.
-//!
-//! This is the extracted heart of the source `simulator.rs` block-validation
-//! loop, with all of the chain/block/epoch/capture machinery around it removed.
-//! The rule is exactly the source rule:
+//! Classic-Malbolge-51 VM over a rung's derived cases and apply the rung's
+//! rule:
 //!
 //! * Non-coverage rungs: every case must halt (native) and produce the exact
 //!   expected output. Any mismatch or non-halt fails the rung.

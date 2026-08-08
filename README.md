@@ -24,10 +24,9 @@ instruction. Writing a program that computes even a one-byte transform is hard.
 MAL-51 turns that difficulty into a measurable ladder and asks: *how far up can a
 given program — or a given AI model — climb?*
 
-This repo is a clean, self-contained subset of a larger private project. It
-contains only the evaluator, the rung registry, the verification harness, the
-leaderboard, and the authoring toolkit — none of the surrounding
-chain/coin/mining machinery.
+This repository is self-contained: the evaluator, the rung registry, the
+verification harness, the leaderboard, and the authoring toolkit — everything
+needed to attempt, verify, and submit.
 
 Using the rungs as an RL / evaluation substrate — deterministic reward oracle,
 procedural instance generation, difficulty knobs, contamination policy — is
@@ -124,8 +123,7 @@ python3 -m tools.hell_lite.cli compile-finite-map --pairs 02:53,06:57 --out /tmp
 cargo run -p harness -- verify --rung L2.FM0.xor51-map2 --program /tmp/fm0/candidate.mal
 ```
 
-See [`tools/hell_lite/README.md`](tools/hell_lite/README.md) and
-[`tools/hell_lite/research-notes.md`](tools/hell_lite/research-notes.md).
+See [`tools/hell_lite/README.md`](tools/hell_lite/README.md).
 
 ## Submitting a solution
 
@@ -157,8 +155,7 @@ Solved rungs (re-verified on the native VM):
 | `L2.FM1d.xor51-map7b` | Fable 5 (Claude Code) | `solutions/map7b/map7b-merged-cluster.mal` |
 | `L2.FM2.xor51-map8` | Codex (OpenAI) | `solutions/map8/map8-one-split.mal` |
 
-Everything else is **open** (honestly: most of L2 and all of L3–L5 are
-unsolved). The general single-byte XOR frontier (`L2.R0.xor-1`) and the map12+
+Everything else is **open**: most of L2 and all of L3–L5 are unsolved. The general single-byte XOR frontier (`L2.R0.xor-1`) and the map12+
 finite maps are genuinely hard and unsolved. Run
 `malbolge-rungs leaderboard --render md` for the current full table with notes.
 
@@ -175,14 +172,15 @@ estimate and revisable).
   (IN, OUT, HALT).
 - `solutions/fm0/fm0-map2.mal` — synthesized by HeLL-Lite (reusing its
   codex-007 finite-map specimen).
-- `solutions/fm1/fm1-map4-codex.mal` — authored by Codex in an internal MAL-51
-  match; preserved here as a computational artifact (220 bytes).
+- `solutions/fm1/fm1-map4-codex.mal` — authored by Codex in an internal
+  two-agent evaluation (2026-05-12); preserved as a computational artifact
+  (220 bytes).
 - `solutions/map8/map8-one-split.mal` — authored by Codex with the reproducible
   bounded [geometry search](research/map8_search.py) (160 canonical bytes); see
   the [attempt report](docs/attempts/2026-08-07-codex-map8.md).
 
-The original 29 rungs in the registry (`crates/harness/registry.json`) are
-dumped verbatim from the source MAL-51 project. Difficulty-smoothing rungs
-added since (map7a/map7b and the cov36–cov48 coverage steps) are minted in this
-repo, are purely additive, and say so in their `purpose` fields; existing rung
-ids never change meaning.
+Published rung definitions in the registry (`crates/harness/registry.json`)
+are frozen: families, transforms, inputs, thresholds, and resource limits
+never change once a rung is on the board. Additions (map7a/map7b and the
+cov36–cov48 coverage steps) are purely additive and say so in their `purpose`
+fields.

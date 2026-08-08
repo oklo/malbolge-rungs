@@ -134,6 +134,22 @@ pub fn verify_leaderboard(epochs: u32) -> (Vec<ReverifyResult>, bool) {
                 continue;
             }
         };
+        {
+            let p = std::path::Path::new(&program_rel);
+            let safe = !p.is_absolute()
+                && p.components()
+                    .all(|c| matches!(c, std::path::Component::Normal(_)));
+            if !safe {
+                all_ok = false;
+                results.push(ReverifyResult {
+                    rung_id: record.rung_id.clone(),
+                    program: program_rel,
+                    passed: false,
+                    detail: "best_program must be a repo-relative path".to_string(),
+                });
+                continue;
+            }
+        }
         let rung = match find_rung(&record.rung_id) {
             Some(r) => r,
             None => {

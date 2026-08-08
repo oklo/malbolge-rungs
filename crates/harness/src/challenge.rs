@@ -1,19 +1,18 @@
-//! Challenge-case derivation. This is a faithful port of the source
-//! `crates/mal51/src/challenge.rs` logic, with one deliberate difference: the
-//! challenge *seed*.
+//! Challenge-case derivation.
 //!
-//! In the source project the seed comes from live chain state (parent hash,
-//! height, miner nonce). A standalone harness has no chain, so we derive the
-//! seed deterministically from the rung id and an epoch index. This makes
-//! verification reproducible and re-runnable.
+//! The challenge seed derives deterministically from the rung id and an epoch
+//! index, so verification is reproducible and re-runnable anywhere.
 //!
 //! The seed only affects the hash-derived inputs of the `EchoPrefix`,
 //! `HashPrefix`, and `Transform` families. The `FiniteMap` and
 //! `CoverageTransform` families derive their inputs independently of the seed
-//! (fixed input list / full 256-byte enumeration), so verdicts for those rungs
-//! are identical to the source regardless of seed policy. Running several
-//! epochs exercises several seeds, which guards echo/transform checks against
+//! (fixed input list / full 256-byte enumeration). Running several epochs
+//! exercises several seeds, which guards echo/transform checks against
 //! single-input overfitting.
+//!
+//! The hash domain strings below are frozen protocol constants: their exact
+//! bytes (historical spellings included) define the derived cases, and
+//! renaming them would silently re-derive every hash-dependent rung.
 
 use crate::hashing::{hash_serialized, Hash32};
 use crate::types::{ChallengeCase, Family, Rung, Transform};

@@ -29,5 +29,5 @@ def compare_map(candidate: str | Path, pairs: str, trace_ops: int = 0) -> dict[s
         "likely_constant_output": result.likely_constant_output,
         "per_input_results": rows,
         "status_counts": result.status_counts,
-        "note": "Python diagnostic VM only; official MAL-51 claims need Rust runner/sweep reports.",
+        "note": "Python diagnostic VM only; claims need the native evaluator (malbolge-rungs verify).",
     }

@@ -12,7 +12,7 @@
     "max_steps_per_case": 100000,
     "max_output_len": 0,
     "max_memory_cells": 59049,
-    "purpose": "Historical classic Malbolge Hello World conformance slot. It carries zero competitive work and is not a proof-of-work rung."
+    "purpose": "Historical classic Malbolge Hello World conformance slot: a clean halt with zero output."
   },
   {
     "id": "L0.R1.echo-1-demo",
@@ -27,7 +27,7 @@
     "max_steps_per_case": 32,
     "max_output_len": 1,
     "max_memory_cells": 59049,
-    "purpose": "Bootstrap proof that a real classic Malbolge program can validate one block."
+    "purpose": "Bootstrap slot: proof that a real classic Malbolge program can pass verification."
   },
   {
     "id": "L1.R0.echo-1",
@@ -87,7 +87,7 @@
     "max_steps_per_case": 1024,
     "max_output_len": 2,
     "max_memory_cells": 59049,
-    "purpose": "Require one program to survive multiple block-derived inputs."
+    "purpose": "Require one program to survive multiple hash-derived inputs."
   },
   {
     "id": "L2.R0.xor-1",
@@ -375,7 +375,7 @@
     "max_steps_per_case": 2048,
     "max_output_len": 1,
     "max_memory_cells": 59049,
-    "purpose": "Every block enumerates all 256 single-byte inputs; the candidate must halt with the correct xor51 output on at least 32 of them. Mismatches and non-halting runs on other inputs are tolerated. This makes partial-coverage progress a deterministic rung instead of a per-block lottery."
+    "purpose": "All 256 single-byte inputs are enumerated; the candidate must halt with the correct xor51 output on at least 32 of them. Mismatches and non-halting runs on other inputs are tolerated. This makes partial-coverage progress deterministic and measurable."
   },
   {
     "id": "L2.C0b.xor51-cov36",

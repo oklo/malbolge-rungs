@@ -1,7 +1,7 @@
-//! Domain-separated SHA-256 hashing, byte-for-byte identical to the source
-//! MAL-51 protocol crate. Challenge inputs for the non-finite-map rung
-//! families are derived from these hashes, so reproducing them exactly is what
-//! lets this standalone harness derive the same cases the source chain does.
+//! Domain-separated SHA-256 hashing. Challenge inputs for the non-finite-map
+//! rung families are derived from these hashes; the encoding and domain
+//! strings are frozen protocol constants, so derived cases are stable
+//! forever.
 //!
 //! Canonical encoding: `bincode` with fixint (little-endian) encoding, prefixed
 //! by the domain string and a NUL separator.

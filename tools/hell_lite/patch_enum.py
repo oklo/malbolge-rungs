@@ -1,7 +1,7 @@
 """Bounded source-valid local patch enumeration.
 
 This is a surgical diagnostic tool. It scores local byte edits against an
-extracted finite map with the Python VM and never edits match artifacts.
+explicit finite map with the Python VM and never edits source artifacts.
 """
 
 from __future__ import annotations
@@ -64,7 +64,7 @@ def patch_enum(
     add_pairs = [_select_target(extracted, target, target_index)]
     sites = _sites_from_route(route, program, max_sites=max_sites)
     warnings = [
-        "Python diagnostic VM only; official MAL-51 evidence requires Rust runner/sweep reports.",
+        "Python diagnostic VM only; the native evaluator (malbolge-rungs verify) is the only ground truth.",
         "Patch enumeration is bounded and local; no local patch may exist.",
     ]
     effective_budget = min(max_candidates, DIAGNOSTIC_SCORE_BUDGET)
@@ -309,7 +309,7 @@ def _markdown(report: dict[str, object]) -> str:
     lines = [
         "# Patch Search Report",
         "",
-        "Diagnostic Python VM only; this is not official MAL-51 evidence.",
+        "Diagnostic Python VM only; not native evidence.",
         "",
         f"- compile_status: `{report.get('compile_status')}`",
         f"- candidates tested: `{report.get('candidates_tested')}`",

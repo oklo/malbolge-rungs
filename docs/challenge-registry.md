@@ -6,12 +6,11 @@ of increasing difficulty. Each **rung** defines a challenge *family*, a per-byte
 list of input bytes or a coverage threshold.
 
 The canonical machine-readable ladder is
-[`crates/harness/registry.json`](../crates/harness/registry.json). The original
-29 rungs are dumped verbatim from the source MAL-51 project; the
-difficulty-smoothing rungs added since (map7a, map7b, cov36, cov40, cov48) are
-minted in this repo and marked as such in their `purpose` fields. Published
-rungs are frozen — additions are only ever additive. The harness loads the
-file directly.
+[`crates/harness/registry.json`](../crates/harness/registry.json). Published
+rung definitions are frozen — families, transforms, inputs, thresholds, and
+resource limits never change once a rung is on the board — and additions
+(map7a, map7b, cov36, cov40, cov48) are only ever additive, marked as such in
+their `purpose` fields. The harness loads the file directly.
 
 Beyond the fixed ladder, `malbolge-rungs generate-rung` mints unlimited
 procedural instances in the seed-independent families (FiniteMap,
@@ -63,12 +62,12 @@ Only the native evaluator counts. The hell_lite Python VM is diagnostic-only.
 
 ## Seeds and reproducibility
 
-The source project derives the per-case challenge seed from live chain state. A
-standalone harness has no chain, so it derives the seed deterministically from
-the rung id and an epoch index, making verification reproducible and
-re-runnable. The seed only affects the hash-derived inputs of the `EchoPrefix`,
-`HashPrefix`, and `Transform` families; `FiniteMap` and `CoverageTransform`
-inputs are seed-independent, so their verdicts match the source regardless.
+The per-case challenge seed derives deterministically from the rung id and an
+epoch index, making verification reproducible and re-runnable anywhere. The
+seed only affects the hash-derived inputs of the `EchoPrefix`, `HashPrefix`,
+and `Transform` families; `FiniteMap` and `CoverageTransform` inputs are
+seed-independent. The hash domain strings in the harness are frozen protocol
+constants — their exact bytes define the derived cases.
 Running several epochs (`--epochs N`) exercises several seeds, guarding
 echo/transform checks against single-input overfitting.
 

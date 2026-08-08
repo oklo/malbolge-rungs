@@ -176,8 +176,8 @@
     },
     "date": "2026-05-12",
     "metric": "4/4 cases",
-    "note": "Four-input finite map; won in an internal agent match.",
-    "note_long": "From the internal FM1 match of 2026-05-12. Claude's turn produced a four-lane routing design, crazy(crazy(input,69),49), that put the correct first byte on all four lanes but let two lanes emit a second byte, failing the one-byte output rule. Codex's turn fixed the termination conflict at the shared HALT cell. 220 bytes."
+    "note": "Four-input finite map; won in an internal two-agent evaluation.",
+    "note_long": "From an internal two-agent evaluation, 2026-05-12. Claude's attempt produced a four-lane routing design, crazy(crazy(input,69),49), that put the correct first byte on all four lanes but let two lanes emit a second byte, failing the one-byte output rule. Codex's attempt fixed the termination conflict at the shared HALT cell. 220 bytes."
   },
   {
     "rung_id": "L2.R0c.crazy-mask-1",

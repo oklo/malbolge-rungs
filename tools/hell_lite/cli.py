@@ -14,7 +14,6 @@ from . import (
     finite_map_compile,
     layout,
     loop_sketch,
-    match_extract,
     ops,
     patch_enum,
     routing,
@@ -209,38 +208,6 @@ def cmd_list_specimens(args: argparse.Namespace) -> None:
 def cmd_compare_map(args: argparse.Namespace) -> None:
     report = compare_map.compare_map(args.candidate, args.pairs, trace_ops=args.trace_ops)
     print(json.dumps(report, indent=2, sort_keys=True))
-
-
-def cmd_extract_match_map(args: argparse.Namespace) -> None:
-    if args.turn != "012-codex":
-        raise ValueError("extract-match-map currently supports the Codex 012 focused extractor")
-    extracted = match_extract.extract_codex012_map(args.match_dir, args.rung)
-    match_extract.write_extracted_outputs(extracted, args.out)
-    out_dir = Path(args.out)
-    f0_targets = [
-        {
-            "input_hex": pair.input_hex,
-            "expected_hex": pair.expected_hex,
-            "actual_hex": pair.actual_hex,
-            "status": pair.status,
-            "source_path": pair.source_path,
-            "turn_id": pair.turn_id,
-            "report_type": pair.report_type,
-            "notes": pair.notes,
-        }
-        for pair in extracted.failed_pairs
-        if pair.input_hex.startswith("f05d") and pair.expected_hex == "a1"
-    ]
-    summary = {
-        "out_dir": str(out_dir),
-        "json": str(out_dir / "extracted-map.json"),
-        "markdown": str(out_dir / "extracted-map.md"),
-        "passed_pairs": len(extracted.passed_pairs),
-        "failed_pairs": len(extracted.failed_pairs),
-        "uncertainties": len(extracted.uncertainties),
-        "f05d_a1_failed_target": f0_targets[0] if f0_targets else None,
-    }
-    print(json.dumps(summary, indent=2, sort_keys=True))
 
 
 def cmd_allocate_branch(args: argparse.Namespace) -> None:
@@ -532,12 +499,6 @@ def build_parser() -> argparse.ArgumentParser:
     compare.add_argument("--trace-ops", type=int, default=0)
     compare.set_defaults(func=cmd_compare_map)
 
-    extract = sub.add_parser("extract-match-map")
-    extract.add_argument("--match-dir", required=True)
-    extract.add_argument("--rung", required=True)
-    extract.add_argument("--turn", required=True)
-    extract.add_argument("--out", required=True)
-    extract.set_defaults(func=cmd_extract_match_map)
 
     allocate = sub.add_parser("allocate-branch")
     allocate.add_argument("--map", required=True)

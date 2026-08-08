@@ -1,4 +1,4 @@
-"""Known internal MAL-51 construction specimens."""
+"""Known-good MAL-51 construction specimens; provenance ids name the internal sessions that produced them."""
 
 from __future__ import annotations
 

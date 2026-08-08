@@ -1,10 +1,9 @@
 //! The MAL-51 rung ladder, embedded at compile time from `registry.json`.
 //!
-//! The original 29 rungs in `registry.json` are dumped verbatim from the
-//! source project (`mal51 registry show` for every rung, finer-rung-ladder
-//! revision). Difficulty-smoothing rungs added since (map7a/map7b, the
-//! cov36–cov48 steps) are minted in this repo, marked in their `purpose`
-//! fields, and strictly additive: a published rung id never changes meaning.
+//! Published rung definitions are frozen: families, transforms, inputs,
+//! thresholds, and resource limits never change once a rung is on the board.
+//! Additions (map7a/map7b, the cov36–cov48 steps) are strictly additive and
+//! say so in their `purpose` fields.
 
 use crate::types::Rung;
 

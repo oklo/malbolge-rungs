@@ -129,7 +129,7 @@ def allocate_branch(
             "Allocator is bounded and diagnostic; it does not submit match candidates.",
             "Known successes are scored as hard preservation constraints.",
             "planning_only means no executable improvement was produced.",
-            "Official MAL-51 evidence still requires Rust runner or sweep reports.",
+            "The native evaluator (malbolge-rungs verify) is the only ground truth.",
         ],
     )
     report = result.to_dict()
@@ -224,7 +224,7 @@ def repair_branch(
         ),
         "add_target_achieved": any(isinstance(item, dict) and item.get("add_count") == 1 for item in best_candidates),
         "next_suggested_task": _next_repair_task(route_report, patch_report),
-        "warning": "Python diagnostic VM only; official MAL-51 evidence requires Rust runner/sweep reports.",
+        "warning": "Python diagnostic VM only; the native evaluator (malbolge-rungs verify) is the only ground truth.",
     }
     if out is not None:
         out.mkdir(parents=True, exist_ok=True)
@@ -254,7 +254,7 @@ def _repair_markdown(report: dict[str, object]) -> str:
     lines = [
         "# Branch Repair Report",
         "",
-        "Diagnostic Python VM only; this is not official MAL-51 evidence.",
+        "Diagnostic Python VM only; not native evidence.",
         "",
         f"- compile_status: `{report.get('compile_status')}`",
         f"- target: `{target.get('input_hex')}` -> `{target.get('expected_hex')}`",

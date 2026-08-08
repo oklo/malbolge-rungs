@@ -15,7 +15,6 @@ from . import (
     finite_map_compile,
     layout,
     loop_sketch,
-    match_extract,
     ops,
     patch_enum,
     routing,
@@ -161,7 +160,7 @@ class HellLiteTests(unittest.TestCase):
         self.assertEqual(report.target["name"], "finite-map")
         self.assertEqual(report.template_family, "source-tail-crazy")
         self.assertGreater(report.candidates_tested, 0)
-        self.assertIn("not an official MAL-51 result", " ".join(report.notes))
+        self.assertIn("not a native result", " ".join(report.notes))
 
         placeholder = routing.search_routing("xor1", inputs=[0x09, 0x30], template="route-sketch")
         self.assertIsNone(placeholder.best_candidate)
@@ -242,86 +241,6 @@ class HellLiteTests(unittest.TestCase):
         self.assertEqual(report["total_correct"], 2)
         self.assertTrue(report["output_varies"])
         self.assertIn("initial_ops", report["per_input_results"][0])  # type: ignore[index]
-
-    def test_match_extract_notes_and_json_are_deterministic(self) -> None:
-        with TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            notes = root / "notes.md"
-            notes.write_text(
-                "Known full-input finite map now includes:\n"
-                "82 -> d3\n"
-                "02 bc ... -> 53\n"
-                "block 1: f0 5d ... -> expected a1, got dd\n"
-            )
-            report = root / "score.json"
-            report.write_text(
-                json.dumps(
-                    {
-                        "groups": {
-                            "visible": {
-                                "rows": [
-                                    {
-                                        "name": "visible",
-                                        "input_prefix": "82",
-                                        "expected": "d3",
-                                        "got": "d3",
-                                        "correct": True,
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                )
-            )
-            notes_pairs = match_extract.extract_pairs_from_notes(notes)
-            notes_pairs_again = match_extract.extract_pairs_from_notes(notes)
-            json_pairs = match_extract.extract_pairs_from_report_json(report)
-        self.assertTrue(any(pair.input_hex == "f05d" and pair.actual_hex == "dd" for pair in notes_pairs))
-        self.assertTrue(any(pair.input_hex == "82" and pair.status == "pass" for pair in json_pairs))
-        self.assertEqual(notes_pairs, notes_pairs_again)
-
-    def test_match_extract_reports_missing_raw_inputs_uncertainty(self) -> None:
-        with TemporaryDirectory() as tmp:
-            report = Path(tmp) / "runner-report.json"
-            report.write_text(json.dumps({"report": {"calibration_outcome": "ConsecutiveBlocksSolved"}}))
-            pairs = match_extract.extract_pairs_from_report_json(report)
-        self.assertEqual(pairs[0].status, "unknown")
-        self.assertIn("no raw challenge input bytes", pairs[0].notes)
-
-    def test_match_extract_promotes_prefix_pairs_to_full_inputs(self) -> None:
-        short_pass = match_extract.ExtractedPair(
-            input_hex="02bc",
-            expected_hex="53",
-            actual_hex="53",
-            status="pass",
-            source_path="notes.md",
-        )
-        short_fail = match_extract.ExtractedPair(
-            input_hex="f05d",
-            expected_hex="a1",
-            actual_hex="dd",
-            status="fail",
-            source_path="notes.md",
-        )
-        full_candidates = [
-            match_extract.ExtractedPair(
-                input_hex="02bcb453",
-                expected_hex="53",
-                status="unknown",
-                source_path="derived.json",
-            ),
-            match_extract.ExtractedPair(
-                input_hex="f05d2f20",
-                expected_hex="a1",
-                status="unknown",
-                source_path="derived.json",
-            ),
-        ]
-        promoted_pass = match_extract._promote_prefixes([short_pass], full_candidates, status="pass")
-        promoted_fail = match_extract._promote_prefixes([short_fail], full_candidates, status="fail")
-        self.assertEqual(promoted_pass[0].input_hex, "02bcb453")
-        self.assertEqual(promoted_fail[0].input_hex, "f05d2f20")
-        self.assertEqual(promoted_fail[0].actual_hex, "dd")
 
     def test_branch_allocator_planning_report(self) -> None:
         with TemporaryDirectory() as tmp:

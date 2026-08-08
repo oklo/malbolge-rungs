@@ -66,6 +66,16 @@ pub struct BestCandidate {
     pub claimed_total_cases: u32,
 }
 
+/// A repo-relative path is safe when it is relative and never steps upward.
+/// Everything a record references must live inside the repository.
+fn is_safe_rel_path(p: &str) -> bool {
+    let path = std::path::Path::new(p);
+    !path.is_absolute()
+        && path
+            .components()
+            .all(|c| matches!(c, std::path::Component::Normal(_)))
+}
+
 fn attempts_dir() -> PathBuf {
     PathBuf::from(REPO_ROOT).join("docs/attempts")
 }
@@ -148,16 +158,23 @@ pub fn validate_attempts() -> (Vec<AttemptValidation>, bool) {
             problems.push(format!("unknown rung {}", rec.rung_id));
         }
         if let Some(report) = &rec.report {
-            if !root.join(report).exists() {
+            if !is_safe_rel_path(report) {
+                problems.push(format!("report path {report} must be repo-relative"));
+            } else if !root.join(report).exists() {
                 problems.push(format!("report {report} does not exist"));
             }
         }
         for artifact in &rec.artifacts {
-            if !root.join(artifact).exists() {
+            if !is_safe_rel_path(artifact) {
+                problems.push(format!("artifact path {artifact} must be repo-relative"));
+            } else if !root.join(artifact).exists() {
                 problems.push(format!("artifact {artifact} does not exist"));
             }
         }
         if let (Some(cand), Some(rung)) = (&rec.best_candidate, &rung) {
+            if !is_safe_rel_path(&cand.program) {
+                problems.push(format!("candidate path {} must be repo-relative", cand.program));
+            }
             match std::fs::read(root.join(&cand.program)) {
                 Err(_) => problems.push(format!("candidate {} does not exist", cand.program)),
                 Ok(program) => {

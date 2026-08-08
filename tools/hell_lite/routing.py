@@ -110,7 +110,7 @@ def _search_source_tail(
         notes=[
             f"Ranked bounded search results; max_results={max_results}, max_candidates={max_candidates}.",
             "Source-tail CRAZY is diagnostic scaffolding, not a solution claim.",
-            "This report is not an official MAL-51 result.",
+            "This report is not a native result.",
         ],
         limitations=[
             "Only fixed source-tail CRAZY chains with plantable source bytes are searched.",

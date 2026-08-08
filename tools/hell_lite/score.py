@@ -1,7 +1,7 @@
 """Diagnostic scoring for HeLL-Lite candidates.
 
-The Python VM here is a construction aid. Official MAL-51 results must still be
-produced by the Rust CLI.
+The Python VM here is a construction aid. The native evaluator
+(malbolge-rungs verify) is the only ground truth.
 """
 
 from __future__ import annotations

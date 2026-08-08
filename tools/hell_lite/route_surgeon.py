@@ -1,7 +1,7 @@
 """Trace-guided route diagnosis for finite MAL-51 candidates.
 
 This module uses the local Python diagnostic VM. It is for construction work,
-not official MAL-51 evidence.
+not native evidence.
 """
 
 from __future__ import annotations
@@ -75,7 +75,7 @@ def route_surgeon(
         "failure_inputs": [failure_pair["input_hex"]],
         "traces": [asdict(item) for item in summaries],
         "comparison": comparison,
-        "warning": "Python diagnostic VM only; official MAL-51 evidence requires Rust runner/sweep reports.",
+        "warning": "Python diagnostic VM only; the native evaluator (malbolge-rungs verify) is the only ground truth.",
     }
     if out_dir is not None:
         write_route_surgeon_outputs(report, out_dir)
@@ -354,7 +354,7 @@ def _markdown(report: dict[str, object]) -> str:
     lines = [
         "# Route Surgeon Report",
         "",
-        "Diagnostic Python VM only; this is not official MAL-51 evidence.",
+        "Diagnostic Python VM only; not native evidence.",
         "",
         f"- candidate: `{report.get('candidate_path')}`",
         f"- target: `{target.get('input_hex')}` -> `{target.get('expected_hex')}`",

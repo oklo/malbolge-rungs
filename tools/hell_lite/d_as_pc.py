@@ -131,7 +131,7 @@ def d_as_pc_sketch(kind: str) -> DAsPcReport:
         program=program,
         notes=[
             "D-as-PC sketches are planning artifacts unless compile_status says otherwise.",
-            "Official MAL-51 evidence still requires Rust runner/sweep reports.",
+            "The native evaluator (malbolge-rungs verify) is the only ground truth.",
         ],
     )
 

@@ -1,6 +1,5 @@
 //! MAL-51 rung harness: the rung registry, deterministic challenge-case
-//! derivation, and native-VM verification, extracted from the source MAL-51
-//! project without any of its chain/coin machinery.
+//! derivation, and native-VM verification.
 
 pub mod attempts;
 pub mod challenge;

@@ -577,7 +577,7 @@ fn render_attempts(b: &mut String, attempts: &[&AttemptRecord]) {
             "<tr><td class=\"dim\">{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>",
             esc(&a.date),
             esc(a.solver.as_ref().map(|s| s.display.as_str()).unwrap_or("—")),
-            a.outcome,
+            esc(&a.outcome),
             best,
             links,
         );

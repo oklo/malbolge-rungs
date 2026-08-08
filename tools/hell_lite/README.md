@@ -27,7 +27,6 @@ solved from a Python/hell_lite result alone.
 - Emit D-as-PC planning sketches for input/output/branch layouts.
 - Attempt tiny finite-map compiles and report an explicit `compile_status`.
 - Compare candidate behavior against explicit byte pairs.
-- Extract file-backed finite-map targets from raw MAL-51 match artifacts.
 - Produce bounded branch-allocation planning reports that preserve known
   successes while targeting one specified failing lane.
 - Emit compact diagnostic traces for explicit full-input or one-byte pairs.
@@ -168,8 +167,7 @@ python3 -m tools.hell_lite.cli d-as-pc-sketch \
 
 Attempt a tiny finite-map compile. Reports use `compile_status` values such as
 `executable_candidate`, `diagnostic_candidate_only`, `planning_only`, and
-`failed_constraints`; `planning_only` is an honest construction artifact, not a
-match claim.
+`failed_constraints`; `planning_only` is a construction artifact, not a claim.
 
 ```sh
 python3 -m tools.hell_lite.cli compile-finite-map \
@@ -189,36 +187,20 @@ python3 -m tools.hell_lite.cli compare-map \
   --pairs 02:53,06:57,82:d3
 ```
 
-Extract the Codex 012 xor4096 finite-map frontier from raw match artifacts:
-
-```sh
-python3 -m tools.hell_lite.cli extract-match-map \
-  --match-dir path/to/match-artifacts \
-  --rung L2.R0d.xor-1-len4096 \
-  --turn 012-codex \
-  --out /tmp/hell-lite-codex012-map
-```
-
-This writes `extracted-map.json` and `extracted-map.md`. The extractor reports
-the source path and status for each pair and records uncertainties when raw
-input bytes are missing from an evaluator report.
-
 Attempt a Phase 4 branch-allocation plan from a seed candidate:
 
 ```sh
 python3 -m tools.hell_lite.cli allocate-branch \
-  --map /tmp/hell-lite-codex012-map/extracted-map.json \
-  --seed-candidate path/to/match-artifacts/rungs/L2.R0d.xor-1-len4096/turns/012-codex/candidate.mal \
+  --map path/to/pairs-map.json \
+  --seed-candidate path/to/candidate.mal \
   --add-target f0:a1 \
   --out /tmp/hell-lite-branch-alloc-f0 \
   --max-candidates 50000
 ```
 
-The allocator treats extracted pass rows as hard preservation constraints. It
-may emit `planning_only`; that is useful construction information, not a
-solution claim. If a match target has a full official input vector, the map
-keeps that full hex string even when the CLI target is supplied as a prefix
-such as `f0:a1`.
+The allocator treats known-pass rows in the pairs map as hard preservation
+constraints. It may emit `planning_only`; that is useful construction
+information, not a solution claim.
 
 Compare compact diagnostic traces:
 
@@ -233,36 +215,28 @@ python3 -m tools.hell_lite.cli compare-trace \
 steps, output, JUMP/MOVD targets when available, final `A/C/D`, and a compact
 multi-input divergence summary, but it is not a Rust trace.
 
-Run Phase 5 trace-guided branch repair on the Codex 012 frontier:
+Run Phase 5 trace-guided branch repair against a pairs map:
 
 ```sh
 python3 -m tools.hell_lite.cli route-surgeon \
-  --candidate path/to/match-artifacts/rungs/L2.R0d.xor-1-len4096/turns/012-codex/candidate.mal \
-  --map /tmp/hell-lite-codex012-map/extracted-map.json \
+  --candidate path/to/candidate.mal \
+  --map path/to/pairs-map.json \
   --target-index 0 \
   --max-ops 80 \
-  --out /tmp/hell-lite-route-surgeon-f0
+  --out /tmp/hell-lite-route-surgeon
 
 python3 -m tools.hell_lite.cli patch-enum \
-  --candidate path/to/match-artifacts/rungs/L2.R0d.xor-1-len4096/turns/012-codex/candidate.mal \
-  --map /tmp/hell-lite-codex012-map/extracted-map.json \
+  --candidate path/to/candidate.mal \
+  --map path/to/pairs-map.json \
   --target-index 0 \
-  --route-report /tmp/hell-lite-route-surgeon-f0/route-surgeon-report.json \
-  --out /tmp/hell-lite-patch-enum-f0 \
+  --route-report /tmp/hell-lite-route-surgeon/route-surgeon-report.json \
+  --out /tmp/hell-lite-patch-enum \
   --max-sites 12 \
   --max-edits 2 \
   --max-candidates 50000
-
-python3 -m tools.hell_lite.cli repair-branch \
-  --map /tmp/hell-lite-codex012-map/extracted-map.json \
-  --seed-candidate path/to/match-artifacts/rungs/L2.R0d.xor-1-len4096/turns/012-codex/candidate.mal \
-  --target-index 0 \
-  --out /tmp/hell-lite-repair-branch-f0 \
-  --max-candidates 50000
 ```
 
-For the Codex 012 map, `--target-index 0` is the file-backed
-`f05d... -> a1` failure. These tools are diagnostic only. `patch-enum` may
+`--target-index` selects which failing pair to attack. These tools are diagnostic only. `patch-enum` may
 return `planning_only` with a blocker report; this is useful construction
 evidence, not a solution.
 
@@ -317,9 +291,9 @@ Run the quick smoke check:
 python3 -m tools.hell_lite.cli smoke
 ```
 
-## Safe Commands During A MAL-51 Bout
+## Safe Commands
 
-These commands are intended to be safe for match-turn setup and diagnostics:
+These commands are bounded and safe for scripted or agent use:
 
 - `compile-linear`
 - `validate-layout`
@@ -334,7 +308,6 @@ These commands are intended to be safe for match-turn setup and diagnostics:
 - `d-as-pc-sketch`
 - `compile-finite-map` for two-, three-, and four-value drills
 - `compare-map` on explicit small pair lists
-- `extract-match-map` for read-only extraction from raw match artifacts
 - `allocate-branch` with explicit bounds
 - `compare-trace` with small pair lists
 - `list-specimens`
@@ -345,22 +318,16 @@ These commands are intended to be safe for match-turn setup and diagnostics:
 - `smoke`
 
 Normal unit tests avoid exhaustive searches and should complete quickly. Heavy
-search should never be part of a normal match-turn sanity check.
+search should never be part of a normal sanity check.
 
 ## Phase 4 Finite-Map Allocator
 
-Phase 4 starts turning the Codex 008-012 routed/trampoline trail into explicit
-finite-map tooling. It adds:
+Phase 4 adds explicit finite-map planning tooling:
 
-- `match_extract.py` for file-backed extraction of visible, holdout, blocks=3,
-  passed, failed, and uncertain pairs.
 - `branch_alloc.py` for a source-valid, cycle-aware planning report around a
   seed candidate and one target lane.
 - `trace_compare.py` for compact diagnostic traces over explicit full-input or
   one-byte pairs.
-- `examples/codex012_preserve_plus_f0.json` as the current focused target:
-  preserve Codex 012's known successes and add `f05d... -> a1`.
-
 The allocator is not a full branch-on-read compiler. It does not yet synthesize
 restore/fixup cells, a general layout solver, or a real source-valid table
 router. Its `compile_status` must be respected. `planning_only` means the tool
@@ -375,38 +342,26 @@ and dangerous cells. The patch enumerator searches bounded local edits using
 only legal source bytes, with known successes enforced as hard constraints.
 
 This is not a full branch-on-read compiler, restore/fixup compiler, or general
-layout solver. There is no guarantee that a local patch exists, and no full
-xor1 solution is known. Official evaluation still requires Rust CLI runner,
-sweep, or classic-execute reports.
+layout solver. There is no guarantee that a local patch exists. The native
+evaluator (`malbolge-rungs verify`) is the only ground truth.
 
 ## Heavy Diagnostics
 
 Large searches are allowed only deliberately. Use explicit bounds, checkpoint
-best-so-far artifacts outside the repo or inside a match turn's scratch area,
-and record the command that produced them. Exhaustive source-tail analysis
-requires `--exhaustive --allow-large-search`. Do not confuse HeLL-Lite
-diagnostics with official MAL-51 results. Candidate artifacts from HeLL-Lite
-still require the Rust `classic execute`, MAL-51 runner, or MAL-51 sweep
-reports before any match claim is made.
+best-so-far artifacts outside the repo, and record the command that produced
+them. Exhaustive source-tail analysis requires
+`--exhaustive --allow-large-search`. Do not confuse HeLL-Lite diagnostics with
+native results; a candidate requires `malbolge-rungs verify` before any claim.
 
-## Current Xor4096 Specimens
+## Specimens
 
-The known specimen report includes:
-
-- Codex `005-codex`: 55-byte source-tail CRAZY diagnostic, `3/256` all-byte
-  xor hits, visible failed.
-- Claude `006-claude`: 81-byte source-tail CRAZY diagnostic, `11/256`
-  all-byte xor hits, visible failed.
-- Codex `007-codex`: executable two-input JUMP/routing branch,
-  `0x02 -> 0x53` and `0x06 -> 0x57`, visible failed.
-- Codex `008-codex`: visible plus `5/5` one-block holdout routed construction,
-  blocks=3 failed, all-byte one-input score remained low.
-
-The current diagnostic evidence suggests fixed source-tail CRAZY chains are
-useful for finite-map islands, but this tested family has not produced a
-visible or holdout-passing `xor1` program. The next promising direction is
-JUMP/loop or HeLL/LMAO-style layout construction, not more constant-output or
-fixed source-tail CRAZY polishing.
+`specimens.py` ships known-good construction specimens, listed by
+`list-specimens`. The two-input routed specimen (`codex-007`) is what
+`compile-finite-map` builds on; the source-tail CRAZY diagnostics record how
+far fixed chains reach (a few dozen of 256 XOR outputs at best). Fixed
+source-tail CRAZY chains are useful for finite-map islands; full generality
+needs routed or multi-stage construction — see the solved rungs' notes on the
+board.
 
 ## Phase 2 Layout Layer
 
@@ -443,14 +398,13 @@ New modules:
   `compile_status`.
 - `compare_map.py`: pairwise candidate comparison using the diagnostic Python
   VM.
-- `specimens.py`: repo-owned metadata for Codex/Claude xor4096 specimens.
+- `specimens.py`: repo-owned metadata for known-good specimens.
 
 The first executable finite-map compile target reuses the Codex 007 two-input
 JUMP/routing specimen for `02:53,06:57`. The three-value map
 `02:53,06:57,82:d3` currently produces a planning report unless a seed
-candidate is supplied. That is deliberate: the tool should make construction
-constraints visible before future match turns try to extend Codex 008's sampled
-finite router toward blocks=3.
+candidate is supplied. That is deliberate: the tool makes construction
+constraints visible instead of guessing.
 
 Phase 3 is still not a full LMAO or Nagoya compiler. It has no general
 restore-jump compiler, no complete branch-on-read generator, no real label
@@ -468,11 +422,3 @@ layout solver for reusable loops, and no full byte-wide `xor1` solution.
   sketches, tail CRAZY exploration, routing reports, loop sketches, and
   finite-map diagnostics.
 
-## Next Milestones
-
-- Generate an executable two-value finite map.
-- Generate a four-value finite map.
-- Generate a cat-like input/output loop skeleton.
-- Add restore-cell planning that can become source-valid code.
-- Try `xor1` diagnostic maps.
-- Only then return to a full `xor1` holdout-passing solution.

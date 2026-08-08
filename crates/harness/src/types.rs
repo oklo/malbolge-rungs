@@ -1,8 +1,6 @@
-//! Lean rung model. Deserialized directly from `registry.json`, which is
-//! sourced from the MAL-51 registry so the rung ladder here is
-//! ground-truth-identical to the source project. Only the fields the
-//! verification harness needs are modeled; any extra fields present in the JSON
-//! are ignored by serde.
+//! Lean rung model, deserialized directly from `registry.json` — the
+//! canonical MAL-51 ladder. Only the fields the verification harness needs are
+//! modeled; any extra fields present in the JSON are ignored by serde.
 
 use serde::{Deserialize, Serialize};
 
