@@ -124,7 +124,9 @@ footer a { color: inherit; }
 footer a:hover { color: var(--accent); }
 p.back {
   font-family: var(--sans); font-size: .78rem; letter-spacing: .08em;
-  text-transform: uppercase; margin: 0 0 1.6rem;
+  text-transform: uppercase; margin: 0 0 1.2rem;
+  position: sticky; top: 0; z-index: 10;
+  background: var(--bg); padding: .7rem 0 .55rem;
 }
 p.back a { color: var(--text-soft); }
 p.back a:hover { color: var(--accent); }
