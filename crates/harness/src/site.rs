@@ -414,7 +414,7 @@ fn attempt_body(generated: &str) -> String {
          case) a rung-qualifying program must respect. Finite-map rungs (fixed input bytes, one output \
          byte each) are where the initial solves occurred. Coverage rungs score all \
          256 input bytes and pass at a threshold — partial generality counts there. \
-         Rung definitions are frozen; evaluation will not move under you.</p>"
+         Rung definitions are frozen; evaluation will not shift under you.</p>"
     );
 
     let _ = writeln!(b, "<h2>The judge</h2>");
