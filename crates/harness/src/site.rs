@@ -288,7 +288,7 @@ fn index_body(
          lossy trinary “crazy” operation.</p>\n\
          <p class=\"intro\">Although it has exhibited limited utility in most software \
          development environments, Malbolge provides a \
-         compelling benchmarking framework. There is almost no training data to \
+         compelling benchmarking framework for frontier models and agentic harnesses. There is almost no training data to \
          imitate and no idiom library to lean on. Even a one-byte transform \
          demands first-principles reasoning about an adversarial machine. The empty \
          rungs below await the minds that will solve them.</p>"
