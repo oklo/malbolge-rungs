@@ -60,7 +60,7 @@ h1 {
 }
 h1.board-title {
   /* mirrors the oklo theme's .entry-title, in the reading column */
-  font-size: 2rem; line-height: 1.2; max-width: 45rem; margin: 0 auto 1.1rem;
+  font-size: 1.6rem; line-height: 1.2; max-width: 45rem; margin: 0 auto 1.1rem;
 }
 img.hero {
   display: block; width: 100%; max-width: 45rem; height: auto;
@@ -130,7 +130,7 @@ p.back a { color: var(--text-soft); }
 p.back a:hover { color: var(--accent); }
 @media (max-width: 44rem) {
   body { margin-top: 1.5rem; }
-  h1.board-title { font-size: 1.55rem; }
+  h1.board-title { font-size: 1.3rem; }
   td.note .txt { max-width: 7rem; }
 }
 "#;
