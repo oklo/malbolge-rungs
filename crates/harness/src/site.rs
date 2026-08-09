@@ -521,26 +521,26 @@ fn attempt_body(generated: &str) -> String {
     let _ = writeln!(
         b,
         "<p class=\"long\">\
-         1. A program is a string of printable ASCII bytes, 33 through 126.<br>\
+         1. A program is a string of printable ASCII bytes, 33 through 126. \
          2. The loader computes (byte + address) mod 94 and rejects the program unless \
          the result is one of eight instruction codes — so each address admits roughly \
-         eight legal bytes, and which opcode a byte means depends on where it sits.<br>\
+         eight legal bytes, and which opcode a byte means depends on where it sits. \
          3. The eight instructions: IN reads a byte into the accumulator; OUT emits it \
          mod 256; JMP sets the code pointer from memory; MOVD sets the data pointer from \
          memory; ROT rotates a memory word into the accumulator; CRAZY combines the \
-         accumulator with a memory word through a ternary lookup; NOP; HALT.<br>\
+         accumulator with a memory word through a ternary lookup; NOP; HALT. \
          4. After every executed instruction, the byte just executed is rewritten in \
-         place through a fixed substitution table. Code self-modifies.<br>\
+         place through a fixed substitution table. Code self-modifies. \
          5. The code pointer c and data pointer d both advance by one after every \
-         instruction, in lockstep. Operand cells are also future code cells.<br>\
+         instruction, in lockstep. Operand cells are also future code cells. \
          6. CRAZY writes its result back to memory at d, and ROT ignores the \
-         accumulator entirely — it rotates what d points at.<br>\
+         accumulator entirely — it rotates what d points at. \
          7. CRAZY is lossy: distinct inputs merge. Computing a function of the input \
-         requires keeping lanes separable.<br>\
+         requires keeping lanes separable. \
          8. Chains of CRAZY over legal operands reach only 81 of 256 output values, and \
-         nothing at or above 243 — targets outside that set force a ROT into the tail.<br>\
+         nothing at or above 243 — targets outside that set force a ROT into the tail. \
          9. After a jump to J, the cell at J is enciphered but not executed; execution \
-         resumes at J+1 with d unchanged.<br>\
+         resumes at J+1 with d unchanged. \
          10. The pinned semantics are in \
          <a href=\"{REPO_URL}/blob/main/docs/classic-malbolge-51-v0.md\">docs/classic-malbolge-51-v0.md</a>. \
          Trust that file and the native binary, in that order.</p>"
