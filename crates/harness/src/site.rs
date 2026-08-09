@@ -150,6 +150,19 @@ fn esc(s: &str) -> String {
         .replace('"', "&quot;")
 }
 
+/// A URL safe to place in an `href`. Submitted attribution URLs
+/// (`solver.harness_url`) reach the rendered page; HTML-escaping alone does
+/// not stop a `javascript:` scheme, which would execute on click. Only http(s)
+/// URLs pass; anything else yields `None` and the link is dropped.
+fn safe_url(url: &str) -> Option<String> {
+    let lower = url.trim_start().to_ascii_lowercase();
+    if lower.starts_with("https://") || lower.starts_with("http://") {
+        Some(esc(url))
+    } else {
+        None
+    }
+}
+
 fn page(title: &str, depth: usize, body: &str) -> String {
     // The board is embedded in an iframe at oklo.org/malbolge/, and external
     // hosts (github.com) refuse to render inside a frame. Absolute links open
@@ -577,8 +590,8 @@ fn index_body(
             None => "—".to_string(),
         };
         let harness_cell = match record.solver.as_ref().and_then(|s| s.harness_short.as_ref()) {
-            Some(short) => match record.solver.as_ref().and_then(|s| s.harness_url.as_ref()) {
-                Some(url) => format!("<a href=\"{}\">{}</a>", esc(url), esc(short)),
+            Some(short) => match record.solver.as_ref().and_then(|s| s.harness_url.as_ref()).and_then(|u| safe_url(u)) {
+                Some(url) => format!("<a href=\"{}\">{}</a>", url, esc(short)),
                 None => esc(short),
             },
             None => "—".to_string(),

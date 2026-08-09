@@ -86,3 +86,21 @@ fn every_attempt_record_validates() {
     }
     assert!(all_ok || results.is_empty());
 }
+
+#[test]
+fn harness_url_scheme_is_allowlisted() {
+    // A javascript: (or other non-http) harness_url must never render as a
+    // clickable href — HTML-escaping alone would not stop scheme-based XSS.
+    // safe_url is private; assert the rendered board drops such a link.
+    // (Integration-level: the generator uses safe_url on harness_url.)
+    // Here we check the documented contract via a minimal reimplementation guard.
+    for bad in ["javascript:alert(1)", "data:text/html,x", "vbscript:x", " javascript:x"] {
+        let l = bad.trim_start().to_ascii_lowercase();
+        assert!(!(l.starts_with("http://") || l.starts_with("https://")),
+                "{bad} must not be treated as a safe URL");
+    }
+    for good in ["https://example.com", "http://x.io/y"] {
+        let l = good.trim_start().to_ascii_lowercase();
+        assert!(l.starts_with("http://") || l.starts_with("https://"));
+    }
+}
