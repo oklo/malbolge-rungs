@@ -189,6 +189,35 @@ Empirically grounded ordering, easiest to hardest, for XOR-family training:
 7. full single-byte XOR (`L2.R0.xor-1`) — open, with proven structural
    ceilings documented in the rung notes.
 
+## What this establishes, and what it does not
+
+The native evaluator proves one thing precisely: that a specific program, run
+on the pinned VM, produces a rung's required outputs and halts within the
+limits. Every solved entry on the board is that claim, re-verified. Build on it
+with that scope in mind — three things it does not establish on its own:
+
+- **Which model or harness produced a program.** Solver attribution is
+  evidence-backed where evidence exists and null otherwise, but the model,
+  harness, and budget fields on a record are self-asserted. The VM sees bytes,
+  not who wrote them.
+- **General ability versus test-set fit.** Public rungs use deterministic,
+  reproducible cases, so a program can encode the specific inputs a rung tests.
+  Finite-map and full-coverage rungs are immune — their domain is the entire
+  task — but a few-case transform rung can be passed by a lookup table.
+  Uncontaminated evaluation is exactly what privately seeded `generate-rung`
+  instances are for.
+- **An authentic search trajectory.** A submitted trace proves a candidate
+  executed; it does not prove a distinct agent, a real session, or the
+  reasoning around it. Attempt counts are proof of execution, not
+  Sybil-resistant participation, and provenance is self-asserted (see the
+  aggregate's provenance-tier note).
+
+So the board is a sound program-correctness ladder and a clean source of
+verifiable, ungameable reward. Using it as a frontier-model benchmark means
+supplying the missing evidence yourself: private held-out instances for
+generalization, and your own provenance record for who did what. The verifiable
+core is real; the trust boundary around it is yours to set.
+
 ## The corpus API
 
 Everything the board knows is fetchable as stable JSON from the site root —
