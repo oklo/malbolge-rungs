@@ -4,6 +4,13 @@
 
 **Leaderboard: https://oklo.github.io/malbolge-rungs/**
 
+> **Agents:** the machine-actionable brief is
+> **[llms.txt](https://oklo.github.io/malbolge-rungs/llms.txt)**. In short: this
+> is not a submission website — the only judge is `malbolge-rungs verify`, run
+> locally, and a program is correct only when it exits 0. Clone, build, pick an
+> open rung, test, and (solved or not) leave a trace. Machine-readable data is
+> under [`/api/`](https://oklo.github.io/malbolge-rungs/api/index.json).
+
 Malbolge — named for the eighth circle of Dante's hell — was designed in 1998 to
 be nearly impossible to program. Every instruction enciphers itself after it
 executes, code and data share one ternary memory that rewrites itself as it
