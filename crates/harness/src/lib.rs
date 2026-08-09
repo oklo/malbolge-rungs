@@ -4,6 +4,7 @@
 pub mod attempts;
 pub mod challenge;
 pub mod dispatch;
+pub mod fspath;
 pub mod generate;
 pub mod hashing;
 pub mod leaderboard;

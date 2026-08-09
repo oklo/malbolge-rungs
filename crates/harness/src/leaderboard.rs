@@ -100,10 +100,6 @@ pub fn load_leaderboard() -> Vec<LeaderboardRecord> {
     records
 }
 
-fn resolve(path: &str) -> PathBuf {
-    PathBuf::from(REPO_ROOT).join(path)
-}
-
 /// Outcome of re-verifying a single `solved` record.
 pub struct ReverifyResult {
     pub rung_id: String,
@@ -134,22 +130,25 @@ pub fn verify_leaderboard(epochs: u32) -> (Vec<ReverifyResult>, bool) {
                 continue;
             }
         };
-        {
-            let p = std::path::Path::new(&program_rel);
-            let safe = !p.is_absolute()
-                && p.components()
-                    .all(|c| matches!(c, std::path::Component::Normal(_)));
-            if !safe {
+        // Resolve the submitted path symlink-safely: it must stay inside the
+        // repository, so a committed symlink cannot make verification read
+        // (and the site publish) a file outside the tree.
+        let safe_path = match crate::fspath::resolve_within_repo(
+            std::path::Path::new(REPO_ROOT),
+            &program_rel,
+        ) {
+            Ok(p) => p,
+            Err(detail) => {
                 all_ok = false;
                 results.push(ReverifyResult {
                     rung_id: record.rung_id.clone(),
                     program: program_rel,
                     passed: false,
-                    detail: "best_program must be a repo-relative path".to_string(),
+                    detail,
                 });
                 continue;
             }
-        }
+        };
         let rung = match find_rung(&record.rung_id) {
             Some(r) => r,
             None => {
@@ -163,7 +162,7 @@ pub fn verify_leaderboard(epochs: u32) -> (Vec<ReverifyResult>, bool) {
                 continue;
             }
         };
-        let program = match std::fs::read(resolve(&program_rel)) {
+        let program = match std::fs::read(&safe_path) {
             Ok(bytes) => bytes,
             Err(err) => {
                 all_ok = false;

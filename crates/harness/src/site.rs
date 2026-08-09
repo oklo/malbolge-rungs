@@ -200,7 +200,12 @@ pub fn generate_site(out_dir: &Path, epochs: u32) -> Result<()> {
             .with_context(|| format!("{}: solved record without best_program", record.rung_id))?;
         let rung = find_rung(&record.rung_id)
             .with_context(|| format!("{}: rung not in registry", record.rung_id))?;
-        let program = std::fs::read(PathBuf::from(REPO_ROOT).join(&program_rel))
+        // Symlink-safe: the program bytes are rendered into the published page,
+        // so a committed symlink must not be able to point outside the repo.
+        let safe_path =
+            crate::fspath::resolve_within_repo(Path::new(REPO_ROOT), &program_rel)
+                .map_err(|e| anyhow::anyhow!("{}: {e}", record.rung_id))?;
+        let program = std::fs::read(&safe_path)
             .with_context(|| format!("{}: reading {program_rel}", record.rung_id))?;
         let outcome = verify_rung(&rung, &program, epochs);
         if !outcome.passed {

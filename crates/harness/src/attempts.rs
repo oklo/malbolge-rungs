@@ -66,16 +66,6 @@ pub struct BestCandidate {
     pub claimed_total_cases: u32,
 }
 
-/// A repo-relative path is safe when it is relative and never steps upward.
-/// Everything a record references must live inside the repository.
-fn is_safe_rel_path(p: &str) -> bool {
-    let path = std::path::Path::new(p);
-    !path.is_absolute()
-        && path
-            .components()
-            .all(|c| matches!(c, std::path::Component::Normal(_)))
-}
-
 fn attempts_dir() -> PathBuf {
     PathBuf::from(REPO_ROOT).join("docs/attempts")
 }
@@ -158,40 +148,36 @@ pub fn validate_attempts() -> (Vec<AttemptValidation>, bool) {
             problems.push(format!("unknown rung {}", rec.rung_id));
         }
         if let Some(report) = &rec.report {
-            if !is_safe_rel_path(report) {
-                problems.push(format!("report path {report} must be repo-relative"));
-            } else if !root.join(report).exists() {
-                problems.push(format!("report {report} does not exist"));
+            if let Err(e) = crate::fspath::resolve_within_repo(&root, report) {
+                problems.push(format!("report {e}"));
             }
         }
         for artifact in &rec.artifacts {
-            if !is_safe_rel_path(artifact) {
-                problems.push(format!("artifact path {artifact} must be repo-relative"));
-            } else if !root.join(artifact).exists() {
-                problems.push(format!("artifact {artifact} does not exist"));
+            if let Err(e) = crate::fspath::resolve_within_repo(&root, artifact) {
+                problems.push(format!("artifact {e}"));
             }
         }
         if let (Some(cand), Some(rung)) = (&rec.best_candidate, &rung) {
-            if !is_safe_rel_path(&cand.program) {
-                problems.push(format!("candidate path {} must be repo-relative", cand.program));
-            }
-            match std::fs::read(root.join(&cand.program)) {
-                Err(_) => problems.push(format!("candidate {} does not exist", cand.program)),
-                Ok(program) => {
-                    let outcome = verify_rung(rung, &program, 1);
-                    let ep = &outcome.epochs[0];
-                    if ep.correct_cases != cand.claimed_correct_cases
-                        || ep.total_cases != cand.claimed_total_cases
-                    {
-                        problems.push(format!(
-                            "claimed {}/{} but the native VM observes {}/{}",
-                            cand.claimed_correct_cases,
-                            cand.claimed_total_cases,
-                            ep.correct_cases,
-                            ep.total_cases
-                        ));
+            match crate::fspath::resolve_within_repo(&root, &cand.program) {
+                Err(e) => problems.push(format!("candidate {e}")),
+                Ok(safe_path) => match std::fs::read(&safe_path) {
+                    Err(_) => problems.push(format!("candidate {} does not exist", cand.program)),
+                    Ok(program) => {
+                        let outcome = verify_rung(rung, &program, 1);
+                        let ep = &outcome.epochs[0];
+                        if ep.correct_cases != cand.claimed_correct_cases
+                            || ep.total_cases != cand.claimed_total_cases
+                        {
+                            problems.push(format!(
+                                "claimed {}/{} but the native VM observes {}/{}",
+                                cand.claimed_correct_cases,
+                                cand.claimed_total_cases,
+                                ep.correct_cases,
+                                ep.total_cases
+                            ));
+                        }
                     }
-                }
+                },
             }
         }
         let ok = problems.is_empty();
