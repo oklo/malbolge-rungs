@@ -12,7 +12,7 @@
 
 use std::path::PathBuf;
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use crate::leaderboard::Solver;
 use crate::registry::find_rung;
@@ -22,8 +22,10 @@ const REPO_ROOT: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/../..");
 
 pub const ATTEMPT_SCHEMA: &str = "malbolge-rungs.attempt.v1";
 
-/// One structured attempt record.
-#[derive(Clone, Debug, Deserialize)]
+/// One structured attempt record. Serializing this type is the corpus API's
+/// public DTO: only these known fields are emitted, so unknown fields present
+/// in a submitted record never reach the API.
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AttemptRecord {
     pub schema: String,
     pub rung_id: String,
@@ -53,12 +55,13 @@ pub struct AttemptRecord {
     /// Repo-relative paths of further artifacts (logs, candidate sets, ...).
     #[serde(default)]
     pub artifacts: Vec<String>,
-    /// Record file path (filled at load time, not part of the JSON).
-    #[serde(skip)]
+    /// Record file path (filled at load time; never read from the JSON, but
+    /// emitted as `file` in the API DTO).
+    #[serde(skip_deserializing, rename = "file")]
     pub path: String,
 }
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct BestCandidate {
     /// Repo-relative path of the candidate program.
     pub program: String,

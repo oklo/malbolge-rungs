@@ -7,7 +7,7 @@
 
 use std::path::PathBuf;
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use crate::registry::find_rung;
 use crate::verify::verify_rung;
@@ -30,7 +30,7 @@ pub enum Status {
 /// Granular attribution for whoever produced the winning program, with the
 /// fields benchmarking sites conventionally record. Only evidenced values are
 /// populated; unknown fields stay null rather than being guessed.
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Solver {
     /// Short display name for the leaderboard table, e.g. "GPT-5.5 (Codex)".
     pub display: String,

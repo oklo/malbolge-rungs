@@ -415,18 +415,10 @@ fn write_api(out_dir: &Path, generated: &str) -> Result<()> {
     std::fs::copy(root.join("crates/harness/registry.json"), api.join("registry.json"))?;
     std::fs::copy(root.join("leaderboard/leaderboard.json"), api.join("leaderboard.json"))?;
 
-    let attempts: Vec<serde_json::Value> = load_attempts()
-        .iter()
-        .map(|a| {
-            let text = std::fs::read_to_string(root.join(&a.path)).unwrap_or_default();
-            let mut v: serde_json::Value =
-                serde_json::from_str(&text).unwrap_or(serde_json::Value::Null);
-            if let Some(m) = v.as_object_mut() {
-                m.insert("file".into(), serde_json::json!(a.path));
-            }
-            v
-        })
-        .collect();
+    // Serialize the parsed AttemptRecord structs (the public DTO), not the raw
+    // files: only known fields are emitted, so an unknown field in a submitted
+    // record cannot pass through into the API.
+    let attempts = load_attempts();
     std::fs::write(
         api.join("attempts.json"),
         serde_json::to_string_pretty(&serde_json::json!({
