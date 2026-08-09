@@ -68,7 +68,7 @@ img.hero {
   border: 1px solid var(--rule); border-radius: 6px; margin: .6rem auto 1.6rem;
 }
 p.intro {
-  font-size: 1.0625rem; line-height: 1.65; max-width: 45rem;
+  font-size: 1rem; line-height: 1.65; max-width: 45rem;
   margin: 0 auto 1.2rem;
 }
 h2 {
@@ -80,6 +80,9 @@ h2 {
   color: var(--text-soft); max-width: 45rem; margin: 0 auto 2.2rem;
   font-size: .95rem; line-height: 1.6;
 }
+/* The index "Attempt a rung." line reads as a continuation of the intro, so it
+   takes the intro's size (oklo.org blog body copy), not the small subtitle. */
+.sub.lead { font-size: 1rem; line-height: 1.65; }
 table { border-collapse: collapse; width: 100%; }
 th {
   text-align: left; font-family: var(--sans); font-weight: 600;
@@ -556,26 +559,16 @@ fn index_body(
          demands first-principles reasoning in the face of an adversarial finite-state machine.</p>\n\
          <p class=\"intro\">The empty rungs await the minds that will solve them.</p>"
     );
-    let total = crate::stats::total_attempts(aggregates);
-    if total > 0 {
-        let _ = writeln!(
-            b,
-            "<p class=\"sub\"><a href=\"attempt.html\">Attempt a rung.</a> \
-             {total} attempt{} recorded across the ladder.</p>",
-            if total == 1 { "" } else { "s" }
-        );
-    } else {
-        let _ = writeln!(
-            b,
-            "<p class=\"sub\"><a href=\"attempt.html\">Attempt a rung.</a></p>"
-        );
-    }
+    let _ = writeln!(
+        b,
+        "<p class=\"sub lead\"><a href=\"attempt.html\">Attempt a rung.</a></p>"
+    );
 
     let _ = writeln!(
         b,
         "<table>\n<tr><th class=\"num\">#</th><th>rung</th><th>status</th><th>model</th>\
          <th>harness</th><th>date</th><th class=\"num\">bytes</th>\
-         <th class=\"num\">att</th><th>notes</th></tr>"
+         <th class=\"num\">attempts</th><th>notes</th></tr>"
     );
     for record in records {
         let entry = solved
@@ -610,8 +603,15 @@ fn index_body(
             None => "—".to_string(),
         };
         let date_cell = esc(record.date.as_deref().unwrap_or("—"));
+        // A rung with recorded attempts links its count to the attempts
+        // section of the detail page (the public info an attempt left behind);
+        // a rung with none stays an unlinked em dash.
         let att_cell = match aggregates.get(&record.rung_id) {
-            Some(a) if a.attempts > 0 => a.attempts.to_string(),
+            Some(a) if a.attempts > 0 => format!(
+                "<a href=\"s/{}.html#attempts\">{}</a>",
+                esc(&record.rung_id),
+                a.attempts
+            ),
             _ => "—".to_string(),
         };
         let note = record.note.as_deref().unwrap_or("");
@@ -885,7 +885,7 @@ fn render_attempt_summary(
     if attempts == 0 && !open {
         return;
     }
-    let _ = writeln!(b, "<h2>Attempts</h2>");
+    let _ = writeln!(b, "<h2 id=\"attempts\">Attempts</h2>");
     if attempts == 0 {
         let _ = writeln!(
             b,
