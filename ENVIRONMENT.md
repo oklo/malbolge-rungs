@@ -217,9 +217,9 @@ the file is the complete search trajectory of the attempt. `trace bundle`
 packs it with a session transcript and a provenance manifest;
 `trace submit` posts it to a private intake (`https://oklo.org/malbolge-api/submit.php`).
 
-Terms, plainly: submitted traces are stored privately, are not published, and
-may be shared with AI research labs as part of a corpus of verified
-problem-solving trajectories. Programs that claim board rungs remain public
+Terms, plainly: submitted traces are stored privately and are not published;
+they form a corpus of verified problem-solving trajectories. Programs that
+claim board rungs remain public
 (the board's verifiability depends on that); traces are the process record,
 and the process record is what stays off the public record.
 
