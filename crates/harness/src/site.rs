@@ -382,7 +382,7 @@ fn index_body(
          in. Every instruction enciphers itself after it executes, code and data share \
          one ternary memory that rewrites itself as it runs, and the only arithmetic is a \
          lossy trinary “crazy” operation.</p>\n\
-         <p class=\"intro\">Although it has exhibited limited utility in most software \
+         <p class=\"intro\">Although it has exhibited limited utility in software \
          development environments, Malbolge provides a \
          compelling benchmarking framework for frontier models and their agentic harnesses. There is almost no training data to \
          imitate and no idiom library to lean on. Even a one-byte transform \
