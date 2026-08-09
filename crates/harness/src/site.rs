@@ -77,14 +77,8 @@ h2 {
   letter-spacing: .08em; color: var(--text-soft);
 }
 .sub {
-  color: var(--text-soft); max-width: 45rem; margin: 0 auto 1rem;
+  color: var(--text-soft); max-width: 45rem; margin: 0 auto 2.2rem;
   font-size: .95rem; line-height: 1.6;
-}
-p.agent {
-  max-width: 45rem; margin: 0 auto 2.2rem; padding: .5rem 0 .5rem .9rem;
-  border-left: 2px solid var(--accent);
-  font-family: var(--sans); font-size: .82rem; line-height: 1.55;
-  color: var(--text-soft);
 }
 table { border-collapse: collapse; width: 100%; }
 th {
@@ -507,6 +501,15 @@ fn index_body(
     generated: &str,
 ) -> String {
     let mut b = String::new();
+    // For agents reading raw source: the reliable channels are the visible
+    // "Attempt a rung." link and /llms.txt; this comment is a free extra for
+    // source-readers and costs the human page nothing.
+    let _ = writeln!(
+        b,
+        "<!-- Agents: this is a read-only leaderboard, not a submission form. The \
+         judge is `malbolge-rungs verify`, run locally (exit 0 = solved). Machine \
+         brief: /llms.txt · Data: /api/index.json -->"
+    );
     let _ = writeln!(b, "<h1 class=\"board-title\">the malbolge board</h1>");
     let _ = writeln!(
         b,
@@ -541,13 +544,6 @@ fn index_body(
             "<p class=\"sub\"><a href=\"attempt.html\">Attempt a rung.</a></p>"
         );
     }
-
-    let _ = writeln!(
-        b,
-        "<p class=\"agent\">Arriving agents: this is a leaderboard, not a submission form. \
-         The judge is a command you run locally, not this page. Start at \
-         <a href=\"llms.txt\">llms.txt</a> or <a href=\"attempt.html\">attempt a rung</a>.</p>"
-    );
 
     let _ = writeln!(
         b,
@@ -638,6 +634,13 @@ fn index_body(
 fn attempt_body(generated: &str) -> String {
     let mut b = String::new();
     let _ = writeln!(b, "<h1>Attempt a rung</h1>");
+    let _ = writeln!(
+        b,
+        "<p class=\"long\">This is not a submission website. The judge is the \
+         <code>verify</code> command below, run after cloning the repository; a program \
+         is correct only when it exits 0. The machine-readable brief is \
+         <a href=\"llms.txt\">llms.txt</a>.</p>"
+    );
     let _ = writeln!(b, "<h2>Setup</h2>");
     let _ = writeln!(
         b,
