@@ -231,15 +231,20 @@ pub fn generate_site(out_dir: &Path, epochs: u32) -> Result<()> {
     .context("copying assets/malbolge.jpg")?;
 
     let generated = build_stamp();
+    let attempts = load_attempts();
+    let aggregates = crate::stats::compute_aggregates(&attempts);
     std::fs::write(
         out_dir.join("index.html"),
-        page("the malbolge board", 0, &index_body(&records, &solved, &generated)),
+        page(
+            "the malbolge board",
+            0,
+            &index_body(&records, &solved, &aggregates, &generated),
+        ),
     )?;
     std::fs::write(
         out_dir.join("attempt.html"),
         page("attempt a rung", 0, &attempt_body(&generated)),
     )?;
-    let attempts = load_attempts();
     for record in &records {
         let rung = find_rung(&record.rung_id)
             .with_context(|| format!("{}: rung not in registry", record.rung_id))?;
@@ -251,12 +256,13 @@ pub fn generate_site(out_dir: &Path, epochs: u32) -> Result<()> {
             .iter()
             .filter(|a| a.rung_id == record.rung_id)
             .collect();
+        let agg = aggregates.get(&record.rung_id);
         std::fs::write(
             out_dir.join("s").join(format!("{}.html", record.rung_id)),
             page(
                 &record.rung_id,
                 1,
-                &detail_body(record, &rung, entry, &rung_attempts, &generated),
+                &detail_body(record, &rung, entry, &rung_attempts, agg, &generated),
             ),
         )?;
     }
@@ -326,6 +332,18 @@ fn write_api(out_dir: &Path, generated: &str) -> Result<()> {
         }))?,
     )?;
 
+    let aggregates = crate::stats::compute_aggregates(&load_attempts());
+    std::fs::write(
+        api.join("attempt-stats.json"),
+        serde_json::to_string_pretty(&serde_json::json!({
+            "schema": "malbolge-rungs.attempt-stats.v1",
+            "generated": generated,
+            "note": "Aggregate counts only. No trace contents, candidate bytes, or identities.",
+            "total_attempts": crate::stats::total_attempts(&aggregates),
+            "rungs": aggregates,
+        }))?,
+    )?;
+
     std::fs::write(
         api.join("index.json"),
         serde_json::to_string_pretty(&serde_json::json!({
@@ -335,6 +353,7 @@ fn write_api(out_dir: &Path, generated: &str) -> Result<()> {
                 "registry": "registry.json",
                 "leaderboard": "leaderboard.json",
                 "attempts": "attempts.json",
+                "attempt_stats": "attempt-stats.json",
                 "feasibility": "feasibility.json",
             },
             "trace_intake": crate::trace::INTAKE_URL,
@@ -371,6 +390,7 @@ fn status_cell(record: &LeaderboardRecord) -> &'static str {
 fn index_body(
     records: &[LeaderboardRecord],
     solved: &[(String, SolvedEntry)],
+    aggregates: &std::collections::BTreeMap<String, crate::stats::RungAggregate>,
     generated: &str,
 ) -> String {
     let mut b = String::new();
@@ -394,15 +414,26 @@ fn index_body(
          demands first-principles reasoning in the face of an adversarial finite-state machine.</p>\n\
          <p class=\"intro\">The empty rungs await the minds that will solve them.</p>"
     );
-    let _ = writeln!(
-        b,
-        "<p class=\"sub\"><a href=\"attempt.html\">Attempt a rung.</a></p>"
-    );
+    let total = crate::stats::total_attempts(aggregates);
+    if total > 0 {
+        let _ = writeln!(
+            b,
+            "<p class=\"sub\"><a href=\"attempt.html\">Attempt a rung.</a> \
+             {total} attempt{} recorded across the ladder.</p>",
+            if total == 1 { "" } else { "s" }
+        );
+    } else {
+        let _ = writeln!(
+            b,
+            "<p class=\"sub\"><a href=\"attempt.html\">Attempt a rung.</a></p>"
+        );
+    }
 
     let _ = writeln!(
         b,
         "<table>\n<tr><th class=\"num\">#</th><th>rung</th><th>status</th><th>model</th>\
-         <th>harness</th><th>date</th><th class=\"num\">bytes</th><th>notes</th></tr>"
+         <th>harness</th><th>date</th><th class=\"num\">bytes</th>\
+         <th class=\"num\">att</th><th>notes</th></tr>"
     );
     for record in records {
         let entry = solved
@@ -437,6 +468,10 @@ fn index_body(
             None => "—".to_string(),
         };
         let date_cell = esc(record.date.as_deref().unwrap_or("—"));
+        let att_cell = match aggregates.get(&record.rung_id) {
+            Some(a) if a.attempts > 0 => a.attempts.to_string(),
+            _ => "—".to_string(),
+        };
         let note = record.note.as_deref().unwrap_or("");
         // Link out whenever there is more to read than the compressed cell shows.
         let more = if record.note_long.is_some() || note.len() > 40 {
@@ -449,7 +484,8 @@ fn index_body(
             "<tr><td class=\"num dim\">{0}</td>\
              <td><a href=\"s/{1}.html\">{1}</a></td><td>{2}</td><td>{3}</td><td>{4}</td>\
              <td class=\"dim\">{5}</td><td class=\"num\">{6}</td>\
-             <td class=\"note\"><span class=\"txt\">{7}</span>{8}</td></tr>",
+             <td class=\"num dim\">{7}</td>\
+             <td class=\"note\"><span class=\"txt\">{8}</span>{9}</td></tr>",
             record.rank.map(|r| r.to_string()).unwrap_or_default(),
             esc(&record.rung_id),
             status_cell(record),
@@ -457,6 +493,7 @@ fn index_body(
             harness_cell,
             date_cell,
             bytes_cell,
+            att_cell,
             esc(note),
             more,
         );
@@ -688,11 +725,51 @@ fn render_attempts(b: &mut String, attempts: &[&AttemptRecord]) {
     let _ = writeln!(b, "</table>");
 }
 
+/// Aggregate attempt headline: shown on every open rung (a `0 recorded`
+/// invitation included), and on solved rungs once attempts exist.
+fn render_attempt_summary(
+    b: &mut String,
+    open: bool,
+    agg: Option<&crate::stats::RungAggregate>,
+) {
+    let attempts = agg.map(|a| a.attempts).unwrap_or(0);
+    if attempts == 0 && !open {
+        return;
+    }
+    let _ = writeln!(b, "<h2>Attempts</h2>");
+    if attempts == 0 {
+        let _ = writeln!(
+            b,
+            "<p class=\"long\">None recorded yet. \
+             <a href=\"../attempt.html\">Be the first</a> — solved or not, a recorded \
+             attempt earns a mark here.</p>"
+        );
+        return;
+    }
+    let mut parts = vec![format!(
+        "{attempts} recorded attempt{}",
+        if attempts == 1 { "" } else { "s" }
+    )];
+    if let Some(best) = agg.and_then(|a| a.best_fragment()) {
+        parts.push(format!("best {best} native"));
+    }
+    if let Some(latest) = agg.and_then(|a| a.latest.as_deref()) {
+        parts.push(format!("latest {latest}"));
+    }
+    let _ = writeln!(
+        b,
+        "<p class=\"long\">{}. Counts include privately submitted traces; \
+         <a href=\"../attempt.html\">details on submitting</a>.</p>",
+        parts.join(" · ")
+    );
+}
+
 fn detail_body(
     record: &LeaderboardRecord,
     rung: &Rung,
     entry: Option<&SolvedEntry>,
     attempts: &[&AttemptRecord],
+    aggregate: Option<&crate::stats::RungAggregate>,
     generated: &str,
 ) -> String {
     let mut b = String::new();
@@ -861,9 +938,11 @@ fn detail_body(
             esc(record.best_program.as_deref().unwrap_or("")),
             entry.outcome.epochs.len()
         );
+        render_attempt_summary(&mut b, false, aggregate);
         render_attempts(&mut b, attempts);
     } else {
         render_notes(&mut b, record);
+        render_attempt_summary(&mut b, true, aggregate);
         render_attempts(&mut b, attempts);
         let _ = writeln!(
             b,

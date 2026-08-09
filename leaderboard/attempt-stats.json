@@ -1,0 +1,6 @@
+{
+  "schema": "malbolge-rungs.attempt-stats.v1",
+  "generated": "2026-08-09T19:56:49Z",
+  "note": "Per-rung counts distilled from privately submitted traces. Numbers only.",
+  "rungs": {}
+}

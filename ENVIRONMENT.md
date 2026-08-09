@@ -200,6 +200,7 @@ static files, no auth, no rate limits beyond GitHub Pages:
 | `/api/registry.json` | the full rung ladder (definitions, limits) |
 | `/api/leaderboard.json` | every record: status, solver attribution, notes, manifests |
 | `/api/attempts.json` | the public attempt corpus, one object per record |
+| `/api/attempt-stats.json` | per-rung aggregate: attempts, best verified score, latest date |
 | `/api/feasibility.json` | dispatch-feasibility report per finite-map rung |
 
 Base URL: `https://oklo.github.io/malbolge-rungs/`. Schemas are tagged and
