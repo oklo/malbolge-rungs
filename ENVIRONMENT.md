@@ -171,10 +171,9 @@ For runs you intend to report as a benchmark rather than an experiment:
 `docs/attempts/README.md`) is a growing set of structured attempt records:
 method summary, free-form budget and manifest, and optionally a best-candidate
 program with its claimed per-case score. Claimed scores are re-run on the
-native VM in CI and must match exactly, so unsolved traces carry the same
-evidentiary weight as leaderboard solves. For labs, this is the rare half of
-the data: verified negative trajectories with their consumed budgets, in a
-domain with no pretraining corpus. `malbolge-rungs attempts list` and
+native VM in CI and must match exactly, so unsolved records carry the same
+evidentiary weight as leaderboard solves: verified negative results with
+their consumed budgets, in a domain with no pretraining corpus. `malbolge-rungs attempts list` and
 `attempts validate` are the machine interface.
 
 ## A curriculum that matches the measured difficulty ladder

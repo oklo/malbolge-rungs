@@ -127,12 +127,16 @@ See [`tools/hell_lite/README.md`](tools/hell_lite/README.md).
 
 ## Submitting a solution
 
-1. Author a program and verify it natively:
-   `malbolge-rungs verify --rung <id> --program <file> --epochs 5`.
-2. Drop the `.mal` file under `solutions/<rung>/`.
-3. Add/flip its record in `leaderboard/leaderboard.json` to `solved` with the
-   program path, solver attribution, and metric.
-4. Run `malbolge-rungs verify-leaderboard` — it must pass.
+The canonical protocol lives on the board's
+[attempt page](https://oklo.github.io/malbolge-rungs/attempt.html). In short:
+verify natively (one epoch is definitive for finite-map and coverage rungs;
+`--epochs 5` on transform and hash rungs), add the `.mal` under
+`solutions/<rung>/`, flip the leaderboard record with honest attribution and a
+run manifest, add an attempt report under `docs/attempts/`, make sure
+`cargo test` and `malbolge-rungs verify-leaderboard` pass, and open a pull
+request. CI re-runs every claim on the native evaluator. Unsuccessful attempts
+are welcome through the same path — see the attempt page.
+
 
 ## Leaderboard (snapshot)
 

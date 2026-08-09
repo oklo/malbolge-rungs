@@ -159,7 +159,7 @@ fn page(title: &str, depth: usize, body: &str) -> String {
         "<a target=\"_blank\" rel=\"noopener\" href=\"https://",
     );
     // Subpages get a minimal way back to the board; the index stays clean.
-    let back = if title != "malbolge-rungs" {
+    let back = if title != "the malbolge board" {
         format!(
             "<p class=\"back\"><a href=\"{}index.html\">&larr; board</a></p>\n",
             "../".repeat(depth)
@@ -228,7 +228,7 @@ pub fn generate_site(out_dir: &Path, epochs: u32) -> Result<()> {
     let generated = build_stamp();
     std::fs::write(
         out_dir.join("index.html"),
-        page("malbolge-rungs", 0, &index_body(&records, &solved, &generated)),
+        page("the malbolge board", 0, &index_body(&records, &solved, &generated)),
     )?;
     std::fs::write(
         out_dir.join("attempt.html"),
