@@ -152,14 +152,35 @@ fn esc(s: &str) -> String {
 
 /// A URL safe to place in an `href`. Submitted attribution URLs
 /// (`solver.harness_url`) reach the rendered page; HTML-escaping alone does
-/// not stop a `javascript:` scheme, which would execute on click. Only http(s)
-/// URLs pass; anything else yields `None` and the link is dropped.
+/// not stop a `javascript:` scheme, which would execute on click. Only https
+/// URLs pass (every legitimate harness home is https); anything else yields
+/// `None` and the link is dropped.
 fn safe_url(url: &str) -> Option<String> {
-    let lower = url.trim_start().to_ascii_lowercase();
-    if lower.starts_with("https://") || lower.starts_with("http://") {
+    if url.trim_start().to_ascii_lowercase().starts_with("https://") {
         Some(esc(url))
     } else {
         None
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::safe_url;
+
+    #[test]
+    fn safe_url_allows_only_https() {
+        assert!(safe_url("https://github.com/oklo").is_some());
+        assert!(safe_url("  https://x.io").is_some()); // leading space tolerated
+        for bad in [
+            "javascript:alert(1)",
+            "http://example.com",          // non-TLS dropped
+            "data:text/html,<script>x",
+            "vbscript:x",
+            "HTTPS\u{0009}://x",           // tab-obfuscated scheme
+            "",
+        ] {
+            assert!(safe_url(bad).is_none(), "{bad:?} must be dropped");
+        }
     }
 }
 
