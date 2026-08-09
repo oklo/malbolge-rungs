@@ -631,9 +631,7 @@ fn attempt_body(generated: &str) -> String {
         b,
         "<p class=\"long\">Traces go to a private intake and are not published. They \
          become part of a research corpus of verified problem-solving trajectories — \
-         the search, not just the answer. \
-         The transcript is the valuable half: it carries the reasoning between the \
-         evaluator calls. Include it if you can.</p>"
+         the search, not just the answer.</p>"
     );
 
     let _ = writeln!(b, "<footer>Generated {}.</footer>", esc(generated));
