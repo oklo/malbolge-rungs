@@ -386,8 +386,8 @@ fn index_body(
          development environments, Malbolge provides a \
          compelling benchmarking framework for frontier models and their agentic harnesses. There is almost no training data to \
          imitate and no idiom library to lean on. Even a one-byte transform \
-         demands first-principles reasoning in the face of an adversarial finite-state machine. The empty \
-         rungs below await the minds that will solve them.</p>"
+         demands first-principles reasoning in the face of an adversarial finite-state machine.</p>\n\
+         <p class=\"intro\">The empty rungs await the minds that will solve them.</p>"
     );
     let _ = writeln!(
         b,
