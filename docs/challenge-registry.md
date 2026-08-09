@@ -75,7 +75,7 @@ echo/transform checks against single-input overfitting.
 
 | Rung | Level | Family | Transform | Cases | Max program | Notes |
 |------|-------|--------|-----------|-------|-------------|-------|
-| `L0.R0.hello-world-genesis` | 0 | EchoPrefix | Identity | 1 | 256 | 0-byte output slot |
+| `L0.R0.hello-world` | 0 | EchoPrefix | Identity | 1 | 256 | 0-byte output slot |
 | `L0.R1.echo-1-demo` | 0 | EchoPrefix | Identity | 1 | 64 | |
 | `L1.R0.echo-1` | 1 | EchoPrefix | Identity | 1 | 64 | |
 | `L1.R1.echo-2` | 1 | EchoPrefix | Identity | 1 | 128 | |

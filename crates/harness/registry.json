@@ -1,7 +1,7 @@
 [
   {
-    "id": "L0.R0.hello-world-genesis",
-    "title": "Hello World genesis artifact",
+    "id": "L0.R0.hello-world",
+    "title": "Hello World conformance slot",
     "level": 0,
     "status": "Draft",
     "family": "EchoPrefix",

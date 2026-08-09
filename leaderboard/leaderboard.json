@@ -1,9 +1,9 @@
 [
   {
-    "rung_id": "L0.R0.hello-world-genesis",
+    "rung_id": "L0.R0.hello-world",
     "rank": 1,
     "status": "solved",
-    "best_program": "solutions/genesis/halt-no-output.mal",
+    "best_program": "solutions/hello-world/halt-no-output.mal",
     "solver": {
       "display": "QC (canonical)",
       "type": "canonical",
