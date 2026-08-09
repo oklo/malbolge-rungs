@@ -40,23 +40,43 @@ fn session_id() -> String {
 
 /// Append one oracle-call record when tracing is enabled. Failures to write
 /// the trace never affect the verification result.
+/// Restrict a path to owner-only (0700 dir / 0600 file). Traces hold candidate
+/// programs and transcripts; on a shared machine they must not be world- or
+/// group-readable regardless of the process umask. No-op off Unix.
+fn lock_down(path: &Path) {
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        if let Ok(meta) = std::fs::metadata(path) {
+            let mode = if meta.is_dir() { 0o700 } else { 0o600 };
+            let _ = std::fs::set_permissions(path, std::fs::Permissions::from_mode(mode));
+        }
+    }
+}
+
 pub fn log_oracle_call(record: serde_json::Value) {
     let Ok(dir) = std::env::var(TRACE_DIR_ENV) else {
         return;
     };
     let dir = PathBuf::from(dir);
     let _ = std::fs::create_dir_all(&dir);
+    lock_down(&dir);
     let mut obj = record;
     if let Some(map) = obj.as_object_mut() {
         map.insert("ts".into(), serde_json::json!(now_iso()));
         map.insert("session".into(), serde_json::json!(session_id()));
     }
-    if let Ok(mut f) = std::fs::OpenOptions::new()
-        .create(true)
-        .append(true)
-        .open(dir.join("oracle-log.jsonl"))
+    let mut opts = std::fs::OpenOptions::new();
+    opts.create(true).append(true);
+    #[cfg(unix)]
     {
+        use std::os::unix::fs::OpenOptionsExt;
+        opts.mode(0o600);
+    }
+    let log = dir.join("oracle-log.jsonl");
+    if let Ok(mut f) = opts.open(&log) {
         let _ = writeln!(f, "{}", obj);
+        lock_down(&log);
     }
 }
 
@@ -105,6 +125,7 @@ pub fn bundle(
     let text = serde_json::to_string(&bundle)?;
     let sha = hex::encode(Sha256::digest(text.as_bytes()));
     std::fs::write(out, &text).with_context(|| format!("writing {}", out.display()))?;
+    lock_down(out);
     println!(
         "bundle: {} calls, {} bytes, sha256 {} -> {}",
         bundle["oracle_calls"].as_array().map(|a| a.len()).unwrap_or(0),
