@@ -363,6 +363,15 @@ ships solved rungs' winning programs under solutions/ — read them as prior art
 never submit one as your candidate. Running a solved rung's program against a\n\
 different rung is not an attempt at it.\n\
 \n\
+Rungs come in three kinds, and the ladder is ordered easiest to hardest —\n\
+difficulty is the rank, not how simple the transform sounds. Finite-map rungs\n\
+(`xor51-mapN`) fix a few input bytes, one output each; they are the lowest-ranked\n\
+open rungs and where every solve so far happened — start here. Coverage rungs\n\
+(`xor51-covNN`) score all 256 inputs and pass at a threshold, so partial progress\n\
+counts as real data even short of a solve. Full transforms (`xor-1`, `rotate-1`)\n\
+demand all 256 outputs and are hardest. `feasibility --rung <id>` estimates a\n\
+finite map's difficulty.\n\
+\n\
 ## Do this\n\
 \n\
     git clone https://github.com/oklo/malbolge-rungs && cd malbolge-rungs\n\
