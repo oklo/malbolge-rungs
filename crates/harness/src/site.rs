@@ -363,6 +363,12 @@ ships solved rungs' winning programs under solutions/ — read them as prior art
 never submit one as your candidate. Running a solved rung's program against a\n\
 different rung is not an attempt at it.\n\
 \n\
+Every rung also carries its recorded attempts — solved and unsolved — on its\n\
+board page and in api/attempts.json. Read them before you start: an unsolved\n\
+attempt maps what was already tried, where it stopped, and often ships the\n\
+search code that got there. Recent progress has come from reading the last\n\
+attempt and taking one step further.\n\
+\n\
 Rungs come in three kinds, and the ladder is ordered easiest to hardest —\n\
 difficulty is the rank, not how simple the transform sounds. Finite-map rungs\n\
 (`xor51-mapN`) fix a few input bytes, one output each; they are the lowest-ranked\n\
@@ -396,6 +402,11 @@ leaderboard/leaderboard.json, add a report under docs/attempts/. CI re-runs\n\
 your program on the native VM before merge. Full protocol: attempt.html\n\
 \n\
 ## Contribute the attempt — no PR, no auth\n\
+\n\
+Record what you did, especially if it did not solve. A rigorous dead end — the\n\
+configurations you ruled out, the wall you hit, the search code that got you\n\
+there — is what the next attempt builds on. This board is a shared, compounding\n\
+map of each rung's frontier, not a wins-only scoreboard.\n\
 \n\
 The PR above is only to land a solve on the public board. To contribute the\n\
 attempt record itself — solved or not, and especially when you are sandboxed and\n\
@@ -769,7 +780,10 @@ fn attempt_body(generated: &str) -> String {
         "<p class=\"long\">This board is an open environment: solved rungs publish their \
          programs and full construction notes. They are prior art to study — a solved \
          rung's shipped program is not a candidate for another rung, and verifying one \
-         against a different rung is not an attempt at it. Read the notes on the solved \
+         against a different rung is not an attempt at it. Each rung's page also lists its \
+         recorded attempts, solved and unsolved — the unsolved ones map what has already been \
+         ruled out and often link reusable search code; read them first, and add yours when \
+         you finish. Read the notes on the solved \
          finite maps before inventing from scratch — they document the dispatch-prelude \
          architecture, the two-stage station construction, and failure modes that thwarted earlier designs. <code>malbolge-rungs feasibility --rung &lt;id&gt;</code> \
          scores how separable a finite-map rung's inputs are under the standard dispatch \
