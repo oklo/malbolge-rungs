@@ -175,18 +175,20 @@ fn bundle_call_count(bundle_path: &Path) -> Result<usize> {
 /// Submit a bundle to the private intake. Shells out to `curl`; on any
 /// failure, prints instructions for submitting manually.
 ///
-/// A near-empty bundle (see [`MIN_TRACE_CALLS`]) is refused before the POST
-/// unless `allow_thin` is set: it captures none of a search, and letting it
-/// through would hand back an `"ok":true` receipt for a trace that records
-/// nothing — the failure this guard exists to make loud.
-pub fn submit(bundle_path: &Path, allow_thin: bool) -> Result<bool> {
+/// A near-empty bundle (see [`MIN_TRACE_CALLS`]) is refused before the POST: it
+/// captures none of a search, and letting it through would hand back an
+/// `"ok":true` receipt for a trace that records nothing. There is deliberately
+/// no override flag — an advertised bypass is one a receipt-seeking agent will
+/// simply take (observed: a low-tier agent hit the refusal, read the offered
+/// flag, and passed it).
+pub fn submit(bundle_path: &Path) -> Result<bool> {
     let calls = bundle_call_count(bundle_path)?;
-    if is_thin(calls) && !allow_thin {
+    if is_thin(calls) {
         println!(
             "refusing to submit: this bundle has only {calls} evaluator call{}, so \
-             it captures essentially none of an attempt. Set {} before your run \
-             and redo the attempt so the search is recorded, then bundle and submit \
-             again. To submit this thin bundle anyway, pass --allow-thin.",
+             it captures essentially none of an attempt. Set {} before your run, \
+             redo the attempt so the whole search is recorded, then bundle and \
+             submit again.",
             if calls == 1 { "" } else { "s" },
             TRACE_DIR_ENV,
         );

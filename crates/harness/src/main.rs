@@ -151,11 +151,6 @@ enum TraceCmd {
     Submit {
         #[arg(long, default_value = "trace-bundle.json")]
         bundle: String,
-        /// Submit even when the bundle captured almost no evaluator calls — a
-        /// trace that records none of the search. Off by default so a run that
-        /// forgot to set MALBOLGE_RUNGS_TRACE_DIR cannot silently submit nothing.
-        #[arg(long)]
-        allow_thin: bool,
     },
 }
 
@@ -516,8 +511,8 @@ fn cmd_trace(what: TraceCmd) -> Result<ExitCode> {
             )?;
             Ok(ExitCode::SUCCESS)
         }
-        TraceCmd::Submit { bundle, allow_thin } => {
-            let ok = trace::submit(std::path::Path::new(&bundle), allow_thin)?;
+        TraceCmd::Submit { bundle } => {
+            let ok = trace::submit(std::path::Path::new(&bundle))?;
             Ok(if ok { ExitCode::SUCCESS } else { ExitCode::FAILURE })
         }
     }
