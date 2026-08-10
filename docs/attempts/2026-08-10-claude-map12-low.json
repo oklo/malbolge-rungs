@@ -1,0 +1,62 @@
+{
+  "artifacts": [
+    "research/map12-low/sweep.c",
+    "research/map12-low/solve.c",
+    "research/map12-low/maxtable.c",
+    "research/map12-low/chain.c",
+    "research/map12-low/build.py",
+    "docs/attempts/2026-08-10-claude-map12-low.md",
+    "docs/attempts/2026-08-10-claude-map12-low.best.mal"
+  ],
+  "best_candidate": {
+    "claimed_correct_cases": 10,
+    "claimed_total_cases": 12,
+    "program": "docs/attempts/2026-08-10-claude-map12-low.best.mal"
+  },
+  "budget": {
+    "best_max_count_buildable": 10,
+    "best_max_count_found": 11,
+    "candidate_program_bytes": 2171,
+    "candidate_steps": 858,
+    "ceiling_note": "Nothing here establishes a ceiling. 11/12 is proven reachable by an exact DP and blocked only by code layout; 12/12 is UNSAT only for consecutive-cell walks with K <= 8, which is a strict subset of the architecture.",
+    "configs_jointly_sat": 0,
+    "configs_with_all_twelve_lanes_live": 83,
+    "dispatch_configs_screened": 0,
+    "dispatch_family_separating_configs_reported_by_tool": 0,
+    "joint_dp_is_exact": true,
+    "table_depths_swept": "K = 2..20 for per-lane liveness, K <= 8 for the exact joint DP, K <= 5 for the full max-count sweep",
+    "table_offsets_swept": "K0 = 81..3600 step 81 (all multiples of 81 that fit under the 4096-byte program cap)",
+    "token_cap": 200000,
+    "wall_cap_seconds": 1800,
+    "what_more_budget_would_have_bought": "This rung is a budget problem on top of a real but narrow structural constraint, and the next levers are concrete rather than exploratory. (1) +1 lane is sitting in a layout problem, not a search problem: the max-count DP reaches 11/12 at K0 = 405 and K0 = 567, and those are unbuildable only because the program's code needs ~700 cells of MOVD padding -- each MOVD waits for D to walk to a prefix cell holding the pointer it wants -- so the code collides with a table that starts at address 414 or 576. Choosing the constant cells jointly with the walk order (a small TSP over the 94-cell landing window) instead of accepting whatever the chain search returns should cut that padding by a large factor and make 11/12 buildable. (2) The 12/12 blocker is window overlap: the K CRAZYs need not be consecutive, and NOP-spaced walks make lane b read cells at offsets O within a longer span, so collisions only occur when an input difference lies in O - O. Choosing O against the twelve pairwise differences attacks exactly what the DP says binds, and the DP generalises to it directly. That is the first thing I would run with real budget, and it was not searched at all here. (3) Deeper tables (K = 6, 7) at K0 around 2100 never finished inside the cap because the DP recomputes each window chain per transition; caching the partial accumulator per state makes it linear, and depth was strongly non-monotone on cov48. (4) A second constant CRAZY after the table walk, reached by making the cell at b+K0+K+1 a MOVD pointer into the [34,127] landing window, would decouple the frozen high part H from K0 -- the one degree of freedom the architecture currently has to spend K0 on. I would not spend anything on dispatch geometries or on more joint-search effort in the 83 refuted configurations."
+  },
+  "builds_on": [
+    "docs/attempts/2026-08-10-claude-cov48.json",
+    "docs/attempts/2026-08-10-claude-map12-hi.json"
+  ],
+  "date": "2026-08-10",
+  "file": "docs/attempts/2026-08-10-claude-map12-low.json",
+  "manifest": {
+    "cpu_workers": 1,
+    "harness": "claude-code",
+    "model_version": "claude-opus-5",
+    "native_binary": "target/release/malbolge-rungs",
+    "reasoning_effort": null,
+    "wall_seconds": null
+  },
+  "outcome": "unsolved",
+  "report": "docs/attempts/2026-08-10-claude-map12-low.md",
+  "rung_id": "L2.FM2l.xor51-map12-low",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "Claude Opus 5 (Claude Code)",
+    "harness": null,
+    "harness_short": "claude-code",
+    "harness_url": "https://claude.com/claude-code",
+    "model": "claude-opus-5",
+    "notes": "Model id as reported by the session's own environment. Run under a fixed 200k-token / 30-minute cap as part of a board-calibration survey.",
+    "provider": "Anthropic",
+    "type": "llm-agent"
+  },
+  "summary": "Abandoned the two-stage dispatch family outright -- the board's own feasibility tool reports 0 separating configs out of 143808 for this input set -- and instead re-aimed the coverage rungs' data-dispatch table architecture (cov40/cov48) at a finite map, where control flow is identical for every input and only the data pointer moves, so separation is never required. Key new result: cov48's constraint that the offset K0 be a multiple of 729 is a coverage-rung constraint (all 256 inputs must index distinct entries); every input of this rung is < 81, so only trits 0..3 must survive the dispatch and K0 can be any multiple of 81 -- 50 offsets instead of 5. That matters because table operands are printable bytes, so trits 5..9 of the accumulator never see the table: the high part H is frozen by K0 and the parity of K, identical for all twelve lanes, and each lane needs the exact low value L* = (target - H) mod 256 with L* <= 242. Under cov48's own K0 = 2916 the rung caps at 9/12 before any table is chosen; widening K0 gives 83 configurations where all twelve lanes are individually live. The exact transfer-matrix DP over the table then proves all 83 jointly UNSAT for K <= 8 -- the binding constraint is window overlap among 0x35/0x37/0x38/0x3b, not lane liveness. Built and natively verified the max-count table at the largest buildable offset: 10/12, with the two misses exactly the two the DP predicted."
+}
