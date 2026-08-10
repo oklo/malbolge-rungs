@@ -1,0 +1,65 @@
+{
+  "artifacts": [
+    "research/map12-hi/window_analysis.py",
+    "research/map12-hi/reach.py",
+    "research/map12-hi/screen.py",
+    "research/map12-hi/tworot.py",
+    "research/map12-hi/partial_build.py",
+    "docs/attempts/2026-08-10-claude-map12-hi.md",
+    "docs/attempts/2026-08-10-claude-map12-hi.best.mal"
+  ],
+  "best_candidate": {
+    "claimed_correct_cases": 7,
+    "claimed_total_cases": 12,
+    "program": "docs/attempts/2026-08-10-claude-map12-hi.best.mal"
+  },
+  "budget": {
+    "ceiling_note": "In the geometry that produced the 7/12, four lanes (0xe0, 0x90, 0x9c, 0xf9) are individually dead, so 8/12 is the two-stage family's ceiling there and the candidate is one short of it.",
+    "configs_that_reached_and_killed_lane_0x90": 109,
+    "free_tail_window_cells_max": 60,
+    "free_tail_window_cells_min": 47,
+    "geometries_screened_full_12_lane": 1187,
+    "geometries_screened_hard_lane_only": 424,
+    "geometries_that_reached_and_killed_lane_0x90": 892,
+    "geometries_with_all_twelve_lanes_live": 0,
+    "joint_assignment_node_budget": 25000,
+    "max_nop_runway": 8,
+    "screen_splits_covered": "0-1 (full 12-lane sweep), 0-2 (hard-lane sweep)",
+    "screen_station_offset_variants": "2 (full sweep), 4 (hard-lane sweep)",
+    "separating_configurations": 115,
+    "tail_shapes_stock": 24,
+    "tail_shapes_widened_two_rot": 56,
+    "token_cap": 400000,
+    "wall_cap_seconds": 3600,
+    "what_more_budget_would_have_bought": "This rung reads as a wall, not a budget problem, but the wall is one level deeper than the tail language. The per-lane obstruction holds with the shared assignment empty, which is strictly more freedom than any joint search has, so more joint-search budget buys nothing; and three independent widenings of the tail grammar (Codex's brute force to length 5, deeper CRAZY chains, and this attempt's double-ROT catalog) all leave the same three lanes dead. With more budget I would spend it on the one thing not yet tried: a three-hop pointer chain (p -> T -> T') for the second-stage jump. Today L = T + 1 with T a printable byte pins every tail body into [34, 127] and hands each lane an operand alphabet fixed by address mod 94; a third indirection frees the tail address entirely and therefore changes the alphabets, which is the only remaining degree of freedom the reachable-set data points at. Second priority is deriving the 47-byte reachable hole in closed form as a function of J(x) and the trail alphabets, which would upgrade this 1611-geometry negative into a proof or produce a counterexample, and would transfer directly to map12-low and map16. I would not spend more on tail shapes or on joint-assignment budget."
+  },
+  "builds_on": [
+    "docs/attempts/2026-08-09-claude-map12hi.json",
+    "docs/attempts/2026-08-10-codex-map12hi.json"
+  ],
+  "date": "2026-08-10",
+  "file": "docs/attempts/2026-08-10-claude-map12-hi.json",
+  "manifest": {
+    "cpu_workers": 6,
+    "harness": "claude-code",
+    "model_version": "claude-opus-5",
+    "native_binary": "target/release/malbolge-rungs",
+    "reasoning_effort": null,
+    "wall_seconds": 2450
+  },
+  "outcome": "unsolved",
+  "report": "docs/attempts/2026-08-10-claude-map12-hi.md",
+  "rung_id": "L2.FM2h.xor51-map12-hi",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "Claude Opus 5 (Claude Code)",
+    "harness": null,
+    "harness_short": "claude-code",
+    "harness_url": "https://claude.com/claude-code",
+    "model": "claude-opus-5",
+    "notes": "Model id as reported by the session's own environment. Run under a fixed 400k-token / 60-minute cap as part of a board-calibration survey.",
+    "provider": "Anthropic",
+    "type": "llm-agent"
+  },
+  "summary": "Replaced the prior attempts' yes/no tail-existence probe with a reachable-output computation, which shows lanes split into two regimes: high-landing lanes can emit all 256 bytes, low-landing lanes can emit only 209, and four of this rung's twelve targets fall in that 47-byte hole. Ran the resulting necessary condition -- every lane must be able to emit its own target in isolation with an empty shared assignment -- over 1611 geometries spanning all 115 separating dispatch configurations: no geometry was ever fully live, and lane 0x90 -> 0xc1 was dead in all 892 geometries that reached it plus 424 more in a lane-focused sweep. Widening the tail catalog to allow a second ROT (24 -> 56 shapes), which the reachable-set data pointed at as the fix, left the dead set identical, so the tail grammar is now ruled out as the lever. Also built the first candidate program any attempt has left on this rung: a maximal partial assignment verifying 7/12 natively, against a family ceiling of 8/12 in that geometry."
+}
