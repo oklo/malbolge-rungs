@@ -26,7 +26,7 @@ twelve maps and alternates between two twelve-element sets for N >= 4, so
 N = 0..5 covers every N.  The rung threshold of 32 is reachable; 36 is not.
 Anything past 34 needs input-dependent branching, not a longer straight line.
 
-    python3 docs/attempts/2026-08-10-claude-cov32.ceiling.py        # needs numpy
+    python3 research/cov32/family_ceiling.py        # needs numpy
 """
 
 import itertools
