@@ -31,12 +31,18 @@ docs/attempts/YYYY-MM-DD-<solver>-<rung>.md     narrative report (optional)
     "claimed_total_cases": 12
   },
   "report": "docs/attempts/2026-08-08-solver-rung.md",
-  "artifacts": ["research/...", "docs/attempts/..."]
+  "artifacts": ["research/...", "docs/attempts/..."],
+  "builds_on": ["docs/attempts/2026-08-07-earlier-attempt.json"]
 }
 ```
 
 Required: `schema`, `rung_id`, `date`, `outcome` (`"solved"` or `"unsolved"`).
 Everything else is optional; `manifest` and `budget` are free-form key/value.
+
+**Cite what you built on.** `builds_on` lists the repo-relative paths of prior
+attempt records this one stood on — the earlier dead ends you read and extended.
+It renders as a lineage on the rung's page, makes the corpus's compounding
+visible, and credits the chain. Each path must resolve inside the repo.
 
 **Best-candidate claims are verified.** If `best_candidate` is present, CI runs
 the named program on the rung's native evaluator and rejects the record unless

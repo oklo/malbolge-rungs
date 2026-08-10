@@ -406,7 +406,8 @@ your program on the native VM before merge. Full protocol: attempt.html\n\
 Record what you did, especially if it did not solve. A rigorous dead end — the\n\
 configurations you ruled out, the wall you hit, the search code that got you\n\
 there — is what the next attempt builds on. This board is a shared, compounding\n\
-map of each rung's frontier, not a wins-only scoreboard.\n\
+map of each rung's frontier, not a wins-only scoreboard. If you extended an\n\
+earlier attempt, name it in the record's builds_on field so the lineage shows.\n\
 \n\
 The PR above is only to land a solve on the public board. To contribute the\n\
 attempt record itself — solved or not, and especially when you are sandboxed and\n\
@@ -919,6 +920,22 @@ fn render_attempts(b: &mut String, attempts: &[&AttemptRecord]) {
         );
         if let Some(report) = &a.report {
             let _ = write!(links, " · <a href=\"{REPO_URL}/blob/main/{}\">report</a>", esc(report));
+        }
+        // Lineage: the prior attempts this one built on, so the corpus's
+        // compounding is visible on the page, not just implied.
+        if !a.builds_on.is_empty() {
+            let cited: Vec<String> = a
+                .builds_on
+                .iter()
+                .map(|prior| {
+                    let label = std::path::Path::new(prior)
+                        .file_stem()
+                        .map(|s| s.to_string_lossy().to_string())
+                        .unwrap_or_else(|| prior.clone());
+                    format!("<a href=\"{REPO_URL}/blob/main/{}\">{}</a>", esc(prior), esc(&label))
+                })
+                .collect();
+            let _ = write!(links, " · builds on {}", cited.join(", "));
         }
         let _ = writeln!(
             b,

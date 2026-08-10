@@ -60,6 +60,10 @@ pub struct AttemptRecord {
     /// Repo-relative paths of further artifacts (logs, candidate sets, ...).
     #[serde(default)]
     pub artifacts: Vec<String>,
+    /// Repo-relative paths of prior attempt records this attempt built on — the
+    /// lineage that makes the corpus's compounding visible and credits the chain.
+    #[serde(default)]
+    pub builds_on: Vec<String>,
     /// Record file path (filled at load time; never read from the JSON, but
     /// emitted as `file` in the API DTO).
     #[serde(skip_deserializing, rename = "file")]
@@ -192,6 +196,11 @@ fn validate_record(root: &Path, rec: &AttemptRecord) -> Vec<String> {
     for artifact in &rec.artifacts {
         if let Err(e) = crate::fspath::resolve_within_repo(root, artifact) {
             problems.push(format!("artifact {e}"));
+        }
+    }
+    for prior in &rec.builds_on {
+        if let Err(e) = crate::fspath::resolve_within_repo(root, prior) {
+            problems.push(format!("builds_on {e}"));
         }
     }
     if let (Some(cand), Some(rung)) = (&rec.best_candidate, &rung) {

@@ -39,5 +39,8 @@
     "research/map12hi/base.py",
     "research/map12hi/geometry.py",
     "docs/attempts/2026-08-10-codex-map12hi.md"
+  ],
+  "builds_on": [
+    "docs/attempts/2026-08-09-claude-map12hi.json"
   ]
 }
