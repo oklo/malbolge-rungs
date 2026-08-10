@@ -290,6 +290,19 @@ pub fn submit_attempt(record_path: &Path) -> Result<bool> {
             read_capped(f, MAX_BUNDLE_BYTES).map_err(|e| anyhow::anyhow!("artifact {a}: {e}"))?;
         artifacts.insert(a.clone(), serde_json::Value::String(content));
     }
+    // The candidate program travels with the bundle. A submitter who cannot open
+    // a pull request has no other way to deliver the bytes that were verified,
+    // and a claimed score is not reviewable without them. validate_record has
+    // already resolved this path inside the repo and re-run it on the VM.
+    if let Some(cand) = &rec.best_candidate {
+        if !artifacts.contains_key(&cand.program) {
+            let f = crate::fspath::open_within_repo(&root, &cand.program)
+                .map_err(|e| anyhow::anyhow!("candidate {e}"))?;
+            let content = read_capped(f, MAX_BUNDLE_BYTES)
+                .map_err(|e| anyhow::anyhow!("candidate {}: {e}", cand.program))?;
+            artifacts.insert(cand.program.clone(), serde_json::Value::String(content));
+        }
+    }
 
     let bundle = serde_json::json!({
         "schema": ATTEMPT_BUNDLE_SCHEMA,
