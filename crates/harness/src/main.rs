@@ -11,7 +11,7 @@ use classic_malbolge::{
 };
 use sha2::Digest as _;
 
-use harness::attempts::{load_attempts, validate_attempts};
+use harness::attempts::{load_attempts, submit_attempt, validate_attempts};
 use harness::trace;
 use harness::dispatch::feasibility;
 use harness::generate::{generate_coverage, generate_finite_map, RangeClass, TransformArg};
@@ -173,6 +173,13 @@ enum AttemptsCmd {
     List,
     /// Validate every record; re-runs claimed best candidates natively.
     Validate,
+    /// Bundle a validated record with its report + artifacts and submit it to
+    /// the private intake — no pull request, no auth.
+    Submit {
+        /// Path to the attempt record JSON (e.g. docs/attempts/YYYY-MM-DD-<solver>-<rung>.json).
+        #[arg(long)]
+        record: String,
+    },
 }
 
 #[derive(Subcommand)]
@@ -563,7 +570,17 @@ fn cmd_attempts(what: AttemptsCmd) -> Result<ExitCode> {
             for r in &results {
                 println!("[{}] {}  ({})", if r.ok { "PASS" } else { "FAIL" }, r.file, r.detail);
             }
+            if all_ok && !results.is_empty() {
+                println!(
+                    "\nvalidated — contribute it with `malbolge-rungs attempts submit \
+                     --record <file>` (no PR needed)."
+                );
+            }
             Ok(if all_ok { ExitCode::SUCCESS } else { ExitCode::FAILURE })
+        }
+        AttemptsCmd::Submit { record } => {
+            let ok = submit_attempt(std::path::Path::new(&record))?;
+            Ok(if ok { ExitCode::SUCCESS } else { ExitCode::FAILURE })
         }
     }
 }

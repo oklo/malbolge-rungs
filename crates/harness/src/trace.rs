@@ -53,7 +53,7 @@ pub fn is_thin(oracle_calls: usize) -> bool {
     oracle_calls < MIN_TRACE_CALLS
 }
 
-fn now_iso() -> String {
+pub(crate) fn now_iso() -> String {
     // Seconds-precision UTC without a time dependency.
     let out = std::process::Command::new("date")
         .args(["-u", "+%Y-%m-%dT%H:%M:%SZ"])
@@ -227,6 +227,13 @@ pub fn submit(bundle_path: &Path) -> Result<bool> {
         );
         return Ok(false);
     }
+    http_post_file(INTAKE_URL, bundle_path)
+}
+
+/// POST a JSON file to `url` via curl. Prints the server's JSON response and
+/// returns whether it reported success; on transport failure prints a manual
+/// fallback command. Shared by trace and attempt submission.
+pub(crate) fn http_post_file(url: &str, path: &Path) -> Result<bool> {
     let output = std::process::Command::new("curl")
         .args([
             "-sS",
@@ -237,8 +244,8 @@ pub fn submit(bundle_path: &Path) -> Result<bool> {
             "-H",
             "Content-Type: application/json",
             "--data-binary",
-            &format!("@{}", bundle_path.display()),
-            INTAKE_URL,
+            &format!("@{}", path.display()),
+            url,
         ])
         .output();
     match output {
@@ -250,8 +257,8 @@ pub fn submit(bundle_path: &Path) -> Result<bool> {
         _ => {
             println!(
                 "submission failed. Submit manually:\n  curl -X POST -H 'Content-Type: application/json' \\\n    --data-binary @{} {}",
-                bundle_path.display(),
-                INTAKE_URL
+                path.display(),
+                url
             );
             Ok(false)
         }

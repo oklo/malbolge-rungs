@@ -10,8 +10,9 @@
 //! carry the same evidentiary weight as solves, which is what makes the
 //! accumulated corpus usable as training or evaluation data.
 
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
+use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
 
 use crate::leaderboard::Solver;
@@ -21,6 +22,10 @@ use crate::verify::verify_rung;
 const REPO_ROOT: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/../..");
 
 pub const ATTEMPT_SCHEMA: &str = "malbolge-rungs.attempt.v1";
+/// A submittable attempt bundle: the record plus its report and artifact
+/// contents, POSTed to the private intake (no PR, no auth).
+pub const ATTEMPT_BUNDLE_SCHEMA: &str = "malbolge-rungs.attempt-bundle.v1";
+pub const ATTEMPT_INTAKE_URL: &str = "https://oklo.org/malbolge-api/attempt.php";
 
 /// One structured attempt record. Serializing this type is the corpus API's
 /// public DTO: only these known fields are emitted, so unknown fields present
@@ -139,50 +144,7 @@ pub fn validate_attempts() -> (Vec<AttemptValidation>, bool) {
     }
 
     for rec in load_attempts() {
-        let mut problems = Vec::new();
-        if rec.schema != ATTEMPT_SCHEMA {
-            problems.push(format!("schema must be {ATTEMPT_SCHEMA}"));
-        }
-        if rec.outcome != "solved" && rec.outcome != "unsolved" {
-            problems.push("outcome must be \"solved\" or \"unsolved\"".to_string());
-        }
-        let rung = find_rung(&rec.rung_id);
-        if rung.is_none() {
-            problems.push(format!("unknown rung {}", rec.rung_id));
-        }
-        if let Some(report) = &rec.report {
-            if let Err(e) = crate::fspath::resolve_within_repo(&root, report) {
-                problems.push(format!("report {e}"));
-            }
-        }
-        for artifact in &rec.artifacts {
-            if let Err(e) = crate::fspath::resolve_within_repo(&root, artifact) {
-                problems.push(format!("artifact {e}"));
-            }
-        }
-        if let (Some(cand), Some(rung)) = (&rec.best_candidate, &rung) {
-            match crate::fspath::resolve_within_repo(&root, &cand.program) {
-                Err(e) => problems.push(format!("candidate {e}")),
-                Ok(safe_path) => match std::fs::read(&safe_path) {
-                    Err(_) => problems.push(format!("candidate {} does not exist", cand.program)),
-                    Ok(program) => {
-                        let outcome = verify_rung(rung, &program, 1);
-                        let ep = &outcome.epochs[0];
-                        if ep.correct_cases != cand.claimed_correct_cases
-                            || ep.total_cases != cand.claimed_total_cases
-                        {
-                            problems.push(format!(
-                                "claimed {}/{} but the native VM observes {}/{}",
-                                cand.claimed_correct_cases,
-                                cand.claimed_total_cases,
-                                ep.correct_cases,
-                                ep.total_cases
-                            ));
-                        }
-                    }
-                },
-            }
-        }
+        let problems = validate_record(&root, &rec);
         let ok = problems.is_empty();
         if !ok {
             all_ok = false;
@@ -204,4 +166,122 @@ pub fn validate_attempts() -> (Vec<AttemptValidation>, bool) {
         });
     }
     (results, all_ok)
+}
+
+/// Validate one record; returns its problems (empty = valid). Schema tag, known
+/// rung, sane outcome, referenced files contained in the repo, and — when a best
+/// candidate is claimed — an exact match between the claimed score and a fresh
+/// native run.
+fn validate_record(root: &Path, rec: &AttemptRecord) -> Vec<String> {
+    let mut problems = Vec::new();
+    if rec.schema != ATTEMPT_SCHEMA {
+        problems.push(format!("schema must be {ATTEMPT_SCHEMA}"));
+    }
+    if rec.outcome != "solved" && rec.outcome != "unsolved" {
+        problems.push("outcome must be \"solved\" or \"unsolved\"".to_string());
+    }
+    let rung = find_rung(&rec.rung_id);
+    if rung.is_none() {
+        problems.push(format!("unknown rung {}", rec.rung_id));
+    }
+    if let Some(report) = &rec.report {
+        if let Err(e) = crate::fspath::resolve_within_repo(root, report) {
+            problems.push(format!("report {e}"));
+        }
+    }
+    for artifact in &rec.artifacts {
+        if let Err(e) = crate::fspath::resolve_within_repo(root, artifact) {
+            problems.push(format!("artifact {e}"));
+        }
+    }
+    if let (Some(cand), Some(rung)) = (&rec.best_candidate, &rung) {
+        match crate::fspath::resolve_within_repo(root, &cand.program) {
+            Err(e) => problems.push(format!("candidate {e}")),
+            Ok(safe_path) => match std::fs::read(&safe_path) {
+                Err(_) => problems.push(format!("candidate {} does not exist", cand.program)),
+                Ok(program) => {
+                    let outcome = verify_rung(rung, &program, 1);
+                    let ep = &outcome.epochs[0];
+                    if ep.correct_cases != cand.claimed_correct_cases
+                        || ep.total_cases != cand.claimed_total_cases
+                    {
+                        problems.push(format!(
+                            "claimed {}/{} but the native VM observes {}/{}",
+                            cand.claimed_correct_cases,
+                            cand.claimed_total_cases,
+                            ep.correct_cases,
+                            ep.total_cases
+                        ));
+                    }
+                }
+            },
+        }
+    }
+    problems
+}
+
+/// Bundle a validated attempt record with its report and referenced artifacts
+/// and POST it to the private intake — no PR, no auth. This is the frictionless
+/// path for a sandboxed agent that produced a record it can't open a PR for.
+/// Refuses to submit a record that does not validate, and reads only files
+/// contained in the repo (a record cannot reach out and bundle a system file).
+pub fn submit_attempt(record_path: &Path) -> Result<bool> {
+    let root = PathBuf::from(REPO_ROOT);
+    let text = std::fs::read_to_string(record_path)
+        .with_context(|| format!("reading {}", record_path.display()))?;
+    let mut rec: AttemptRecord = serde_json::from_str(&text)
+        .with_context(|| format!("{} is not a valid attempt record", record_path.display()))?;
+    rec.path = record_path
+        .strip_prefix(&root)
+        .unwrap_or(record_path)
+        .to_string_lossy()
+        .trim_start_matches('/')
+        .to_string();
+
+    let problems = validate_record(&root, &rec);
+    if !problems.is_empty() {
+        println!("refusing to submit: this record does not validate:");
+        for p in &problems {
+            println!("  - {p}");
+        }
+        return Ok(false);
+    }
+
+    // Gather the report and artifact contents, reading only inside the repo.
+    let report_text = match &rec.report {
+        Some(r) => {
+            let safe = crate::fspath::resolve_within_repo(&root, r)
+                .map_err(|e| anyhow::anyhow!("report {e}"))?;
+            Some(std::fs::read_to_string(&safe).with_context(|| format!("reading report {r}"))?)
+        }
+        None => None,
+    };
+    let mut artifacts = serde_json::Map::new();
+    for a in &rec.artifacts {
+        let safe = crate::fspath::resolve_within_repo(&root, a)
+            .map_err(|e| anyhow::anyhow!("artifact {e}"))?;
+        let content = std::fs::read_to_string(&safe).with_context(|| format!("reading artifact {a}"))?;
+        artifacts.insert(a.clone(), serde_json::Value::String(content));
+    }
+
+    let bundle = serde_json::json!({
+        "schema": ATTEMPT_BUNDLE_SCHEMA,
+        "created": crate::trace::now_iso(),
+        "record": serde_json::to_value(&rec)?,
+        "report": report_text,
+        "artifacts": artifacts,
+    });
+    let body = serde_json::to_string(&bundle)?;
+    if body.len() > 25 * 1024 * 1024 {
+        anyhow::bail!(
+            "bundle is {} bytes, over the 25 MiB intake cap — trim artifacts",
+            body.len()
+        );
+    }
+
+    let tmp = std::env::temp_dir().join(format!("mal-attempt-bundle-{}.json", std::process::id()));
+    std::fs::write(&tmp, &body).with_context(|| format!("writing {}", tmp.display()))?;
+    let ok = crate::trace::http_post_file(ATTEMPT_INTAKE_URL, &tmp);
+    let _ = std::fs::remove_file(&tmp);
+    ok
 }
