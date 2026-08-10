@@ -1,0 +1,106 @@
+{
+  "artifacts": [
+    "research/cov34/argmax.c",
+    "research/cov34/search.c",
+    "research/cov34/chain.c",
+    "research/cov34/build.py",
+    "docs/attempts/2026-08-10-claude-cov34.md"
+  ],
+  "best_candidate": {
+    "claimed_correct_cases": 34,
+    "claimed_total_cases": 256,
+    "program": "solutions/cov34/cov34-two-crazy.mal"
+  },
+  "budget": {
+    "cap": "400k tokens or 60 minutes, whichever came first",
+    "family_ceiling": 34,
+    "rung_threshold": 34,
+    "searches_run": [
+      "argmax.c: exhaustive over the N=2 shift-0 family -- 9^6 per-position operand-trit-pair assignments for trits 0..5 crossed with all 256 constants; found exactly 9 configurations at 34 and none above",
+      "search.c: BFS over the full 59,049-word space under A <- crazy(A, seed) and A <- rot(A) from A = 0; 26,944 words reachable; all 243 x 243 shape-valid pairs scored by direct simulation",
+      "chain.c: shortest two-leg chain with the second leg forbidden from re-using the first leg's seed bytes and forbidden from opening with a ROT; optimum 12 ops"
+    ],
+    "slack": 0,
+    "spent_tokens_approx": 140000,
+    "spent_under_cap": true,
+    "spent_wall_seconds_approx": 2400,
+    "would_try_next_with_more": "Nothing on this rung -- 34 is exhaustive over the branchless family and this program attains it, so there is no headroom left to buy. The budget that mattered was spent on the argmax and the reachability BFS, both of which run in under a second; the rest was reading prior art and two rounds of hand derivation that the BFS made unnecessary. For cov36 and above, more budget on THIS method buys nothing at all: the branchless ceiling is a proof, not a search bound, and cov36 needs input-dependent branching. The next thing I would actually spend budget on is the lane/dispatch architecture that stalled at 27/256 and whose pointer pool 'runs out near 30 lanes' -- specifically, whether the register-machine BFS in search.c can be extended to search for a cheap input-dependent D-jump, since the pointer-pool wall is a layout problem and the BFS model is exactly the tool that dissolved the layout problem here. I would also flag for ranking purposes that cov36/40/48/64 (ranks 18-21) all sit behind the same single wall and are probably not meaningfully ordered relative to each other."
+  },
+  "builds_on": [
+    "docs/attempts/2026-08-10-claude-cov32.json"
+  ],
+  "date": "2026-08-10",
+  "file": "docs/attempts/2026-08-10-claude-cov34.json",
+  "manifest": {
+    "accumulator_reset_used": false,
+    "chain_ops": 12,
+    "crazy_operands": [
+      5467,
+      43780
+    ],
+    "cross_checks": {
+      "L2.C0.xor51-cov32": "34/256 PASS",
+      "L2.C0b.xor51-cov36": "34/256 FAIL (36 required)"
+    },
+    "distinct_seed_bytes_available": 94,
+    "halts_on_all_256_inputs": true,
+    "length_limit": 4096,
+    "manufacturing_cells": [
+      34,
+      35,
+      91,
+      44,
+      68
+    ],
+    "max_steps_per_case": 855,
+    "non_nop_instructions": 31,
+    "operand_cells": [
+      91,
+      68
+    ],
+    "operand_trits_c1": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      2,
+      0,
+      0
+    ],
+    "operand_trits_c2": [
+      1,
+      1,
+      1,
+      1,
+      0,
+      0,
+      0,
+      2,
+      0,
+      2
+    ],
+    "program_bytes": 855,
+    "reachable_words_bfs": 26944,
+    "search_used": true,
+    "step_limit": 2048,
+    "word_space": 59049
+  },
+  "outcome": "solved",
+  "report": "docs/attempts/2026-08-10-claude-cov34.md",
+  "rung_id": "L2.C0a.xor51-cov34",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "Claude Opus 5 (Claude Code)",
+    "harness": "Claude Code CLI, autonomous single-session run under a hard cap of 400k tokens / 60 minutes; existing clone of this repository, no network access beyond llms.txt",
+    "harness_short": "claude-code",
+    "harness_url": "https://claude.com/claude-code",
+    "model": "claude-opus-5",
+    "notes": "Model id as self-reported by the session. Prior art read before starting: llms.txt, the cov34 and cov32 registry entries, and docs/attempts/2026-08-10-claude-cov32.{json,md} with research/cov32/{build.py,family_ceiling.py}. The cov32 layout technique (prefix of NOP cells doubling as a MOVD pointer table) and its Builder class were reused directly; the operand construction is new.",
+    "provider": "Anthropic",
+    "type": "llm-agent"
+  },
+  "summary": "cov34's threshold equals the exhaustive ceiling of the branchless CRAZY/ROTATE family that the cov32 attempt established, so the rung has no slack: it demands that family's optimum realized exactly. Re-enumerating the N=2 family's argmax shows the 34-point is essentially unique -- identity at trits 0..3, (c1_4,c2_4)=(1,0) giving g_4 = m0 o m1 = (0,1,0), and a high constant of 81 -- and the two hits past cov32's 32 come from that map firing on the bytes with trit_4 = 2 and b AND 0x51 == 0x51. The obstruction cov32 did not face is that c2 needs a ZERO trit at position 4, while every operand of cov32's form rot^k(crazy(0, byte)) has all ten trits in {1,2}, because crazy(0,.) maps every trit to 1 or 2 and rotation only permutes; independently, the constant 81 is odd and all weights 3^i mod 256 are odd, so some high position needs trit 2 in BOTH operands, which a byte operand (high trits all zero) also cannot supply. A second CRAZY layer is therefore structurally required. Rather than derive it, a BFS over the whole 59,049-word space under the two ops actually available reaches 26,944 words and yields many valid pairs; the cheapest chain is 12 ops, built as one chain cut in the middle so the second operand starts from the first and no accumulator reset is needed (cov32's zeroing trick requires all-nonzero trits, which c2 lacks), with each seed byte used at most once since every CRAZY consumes its cell. 34/256 natively, 855 bytes, 855 steps."
+}

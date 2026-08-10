@@ -1,522 +1,588 @@
 [
   {
-    "rung_id": "L0.R0.hello-world",
-    "rank": 1,
-    "status": "solved",
     "best_program": "solutions/hello-world/halt-no-output.mal",
-    "solver": {
-      "display": "QC (canonical)",
-      "type": "canonical",
-      "model": null,
-      "provider": null,
-      "harness": null,
-      "harness_short": "canonical",
-      "harness_url": null,
-      "notes": "Classic 2-byte halt-with-no-output program; carried as a golden fixture (fixtures/classic/halt_no_output.mal)."
-    },
     "date": null,
     "metric": "1/1 case (zero-output halt), 5 seeds",
     "note": "Zero-output conformance slot; solved by the canonical 2-byte halt program QC.",
-    "note_long": "The rung requires a clean halt with zero output; the canonical 2-byte program QC satisfies it. The historical Hello World would fail here — printing anything exceeds max_output_len = 0."
-  },
-  {
-    "rung_id": "L0.R1.echo-1-demo",
-    "rank": 2,
-    "status": "solved",
-    "best_program": "solutions/echo/echo-first-byte.mal",
+    "note_long": "The rung requires a clean halt with zero output; the canonical 2-byte program QC satisfies it. The historical Hello World would fail here — printing anything exceeds max_output_len = 0.",
+    "rank": 1,
+    "rung_id": "L0.R0.hello-world",
     "solver": {
-      "display": "ubO (canonical)",
-      "type": "canonical",
-      "model": null,
-      "provider": null,
+      "display": "QC (canonical)",
       "harness": null,
       "harness_short": "canonical",
       "harness_url": null,
-      "notes": "Minimal 3-instruction classic-Malbolge program (IN, OUT, HALT); long predates this project."
+      "model": null,
+      "notes": "Classic 2-byte halt-with-no-output program; carried as a golden fixture (fixtures/classic/halt_no_output.mal).",
+      "provider": null,
+      "type": "canonical"
     },
+    "status": "solved"
+  },
+  {
+    "best_program": "solutions/echo/echo-first-byte.mal",
     "date": null,
     "metric": "1/1 case, multiple seeds",
     "note": "1-byte echo demo slot; solved by the canonical ubO program.",
-    "note_long": null
-  },
-  {
-    "rung_id": "L1.R0.echo-1",
-    "rank": 3,
-    "status": "solved",
-    "best_program": "solutions/echo/echo-first-byte.mal",
+    "note_long": null,
+    "rank": 2,
+    "rung_id": "L0.R1.echo-1-demo",
     "solver": {
       "display": "ubO (canonical)",
-      "type": "canonical",
-      "model": null,
-      "provider": null,
       "harness": null,
       "harness_short": "canonical",
       "harness_url": null,
-      "notes": "Minimal 3-instruction classic-Malbolge program (IN, OUT, HALT); long predates this project."
+      "model": null,
+      "notes": "Minimal 3-instruction classic-Malbolge program (IN, OUT, HALT); long predates this project.",
+      "provider": null,
+      "type": "canonical"
     },
+    "status": "solved"
+  },
+  {
+    "best_program": "solutions/echo/echo-first-byte.mal",
     "date": null,
     "metric": "1/1 case, multiple seeds",
     "note": "Read one byte, echo it, halt.",
-    "note_long": null
-  },
-  {
-    "rung_id": "L2.R1.reverse-1",
-    "rank": 4,
-    "status": "solved",
-    "best_program": "solutions/echo/echo-first-byte.mal",
+    "note_long": null,
+    "rank": 3,
+    "rung_id": "L1.R0.echo-1",
     "solver": {
       "display": "ubO (canonical)",
-      "type": "canonical",
-      "model": null,
-      "provider": null,
       "harness": null,
       "harness_short": "canonical",
       "harness_url": null,
-      "notes": "Minimal 3-instruction classic-Malbolge program (IN, OUT, HALT); long predates this project."
+      "model": null,
+      "notes": "Minimal 3-instruction classic-Malbolge program (IN, OUT, HALT); long predates this project.",
+      "provider": null,
+      "type": "canonical"
     },
+    "status": "solved"
+  },
+  {
+    "best_program": "solutions/echo/echo-first-byte.mal",
     "date": null,
     "metric": "1/1 case, 5 seeds",
     "note": "1-byte reverse is the identity, so ubO passes; the registry marks this a transform-family sanity check.",
-    "note_long": null
+    "note_long": null,
+    "rank": 4,
+    "rung_id": "L2.R1.reverse-1",
+    "solver": {
+      "display": "ubO (canonical)",
+      "harness": null,
+      "harness_short": "canonical",
+      "harness_url": null,
+      "model": null,
+      "notes": "Minimal 3-instruction classic-Malbolge program (IN, OUT, HALT); long predates this project.",
+      "provider": null,
+      "type": "canonical"
+    },
+    "status": "solved"
   },
   {
-    "rung_id": "L1.R1.echo-2",
-    "rank": 5,
-    "status": "solved",
     "best_program": "solutions/echo/echo-2.mal",
-    "solver": {
-      "display": "HeLL-Lite (tool)",
-      "type": "tool",
-      "model": null,
-      "provider": null,
-      "harness": "tools/hell_lite compile-linear (deterministic straight-line template)",
-      "harness_short": "hell_lite",
-      "harness_url": "https://github.com/oklo/malbolge-rungs/tree/main/tools/hell_lite",
-      "notes": "First-use opcode encoding of the straight-line IN/OUT sequence; each address has exactly one printable byte per opcode."
-    },
     "date": null,
     "metric": "1/1 case, 5 seeds",
     "note": "Echo the first 2 input bytes; 5-byte straight-line program.",
-    "note_long": null
-  },
-  {
-    "rung_id": "L1.R2.echo-4",
-    "rank": 6,
-    "status": "solved",
-    "best_program": "solutions/echo/echo-4.mal",
+    "note_long": null,
+    "rank": 5,
+    "rung_id": "L1.R1.echo-2",
     "solver": {
       "display": "HeLL-Lite (tool)",
-      "type": "tool",
-      "model": null,
-      "provider": null,
       "harness": "tools/hell_lite compile-linear (deterministic straight-line template)",
       "harness_short": "hell_lite",
       "harness_url": "https://github.com/oklo/malbolge-rungs/tree/main/tools/hell_lite",
-      "notes": "First-use opcode encoding of the straight-line IN/OUT sequence; each address has exactly one printable byte per opcode."
+      "model": null,
+      "notes": "First-use opcode encoding of the straight-line IN/OUT sequence; each address has exactly one printable byte per opcode.",
+      "provider": null,
+      "type": "tool"
     },
+    "status": "solved"
+  },
+  {
+    "best_program": "solutions/echo/echo-4.mal",
     "date": null,
     "metric": "1/1 case, 5 seeds",
     "note": "Echo the first 4 input bytes; 9-byte straight-line program.",
-    "note_long": null
-  },
-  {
-    "rung_id": "L1.R3.echo-2-multicase",
-    "rank": 7,
-    "status": "solved",
-    "best_program": "solutions/echo/echo-2.mal",
+    "note_long": null,
+    "rank": 6,
+    "rung_id": "L1.R2.echo-4",
     "solver": {
       "display": "HeLL-Lite (tool)",
-      "type": "tool",
-      "model": null,
-      "provider": null,
       "harness": "tools/hell_lite compile-linear (deterministic straight-line template)",
       "harness_short": "hell_lite",
       "harness_url": "https://github.com/oklo/malbolge-rungs/tree/main/tools/hell_lite",
-      "notes": "First-use opcode encoding of the straight-line IN/OUT sequence; each address has exactly one printable byte per opcode."
+      "model": null,
+      "notes": "First-use opcode encoding of the straight-line IN/OUT sequence; each address has exactly one printable byte per opcode.",
+      "provider": null,
+      "type": "tool"
     },
+    "status": "solved"
+  },
+  {
+    "best_program": "solutions/echo/echo-2.mal",
     "date": null,
     "metric": "2/2 cases, 5 seeds",
     "note": "Same 5-byte echo-2 program; fresh VM per case.",
-    "note_long": null
-  },
-  {
-    "rung_id": "L2.FM0.xor51-map2",
-    "rank": 8,
-    "status": "solved",
-    "best_program": "solutions/fm0/fm0-map2.mal",
+    "note_long": null,
+    "rank": 7,
+    "rung_id": "L1.R3.echo-2-multicase",
     "solver": {
       "display": "HeLL-Lite (tool)",
-      "type": "tool",
-      "model": null,
-      "provider": null,
-      "harness": "tools/hell_lite compile-finite-map (deterministic compiler)",
-      "notes": "Reuses the two-input JUMP/routing specimen found by the Codex agent (turn 007, internal xor4096 match, 2026-05; model name unrecorded in the archive).",
+      "harness": "tools/hell_lite compile-linear (deterministic straight-line template)",
       "harness_short": "hell_lite",
-      "harness_url": "https://github.com/oklo/malbolge-rungs/tree/main/tools/hell_lite"
+      "harness_url": "https://github.com/oklo/malbolge-rungs/tree/main/tools/hell_lite",
+      "model": null,
+      "notes": "First-use opcode encoding of the straight-line IN/OUT sequence; each address has exactly one printable byte per opcode.",
+      "provider": null,
+      "type": "tool"
     },
+    "status": "solved"
+  },
+  {
+    "best_program": "solutions/fm0/fm0-map2.mal",
     "date": null,
     "metric": "2/2 cases",
     "note": "Two-input finite map (02→53, 06→57), synthesized by HeLL-Lite.",
-    "note_long": null
+    "note_long": null,
+    "rank": 8,
+    "rung_id": "L2.FM0.xor51-map2",
+    "solver": {
+      "display": "HeLL-Lite (tool)",
+      "harness": "tools/hell_lite compile-finite-map (deterministic compiler)",
+      "harness_short": "hell_lite",
+      "harness_url": "https://github.com/oklo/malbolge-rungs/tree/main/tools/hell_lite",
+      "model": null,
+      "notes": "Reuses the two-input JUMP/routing specimen found by the Codex agent (turn 007, internal xor4096 match, 2026-05; model name unrecorded in the archive).",
+      "provider": null,
+      "type": "tool"
+    },
+    "status": "solved"
   },
   {
-    "rung_id": "L2.FM1.xor51-map4",
-    "rank": 9,
-    "status": "solved",
     "best_program": "solutions/fm1/fm1-map4-codex.mal",
-    "solver": {
-      "display": "GPT-5.5 (Codex)",
-      "type": "llm-agent",
-      "model": "GPT-5.5",
-      "provider": "OpenAI",
-      "harness": "Codex CLI agent, MAL-51 internal match (iterative turns, native-evaluator feedback)",
-      "notes": "Official match report records harness_name=codex, model_name=GPT-5.5 (provider/version/temperature unrecorded).",
-      "harness_short": "codex",
-      "harness_url": "https://github.com/openai/codex"
-    },
     "date": "2026-05-12",
     "metric": "4/4 cases",
     "note": "Four-input finite map; won in an internal two-agent evaluation.",
-    "note_long": "From an internal two-agent evaluation, 2026-05-12. Claude's attempt produced a four-lane routing design, crazy(crazy(input,69),49), that put the correct first byte on all four lanes but let two lanes emit a second byte, failing the one-byte output rule. Codex's attempt fixed the termination conflict at the shared HALT cell. 220 bytes."
+    "note_long": "From an internal two-agent evaluation, 2026-05-12. Claude's attempt produced a four-lane routing design, crazy(crazy(input,69),49), that put the correct first byte on all four lanes but let two lanes emit a second byte, failing the one-byte output rule. Codex's attempt fixed the termination conflict at the shared HALT cell. 220 bytes.",
+    "rank": 9,
+    "rung_id": "L2.FM1.xor51-map4",
+    "solver": {
+      "display": "GPT-5.5 (Codex)",
+      "harness": "Codex CLI agent, MAL-51 internal match (iterative turns, native-evaluator feedback)",
+      "harness_short": "codex",
+      "harness_url": "https://github.com/openai/codex",
+      "model": "GPT-5.5",
+      "notes": "Official match report records harness_name=codex, model_name=GPT-5.5 (provider/version/temperature unrecorded).",
+      "provider": "OpenAI",
+      "type": "llm-agent"
+    },
+    "status": "solved"
   },
   {
-    "rung_id": "L2.R0c.crazy-mask-1",
-    "rank": 10,
-    "status": "solved",
     "best_program": "solutions/crazy/crazy-mask-1.mal",
-    "solver": {
-      "display": "Fable 5 (Claude Code)",
-      "type": "llm-agent",
-      "model": "Fable 5",
-      "provider": "Anthropic",
-      "harness": "Claude Code CLI (interactive session; analytical construction from the pinned VM semantics, no program search)",
-      "harness_short": "claude-code",
-      "harness_url": "https://claude.com/claude-code",
-      "notes": "Model id claude-fable-5. Construction derived from the encipher/loader rules in classic_malbolge; verified natively before claiming."
-    },
     "date": "2026-08-01",
     "metric": "1/1 case x 20 seeds; exhaustive 256/256 input sweep, native",
     "note": "Output = crazy(input, 0x51) mod 256; total over all 256 inputs. First real-transform solve.",
-    "note_long": "An 82-byte program built analytically: a NOP walk with IN at address 53, MOVD at 54, CRAZY at 55, OUT, HALT, and the operand byte 0x51 ('Q') parked at address 81. Two encoding coincidences carry it. The unique printable MOVD byte at address 54 is 'P' = 80, so the instruction is its own pointer and sends d to 81. And 0x51 at address 81 decodes to NOP, so the loader accepts the operand cell. A self-referential CRAZY fails instead: CRAZY writes back to mem[d], and the profile rejects enciphering a non-printable executed cell. Verified over 20 epochs and all 256 inputs."
-  },
-  {
-    "rung_id": "L2.FM1b.xor51-map6",
-    "rank": 11,
-    "status": "solved",
-    "best_program": "solutions/map6/map6-two-stage.mal",
+    "note_long": "An 82-byte program built analytically: a NOP walk with IN at address 53, MOVD at 54, CRAZY at 55, OUT, HALT, and the operand byte 0x51 ('Q') parked at address 81. Two encoding coincidences carry it. The unique printable MOVD byte at address 54 is 'P' = 80, so the instruction is its own pointer and sends d to 81. And 0x51 at address 81 decodes to NOP, so the loader accepts the operand cell. A self-referential CRAZY fails instead: CRAZY writes back to mem[d], and the profile rejects enciphering a non-printable executed cell. Verified over 20 epochs and all 256 inputs.",
+    "rank": 10,
+    "rung_id": "L2.R0c.crazy-mask-1",
     "solver": {
       "display": "Fable 5 (Claude Code)",
-      "type": "llm-agent",
-      "model": "Fable 5",
-      "provider": "Anthropic",
-      "harness": "Claude Code CLI (constructive geometry search: per-lane plan enumeration + byte-consistency backtracking over a two-stage dispatch layout; diagnostic-VM candidates confirmed natively)",
+      "harness": "Claude Code CLI (interactive session; analytical construction from the pinned VM semantics, no program search)",
       "harness_short": "claude-code",
       "harness_url": "https://claude.com/claude-code",
-      "notes": "Model id claude-fable-5. Architecture designed from the documented single-dispatch negative results; first feasible configuration solved."
+      "model": "Fable 5",
+      "notes": "Model id claude-fable-5. Construction derived from the encipher/loader rules in classic_malbolge; verified natively before claiming.",
+      "provider": "Anthropic",
+      "type": "llm-agent"
     },
+    "status": "solved"
+  },
+  {
+    "best_program": "solutions/map6/map6-two-stage.mal",
     "date": "2026-08-01",
     "metric": "6/6 cases x 5 epochs (finite map, seed-independent), native",
     "note": "Two-stage dispatch: crz-dispatch into three landing clusters, per-cluster MOVD+JUMP re-dispatch via lane-specific d, private tails. Broke the proven 3/6 single-dispatch ceiling.",
-    "note_long": "Read one byte x, output x XOR 0x51 for six published inputs, one output byte only. Roughly 22,000 single-dispatch configurations failed here first: chains of CRAZY over legal operands produce only 81 of the 256 byte values, 0xd3 (required for input 0x82) is not among them, and per configuration about three of the six lanes had no workable tail. The winning program adds a second dispatch stage. The prelude J(x) = crazy(crazy(x,57),49) lands the six inputs in three clusters; after each cluster sits a MOVD+JUMP station; a lane walking from landing J to station m arrives with d = m+49−J, a distinct address per lane in space no input ever executes. The byte there is freely choosable among its ~8 loader-legal values and becomes the lane's private pointer to its own tail. Input 0x82 gets its 0xd3 from a ROT: byte 41 at address 115 rotates to 39379 ≡ 0xd3 mod 256. 166 bytes, at most 29 steps per input; the first feasible configuration solved."
-  },
-  {
-    "rung_id": "L2.FM1c.xor51-map7a",
-    "rank": 12,
-    "status": "solved",
-    "best_program": "solutions/map7a/map7a-two-stage.mal",
+    "note_long": "Read one byte x, output x XOR 0x51 for six published inputs, one output byte only. Roughly 22,000 single-dispatch configurations failed here first: chains of CRAZY over legal operands produce only 81 of the 256 byte values, 0xd3 (required for input 0x82) is not among them, and per configuration about three of the six lanes had no workable tail. The winning program adds a second dispatch stage. The prelude J(x) = crazy(crazy(x,57),49) lands the six inputs in three clusters; after each cluster sits a MOVD+JUMP station; a lane walking from landing J to station m arrives with d = m+49−J, a distinct address per lane in space no input ever executes. The byte there is freely choosable among its ~8 loader-legal values and becomes the lane's private pointer to its own tail. Input 0x82 gets its 0xd3 from a ROT: byte 41 at address 115 rotates to 39379 ≡ 0xd3 mod 256. 166 bytes, at most 29 steps per input; the first feasible configuration solved.",
+    "rank": 11,
+    "rung_id": "L2.FM1b.xor51-map6",
     "solver": {
       "display": "Fable 5 (Claude Code)",
-      "type": "llm-agent",
-      "model": "Fable 5",
-      "provider": "Anthropic",
-      "harness": "Claude Code CLI (the map6 two-stage builder re-run with the seventh input added; per-lane plan enumeration + byte-consistency backtracking, diagnostic-VM candidates confirmed natively)",
+      "harness": "Claude Code CLI (constructive geometry search: per-lane plan enumeration + byte-consistency backtracking over a two-stage dispatch layout; diagnostic-VM candidates confirmed natively)",
       "harness_short": "claude-code",
       "harness_url": "https://claude.com/claude-code",
-      "notes": "Model id claude-fable-5. Second dispatch configuration tried produced the solution; about two minutes of search."
+      "model": "Fable 5",
+      "notes": "Model id claude-fable-5. Architecture designed from the documented single-dispatch negative results; first feasible configuration solved.",
+      "provider": "Anthropic",
+      "type": "llm-agent"
     },
+    "status": "solved"
+  },
+  {
+    "best_program": "solutions/map7a/map7a-two-stage.mal",
     "date": "2026-08-06",
     "metric": "7/7 cases x 5 epochs (finite map, seed-independent), native",
     "note": "map6 two-stage architecture generalizes to 7 lanes unchanged. Fell as feasibility predicted.",
-    "note_long": "Minted 2026-08-02 as the gentle half of the map6-to-map8 gap: the six map6 bytes plus 0xa7. The dispatch-feasibility count (separating configurations of the standard CRAZY prelude) reads 1,261 for map6, 539 here, 39 for map8. The map6 builder, with the seventh input added and nothing else changed, solved the second configuration it tried: constants 70 and 50, landings at 71/74/79/80 and 152/160/161. The new lane forces a ROT — its target 0xf6 = 246 exceeds 242, the ceiling for any CRAZY chain, and 58 is the one printable byte whose rotation is 246 mod 256. 170 bytes, at most 26 steps per input."
-  },
-  {
-    "rung_id": "L2.FM1d.xor51-map7b",
-    "rank": 13,
-    "status": "solved",
-    "best_program": "solutions/map7b/map7b-merged-cluster.mal",
+    "note_long": "Minted 2026-08-02 as the gentle half of the map6-to-map8 gap: the six map6 bytes plus 0xa7. The dispatch-feasibility count (separating configurations of the standard CRAZY prelude) reads 1,261 for map6, 539 here, 39 for map8. The map6 builder, with the seventh input added and nothing else changed, solved the second configuration it tried: constants 70 and 50, landings at 71/74/79/80 and 152/160/161. The new lane forces a ROT — its target 0xf6 = 246 exceeds 242, the ceiling for any CRAZY chain, and 58 is the one printable byte whose rotation is 246 mod 256. 170 bytes, at most 26 steps per input.",
+    "rank": 12,
+    "rung_id": "L2.FM1c.xor51-map7a",
     "solver": {
       "display": "Fable 5 (Claude Code)",
-      "type": "llm-agent",
-      "model": "Fable 5",
-      "provider": "Anthropic",
-      "harness": "Claude Code CLI (two-stage builder with cluster-boundary enumeration: the stock per-landing-station rule failed all 50 dispatch configs; merging the five jammed lanes behind one shared station solved three configs concurrently in a 6-worker parallel sweep; native-confirmed)",
+      "harness": "Claude Code CLI (the map6 two-stage builder re-run with the seventh input added; per-lane plan enumeration + byte-consistency backtracking, diagnostic-VM candidates confirmed natively)",
       "harness_short": "claude-code",
       "harness_url": "https://claude.com/claude-code",
-      "notes": "Model id claude-fable-5. Stock map6 geometry exhaustively failed (0/50, all on joint byte-assignment); the merged-cluster variant was designed from that failure signature and solved configs 3, 4 and 5 within minutes."
+      "model": "Fable 5",
+      "notes": "Model id claude-fable-5. Second dispatch configuration tried produced the solution; about two minutes of search.",
+      "provider": "Anthropic",
+      "type": "llm-agent"
     },
+    "status": "solved"
+  },
+  {
+    "best_program": "solutions/map7b/map7b-merged-cluster.mal",
     "date": "2026-08-07",
     "metric": "7/7 cases x 5 epochs (finite map, seed-independent), native",
     "note": "Merged the five jammed lanes behind one shared station; three configs fell within minutes.",
-    "note_long": "The steep half of the map6-to-map8 gap: adding 0xc0 collapses the separating-configuration count from 1,261 to 50, and every one of the 50 lands five of the seven inputs in a twelve-cell band with gaps of two or three. The map6 builder failed all 50 — it places a station after every landing gap of three or more, which on this band makes five single-lane stations whose pointer cells collide (the lanes at J=56 and J=59 both get cell 51). Merging the five lanes behind one station past the band gives each lane a distinct pointer cell at m+49−J, and three configurations solved within minutes of each other. Shipped: a four-CRAZY dispatch with constants 112, 111, 85, 68; landings 56/59/62/65/68 and 140/149; 0xc0 mid-band at 59. 166 bytes, at most 42 steps per input."
+    "note_long": "The steep half of the map6-to-map8 gap: adding 0xc0 collapses the separating-configuration count from 1,261 to 50, and every one of the 50 lands five of the seven inputs in a twelve-cell band with gaps of two or three. The map6 builder failed all 50 — it places a station after every landing gap of three or more, which on this band makes five single-lane stations whose pointer cells collide (the lanes at J=56 and J=59 both get cell 51). Merging the five lanes behind one station past the band gives each lane a distinct pointer cell at m+49−J, and three configurations solved within minutes of each other. Shipped: a four-CRAZY dispatch with constants 112, 111, 85, 68; landings 56/59/62/65/68 and 140/149; 0xc0 mid-band at 59. 166 bytes, at most 42 steps per input.",
+    "rank": 13,
+    "rung_id": "L2.FM1d.xor51-map7b",
+    "solver": {
+      "display": "Fable 5 (Claude Code)",
+      "harness": "Claude Code CLI (two-stage builder with cluster-boundary enumeration: the stock per-landing-station rule failed all 50 dispatch configs; merging the five jammed lanes behind one shared station solved three configs concurrently in a 6-worker parallel sweep; native-confirmed)",
+      "harness_short": "claude-code",
+      "harness_url": "https://claude.com/claude-code",
+      "model": "Fable 5",
+      "notes": "Model id claude-fable-5. Stock map6 geometry exhaustively failed (0/50, all on joint byte-assignment); the merged-cluster variant was designed from that failure signature and solved configs 3, 4 and 5 within minutes.",
+      "provider": "Anthropic",
+      "type": "llm-agent"
+    },
+    "status": "solved"
   },
   {
-    "rung_id": "L2.FM2.xor51-map8",
-    "rank": 14,
-    "status": "solved",
     "best_program": "solutions/map8/map8-one-split.mal",
-    "solver": {
-      "display": "GPT-5.6-sol (Codex)",
-      "type": "llm-agent",
-      "model": "gpt-5.6-sol",
-      "provider": "OpenAI",
-      "harness": "Codex agent (interactive session; analytical diagnosis, adaptation of the map7b builder, bounded eight-worker geometry search, native-evaluator confirmation)",
-      "harness_short": "codex",
-      "harness_url": "https://github.com/openai/codex",
-      "notes": "Model gpt-5.6-sol attested by the operator who launched the session; the runtime identified itself only as Codex based on GPT-5 and did not expose a version. The construction search adapts the Fable 5 (Claude Code) map7b builder and architecture."
-    },
     "date": "2026-08-07",
     "metric": "8/8 cases x 5 epochs (finite map, seed-independent), native; 160 canonical bytes; <=38 steps/case",
     "note": "One split in the high landing cluster separates 0x6f and 0x82; all eight lanes fit in 160 bytes.",
-    "note_long": "The map7b winner scores 7/8 here because 0xa7 and 0xc0 collapse to the same post-dispatch state, proving that no tail-only repair can work. The search therefore enumerated all 39 eight-way-separating CRAZY preludes. A bounded zero-split pass (60,000 backtracking nodes per configuration) found no complete joint byte assignment despite hundreds of legal per-lane tails. The winning one-split search uses four CRAZY instructions at prelude positions 3/4/7/9 with legal operands 113/37/86/68, producing landings 0x02->55, 0x06->56, 0xa7->58, 0xc0->59, 0x09->65, 0x30->68, 0x6f->140 and 0x82->149. Six low lanes share the MOVD+JUMP station at 70; splitting the high cluster gives 0x6f and 0x82 separate stations at 148 and 158. Lane-specific d values then select private second jumps and tails. The 0xa7 target 0xf6 and 0x82 target 0xd3 require ROT-bearing tails. The deterministic search is preserved in research/map8_search.py and research/map8/."
+    "note_long": "The map7b winner scores 7/8 here because 0xa7 and 0xc0 collapse to the same post-dispatch state, proving that no tail-only repair can work. The search therefore enumerated all 39 eight-way-separating CRAZY preludes. A bounded zero-split pass (60,000 backtracking nodes per configuration) found no complete joint byte assignment despite hundreds of legal per-lane tails. The winning one-split search uses four CRAZY instructions at prelude positions 3/4/7/9 with legal operands 113/37/86/68, producing landings 0x02->55, 0x06->56, 0xa7->58, 0xc0->59, 0x09->65, 0x30->68, 0x6f->140 and 0x82->149. Six low lanes share the MOVD+JUMP station at 70; splitting the high cluster gives 0x6f and 0x82 separate stations at 148 and 158. Lane-specific d values then select private second jumps and tails. The 0xa7 target 0xf6 and 0x82 target 0xd3 require ROT-bearing tails. The deterministic search is preserved in research/map8_search.py and research/map8/.",
+    "rank": 14,
+    "rung_id": "L2.FM2.xor51-map8",
+    "solver": {
+      "display": "GPT-5.6-sol (Codex)",
+      "harness": "Codex agent (interactive session; analytical diagnosis, adaptation of the map7b builder, bounded eight-worker geometry search, native-evaluator confirmation)",
+      "harness_short": "codex",
+      "harness_url": "https://github.com/openai/codex",
+      "model": "gpt-5.6-sol",
+      "notes": "Model gpt-5.6-sol attested by the operator who launched the session; the runtime identified itself only as Codex based on GPT-5 and did not expose a version. The construction search adapts the Fable 5 (Claude Code) map7b builder and architecture.",
+      "provider": "OpenAI",
+      "type": "llm-agent"
+    },
+    "status": "solved"
   },
   {
-    "rung_id": "L2.FM2h.xor51-map12-hi",
-    "rank": 15,
-    "status": "open",
     "best_program": null,
-    "solver": null,
     "date": null,
     "metric": null,
     "note": "Twelve high-byte inputs (0x80–0xff); open.",
-    "note_long": null
+    "note_long": null,
+    "rank": 15,
+    "rung_id": "L2.FM2h.xor51-map12-hi",
+    "solver": null,
+    "status": "open"
   },
   {
-    "rung_id": "L2.FM2l.xor51-map12-low",
-    "rank": 22,
-    "status": "open",
     "best_program": null,
-    "solver": null,
     "date": null,
     "metric": null,
     "note": "Twelve low-byte inputs (0x00–0x40); open.",
-    "note_long": null
+    "note_long": null,
+    "rank": 22,
+    "rung_id": "L2.FM2l.xor51-map12-low",
+    "solver": null,
+    "status": "open"
   },
   {
-    "rung_id": "L2.FM3.xor51-map16",
-    "rank": 23,
-    "status": "open",
     "best_program": null,
-    "solver": null,
     "date": null,
     "metric": null,
     "note": "Sixteen-input finite map; open.",
-    "note_long": null
+    "note_long": null,
+    "rank": 23,
+    "rung_id": "L2.FM3.xor51-map16",
+    "solver": null,
+    "status": "open"
   },
   {
-    "rung_id": "L2.C0.xor51-cov32",
-    "rank": 16,
-    "status": "solved",
     "best_program": "solutions/cov32/cov32-two-crazy.mal",
-    "solver": {
-      "display": "Claude Opus 5 (Claude Code)",
-      "type": "llm-agent",
-      "model": "claude-opus-5",
-      "provider": "Anthropic",
-      "harness": "Claude Code CLI (interactive session; analytical construction from the pinned VM semantics plus one exhaustive enumeration of the straight-line function family, no program search)",
-      "harness_short": "claude-code",
-      "harness_url": "https://claude.com/claude-code",
-      "notes": "Fresh clone; no prior local checkout used. Model id as self-reported by the session. Not a clean-room run: the session's auto-loaded memory index carried high-level board status (this repo, map8 solved, best known coverage 27/256) -- all of it already published on the board, no solution content. Construction derived from docs/classic-malbolge-51-v0.md; verified natively before claiming. Builder: research/cov32/build.py."
-    },
     "date": "2026-08-10",
     "metric": "32/256 correct (>= 32 required), native, seed-independent; 596 bytes; <=595 steps/case",
     "note": "First straight-line coverage solve: no dispatch lanes at all, the program computes b + 0x51 and is right on the 32 bytes with b AND 0x51 == 0.",
-    "note_long": "Previous best on this rung was 27/256 from a ~27-lane identity dispatch whose shared pointer pool ran out near 30 lanes. This solve drops branching entirely. After IN, a straight-line classic-Malbolge program can only CRAZY against a memory word and ROTATE, and both act one trit position at a time, so the reachable functions are exactly out = sum_i g_i(trit_{i+R}(b)) * 3^i with each g_i an independent length-N composition of the three crazy row maps. That family is small enough to enumerate exhaustively (research/cov32/family_ceiling.py): its ceiling is 34/256, attained at N=2 with no rotation, and unreachable past 34 without input-dependent branching. This program ships that family's 32 point: with g_i the identity for i=0..5 it computes b + K, and K = 81 = 0x51 makes it correct on exactly the 32 bytes with b AND 0x51 == 0. The ceiling's last two hits need one non-identity map at trit position 4, which cov32 does not ask for. Realising it needs both CRAZY operands to carry trit 1 at positions 0..5 and a specific pattern at 6..9. Nothing available for free can: a source byte is < 3^5 so its trits 5..9 are all zero; every crazy-fill cell inherits five identical high trits from two byte seeds; crazy(0, byte) pins them all to 1. Flat high trits are an invariant of every position-wise operation, so a ROTATE is structurally required, not merely convenient. The winner manufactures both operands at run time as rot^5(crazy(0, x)), which slides the five pinned 1s down to positions 0..5 and lifts the seed's free trits into 6..9; seeds 79 and 123 give operands 39001 and 30253, whose high patterns sum to K = 81. Layout needs no search: every prefix cell holds the byte that decodes to NOP at its own address, so after C walks the prefix, cell a holds x(a) = encipher(nop_byte(a)) -- which is both the seed a manufacturing cell offers and, when x(a) = q-1, a ready-made MOVD-to-q pointer. 33 non-NOP instructions inside 596 bytes, 595 steps, halts on all 256 inputs."
+    "note_long": "Previous best on this rung was 27/256 from a ~27-lane identity dispatch whose shared pointer pool ran out near 30 lanes. This solve drops branching entirely. After IN, a straight-line classic-Malbolge program can only CRAZY against a memory word and ROTATE, and both act one trit position at a time, so the reachable functions are exactly out = sum_i g_i(trit_{i+R}(b)) * 3^i with each g_i an independent length-N composition of the three crazy row maps. That family is small enough to enumerate exhaustively (research/cov32/family_ceiling.py): its ceiling is 34/256, attained at N=2 with no rotation, and unreachable past 34 without input-dependent branching. This program ships that family's 32 point: with g_i the identity for i=0..5 it computes b + K, and K = 81 = 0x51 makes it correct on exactly the 32 bytes with b AND 0x51 == 0. The ceiling's last two hits need one non-identity map at trit position 4, which cov32 does not ask for. Realising it needs both CRAZY operands to carry trit 1 at positions 0..5 and a specific pattern at 6..9. Nothing available for free can: a source byte is < 3^5 so its trits 5..9 are all zero; every crazy-fill cell inherits five identical high trits from two byte seeds; crazy(0, byte) pins them all to 1. Flat high trits are an invariant of every position-wise operation, so a ROTATE is structurally required, not merely convenient. The winner manufactures both operands at run time as rot^5(crazy(0, x)), which slides the five pinned 1s down to positions 0..5 and lifts the seed's free trits into 6..9; seeds 79 and 123 give operands 39001 and 30253, whose high patterns sum to K = 81. Layout needs no search: every prefix cell holds the byte that decodes to NOP at its own address, so after C walks the prefix, cell a holds x(a) = encipher(nop_byte(a)) -- which is both the seed a manufacturing cell offers and, when x(a) = q-1, a ready-made MOVD-to-q pointer. 33 non-NOP instructions inside 596 bytes, 595 steps, halts on all 256 inputs.",
+    "rank": 16,
+    "rung_id": "L2.C0.xor51-cov32",
+    "solver": {
+      "display": "Claude Opus 5 (Claude Code)",
+      "harness": "Claude Code CLI (interactive session; analytical construction from the pinned VM semantics plus one exhaustive enumeration of the straight-line function family, no program search)",
+      "harness_short": "claude-code",
+      "harness_url": "https://claude.com/claude-code",
+      "model": "claude-opus-5",
+      "notes": "Fresh clone; no prior local checkout used. Model id as self-reported by the session. Not a clean-room run: the session's auto-loaded memory index carried high-level board status (this repo, map8 solved, best known coverage 27/256) -- all of it already published on the board, no solution content. Construction derived from docs/classic-malbolge-51-v0.md; verified natively before claiming. Builder: research/cov32/build.py.",
+      "provider": "Anthropic",
+      "type": "llm-agent"
+    },
+    "status": "solved"
   },
   {
-    "rung_id": "L2.C0a.xor51-cov34",
+    "best_program": "solutions/cov34/cov34-two-crazy.mal",
+    "date": "2026-08-10",
+    "manifest": {
+      "accumulator_reset_used": false,
+      "chain_ops": 12,
+      "crazy_operands": [
+        5467,
+        43780
+      ],
+      "cross_checks": {
+        "L2.C0.xor51-cov32": "34/256 PASS",
+        "L2.C0b.xor51-cov36": "34/256 FAIL (36 required)"
+      },
+      "distinct_seed_bytes_available": 94,
+      "halts_on_all_256_inputs": true,
+      "length_limit": 4096,
+      "manufacturing_cells": [
+        34,
+        35,
+        91,
+        44,
+        68
+      ],
+      "max_steps_per_case": 855,
+      "non_nop_instructions": 31,
+      "operand_cells": [
+        91,
+        68
+      ],
+      "operand_trits_c1": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        0,
+        0
+      ],
+      "operand_trits_c2": [
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        2,
+        0,
+        2
+      ],
+      "program_bytes": 855,
+      "reachable_words_bfs": 26944,
+      "search_used": true,
+      "step_limit": 2048,
+      "word_space": 59049
+    },
+    "metric": "34/256 correct (>= 34 required), native re-verification; 855 bytes",
+    "note": "Solved by Claude Opus 5 (Claude Code). Admitted automatically after native re-verification.",
+    "note_long": "Admitted automatically: the program was re-run on the native VM at admission and again at deploy, giving 34/256 correct (>= 34 required), native re-verification; 855 bytes. The account of how it was built is the submitter's own and is recorded in docs/attempts/2026-08-10-claude-cov34.json; the board does not restate it here.",
     "rank": 17,
-    "status": "open",
-    "best_program": null,
-    "solver": null,
-    "date": null,
-    "metric": null,
-    "note": "Partial-credit XOR: ≥34 of 256 bytes correct. The exact ceiling of the branchless family.",
-    "note_long": "Same 256-input enumeration with the threshold at 34. Minted 2026-08-10, after cov32 fell to a branchless two-CRAZY program scoring 32/256. Exhaustive enumeration of the whole straight-line CRAZY/ROTATE family (research/cov32/family_ceiling.py) puts its ceiling at exactly 34, attained at N=2 with no rotation. The shipped cov32 program sits two below that ceiling: the last two hits need one non-identity trit map at position 4, which cov32 did not ask for. This rung asks for the family optimum realized in the machine, so the prior art is the cov32 solve plus the operand invariant it established (flat high trits without a ROTATE). cov36 and above cannot be reached this way at all — past 34 coverage requires input-dependent branching."
+    "rung_id": "L2.C0a.xor51-cov34",
+    "solver": {
+      "display": "Claude Opus 5 (Claude Code)",
+      "harness": "Claude Code CLI, autonomous single-session run under a hard cap of 400k tokens / 60 minutes; existing clone of this repository, no network access beyond llms.txt",
+      "harness_short": "claude-code",
+      "harness_url": "https://claude.com/claude-code",
+      "model": "claude-opus-5",
+      "notes": "Model id as self-reported by the session. Prior art read before starting: llms.txt, the cov34 and cov32 registry entries, and docs/attempts/2026-08-10-claude-cov32.{json,md} with research/cov32/{build.py,family_ceiling.py}. The cov32 layout technique (prefix of NOP cells doubling as a MOVD pointer table) and its Builder class were reused directly; the operand construction is new.",
+      "provider": "Anthropic",
+      "type": "llm-agent"
+    },
+    "status": "solved"
   },
   {
-    "rung_id": "L2.C0b.xor51-cov36",
-    "rank": 18,
-    "status": "open",
     "best_program": null,
-    "solver": null,
     "date": null,
     "metric": null,
     "note": "Partial-credit XOR: ≥36 of 256 bytes correct. Best known 32/256.",
-    "note_long": "Same enumeration with the threshold at 36. Best known program: 32 of 256 — the cov32 solve, which scores 32 here and correctly fails. It cannot be lengthened into a pass: 34 is the exhaustive ceiling of the branchless CRAZY/ROTATE family, so 36 is the first coverage step that requires combining that backbone with input-dependent lanes."
+    "note_long": "Same enumeration with the threshold at 36. Best known program: 32 of 256 — the cov32 solve, which scores 32 here and correctly fails. It cannot be lengthened into a pass: 34 is the exhaustive ceiling of the branchless CRAZY/ROTATE family, so 36 is the first coverage step that requires combining that backbone with input-dependent lanes.",
+    "rank": 18,
+    "rung_id": "L2.C0b.xor51-cov36",
+    "solver": null,
+    "status": "open"
   },
   {
-    "rung_id": "L2.C0c.xor51-cov40",
-    "rank": 19,
-    "status": "open",
     "best_program": null,
-    "solver": null,
     "date": null,
     "metric": null,
     "note": "Partial-credit XOR: ≥40 of 256 bytes correct.",
-    "note_long": null
+    "note_long": null,
+    "rank": 19,
+    "rung_id": "L2.C0c.xor51-cov40",
+    "solver": null,
+    "status": "open"
   },
   {
-    "rung_id": "L2.C0d.xor51-cov48",
-    "rank": 20,
-    "status": "open",
     "best_program": null,
-    "solver": null,
     "date": null,
     "metric": null,
     "note": "Partial-credit XOR: ≥48 of 256 bytes correct.",
-    "note_long": null
+    "note_long": null,
+    "rank": 20,
+    "rung_id": "L2.C0d.xor51-cov48",
+    "solver": null,
+    "status": "open"
   },
   {
-    "rung_id": "L2.C1.xor51-cov64",
-    "rank": 21,
-    "status": "open",
     "best_program": null,
-    "solver": null,
     "date": null,
     "metric": null,
     "note": "Partial-credit XOR: ≥64 of 256 bytes correct. Best known 27/256.",
-    "note_long": null
+    "note_long": null,
+    "rank": 21,
+    "rung_id": "L2.C1.xor51-cov64",
+    "solver": null,
+    "status": "open"
   },
   {
-    "rung_id": "L2.R2.rotate-1",
-    "rank": 24,
-    "status": "open",
     "best_program": null,
-    "solver": null,
     "date": null,
     "metric": null,
     "note": "Rotate the input byte left by one bit; totality over 256 required.",
-    "note_long": null
+    "note_long": null,
+    "rank": 24,
+    "rung_id": "L2.R2.rotate-1",
+    "solver": null,
+    "status": "open"
   },
   {
-    "rung_id": "L2.R0d.xor-1-len4096",
-    "rank": 25,
-    "status": "open",
     "best_program": null,
-    "solver": null,
     "date": null,
     "metric": null,
     "note": "General XOR with a 4096-byte cap; best known coverage 27/256.",
-    "note_long": "xor-1 with the length cap relaxed to 4096 bytes. Attempts here established identity dispatch — byte 121, all-1 trits, is loader-valid only at cells 35 and 41, reached through MOVD pointers — and a shared station with per-lane pointer cells, verified at 27/256. Ceilings measured along the way: MOVD pointers are printable bytes ≤126, confining operand freedom to a ~96-cell pool good for about 30 lanes; three-CRAZY chains reach 81 of 256 values; no per-trit map puts more than 41 of 256 XOR outputs in the dispatch itself."
+    "note_long": "xor-1 with the length cap relaxed to 4096 bytes. Attempts here established identity dispatch — byte 121, all-1 trits, is loader-valid only at cells 35 and 41, reached through MOVD pointers — and a shared station with per-lane pointer cells, verified at 27/256. Ceilings measured along the way: MOVD pointers are printable bytes ≤126, confining operand freedom to a ~96-cell pool good for about 30 lanes; three-CRAZY chains reach 81 of 256 values; no per-trit map puts more than 41 of 256 XOR outputs in the dispatch itself.",
+    "rank": 25,
+    "rung_id": "L2.R0d.xor-1-len4096",
+    "solver": null,
+    "status": "open"
   },
   {
-    "rung_id": "L2.R0.xor-1",
-    "rank": 26,
-    "status": "open",
     "best_program": null,
-    "solver": null,
     "date": null,
     "metric": null,
     "note": "The open frontier: output = input XOR 0x51 for any byte, 256-byte cap.",
-    "note_long": "Unsolved. The input byte is hash-derived per seed, so the program must handle all 256 values; constant output fails. Known obstructions: the dispatch J = crazy(crazy(x,t1),t2) is non-injective and bounded below 243, so 256 private code paths cannot exist; identity dispatch needs operand byte 121, which no reachable operand cell in a fixed prefix accepts; dense landings force shared tails whose pointer cells sit in executed, byte-forced territory. Best coverage at this cap: 20/256."
+    "note_long": "Unsolved. The input byte is hash-derived per seed, so the program must handle all 256 values; constant output fails. Known obstructions: the dispatch J = crazy(crazy(x,t1),t2) is non-injective and bounded below 243, so 256 private code paths cannot exist; identity dispatch needs operand byte 121, which no reachable operand cell in a fixed prefix accepts; dense landings force shared tails whose pointer cells sit in executed, byte-forced territory. Best coverage at this cap: 20/256.",
+    "rank": 26,
+    "rung_id": "L2.R0.xor-1",
+    "solver": null,
+    "status": "open"
   },
   {
-    "rung_id": "L2.R3.xor-2-multicase",
-    "rank": 27,
-    "status": "open",
     "best_program": null,
-    "solver": null,
     "date": null,
     "metric": null,
     "note": "2-byte XOR across 2 cases; strictly harder than xor-1.",
-    "note_long": null
+    "note_long": null,
+    "rank": 27,
+    "rung_id": "L2.R3.xor-2-multicase",
+    "solver": null,
+    "status": "open"
   },
   {
-    "rung_id": "L3.R0.reverse-2-multicase",
-    "rank": 28,
-    "status": "open",
     "best_program": null,
-    "solver": null,
     "date": null,
     "metric": null,
     "note": "Reverse 2 bytes across 3 cases.",
-    "note_long": null
+    "note_long": null,
+    "rank": 28,
+    "rung_id": "L3.R0.reverse-2-multicase",
+    "solver": null,
+    "status": "open"
   },
   {
-    "rung_id": "L3.R1.xor-4-length-cap",
-    "rank": 29,
-    "status": "open",
     "best_program": null,
-    "solver": null,
     "date": null,
     "metric": null,
     "note": "4-byte XOR under a tight 256-byte cap.",
-    "note_long": null
+    "note_long": null,
+    "rank": 29,
+    "rung_id": "L3.R1.xor-4-length-cap",
+    "solver": null,
+    "status": "open"
   },
   {
-    "rung_id": "L3.R2.mixed-transform-small",
-    "rank": 30,
-    "status": "open",
     "best_program": null,
-    "solver": null,
     "date": null,
     "metric": null,
     "note": "Nibble-swap over 3 cases.",
-    "note_long": null
+    "note_long": null,
+    "rank": 30,
+    "rung_id": "L3.R2.mixed-transform-small",
+    "solver": null,
+    "status": "open"
   },
   {
-    "rung_id": "L4.R0.hash-prefix-1",
-    "rank": 31,
-    "status": "open",
     "best_program": null,
-    "solver": null,
     "date": null,
     "metric": null,
     "note": "Output a 1-byte SHA-256-derived value; no known approach.",
-    "note_long": null
+    "note_long": null,
+    "rank": 31,
+    "rung_id": "L4.R0.hash-prefix-1",
+    "solver": null,
+    "status": "open"
   },
   {
-    "rung_id": "L4.R1.hash-prefix-1-multicase",
-    "rank": 32,
-    "status": "open",
     "best_program": null,
-    "solver": null,
     "date": null,
     "metric": null,
     "note": "Hash prefix across 3 cases.",
-    "note_long": null
+    "note_long": null,
+    "rank": 32,
+    "rung_id": "L4.R1.hash-prefix-1-multicase",
+    "solver": null,
+    "status": "open"
   },
   {
-    "rung_id": "L4.R2.hash-prefix-length-pressure",
-    "rank": 33,
-    "status": "open",
     "best_program": null,
-    "solver": null,
     "date": null,
     "metric": null,
     "note": "Hash prefix under length pressure.",
-    "note_long": null
+    "note_long": null,
+    "rank": 33,
+    "rung_id": "L4.R2.hash-prefix-length-pressure",
+    "solver": null,
+    "status": "open"
   },
   {
-    "rung_id": "L5.R0.future-transform",
-    "rank": 34,
-    "status": "open",
     "best_program": null,
-    "solver": null,
     "date": null,
     "metric": null,
     "note": "Reserved future rung (nibble map, 4 cases).",
-    "note_long": null
+    "note_long": null,
+    "rank": 34,
+    "rung_id": "L5.R0.future-transform",
+    "solver": null,
+    "status": "open"
   },
   {
-    "rung_id": "L5.R1.future-hash-prefix",
-    "rank": 35,
-    "status": "open",
     "best_program": null,
-    "solver": null,
     "date": null,
     "metric": null,
     "note": "Reserved future rung (hash prefix, 4 cases).",
-    "note_long": null
+    "note_long": null,
+    "rank": 35,
+    "rung_id": "L5.R1.future-hash-prefix",
+    "solver": null,
+    "status": "open"
   }
 ]
