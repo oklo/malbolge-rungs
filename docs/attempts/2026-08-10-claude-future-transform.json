@@ -1,0 +1,47 @@
+{
+  "artifacts": [
+    "research/future-transform/straightline_ceiling.c",
+    "research/future-transform/build.py",
+    "research/future-transform/ceiling-output.txt",
+    "research/future-transform/cand-identity.mal"
+  ],
+  "best_candidate": {
+    "claimed_correct_cases": 0,
+    "claimed_total_cases": 4,
+    "program": "research/future-transform/cand-4stage-crazy.mal"
+  },
+  "budget": {
+    "conclusion": "Wall, not budget -- at least for every mechanism reachable without branching. A 4x-replicated 256-entry dispatch is a strictly harder object than the 12-entry finite maps that are still open at ranks 15-17 with 400k budgets, so rank 34 is if anything an under-estimate of this rung relative to those.",
+    "search_performed": "Exhaustive over the whole straight-line CRAZY/ROTATE family against NibbleMap; exhaustive over all 94x94 ordered pairs of data-cell operand values for the buildable two-CRAZY stage. No branching search was attempted -- the budget did not allow one.",
+    "spent": "Roughly 80k of the 100k token cap and the full 20-minute wall cap; ~2 minutes of that was the exhaustive C enumeration of the straight-line family (N=0..5 x 10 shifts x up to 12^6 per-position map assignments x 256 inputs), the rest was reading prior art, deriving the pointer/operand constraints, and building and verifying two candidates.",
+    "would_try_next": "The only mechanism left is input-dependent dispatch, and the useful next step is to test whether it is even addressable here before building it. Concretely: (1) confirm the pointer ceiling -- every value in a fresh program's memory is a printable byte <= 126, and MOVD sets D = mem[D], so D can only ever be redirected into cells 34..127, i.e. 94 data cells for the whole program; a 256-way table cannot be addressed directly and would need a computed JMP (code 4 sets C = mem[D], same <= 127 bound) so the jump table itself has to live in the first 128 bytes. That bound, if it holds under a proper proof, is a structural obstruction for this rung independent of program length and worth writing up on its own. (2) If a two-level dispatch (split the byte into its high and low nibble, 16 lanes each, compose) can be made to fit those 94 cells, that is the only plausible route, and it must then be replicated four times within 1024 bytes -- roughly 15 bytes per instruction under the cov32 NOP-walk layout gives about 68 instructions of headroom total, which is the number to beat. (3) Cheap and worth doing first at any budget: re-derive the same 16/256 ceiling for the extended family in which CRAZY operands are themselves input-derived (store A into a cell, ROTATE it, CRAZY it against a second stored copy at a trit offset), which is the first family with genuine cross-trit interaction and is not covered by the enumeration run here. If that family also tops out near 16, this rung is a wall and not a budget problem; that single experiment is the highest-value next 50k tokens on this rung."
+  },
+  "builds_on": [
+    "docs/attempts/2026-08-10-claude-cov32.json"
+  ],
+  "date": "2026-08-10",
+  "file": "docs/attempts/2026-08-10-claude-future-transform.json",
+  "manifest": {
+    "model_version": "claude-opus-5",
+    "straightline_family_ceiling_over_256_inputs": 16,
+    "straightline_pass_probability_per_epoch": "(16/256)^16 = 2^-64",
+    "token_cap": 100000,
+    "verify_epochs_run": 1,
+    "wall_cap_minutes": 20
+  },
+  "outcome": "unsolved",
+  "report": "docs/attempts/2026-08-10-claude-future-transform.md",
+  "rung_id": "L5.R0.future-transform",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "Claude Opus 5 (Claude Code)",
+    "harness": null,
+    "harness_short": "claude-code",
+    "harness_url": "https://claude.com/claude-code",
+    "model": "claude-opus-5",
+    "notes": "Model id as the session reports it. Run under a hard 100k-token / 20-minute cap as a difficulty calibration probe, not a solve attempt.",
+    "provider": "Anthropic",
+    "type": "llm-agent"
+  },
+  "summary": "Characterised the rung rather than searched it. L5.R0 is Family=Transform with NibbleMap: each of 4 cases feeds a 32-byte hash-derived input and demands the nibble swap ((b<<4)|(b>>4))&0xFF of its first four bytes -- 16 exact bytes per epoch, with the inputs re-derived from the challenge seed on every epoch, so nothing case-specific can be baked in and no partial credit exists (verify scores whole cases). Adapted research/cov32/family_ceiling.py to this target and re-ran it exhaustively in C over the entire straight-line CRAZY/ROTATE family (every N in 0..5, every rotation shift, every per-position trit map, every reachable high-trit constant K): the maximum agreement with the nibble swap over the 256 byte values is 16/256, and it is attained at N=0 -- the identity. No composition of CRAZY-with-a-constant and ROTATE beats emitting the input byte unchanged, because the nibble swap is a base-16 digit exchange with no positionwise base-3 structure to exploit. That fixes the straight-line pass probability at (16/256)^16 = 2^-64 per epoch and rules the whole family out as a mechanism, not as a budget question. Authored and natively verified two candidates for this rung: a 688-byte four-stage program (IN; CRAZY v1; CRAZY v2; OUT, four times, each stage on its own operand cells since CRAZY overwrites its operand) built on the cov32 NOP-prefix pointer-table layout, best available two-crazy agreement 11/256 per byte; and the ceiling-optimal 9-byte straight-line program at 16/256 per byte. Both load, halt, emit exactly 4 bytes, and score 0/4 cases. The remaining mechanism is a 256-entry input-dependent dispatch applied four times, which the board's own frontier says is out of reach: 12-entry finite maps are still open two ranks below with 400k budgets."
+}

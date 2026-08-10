@@ -172,6 +172,12 @@ pub fn validate_attempts() -> (Vec<AttemptValidation>, bool) {
     (results, all_ok)
 }
 
+/// Validate one record against a repository root — the same checks
+/// `validate_attempts` runs, exposed for the admission path.
+pub fn validate_record_at(root: &Path, rec: &AttemptRecord) -> Vec<String> {
+    validate_record(root, rec)
+}
+
 /// Validate one record; returns its problems (empty = valid). Schema tag, known
 /// rung, sane outcome, referenced files contained in the repo, and — when a best
 /// candidate is claimed — an exact match between the claimed score and a fresh

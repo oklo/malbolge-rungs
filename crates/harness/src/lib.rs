@@ -1,6 +1,7 @@
 //! MAL-51 rung harness: the rung registry, deterministic challenge-case
 //! derivation, and native-VM verification.
 
+pub mod admit;
 pub mod attempts;
 pub mod challenge;
 pub mod dispatch;

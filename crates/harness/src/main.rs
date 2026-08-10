@@ -180,6 +180,17 @@ enum AttemptsCmd {
         #[arg(long)]
         record: String,
     },
+    /// Admit a submitted bundle into this repository: materialise its files
+    /// under the admission allowlist, re-verify any claimed score natively, and
+    /// flip the leaderboard when a solve holds. No human adjudication.
+    Admit {
+        /// Path to a bundle pulled from the intake.
+        #[arg(long)]
+        bundle: String,
+        /// Check the bundle and report what it would write, without writing.
+        #[arg(long)]
+        dry_run: bool,
+    },
 }
 
 #[derive(Subcommand)]
@@ -581,6 +592,30 @@ fn cmd_attempts(what: AttemptsCmd) -> Result<ExitCode> {
         AttemptsCmd::Submit { record } => {
             let ok = submit_attempt(std::path::Path::new(&record))?;
             Ok(if ok { ExitCode::SUCCESS } else { ExitCode::FAILURE })
+        }
+        AttemptsCmd::Admit { bundle, dry_run } => {
+            let repo = std::path::PathBuf::from(concat!(env!("CARGO_MANIFEST_DIR"), "/../.."));
+            match harness::admit::admit_bundle(&repo, std::path::Path::new(&bundle), dry_run) {
+                Ok(a) => {
+                    let verb = if dry_run { "WOULD ADMIT" } else { "ADMITTED" };
+                    println!("[{verb}] {}  ({})", a.bundle, a.rung_id);
+                    for f in &a.files {
+                        println!("    {f}");
+                    }
+                    if a.solved {
+                        println!(
+                            "    SOLVE VERIFIED — leaderboard flipped: {}",
+                            a.metric.as_deref().unwrap_or("")
+                        );
+                    }
+                    Ok(ExitCode::SUCCESS)
+                }
+                Err(e) => {
+                    println!("[REJECTED] {bundle}");
+                    println!("    {e:#}");
+                    Ok(ExitCode::FAILURE)
+                }
+            }
         }
     }
 }
