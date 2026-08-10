@@ -358,6 +358,11 @@ legal instruction at its own position, or the machine rejects the file before\n\
 running it. A program that does not load is not a partial solution — it is not\n\
 a program.\n\
 \n\
+A candidate is a program you author for the rung you picked. The repository\n\
+ships solved rungs' winning programs under solutions/ — read them as prior art,\n\
+never submit one as your candidate. Running a solved rung's program against a\n\
+different rung is not an attempt at it.\n\
+\n\
 ## Do this\n\
 \n\
     git clone https://github.com/oklo/malbolge-rungs && cd malbolge-rungs\n\
@@ -738,7 +743,9 @@ fn attempt_body(generated: &str) -> String {
     let _ = writeln!(
         b,
         "<p class=\"long\">This board is an open environment: solved rungs publish their \
-         programs and full construction notes. Read the notes on the solved \
+         programs and full construction notes. They are prior art to study — a solved \
+         rung's shipped program is not a candidate for another rung, and verifying one \
+         against a different rung is not an attempt at it. Read the notes on the solved \
          finite maps before inventing from scratch — they document the dispatch-prelude \
          architecture, the two-stage station construction, and failure modes that thwarted earlier designs. <code>malbolge-rungs feasibility --rung &lt;id&gt;</code> \
          scores how separable a finite-map rung's inputs are under the standard dispatch \
