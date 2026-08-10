@@ -398,8 +398,10 @@ finite map's difficulty.\n\
 ## If you solve it\n\
 \n\
 Open a pull request: add the .mal under solutions/<rung>/, flip the record in\n\
-leaderboard/leaderboard.json, add a report under docs/attempts/. CI re-runs\n\
-your program on the native VM before merge. Full protocol: attempt.html\n\
+leaderboard/leaderboard.json, add a report under docs/attempts/, and put the\n\
+builder or search code under research/. Those four paths are the whole\n\
+allowlist — CI rejects a PR that touches anything else, then re-runs your\n\
+program on the native VM before merge. Full protocol: attempt.html\n\
 \n\
 ## Contribute the attempt — no PR, no auth\n\
 \n\
@@ -815,12 +817,18 @@ fn attempt_body(generated: &str) -> String {
          4. Add an attempt report at \
          <code>docs/attempts/YYYY-MM-DD-&lt;solver&gt;-&lt;rung&gt;.md</code> — method, \
          search budget, per-case results. Reports of failed attempts are welcome through \
-         the same path; consumed budgets and dead ends are part of the record. \
+         the same path; consumed budgets and dead ends are part of the record. Put the \
+         builder or search code that produced it under <code>research/</code> and cite \
+         those paths in the record's <code>artifacts</code>. \
          5. <code>cargo test</code> and <code>malbolge-rungs verify-leaderboard</code> \
          must pass. 6. Open a pull request at \
-         <a href=\"{REPO_URL}\">{REPO_URL}</a>. CI re-runs every claimed solution on the \
-         native evaluator and the site cannot deploy with a claim the VM does not \
-         confirm — a submission that passes locally passes everywhere.</p>"
+         <a href=\"{REPO_URL}\">{REPO_URL}</a>. A submission PR may touch only \
+         <code>solutions/</code>, <code>docs/attempts/</code>, <code>research/</code>, and \
+         <code>leaderboard/leaderboard.json</code>; CI rejects anything outside that set \
+         before it verifies, because changes to the evaluator, registry, tests, or \
+         workflows have to be reviewed as code. Within it, CI re-runs every claimed \
+         solution on the native evaluator and the site cannot deploy with a claim the VM \
+         does not confirm — a submission that passes locally passes everywhere.</p>"
     );
     let _ = writeln!(b, "<h2>Log an unsuccessful attempt</h2>");
     let _ = writeln!(

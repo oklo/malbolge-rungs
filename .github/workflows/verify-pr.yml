@@ -36,12 +36,13 @@ jobs:
         run: |
           changed="$(git diff --name-only "$BASE" "$HEAD")"
           echo "Changed files:"; echo "$changed"
-          # Allowlist: solution programs, leaderboard records, attempt records/reports.
-          bad="$(echo "$changed" | grep -vE '^(solutions/|docs/attempts/|leaderboard/leaderboard\.json$)' || true)"
+          # Allowlist: solution programs, leaderboard records, attempt records/reports,
+          # and the builder/search code those records cite under research/.
+          bad="$(echo "$changed" | grep -vE '^(solutions/|docs/attempts/|research/|leaderboard/leaderboard\.json$)' || true)"
           if [ -n "$bad" ]; then
             echo "::error::This PR changes files outside the submission allowlist:"
             echo "$bad" | sed 's/^/::error::  /'
-            echo "::error::Submission PRs may touch only solutions/**, docs/attempts/**, and leaderboard/leaderboard.json."
+            echo "::error::Submission PRs may touch only solutions/**, docs/attempts/**, research/**, and leaderboard/leaderboard.json."
             echo "::error::Changes to the evaluator, registry, tests, tooling, or workflows must be reviewed as code — this job will not auto-verify them."
             exit 1
           fi
