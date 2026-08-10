@@ -159,7 +159,20 @@ def place_code(geo, cells_ops, assign):
             delta[cell] = b
     return delta
 
-def tail_plans(geo, x, assign, max_k=8, max_n=3, cap=None):
+# Attempt-budget guard: solve_operands' rec() has no native bound on total
+# nodes visited when a lane has zero valid tails in a geometry -- it must
+# otherwise exhaust the full combinatorial tree to prove that. map12-hi's
+# larger landing spread (vs map8) inflates that tree enough to hang for a
+# very long time. _ATTEMPTS/_ATTEMPT_BUDGET give tail_plans() an optional
+# total-node cap; exceeding it is treated the same as genuine exhaustion
+# (stop yielding) rather than raising, since callers already treat a
+# zero-yield result as "skip this geometry."
+_ATTEMPTS = [0]
+_ATTEMPT_BUDGET = [None]
+
+def tail_plans(geo, x, assign, max_k=8, max_n=3, cap=None, attempt_budget=None):
+    _ATTEMPTS[0] = 0
+    _ATTEMPT_BUDGET[0] = attempt_budget
     Jx, m = geo.lane_env(x)
     q = m + 49 - Jx
     emitted = [0]
@@ -187,6 +200,12 @@ def tail_plans(geo, x, assign, max_k=8, max_n=3, cap=None):
                 emitted[0] += 1
                 if cap and emitted[0] >= cap:
                     return
+                if _ATTEMPT_BUDGET[0] is not None and _ATTEMPTS[0] >= _ATTEMPT_BUDGET[0]:
+                    return
+            if _ATTEMPT_BUDGET[0] is not None and _ATTEMPTS[0] >= _ATTEMPT_BUDGET[0]:
+                return
+        if _ATTEMPT_BUDGET[0] is not None and _ATTEMPTS[0] >= _ATTEMPT_BUDGET[0]:
+            return
 
 def tails_from(geo, x, Jx, L, d0, assign, acc_delta, max_k, max_n):
     tgt = TGT[x]
@@ -213,6 +232,9 @@ def solve_operands(geo, x, Jx, tgt, ops, d0, assign, acc_delta, Tcell):
     extra_enc = (Tcell,)
     def rec(i, a_val, d_cur, cur_assign, cur_delta):
         if len(results) >= 24:
+            return
+        _ATTEMPTS[0] += 1
+        if _ATTEMPT_BUDGET[0] is not None and _ATTEMPTS[0] >= _ATTEMPT_BUDGET[0]:
             return
         if i == len(ops):
             return

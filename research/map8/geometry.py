@@ -105,6 +105,8 @@ def tails_from_v2(geo, x, Jx, L, d0, assign, acc_delta, max_k, max_n):
     Tcell = L - 1
     for k in range(0, max_k + 1):
         for shape in SHAPES:
+            if B._ATTEMPT_BUDGET[0] is not None and B._ATTEMPTS[0] >= B._ATTEMPT_BUDGET[0]:
+                return
             ops = [NOP] * k + shape + [OUT, HALT]
             cells = list(range(L, L + len(ops)))
             code_delta = place_code(geo, list(zip(cells, ops)), assign)
