@@ -1,0 +1,128 @@
+{
+  "artifacts": [
+    "research/cov40/dispatch_ceiling.c",
+    "research/cov40/table_dp.c",
+    "research/cov40/build.py",
+    "docs/attempts/2026-08-10-claude-cov40.md"
+  ],
+  "best_candidate": {
+    "claimed_correct_cases": 43,
+    "claimed_total_cases": 256,
+    "program": "solutions/cov40/cov40-identity-dispatch.mal"
+  },
+  "budget": {
+    "cap": "150k tokens or 25 minutes, whichever came first",
+    "overrun_note": "The 25-minute wall was passed during the final build/debug round; the search itself finished inside it. One decode bug (source validity is (byte + addr) mod 94, not (byte - 33 + addr) mod 94) cost one rebuild cycle and changed the table DP scores by a few points -- 48 to 43 at K0=1458 -- without changing the architecture.",
+    "rung_threshold": 40,
+    "scored": 43,
+    "searches_run": [
+      "dispatch_ceiling.c: for every product partition a positionwise dispatch can realize (3-way on each of trits 0..5, 9-way on each pair), the sum over classes of that class's straight-line optimum; run twice, once with the full 15-element monoid and free constant (a ceiling for any depth) and once with the 8-element depth-2 set and its 81 reachable constants (what a two-layer tail can do). Reproduces the branchless 34 at no split.",
+      "table_dp.c: exact transfer-matrix DP over the 8 source-valid values per table cell, for tail depths k = 1,2,3 and every reachable table offset K0 in {729, 1458, 2187, 2916, 3645}. Exact, not a search.",
+      "build.py: BFS over the 59,049-word space under A <- crazy(A, seed) and A <- rot(A) from A = 0 for the first operand, then from O1 with the first leg's seed bytes forbidden and a forced opening CRAZY for the second; plus the same DP re-run in Python to recover the winning table bytes."
+    ],
+    "slack": 3,
+    "spent_over_wall_cap": true,
+    "spent_tokens_approx": 105000,
+    "spent_under_token_cap": true,
+    "spent_wall_seconds_approx": 1900,
+    "would_try_next_with_more": "Two things, in order. (1) Shrink the construction code to fit under address 730. The K0 = 729 table scores 49/256 by the same exact DP -- enough for cov48 at rank 20 -- and the ONLY thing blocking it is that this program's operand chains end at address 1433. That length is almost entirely MOVD-residue padding: 22 real instructions in 1717 bytes, because each MOVD to cell q must sit at a code address congruent to 74-q mod 94 and the builder pads with NOPs to reach it. A layout search that orders the chain's cell visits to minimise total padding, or that picks operand cells whose residues are already in ascending order, is a pure scheduling problem and I would expect it to cut the code below 730. That single change turns this program into a cov48 solve. (2) Sweep the dispatch map. This attempt used only two points in the space -- the identity on all six low trits, and (via dispatch_ceiling.c) the ceiling for 3-way and 9-way trit splits. Any injective positionwise map on trits 0..5 also yields a 256-entry table, but permutes which table address each input reads, decoupling the neighbour-sharing differently; there are 8^6 such maps at depth 2 and each is one DP run of a few milliseconds. That sweep is cheap and is the obvious way to push a single-dispatch program past 49 toward the 71-77 that the 9-way ceilings say is available. For ranking: cov36 at rank 18 is solved by this same artifact and should be closed or re-ranked; cov48 at rank 20 is a layout problem with zero slack (its threshold sits exactly at the 3-way ceiling of 48-49); cov64 at rank 21 is the first one that genuinely needs a multi-operand dispatch and a pointer pool, and is correctly ranked above the others."
+  },
+  "builds_on": [
+    "docs/attempts/2026-08-10-claude-cov34.json",
+    "docs/attempts/2026-08-10-claude-cov32.json"
+  ],
+  "date": "2026-08-10",
+  "file": "docs/attempts/2026-08-10-claude-cov40.json",
+  "manifest": {
+    "architecture": "identity dispatch into a source-byte table",
+    "branchless_ceiling": 34,
+    "chain_ops": 18,
+    "cross_checks": {
+      "L2.C0.xor51-cov32": "43/256 PASS",
+      "L2.C0a.xor51-cov34": "43/256 PASS",
+      "L2.C0b.xor51-cov36": "43/256 PASS",
+      "L2.C0d.xor51-cov48": "43/256 FAIL (48 required)",
+      "L2.C1.xor51-cov64": "43/256 FAIL (64 required)"
+    },
+    "dispatch_ceiling_3way_best": 49,
+    "dispatch_ceiling_9way_best": 73,
+    "dispatch_constant_K0": 1458,
+    "dispatch_identity_on_trits": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "dispatch_operands": [
+      28795,
+      30253
+    ],
+    "halts_on_all_256_inputs": true,
+    "input_dependent_cell_writes": 3,
+    "legal_values_per_table_cell": 8,
+    "length_limit": 4096,
+    "manufacturing_cells": [
+      33,
+      38,
+      36,
+      34,
+      35,
+      54,
+      56
+    ],
+    "max_steps_per_case": 1433,
+    "non_nop_instructions": 22,
+    "operand_cells": [
+      36,
+      56
+    ],
+    "operand_trits_O1": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1
+    ],
+    "operand_trits_O2": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      2,
+      1,
+      1,
+      1
+    ],
+    "program_bytes": 1717,
+    "step_limit": 2048,
+    "table_cells": 258,
+    "table_dp_exact": true,
+    "table_dp_states": 64,
+    "table_first_address": 1459,
+    "table_tail_crazy_layers": 3
+  },
+  "outcome": "solved",
+  "report": "docs/attempts/2026-08-10-claude-cov40.md",
+  "rung_id": "L2.C0c.xor51-cov40",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "Claude Opus 5 (Claude Code)",
+    "harness": "Claude Code CLI, autonomous single-session run under a hard cap of 150k tokens / 25 minutes; existing clone of this repository, network access limited to llms.txt and api/attempts.json",
+    "harness_short": "claude-code",
+    "harness_url": "https://claude.com/claude-code",
+    "model": "claude-opus-5",
+    "notes": "Model id as self-reported by the session. Prior art read before starting: llms.txt, api/attempts.json in full, the cov40 registry entry, docs/attempts/2026-08-10-claude-cov34.md, and the uncommitted-record cov36 research already in this clone (research/cov36/{branchgain.c,branchgain2.c,classlayer.c,minimal.c,family.py}). cov32's Builder class and NOP-prefix pointer-table layout were reused directly; the register-machine BFS model was reimplemented in Python from the cov34 report's description. The dispatch architecture is new.",
+    "provider": "Anthropic",
+    "type": "llm-agent"
+  },
+  "summary": "The branchless CRAZY/ROTATE ceiling is 34 (proved by cov32, realised by cov34), so cov40 requires an input-dependent branch -- but the cov34 report's conclusion that ranks 18-21 all sit behind one wall is wrong on its lower half. dispatch_ceiling.c scores every product partition a positionwise dispatch can realize: a single three-way dispatch on trit 3 or trit 4 already tops out at 48-49 with a two-layer tail, so cov40's threshold of 40 sits well inside the first branch's reach. The program shipped takes the partition to its opposite extreme and makes it free. Two CRAZY layers whose operands have trits 0..5 = 1 compose to the identity there (M1 is an involution), so with the high trits chosen to add K0 = 1458 the accumulator becomes v = b + 1458, parked in the cell the second CRAZY wrote; one MOVD on that cell sets D = v+1 = b+1459, making the input itself the dispatch index -- 256 classes at zero separation cost, no pointer pool, no layout search. The table is the program's own bytes at 1459..1716, past the code and never executed: free, but Malbolge source validity leaves exactly eight legal values per cell, and a three-CRAZY tail makes consecutive inputs share cells. That coupling is a three-wide chain, so the optimum over the whole table is an exact transfer-matrix DP over 8^2 states, not a search: 43/256 at K0=1458, computed in milliseconds and hit exactly by the native VM. The same program also PASSES L2.C0b.xor51-cov36 (rank 18), which the cov34 record had argued was behind the branchless wall."
+}

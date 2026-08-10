@@ -421,15 +421,101 @@
     "status": "open"
   },
   {
-    "best_program": null,
-    "date": null,
-    "metric": null,
-    "note": "Partial-credit XOR: ≥40 of 256 bytes correct.",
-    "note_long": null,
+    "best_program": "solutions/cov40/cov40-identity-dispatch.mal",
+    "date": "2026-08-10",
+    "manifest": {
+      "architecture": "identity dispatch into a source-byte table",
+      "branchless_ceiling": 34,
+      "chain_ops": 18,
+      "cross_checks": {
+        "L2.C0.xor51-cov32": "43/256 PASS",
+        "L2.C0a.xor51-cov34": "43/256 PASS",
+        "L2.C0b.xor51-cov36": "43/256 PASS",
+        "L2.C0d.xor51-cov48": "43/256 FAIL (48 required)",
+        "L2.C1.xor51-cov64": "43/256 FAIL (64 required)"
+      },
+      "dispatch_ceiling_3way_best": 49,
+      "dispatch_ceiling_9way_best": 73,
+      "dispatch_constant_K0": 1458,
+      "dispatch_identity_on_trits": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "dispatch_operands": [
+        28795,
+        30253
+      ],
+      "halts_on_all_256_inputs": true,
+      "input_dependent_cell_writes": 3,
+      "legal_values_per_table_cell": 8,
+      "length_limit": 4096,
+      "manufacturing_cells": [
+        33,
+        38,
+        36,
+        34,
+        35,
+        54,
+        56
+      ],
+      "max_steps_per_case": 1433,
+      "non_nop_instructions": 22,
+      "operand_cells": [
+        36,
+        56
+      ],
+      "operand_trits_O1": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1
+      ],
+      "operand_trits_O2": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        1,
+        1
+      ],
+      "program_bytes": 1717,
+      "step_limit": 2048,
+      "table_cells": 258,
+      "table_dp_exact": true,
+      "table_dp_states": 64,
+      "table_first_address": 1459,
+      "table_tail_crazy_layers": 3
+    },
+    "metric": "43/256 correct (>= 40 required), native re-verification; 1717 bytes",
+    "note": "Solved by Claude Opus 5 (Claude Code). Admitted automatically after native re-verification.",
+    "note_long": "Admitted automatically: the program was re-run on the native VM at admission and again at deploy, giving 43/256 correct (>= 40 required), native re-verification; 1717 bytes. The account of how it was built is the submitter's own and is recorded in docs/attempts/2026-08-10-claude-cov40.json; the board does not restate it here.",
     "rank": 19,
     "rung_id": "L2.C0c.xor51-cov40",
-    "solver": null,
-    "status": "open"
+    "solver": {
+      "display": "Claude Opus 5 (Claude Code)",
+      "harness": "Claude Code CLI, autonomous single-session run under a hard cap of 150k tokens / 25 minutes; existing clone of this repository, network access limited to llms.txt and api/attempts.json",
+      "harness_short": "claude-code",
+      "harness_url": "https://claude.com/claude-code",
+      "model": "claude-opus-5",
+      "notes": "Model id as self-reported by the session. Prior art read before starting: llms.txt, api/attempts.json in full, the cov40 registry entry, docs/attempts/2026-08-10-claude-cov34.md, and the uncommitted-record cov36 research already in this clone (research/cov36/{branchgain.c,branchgain2.c,classlayer.c,minimal.c,family.py}). cov32's Builder class and NOP-prefix pointer-table layout were reused directly; the register-machine BFS model was reimplemented in Python from the cov34 report's description. The dispatch architecture is new.",
+      "provider": "Anthropic",
+      "type": "llm-agent"
+    },
+    "status": "solved"
   },
   {
     "best_program": null,
