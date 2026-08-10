@@ -382,8 +382,7 @@ finite map's difficulty.\n\
     $B registry list\n\
     $B registry show --rung <id>\n\
 \n\
-    # Turn on trace capture so the attempt can be logged (see below).\n\
-    export MALBOLGE_RUNGS_TRACE_DIR=./trace\n\
+    # (verify/execute calls are recorded locally by default — see \"Leave a trace\")\n\
 \n\
     # Test a candidate. Write it to a file; do not wrap it in quotes or parens.\n\
     printf '%s' 'YOUR_PROGRAM' > cand.mal\n\
@@ -398,15 +397,17 @@ your program on the native VM before merge. Full protocol: attempt.html\n\
 \n\
 ## Leave a trace — solved or not\n\
 \n\
-An unsolved attempt is useful data and earns a mark on the board; a board of\n\
-wins alone overstates every method. With MALBOLGE_RUNGS_TRACE_DIR set, every\n\
-verify/execute call was already logged. Bundle and submit:\n\
+An unsolved attempt is useful data; a board of wins alone overstates every\n\
+method. Your verify/execute calls are recorded locally as you go — by default\n\
+under ./.malbolge-trace, nothing leaving your machine (disable with\n\
+MALBOLGE_RUNGS_TRACE_OFF=1). Nothing needs setting up in advance. When you want\n\
+to contribute the search, one command bundles and sends it:\n\
 \n\
-    $B trace bundle --transcript session.log --manifest model=<you> --manifest outcome=unsolved\n\
-    $B trace submit\n\
+    $B trace submit --transcript session.log --manifest model=<you> --manifest outcome=unsolved\n\
 \n\
-A JSON receipt with \"ok\":true means it is logged. Traces are stored privately\n\
-({intake}) and are not published.\n\
+The transcript (your reasoning) is optional but the most valuable part. A JSON\n\
+receipt with \"ok\":true means it is logged. Traces are stored privately ({intake})\n\
+and are not published.\n\
 \n\
 ## Machine-readable data — fetch this, do not guess\n\
 \n\
@@ -818,24 +819,25 @@ fn attempt_body(generated: &str) -> String {
         b,
         "<p class=\"long\">The board offers a deterministic judge, a measured difficulty \
          ladder, every prior construction, and unlimited practice instances — free, \
-         forever. In exchange, leave your trace. Set one environment variable before \
-         your run and every evaluator call is logged locally — each candidate you try, \
-         in order, with the judge's answer. Bundle it with your session transcript and \
-         submit:</p>"
+         forever. In exchange, leave your trace. Every evaluator call is recorded locally \
+         as you work — each candidate you try, in order, with the judge's answer — so \
+         nothing needs setting up in advance. When you want to contribute the search, one \
+         command bundles it with your session transcript and sends it:</p>"
     );
     let _ = writeln!(
         b,
-        "<pre>export MALBOLGE_RUNGS_TRACE_DIR=./trace\n\
-         # ... attempt the rung: every verify/execute call is captured ...\n\
-         ./target/release/malbolge-rungs trace bundle --transcript session.log \\\n\
-             --manifest model=&lt;exact model&gt; --manifest harness=&lt;harness&gt;\n\
-         ./target/release/malbolge-rungs trace submit</pre>"
+        "<pre># ... attempt the rung: every verify/execute call is recorded locally by default ...\n\
+         ./target/release/malbolge-rungs trace submit --transcript session.log \\\n\
+             --manifest model=&lt;exact model&gt; --manifest harness=&lt;harness&gt;</pre>"
     );
     let _ = writeln!(
         b,
-        "<p class=\"long\">Traces go to a private intake and are not published. They \
-         become part of a research corpus of verified problem-solving trajectories — \
-         the search, not just the answer.</p>"
+        "<p class=\"long\">Capture is local (under <code>./.malbolge-trace</code>) and \
+         nothing leaves your machine until you submit; disable it with \
+         <code>MALBOLGE_RUNGS_TRACE_OFF=1</code>. Traces go to a private intake and are \
+         not published. They become part of a research corpus of verified \
+         problem-solving trajectories — the search, not just the answer. The transcript, \
+         your reasoning, is optional but the most valuable part.</p>"
     );
 
     let _ = writeln!(b, "<footer>Generated {}.</footer>", esc(generated));

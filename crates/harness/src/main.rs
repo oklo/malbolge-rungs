@@ -147,10 +147,23 @@ enum TraceCmd {
         #[arg(long, default_value = "trace-bundle.json")]
         out: String,
     },
-    /// Submit a bundle to the board's private intake.
+    /// Submit a trace to the board's private intake. If the bundle file does
+    /// not exist, it is built first from the recorded session — so a single
+    /// `trace submit` bundles and sends in one step.
     Submit {
+        /// Bundle file; built from the trace directory if it does not exist.
         #[arg(long, default_value = "trace-bundle.json")]
         bundle: String,
+        /// Trace directory to bundle from when the bundle must be built
+        /// (defaults to $MALBOLGE_RUNGS_TRACE_DIR, else the local default).
+        #[arg(long)]
+        dir: Option<String>,
+        /// Session transcript (your reasoning) to embed — optional, most valuable.
+        #[arg(long)]
+        transcript: Option<String>,
+        /// Provenance for a built bundle: --manifest model=... --manifest tokens=...
+        #[arg(long = "manifest")]
+        manifest: Vec<String>,
     },
 }
 
@@ -500,19 +513,29 @@ fn write_generated(json: String, out: Option<&str>) -> Result<()> {
 fn cmd_trace(what: TraceCmd) -> Result<ExitCode> {
     match what {
         TraceCmd::Bundle { dir, transcript, manifest, out } => {
-            let dir = dir
-                .or_else(|| std::env::var(harness::trace::TRACE_DIR_ENV).ok())
-                .context("pass --dir or set MALBOLGE_RUNGS_TRACE_DIR")?;
+            let dir = trace::trace_dir(dir.as_deref());
             trace::bundle(
-                std::path::Path::new(&dir),
+                &dir,
                 transcript.as_deref().map(std::path::Path::new),
                 &manifest,
                 std::path::Path::new(&out),
             )?;
             Ok(ExitCode::SUCCESS)
         }
-        TraceCmd::Submit { bundle } => {
-            let ok = trace::submit(std::path::Path::new(&bundle))?;
+        TraceCmd::Submit { bundle, dir, transcript, manifest } => {
+            let bundle_path = std::path::PathBuf::from(&bundle);
+            // One-shot: with no prebuilt bundle, build it from the recorded
+            // session so a lone `trace submit` bundles and sends in one step.
+            if !bundle_path.exists() {
+                let dir = trace::trace_dir(dir.as_deref());
+                trace::bundle(
+                    &dir,
+                    transcript.as_deref().map(std::path::Path::new),
+                    &manifest,
+                    &bundle_path,
+                )?;
+            }
+            let ok = trace::submit(&bundle_path)?;
             Ok(if ok { ExitCode::SUCCESS } else { ExitCode::FAILURE })
         }
     }

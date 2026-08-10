@@ -4,7 +4,8 @@
 .DS_Store
 _site/
 
-# Local trace captures (submitted privately, never committed)
+# Local trace captures (recorded locally by default, submitted privately, never committed)
+.malbolge-trace/
 /trace/
 trace-bundle.json
 oracle-log.jsonl
