@@ -378,6 +378,22 @@
     "purpose": "All 256 single-byte inputs are enumerated; the candidate must halt with the correct xor51 output on at least 32 of them. Mismatches and non-halting runs on other inputs are tolerated. This makes partial-coverage progress deterministic and measurable."
   },
   {
+    "id": "L2.C0a.xor51-cov34",
+    "title": "Xor-mask coverage over at least 34 of 256 inputs",
+    "level": 2,
+    "status": "Calibration",
+    "family": "CoverageTransform",
+    "transform": "XorMask",
+    "output_bytes": 1,
+    "cases": 256,
+    "min_correct_cases": 34,
+    "max_program_len": 4096,
+    "max_steps_per_case": 2048,
+    "max_output_len": 1,
+    "max_memory_cells": 59049,
+    "purpose": "Coverage-ladder step between cov32 and cov36: all 256 single-byte inputs, at least 34 exact xor51 outputs required, failures elsewhere tolerated. Added 2026-08-10 and strictly additive. 34 is the exhaustive ceiling of the branchless CRAZY/ROTATE family, so this step asks for that family's optimum realized in the machine; cov36 and up cannot be reached without input-dependent branching."
+  },
+  {
     "id": "L2.C0b.xor51-cov36",
     "title": "Xor-mask coverage over at least 36 of 256 inputs",
     "level": 2,

@@ -292,7 +292,7 @@
   },
   {
     "rung_id": "L2.FM2l.xor51-map12-low",
-    "rank": 16,
+    "rank": 22,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -303,7 +303,7 @@
   },
   {
     "rung_id": "L2.FM3.xor51-map16",
-    "rank": 17,
+    "rank": 23,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -314,7 +314,7 @@
   },
   {
     "rung_id": "L2.C0.xor51-cov32",
-    "rank": 18,
+    "rank": 16,
     "status": "solved",
     "best_program": "solutions/cov32/cov32-two-crazy.mal",
     "solver": {
@@ -333,19 +333,30 @@
     "note_long": "Previous best on this rung was 27/256 from a ~27-lane identity dispatch whose shared pointer pool ran out near 30 lanes. This solve drops branching entirely. After IN, a straight-line classic-Malbolge program can only CRAZY against a memory word and ROTATE, and both act one trit position at a time, so the reachable functions are exactly out = sum_i g_i(trit_{i+R}(b)) * 3^i with each g_i an independent length-N composition of the three crazy row maps. That family is small enough to enumerate exhaustively (research/cov32/family_ceiling.py): its ceiling is 34/256, attained at N=2 with no rotation, and unreachable past 34 without input-dependent branching. This program ships that family's 32 point: with g_i the identity for i=0..5 it computes b + K, and K = 81 = 0x51 makes it correct on exactly the 32 bytes with b AND 0x51 == 0. The ceiling's last two hits need one non-identity map at trit position 4, which cov32 does not ask for. Realising it needs both CRAZY operands to carry trit 1 at positions 0..5 and a specific pattern at 6..9. Nothing available for free can: a source byte is < 3^5 so its trits 5..9 are all zero; every crazy-fill cell inherits five identical high trits from two byte seeds; crazy(0, byte) pins them all to 1. Flat high trits are an invariant of every position-wise operation, so a ROTATE is structurally required, not merely convenient. The winner manufactures both operands at run time as rot^5(crazy(0, x)), which slides the five pinned 1s down to positions 0..5 and lifts the seed's free trits into 6..9; seeds 79 and 123 give operands 39001 and 30253, whose high patterns sum to K = 81. Layout needs no search: every prefix cell holds the byte that decodes to NOP at its own address, so after C walks the prefix, cell a holds x(a) = encipher(nop_byte(a)) -- which is both the seed a manufacturing cell offers and, when x(a) = q-1, a ready-made MOVD-to-q pointer. 33 non-NOP instructions inside 596 bytes, 595 steps, halts on all 256 inputs."
   },
   {
-    "rung_id": "L2.C0b.xor51-cov36",
-    "rank": 19,
+    "rung_id": "L2.C0a.xor51-cov34",
+    "rank": 17,
     "status": "open",
     "best_program": null,
     "solver": null,
     "date": null,
     "metric": null,
-    "note": "Partial-credit XOR: ≥36 of 256 bytes correct. Best known 27/256.",
-    "note_long": "Same enumeration with the threshold at 36. Best known program: 27 of 256."
+    "note": "Partial-credit XOR: ≥34 of 256 bytes correct. The exact ceiling of the branchless family.",
+    "note_long": "Same 256-input enumeration with the threshold at 34. Minted 2026-08-10, after cov32 fell to a branchless two-CRAZY program scoring 32/256. Exhaustive enumeration of the whole straight-line CRAZY/ROTATE family (research/cov32/family_ceiling.py) puts its ceiling at exactly 34, attained at N=2 with no rotation. The shipped cov32 program sits two below that ceiling: the last two hits need one non-identity trit map at position 4, which cov32 did not ask for. This rung asks for the family optimum realized in the machine, so the prior art is the cov32 solve plus the operand invariant it established (flat high trits without a ROTATE). cov36 and above cannot be reached this way at all — past 34 coverage requires input-dependent branching."
+  },
+  {
+    "rung_id": "L2.C0b.xor51-cov36",
+    "rank": 18,
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "Partial-credit XOR: ≥36 of 256 bytes correct. Best known 32/256.",
+    "note_long": "Same enumeration with the threshold at 36. Best known program: 32 of 256 — the cov32 solve, which scores 32 here and correctly fails. It cannot be lengthened into a pass: 34 is the exhaustive ceiling of the branchless CRAZY/ROTATE family, so 36 is the first coverage step that requires combining that backbone with input-dependent lanes."
   },
   {
     "rung_id": "L2.C0c.xor51-cov40",
-    "rank": 20,
+    "rank": 19,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -356,7 +367,7 @@
   },
   {
     "rung_id": "L2.C0d.xor51-cov48",
-    "rank": 21,
+    "rank": 20,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -367,7 +378,7 @@
   },
   {
     "rung_id": "L2.C1.xor51-cov64",
-    "rank": 22,
+    "rank": 21,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -378,7 +389,7 @@
   },
   {
     "rung_id": "L2.R2.rotate-1",
-    "rank": 23,
+    "rank": 24,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -389,7 +400,7 @@
   },
   {
     "rung_id": "L2.R0d.xor-1-len4096",
-    "rank": 24,
+    "rank": 25,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -400,7 +411,7 @@
   },
   {
     "rung_id": "L2.R0.xor-1",
-    "rank": 25,
+    "rank": 26,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -411,7 +422,7 @@
   },
   {
     "rung_id": "L2.R3.xor-2-multicase",
-    "rank": 26,
+    "rank": 27,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -422,7 +433,7 @@
   },
   {
     "rung_id": "L3.R0.reverse-2-multicase",
-    "rank": 27,
+    "rank": 28,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -433,7 +444,7 @@
   },
   {
     "rung_id": "L3.R1.xor-4-length-cap",
-    "rank": 28,
+    "rank": 29,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -444,7 +455,7 @@
   },
   {
     "rung_id": "L3.R2.mixed-transform-small",
-    "rank": 29,
+    "rank": 30,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -455,7 +466,7 @@
   },
   {
     "rung_id": "L4.R0.hash-prefix-1",
-    "rank": 30,
+    "rank": 31,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -466,7 +477,7 @@
   },
   {
     "rung_id": "L4.R1.hash-prefix-1-multicase",
-    "rank": 31,
+    "rank": 32,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -477,7 +488,7 @@
   },
   {
     "rung_id": "L4.R2.hash-prefix-length-pressure",
-    "rank": 32,
+    "rank": 33,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -488,7 +499,7 @@
   },
   {
     "rung_id": "L5.R0.future-transform",
-    "rank": 33,
+    "rank": 34,
     "status": "open",
     "best_program": null,
     "solver": null,
@@ -499,7 +510,7 @@
   },
   {
     "rung_id": "L5.R1.future-hash-prefix",
-    "rank": 34,
+    "rank": 35,
     "status": "open",
     "best_program": null,
     "solver": null,

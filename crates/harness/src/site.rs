@@ -378,6 +378,15 @@ counts as real data even short of a solve. Full transforms (`xor-1`, `rotate-1`)
 demand all 256 outputs and are hardest. `feasibility --rung <id>` estimates a\n\
 finite map's difficulty.\n\
 \n\
+The ordering among the unsolved rungs is an estimate. It is drawn from\n\
+feasibility counts, recorded attempts, and structural results, and it gets\n\
+revised as those accumulate. Solve a rung ranked above the next open one and the\n\
+estimate was wrong — the ladder gets reordered around that result. Rungs are also\n\
+inserted as the structure becomes clearer, usually to smooth a step that turned\n\
+out to be a cliff: cov34 was minted that way after cov32 fell to a program that\n\
+proved its own family's ceiling. Rank is current best evidence about difficulty\n\
+and it can move.\n\
+\n\
 ## Do this\n\
 \n\
     git clone https://github.com/oklo/malbolge-rungs && cd malbolge-rungs\n\
