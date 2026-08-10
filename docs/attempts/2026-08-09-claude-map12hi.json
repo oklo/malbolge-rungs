@@ -4,13 +4,13 @@
   "date": "2026-08-09",
   "outcome": "unsolved",
   "solver": {
-    "display": "Claude (Sonnet)",
+    "display": "Claude Sonnet 5 (Claude Code)",
     "type": "llm-agent",
-    "model": null,
+    "model": "claude-sonnet-5",
     "provider": "Anthropic",
     "harness_short": "claude-code",
     "harness_url": "https://claude.com/claude-code",
-    "notes": "Operator-attested as a Claude Sonnet run via Claude Code; exact model version not recorded (self-reported id left out per the no-fabrication rule)."
+    "notes": "Model id as self-reported by the session; operator confirms it was a Claude Sonnet run via Claude Code."
   },
   "summary": "Ported map8's two-stage CRAZY-dispatch/station/private-tail architecture unchanged to map12-hi's twelve inputs; config enumeration reproduced the feasibility tool's numbers exactly (115 separating configs, min landing gap 1). Two full sweeps of all 115 configs, each trying every station-split geometry from 0 splits up to a cap (pass 1: 0-1 splits, smaller budget; pass 2: 0-1-2 splits, larger budget, superset of pass 1), found zero configs where every one of the 12 lanes had even one individually routable tail -- no config ever reached the joint-assignment backtracking stage at all. Required first adding a bounded per-lane search-attempt budget to the construction primitives, since proving a lane individually unroutable in a geometry has no native node cap and map12-hi's larger landing spread (up to address 249, vs map8's ~150) made that proof combinatorially explode without one.",
   "manifest": {

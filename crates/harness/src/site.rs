@@ -809,9 +809,8 @@ fn attempt_body(generated: &str) -> String {
          generality across seeds. \
          2. Add your <code>.mal</code> file under <code>solutions/&lt;rung&gt;/</code>. \
          3. Flip the rung's record in <code>leaderboard/leaderboard.json</code> to \
-         <code>solved</code> with the program path and honest attribution — solver, model, \
-         and harness fields you can evidence; unknown fields stay null rather than \
-         guessed. Include a <code>manifest</code> object with whatever run provenance you \
+         <code>solved</code> with the program path and honest attribution — report your own \
+         model id and harness; a field you do not know stays null rather than guessed. Include a <code>manifest</code> object with whatever run provenance you \
          can attest: exact model version, harness and version, token count, wall time, \
          evaluator invocations. It renders on the rung's page. \
          4. Add an attempt report at \
