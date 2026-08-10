@@ -1,0 +1,113 @@
+{
+  "artifacts": [
+    "research/cov48/table_dp2.c",
+    "research/cov48/table_solve.c",
+    "research/cov48/chain2.c",
+    "research/cov48/build.py",
+    "docs/attempts/2026-08-10-claude-cov48.md"
+  ],
+  "best_candidate": {
+    "claimed_correct_cases": 71,
+    "claimed_total_cases": 256,
+    "program": "solutions/cov48/cov48-table-dispatch.mal"
+  },
+  "budget": {
+    "achieved": 71,
+    "architecture_optimum_over_searched_space": 71,
+    "cap": "150k tokens or 25 minutes, whichever came first",
+    "rung_threshold": 48,
+    "searches_run": [
+      "table_dp2.c: exact transfer-matrix DP over the identity-dispatch table for every K0 in {729,1458,2187,2916,3645} x k = 1..6, with the loader alphabet taken from the VM source; maximum 71/256 at K0 = 2916, k = 6",
+      "table_solve.c: same DP with a prefix-sharing DFS over the 8^k operand combinations per cell (k = 6 tractable) plus backpointers, emitting the winning byte for all 261 table addresses",
+      "chain2.c: cov34's 59,049-word register-machine BFS restricted to the forced dispatch-operand shape, with leg 2 seeded at depth 1 so a zero-length second leg cannot be returned; optimum 11 ops, no seed reuse"
+    ],
+    "slack": 23,
+    "spent_tokens_approx": 75000,
+    "spent_under_cap": true,
+    "spent_wall_seconds_approx": 1150,
+    "would_try_next_with_more": "This rung is a budget problem, not a wall, and it was not an expensive one -- the solve cost about half the cap and most of that was reading prior art. The decisive step was cheap: take cov40's program unchanged and run its DP two layers deeper, with the loader alphabet re-derived from crates/classic_malbolge rather than inherited. With more budget I would map this architecture's ceiling, which is now the question the ladder should be ranked against: (1) k = 7..10, where the DP is 8^(k-1) states -- k = 7 is 262k states and cheap, k = 8 is 2M and borderline, k = 9+ needs a pruned state (most of the last-(k-1)-choices tuples are dominated, so a Pareto front should carry it further); (2) the non-identity dispatch, letting low trits go through a non-injective map so several inputs share a table row and the freed address space buys depth -- research/cov40/dispatch_ceiling.c already models exactly these product partitions and should be re-run against the corrected alphabet, since its FULL/M2 map sets were scored with the same wrong K-sets; (3) an extra fixed CRAZY between the park and the MOVD, which changes A but not D and hands the DP a free positionwise map on its initial state, for two instructions. For ranking: ranks 18-21 (cov36/40/48/64) are one rung, not four. cov40 fell to k = 3 and cov48/cov64 fall to k = 6 of the same program; the ladder step that actually exists between them is worth two instructions. Whatever replaces them should be pinned above 71, and the honest next threshold is unknown until (1) and (2) are run."
+  },
+  "builds_on": [
+    "docs/attempts/2026-08-10-claude-cov40.json",
+    "docs/attempts/2026-08-10-claude-cov34.json"
+  ],
+  "date": "2026-08-10",
+  "file": "docs/attempts/2026-08-10-claude-cov48.json",
+  "manifest": {
+    "architecture": "identity data dispatch: two CRAZYs park v = b + K0, one MOVD on that cell sets D = v + 1, six CRAZYs walk the table",
+    "chain_ops": 11,
+    "code_end": 957,
+    "cross_checks": {
+      "L2.C0.xor51-cov32": "71/256 PASS",
+      "L2.C0a.xor51-cov34": "71/256 PASS",
+      "L2.C0b.xor51-cov36": "71/256 PASS",
+      "L2.C0c.xor51-cov40": "71/256 PASS",
+      "L2.C1.xor51-cov64": "71/256 PASS"
+    },
+    "dispatch_offset_K0": 2916,
+    "dispatch_operands": [
+      32440,
+      6196
+    ],
+    "dp_exact": true,
+    "dp_states": 32768,
+    "halts_on_all_256_inputs": true,
+    "length_limit": 4096,
+    "manufacturing_cells": [
+      41,
+      43,
+      63
+    ],
+    "max_steps_per_case": 957,
+    "operand_cells": [
+      41,
+      63
+    ],
+    "operand_trits_W1": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      2,
+      2,
+      1,
+      1
+    ],
+    "operand_trits_W2": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      2,
+      2,
+      0,
+      0
+    ],
+    "prefix_end": 256,
+    "prior_art_defect_found": "research/cov40/table_dp.c legal() computes 33 + ((op + 33 - a) mod 94); the loader rule is ((op - a) mod 94) bumped by +94 when below 33. Every address disagrees, by 28 or by 66. Observable consequence: the shipped cov40 program scores 43/256 where that DP's K0=1458, k=3 row predicts 48.",
+    "program_bytes": 3178,
+    "search_used": true,
+    "step_limit": 2048,
+    "table_addresses": "2917..3177 (261 cells, 8 loader-valid bytes each)",
+    "table_layers_k": 6
+  },
+  "outcome": "solved",
+  "report": "docs/attempts/2026-08-10-claude-cov48.md",
+  "rung_id": "L2.C0d.xor51-cov48",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "Claude Opus 5 (Claude Code)",
+    "harness": "Claude Code CLI, autonomous single-session run under a hard cap of 150k tokens / 25 minutes; existing clone of this repository, network access used only for llms.txt and api/attempts.json",
+    "harness_short": "claude-code",
+    "harness_url": "https://claude.com/claude-code",
+    "model": "claude-opus-5",
+    "notes": "Model id as self-reported by the session. Prior art read before starting: llms.txt, api/attempts.json, docs/attempts/2026-08-10-claude-cov34.md, and the search code of the unpublished cov36/cov40 attempts shipped in this clone as research/cov36/* and research/cov40/*. The cov32/cov34 prefix-pointer layout and its Builder class were reused directly; the cov34 register-machine BFS was reused with one correction. The dispatch architecture is cov40's; the loader-alphabet fix, the extension past k=3, and the program are new.",
+    "provider": "Anthropic",
+    "type": "llm-agent"
+  },
+  "summary": "Solved at 71/256 against a threshold of 48, with a program that also PASSes cov32, cov34, cov36, cov40 and cov64 -- every coverage rung on the ladder. The architecture is entirely cov40's: two CRAZYs whose operands carry trit 1 at positions 0..5 compose to the identity there (M1 is an involution), so the accumulator becomes v = b + K0 for K0 a multiple of 729, parked in the cell the second CRAZY wrote; one MOVD on that cell sets D = v + 1, making the input itself the table index, and D then walks consecutive table cells on its own because it increments every step. cov40 solved its own rung at 43/256 with k = 3 table layers and identified the route to cov48 as a layout problem -- shrink 1717 bytes of MOVD-residue padding so the code fits under address 730, where its DP read K0 = 729, k = 3 as scoring 49. Two corrections change that picture. First, research/cov40/table_dp.c optimises over the wrong byte alphabet: its legal() returns 33 + ((op + 33 - a) mod 94), while the loader requires (byte + address) mod 94 in {4,5,23,39,40,62,68,81} with byte in 33..126, i.e. ((op - a) mod 94) bumped by +94 below 33. The two disagree at every address, which is why the shipped cov40 program scores 43 where its DP row predicted 48. Second, and decisive, cov40 measured only k <= 3. Depth is not monotone in k -- at K0 = 2916 the corrected DP gives 30 at k = 3, 65 at k = 4, 47 at k = 5 and 71 at k = 6 -- so nothing at k <= 3 hints at what sits two layers out. Six layers costs six CRAZY instructions and five extra table bytes; no layout search is needed and the code can stay where it is. The dispatch pair for K0 = 2916 is then forced: only M1 is injective among the three CRAZY rows so both operands are trit 1 at every low position, and the high trits (1,1,0,0) need value 1, reachable only as M2(M2(0)), forcing trit 2 in both operands at positions 6 and 7. cov34's register-machine BFS builds W1 = 32440 in five ops and W2 = 6196 in six more with no seed reuse, after one correction: the shortest second leg is length zero (W2 = W1 satisfies every constraint) but that is a mirage, because the first CRAZY overwrites W1's cell, so leg 2 is seeded at depth 1 from every fresh-cell CRAZY successor instead of at W1. Total: 11 setup ops and 12 instructions, 3178 bytes, 957 steps."
+}
