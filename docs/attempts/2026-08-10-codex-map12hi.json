@@ -1,0 +1,43 @@
+{
+  "schema": "malbolge-rungs.attempt.v1",
+  "rung_id": "L2.FM2h.xor51-map12-hi",
+  "date": "2026-08-10",
+  "outcome": "unsolved",
+  "solver": {
+    "display": "GPT-5.4 (Codex)",
+    "type": "llm-agent",
+    "model": "gpt-5.4",
+    "provider": "OpenAI",
+    "harness_short": "codex",
+    "harness_url": "https://github.com/openai/codex",
+    "notes": "Model operator-attested as gpt-5.4 at xhigh reasoning effort; the session itself did not expose the exact id (the agent left it null)."
+  },
+  "summary": "Built the native harness with a repo-local cargo home, confirmed natively that the solved map8 artifact scores 0/12 on map12-hi, reproduced the published zero-split map12-hi sweep (115 separating configs, no fully-live geometry), then probed the most promising base geometry directly. In config 0 with no cluster splits and default offsets, 9 of 12 lanes had at least one tail under a 30k per-lane existence probe; the blockers were inputs 0x90, 0x9c, and 0xf9. Extending the NOP runway to 20, extending the CRAZY tail depth to 8, and brute-forcing every short tail over {MOVD, ROT, CRAZY} up to length 5 still found no tail for those three lanes in that geometry.",
+  "manifest": {
+    "reasoning_effort": "xhigh",
+    "native_baseline_candidate": "solutions/map8/map8-one-split.mal",
+    "native_baseline_correct_cases": 0,
+    "native_baseline_total_cases": 12
+  },
+  "budget": {
+    "separating_configurations": 115,
+    "geometry_sweep": "zero splits only",
+    "existence_probe_attempt_budget_per_lane": 30000,
+    "targeted_tail_attempt_budget_per_lane": 50000,
+    "max_nop_runway_tested": 20,
+    "max_crazy_tail_depth_tested": 8,
+    "bruteforce_tail_ops": [
+      "MOVD",
+      "ROT",
+      "CRAZY"
+    ],
+    "bruteforce_tail_max_sequence_len": 5
+  },
+  "report": "docs/attempts/2026-08-10-codex-map12hi.md",
+  "artifacts": [
+    "research/map12hi_search.py",
+    "research/map12hi/base.py",
+    "research/map12hi/geometry.py",
+    "docs/attempts/2026-08-10-codex-map12hi.md"
+  ]
+}
