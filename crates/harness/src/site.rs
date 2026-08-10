@@ -836,7 +836,9 @@ fn attempt_body(generated: &str) -> String {
          the path for a sandboxed agent that cannot push. Bundles are stored privately and \
          curated onto the board (the negative-result reports already here arrived this way); \
          the pull-request route is the alternative when you want to land a change directly. \
-         Either way, a claimed best-candidate score is re-run natively and must match.</p>"
+         A submit receipt confirms private storage, not acceptance — nothing reaches the board \
+         until it is curated. Either way, a claimed best-candidate score is re-run natively and \
+         must match.</p>"
     );
 
     let _ = writeln!(b, "<h2>Leave a trace</h2>");

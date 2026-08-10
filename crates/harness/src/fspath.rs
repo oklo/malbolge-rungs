@@ -39,6 +39,51 @@ pub fn resolve_within_repo(repo_root: &Path, rel: &str) -> Result<PathBuf, Strin
     Ok(real)
 }
 
+/// Open a repo-relative path for reading with full containment safety:
+/// [`resolve_within_repo`] first (lexical + canonical containment), then open
+/// refusing to follow a final-component symlink, requiring a regular file that
+/// is not a hard link. This closes the two reads canonicalization alone does
+/// not: a hard link inside the repo whose inode lives outside it (canonicalize
+/// returns the in-repo name, so the lexical + `starts_with` check passes), and
+/// a path swapped for a symlink between the check and the open.
+pub fn open_within_repo(repo_root: &Path, rel: &str) -> Result<std::fs::File, String> {
+    open_hardened(&resolve_within_repo(repo_root, rel)?)
+}
+
+/// Open an already-resolved path with the containment safety checks: no symlink
+/// follow (`O_NOFOLLOW`), a regular file, and — on Unix — a single link, so it
+/// cannot be a hard link aliasing content elsewhere on the filesystem.
+pub fn open_hardened(path: &Path) -> Result<std::fs::File, String> {
+    let mut opts = std::fs::OpenOptions::new();
+    opts.read(true);
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::OpenOptionsExt;
+        opts.custom_flags(libc::O_NOFOLLOW);
+    }
+    let file = opts
+        .open(path)
+        .map_err(|e| format!("opening {}: {e}", path.display()))?;
+    let meta = file
+        .metadata()
+        .map_err(|e| format!("stat {}: {e}", path.display()))?;
+    if !meta.is_file() {
+        return Err(format!("{} is not a regular file", path.display()));
+    }
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::MetadataExt;
+        if meta.nlink() > 1 {
+            return Err(format!(
+                "{} is a hard link (nlink {}); refusing to read a possibly out-of-repo inode",
+                path.display(),
+                meta.nlink()
+            ));
+        }
+    }
+    Ok(file)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -69,5 +114,44 @@ mod tests {
         let result = resolve_within_repo(&root, "solutions/hello-world/__fspath_test_link.mal");
         let _ = std::fs::remove_file(&link);
         assert!(result.is_err(), "symlink escaping the repo must be rejected");
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn open_hardened_rejects_hard_link() {
+        use std::fs;
+        let dir = std::env::temp_dir();
+        let pid = std::process::id();
+        let a = dir.join(format!("mal-fspath-hlink-a-{pid}"));
+        let b = dir.join(format!("mal-fspath-hlink-b-{pid}"));
+        let _ = fs::remove_file(&a);
+        let _ = fs::remove_file(&b);
+        fs::write(&a, "secret").unwrap();
+        // A hard link aliases the same inode; canonicalization can't see it, so
+        // open_hardened must reject it on nlink.
+        if fs::hard_link(&a, &b).is_ok() {
+            assert!(open_hardened(&b).is_err(), "a hard link (nlink 2) must be rejected");
+        }
+        let _ = fs::remove_file(&a);
+        let _ = fs::remove_file(&b);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn open_hardened_rejects_symlink_and_accepts_regular() {
+        use std::fs;
+        let dir = std::env::temp_dir();
+        let pid = std::process::id();
+        let target = dir.join(format!("mal-fspath-sl-target-{pid}"));
+        let link = dir.join(format!("mal-fspath-sl-link-{pid}"));
+        let _ = fs::remove_file(&target);
+        let _ = fs::remove_file(&link);
+        fs::write(&target, "x").unwrap();
+        assert!(open_hardened(&target).is_ok(), "a plain regular file opens");
+        if std::os::unix::fs::symlink(&target, &link).is_ok() {
+            assert!(open_hardened(&link).is_err(), "O_NOFOLLOW must reject a symlink");
+        }
+        let _ = fs::remove_file(&link);
+        let _ = fs::remove_file(&target);
     }
 }

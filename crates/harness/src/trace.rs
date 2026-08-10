@@ -265,6 +265,51 @@ pub(crate) fn http_post_file(url: &str, path: &Path) -> Result<bool> {
     }
 }
 
+/// POST an in-memory JSON body to `url` via curl, streamed on stdin — so no
+/// temporary file is created (nothing predictable for a co-tenant to pre-empt
+/// with a symlink, and no residue). The body is written on a separate thread to
+/// avoid a stdin/stdout pipe deadlock on a body larger than the pipe buffer.
+pub(crate) fn http_post_body(url: &str, body: &str) -> Result<bool> {
+    use std::io::Write as _;
+    use std::process::Stdio;
+    let child = std::process::Command::new("curl")
+        .args([
+            "-sS", "--max-time", "120", "-X", "POST",
+            "-H", "Content-Type: application/json",
+            "--data-binary", "@-", url,
+        ])
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn();
+    let mut child = match child {
+        Ok(c) => c,
+        Err(e) => {
+            println!("submission failed: could not run curl: {e}");
+            return Ok(false);
+        }
+    };
+    let mut stdin = child.stdin.take().expect("stdin piped");
+    let body_owned = body.to_string();
+    let writer = std::thread::spawn(move || {
+        let _ = stdin.write_all(body_owned.as_bytes());
+        // stdin dropped here → EOF, so curl finishes sending and the server replies.
+    });
+    let out = child.wait_with_output();
+    let _ = writer.join();
+    match out {
+        Ok(o) if o.status.success() => {
+            let resp = String::from_utf8_lossy(&o.stdout);
+            println!("{}", resp.trim());
+            Ok(resp.contains("\"ok\":true") || resp.contains("\"ok\": true"))
+        }
+        _ => {
+            println!("submission failed (curl transport error).");
+            Ok(false)
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

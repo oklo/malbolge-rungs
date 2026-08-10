@@ -220,23 +220,43 @@ fn validate_record(root: &Path, rec: &AttemptRecord) -> Vec<String> {
     problems
 }
 
+/// Per-file and whole-bundle size cap; matches the intake's cap so a bundle the
+/// server would reject is caught before it is even built, and no single file is
+/// read into memory unbounded.
+const MAX_BUNDLE_BYTES: u64 = 8 * 1024 * 1024;
+
 /// Bundle a validated attempt record with its report and referenced artifacts
 /// and POST it to the private intake — no PR, no auth. This is the frictionless
 /// path for a sandboxed agent that produced a record it can't open a PR for.
-/// Refuses to submit a record that does not validate, and reads only files
-/// contained in the repo (a record cannot reach out and bundle a system file).
+///
+/// Refuses to submit a record that does not validate. The record itself and
+/// every report/artifact is read through the hardened opener
+/// ([`crate::fspath::open_within_repo`]): inside the repo, a regular file, not a
+/// symlink and not a hard link — so a crafted record cannot make this read (and
+/// exfiltrate) a file outside the repo, and each read is size-capped before
+/// allocation. The bundle is streamed to curl on stdin, so no temporary file is
+/// created.
 pub fn submit_attempt(record_path: &Path) -> Result<bool> {
     let root = PathBuf::from(REPO_ROOT);
-    let text = std::fs::read_to_string(record_path)
-        .with_context(|| format!("reading {}", record_path.display()))?;
+    let root_canon = root.canonicalize().context("resolving repository root")?;
+
+    // The record must resolve inside the repo before it is read, and is read
+    // through the same hardened opener as its artifacts.
+    let rec_canon = record_path
+        .canonicalize()
+        .with_context(|| format!("{} does not exist", record_path.display()))?;
+    if !rec_canon.starts_with(&root_canon) {
+        anyhow::bail!("record {} is outside the repository", record_path.display());
+    }
+    let rec_file =
+        crate::fspath::open_hardened(&rec_canon).map_err(|e| anyhow::anyhow!("record {e}"))?;
+    let text = read_capped(rec_file, MAX_BUNDLE_BYTES).map_err(|e| anyhow::anyhow!("record {e}"))?;
     let mut rec: AttemptRecord = serde_json::from_str(&text)
         .with_context(|| format!("{} is not a valid attempt record", record_path.display()))?;
-    rec.path = record_path
-        .strip_prefix(&root)
-        .unwrap_or(record_path)
-        .to_string_lossy()
-        .trim_start_matches('/')
-        .to_string();
+    rec.path = rec_canon
+        .strip_prefix(&root_canon)
+        .map(|p| p.to_string_lossy().to_string())
+        .unwrap_or_else(|_| record_path.to_string_lossy().to_string());
 
     let problems = validate_record(&root, &rec);
     if !problems.is_empty() {
@@ -247,20 +267,18 @@ pub fn submit_attempt(record_path: &Path) -> Result<bool> {
         return Ok(false);
     }
 
-    // Gather the report and artifact contents, reading only inside the repo.
     let report_text = match &rec.report {
         Some(r) => {
-            let safe = crate::fspath::resolve_within_repo(&root, r)
-                .map_err(|e| anyhow::anyhow!("report {e}"))?;
-            Some(std::fs::read_to_string(&safe).with_context(|| format!("reading report {r}"))?)
+            let f = crate::fspath::open_within_repo(&root, r).map_err(|e| anyhow::anyhow!("report {e}"))?;
+            Some(read_capped(f, MAX_BUNDLE_BYTES).map_err(|e| anyhow::anyhow!("report {r}: {e}"))?)
         }
         None => None,
     };
     let mut artifacts = serde_json::Map::new();
     for a in &rec.artifacts {
-        let safe = crate::fspath::resolve_within_repo(&root, a)
-            .map_err(|e| anyhow::anyhow!("artifact {e}"))?;
-        let content = std::fs::read_to_string(&safe).with_context(|| format!("reading artifact {a}"))?;
+        let f = crate::fspath::open_within_repo(&root, a).map_err(|e| anyhow::anyhow!("artifact {e}"))?;
+        let content =
+            read_capped(f, MAX_BUNDLE_BYTES).map_err(|e| anyhow::anyhow!("artifact {a}: {e}"))?;
         artifacts.insert(a.clone(), serde_json::Value::String(content));
     }
 
@@ -272,16 +290,30 @@ pub fn submit_attempt(record_path: &Path) -> Result<bool> {
         "artifacts": artifacts,
     });
     let body = serde_json::to_string(&bundle)?;
-    if body.len() > 25 * 1024 * 1024 {
+    if body.len() as u64 > MAX_BUNDLE_BYTES {
         anyhow::bail!(
-            "bundle is {} bytes, over the 25 MiB intake cap — trim artifacts",
-            body.len()
+            "bundle is {} bytes, over the {} MiB intake cap — trim artifacts",
+            body.len(),
+            MAX_BUNDLE_BYTES / (1024 * 1024)
         );
     }
 
-    let tmp = std::env::temp_dir().join(format!("mal-attempt-bundle-{}.json", std::process::id()));
-    std::fs::write(&tmp, &body).with_context(|| format!("writing {}", tmp.display()))?;
-    let ok = crate::trace::http_post_file(ATTEMPT_INTAKE_URL, &tmp);
-    let _ = std::fs::remove_file(&tmp);
-    ok
+    // Streamed to curl on stdin: no temporary file, nothing to clean up.
+    crate::trace::http_post_body(ATTEMPT_INTAKE_URL, &body)
+}
+
+/// Read an open file to a String, refusing anything over `max_bytes` — checked
+/// against the file's own metadata before allocation, then bounded on read.
+fn read_capped(file: std::fs::File, max_bytes: u64) -> Result<String> {
+    use std::io::Read as _;
+    let meta = file.metadata().context("stat")?;
+    if meta.len() > max_bytes {
+        anyhow::bail!("file is {} bytes, over the {}-byte limit", meta.len(), max_bytes);
+    }
+    let mut s = String::new();
+    file.take(max_bytes + 1).read_to_string(&mut s).context("read")?;
+    if s.len() as u64 > max_bytes {
+        anyhow::bail!("file exceeds the {}-byte limit", max_bytes);
+    }
+    Ok(s)
 }
