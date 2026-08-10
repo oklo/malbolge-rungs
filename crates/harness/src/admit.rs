@@ -136,9 +136,27 @@ pub fn admit_bundle(repo: &Path, bundle_path: &Path, dry_run: bool) -> Result<Ad
         }
     }
 
+    // A bundle may name the same path twice — a record that lists its own report
+    // in `artifacts`, for instance. Identical content collapses to one write;
+    // conflicting content is a rejection, since otherwise the last writer would
+    // silently win and the no-overwrite guarantee would hold only across
+    // bundles, not within one.
+    let mut seen: std::collections::BTreeMap<String, String> = std::collections::BTreeMap::new();
+    for (rel, content) in writes {
+        match seen.get(&rel) {
+            Some(prior) if *prior != content => {
+                bail!("bundle lists {rel} twice with different content")
+            }
+            Some(_) => {}
+            None => {
+                seen.insert(rel, content);
+            }
+        }
+    }
+
     let mut total = 0usize;
     let mut targets = Vec::new();
-    for (rel, content) in &writes {
+    for (rel, content) in &seen {
         if content.len() > MAX_FILE_BYTES {
             bail!("{rel} is {} bytes, over the per-file cap", content.len());
         }
