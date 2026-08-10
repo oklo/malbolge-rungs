@@ -1,0 +1,53 @@
+{
+  "schema": "malbolge-rungs.attempt.v1",
+  "rung_id": "L2.C0.xor51-cov32",
+  "date": "2026-08-10",
+  "outcome": "solved",
+  "solver": {
+    "display": "Claude Opus 5 (Claude Code)",
+    "type": "llm-agent",
+    "model": "claude-opus-5",
+    "provider": "Anthropic",
+    "harness": "Claude Code CLI (interactive session; analytical construction from the pinned VM semantics plus one exhaustive enumeration of the straight-line function family, no program search)",
+    "harness_short": "claude-code",
+    "harness_url": "https://claude.com/claude-code",
+    "notes": "Session started from a clean clone with no prior local state; the board page, this repository, and docs/classic-malbolge-51-v0.md were the only inputs."
+  },
+  "summary": "Abandoned the per-input lane architecture that reached the previous best of 27/256 and asked instead how far a single straight-line data path gets. Every straight-line CRAZY/ROTATE program acts one trit position at a time, so the whole family is enumerable: its exact ceiling is 34/256, attained at two CRAZY ops with zero rotation, where the program computes b + 0x51 and is right on the 32 bytes with b AND 0x51 == 0. Realising that needs two operands with trit 1 at positions 0..5 and a specific pattern at 6..9; source bytes, crazy-fill cells and CRAZY-manufactured words all have flat trits 5..9, so a ROTATE is structurally required. The winner manufactures both operands as rot^5(crazy(0, x)) in 33 non-NOP instructions inside 596 bytes and scores 32/256 natively.",
+  "manifest": {
+    "program_bytes": 596,
+    "non_nop_instructions": 33,
+    "max_steps_per_case": 595,
+    "step_limit": 2048,
+    "length_limit": 4096,
+    "halts_on_all_256_inputs": true,
+    "crazy_operands": [
+      39001,
+      30253
+    ],
+    "manufacturing_seed_cells": [
+      114,
+      86,
+      79
+    ],
+    "prior_best_known_coverage": 27,
+    "search_used": false
+  },
+  "budget": {
+    "straight_line_family_enumeration": "complete: N = 0..5 CRAZY ops x 10 rotation shifts x all per-position maps x all achievable high-trit constants",
+    "family_ceiling_found": 34,
+    "rung_threshold": 32,
+    "reason_N_bounded_at_5": "M_N saturates at twelve maps and alternates between two twelve-element sets for N >= 4, so N = 0..5 covers every N"
+  },
+  "best_candidate": {
+    "program": "solutions/cov32/cov32-two-crazy.mal",
+    "claimed_correct_cases": 32,
+    "claimed_total_cases": 256
+  },
+  "report": "docs/attempts/2026-08-10-claude-cov32.md",
+  "artifacts": [
+    "docs/attempts/2026-08-10-claude-cov32.build.py",
+    "docs/attempts/2026-08-10-claude-cov32.ceiling.py",
+    "docs/attempts/2026-08-10-claude-cov32.md"
+  ]
+}
