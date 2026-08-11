@@ -103,7 +103,7 @@
     "max_output_len": 1,
     "max_memory_cells": 59049,
     "purpose": "Apply the v0 xor-mask transform to the first byte.",
-    "min_epochs": 5
+    "min_epochs": 80
   },
   {
     "id": "L2.R0d.xor-1-len4096",
@@ -119,7 +119,7 @@
     "max_output_len": 1,
     "max_memory_cells": 59049,
     "purpose": "Same v0 xor-mask task as L2.R0.xor-1, with only the program-length cap relaxed for calibration.",
-    "min_epochs": 5
+    "min_epochs": 80
   },
   {
     "id": "L2.R0c.crazy-mask-1",
@@ -135,7 +135,7 @@
     "max_output_len": 1,
     "max_memory_cells": 59049,
     "purpose": "Apply output = crazy(input, 0x51) mod 256 to the first byte. The transform is per-trit realizable inside a CRAZY-chain dispatch, so this rung demands totality over all 256 inputs without XOR's binary-carry obstruction. It sits between the finite-map rungs and full xor-1.",
-    "min_epochs": 5
+    "min_epochs": 80
   },
   {
     "id": "L2.FM0.xor51-map2",
@@ -490,7 +490,7 @@
     "max_output_len": 1,
     "max_memory_cells": 59049,
     "purpose": "One-byte reverse is behaviorally trivial but useful as a transform-family sanity check.",
-    "min_epochs": 5
+    "min_epochs": 80
   },
   {
     "id": "L2.R2.rotate-1",
@@ -506,7 +506,7 @@
     "max_output_len": 1,
     "max_memory_cells": 59049,
     "purpose": "Rotate the first input byte left by one bit.",
-    "min_epochs": 5
+    "min_epochs": 80
   },
   {
     "id": "L2.R3.xor-2-multicase",
@@ -522,7 +522,7 @@
     "max_output_len": 2,
     "max_memory_cells": 59049,
     "purpose": "Discourage constant-output shortcuts by requiring a transform over two cases.",
-    "min_epochs": 5
+    "min_epochs": 40
   },
   {
     "id": "L3.R0.reverse-2-multicase",
@@ -538,7 +538,7 @@
     "max_output_len": 2,
     "max_memory_cells": 59049,
     "purpose": "A small but real input-dependent transformation over several cases.",
-    "min_epochs": 5
+    "min_epochs": 27
   },
   {
     "id": "L3.R1.xor-4-length-cap",
@@ -554,7 +554,7 @@
     "max_output_len": 4,
     "max_memory_cells": 59049,
     "purpose": "Four-byte transform with a cap intended to expose brittle generated code.",
-    "min_epochs": 5
+    "min_epochs": 40
   },
   {
     "id": "L3.R2.mixed-transform-small",
@@ -570,7 +570,7 @@
     "max_output_len": 2,
     "max_memory_cells": 59049,
     "purpose": "Draft rung for compact deterministic byte remapping tasks.",
-    "min_epochs": 5
+    "min_epochs": 27
   },
   {
     "id": "L4.R0.hash-prefix-1",
@@ -634,7 +634,7 @@
     "max_output_len": 4,
     "max_memory_cells": 59049,
     "purpose": "Reserved for a future calibrated transform rung.",
-    "min_epochs": 5
+    "min_epochs": 20
   },
   {
     "id": "L5.R1.future-hash-prefix",
@@ -676,7 +676,7 @@
     "cases": 3,
     "min_input_len": 1,
     "max_input_len": 16,
-    "min_epochs": 5,
+    "min_epochs": 27,
     "max_memory_cells": 59049,
     "id": "L6.S0.cat",
     "transform": "Identity",
@@ -695,7 +695,7 @@
     "cases": 3,
     "min_input_len": 1,
     "max_input_len": 16,
-    "min_epochs": 5,
+    "min_epochs": 27,
     "max_memory_cells": 59049,
     "id": "L6.S1.length",
     "transform": "Length",
@@ -714,7 +714,7 @@
     "cases": 3,
     "min_input_len": 1,
     "max_input_len": 16,
-    "min_epochs": 5,
+    "min_epochs": 27,
     "max_memory_cells": 59049,
     "id": "L6.S2.checksum",
     "transform": "Checksum",
@@ -733,7 +733,7 @@
     "cases": 3,
     "min_input_len": 1,
     "max_input_len": 16,
-    "min_epochs": 5,
+    "min_epochs": 27,
     "max_memory_cells": 59049,
     "id": "L6.S3.reverse",
     "transform": "Reverse",
