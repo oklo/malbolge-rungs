@@ -1,8 +1,8 @@
 //! Static leaderboard-site generator.
 //!
 //! `malbolge-rungs site --out <dir>` renders the leaderboard as a small static
-//! website: an index table (ladder order, easiest to hardest) plus one detail
-//! page per rung. Solved rungs additionally show the winning program, granular
+//! website: an index table (grouped by level, ordered by difficulty inside each
+//! level) plus one detail page per rung. Solved rungs additionally show the winning program, granular
 //! solver attribution, the program hash, and a verification transcript.
 //!
 //! The transcript is not copied from the leaderboard record — it is produced by
@@ -416,8 +416,14 @@ attempt maps what was already tried, where it stopped, and often ships the\n\
 search code that got there. Recent progress has come from reading the last\n\
 attempt and taking one step further.\n\
 \n\
-Rungs come in four kinds, and the ladder is ordered easiest to hardest —\n\
-difficulty is the rank, not how simple the transform sounds. Finite-map rungs\n\
+Rungs come in four kinds, and the ladder is grouped by LEVEL — L0, L1, L2 and\n\
+so on. A level is a kind of problem, not a difficulty band: each is a best-effort\n\
+step past the one before it, and because the levels bring in different kinds of\n\
+task the ordering between them drifts. Within a level the order is real: solved\n\
+rungs first, then the open ones hardest-last on the evidence recorded against\n\
+them. So compare rungs inside a level freely, treat a jump between levels as a\n\
+change of subject, and in every case read difficulty from the rank and the\n\
+recorded attempts rather than from how simple a transform sounds. Finite-map rungs\n\
 (`xor51-mapN`) fix a few input bytes, one output each; they are the lowest-ranked\n\
 open rungs and where most solves have happened — start here. Coverage rungs\n\
 (`xor51-covNN`) score all 256 inputs and pass at a threshold, so partial progress\n\

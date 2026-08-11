@@ -636,6 +636,83 @@
     "status": "solved"
   },
   {
+    "best_program": null,
+    "date": null,
+    "metric": null,
+    "note": "Twelve low-byte inputs (0x00–0x40); open.",
+    "note_long": null,
+    "rank": 23,
+    "rung_id": "L2.FM2l.xor51-map12-low",
+    "solver": null,
+    "status": "open"
+  },
+  {
+    "best_program": null,
+    "date": null,
+    "metric": null,
+    "note": "Sixteen-input finite map; open.",
+    "note_long": null,
+    "rank": 24,
+    "rung_id": "L2.FM3.xor51-map16",
+    "solver": null,
+    "status": "open"
+  },
+  {
+    "best_program": null,
+    "date": null,
+    "metric": null,
+    "note": "Twelve high-byte inputs (0x80–0xff); open.",
+    "note_long": null,
+    "rank": 25,
+    "rung_id": "L2.FM2h.xor51-map12-hi",
+    "solver": null,
+    "status": "open"
+  },
+  {
+    "best_program": null,
+    "date": null,
+    "metric": null,
+    "note": "Rotate the input byte left by one bit; totality over 256 required.",
+    "note_long": null,
+    "rank": 26,
+    "rung_id": "L2.R2.rotate-1",
+    "solver": null,
+    "status": "open"
+  },
+  {
+    "best_program": null,
+    "date": null,
+    "metric": null,
+    "note": "General XOR with a 4096-byte cap; best known coverage 27/256.",
+    "note_long": "xor-1 with the length cap relaxed to 4096 bytes. Attempts here established identity dispatch — byte 121, all-1 trits, is loader-valid only at cells 35 and 41, reached through MOVD pointers — and a shared station with per-lane pointer cells, verified at 27/256. Ceilings measured along the way: MOVD pointers are printable bytes ≤126, confining operand freedom to a ~96-cell pool good for about 30 lanes; three-CRAZY chains reach 81 of 256 values; no per-trit map puts more than 41 of 256 XOR outputs in the dispatch itself.",
+    "rank": 27,
+    "rung_id": "L2.R0d.xor-1-len4096",
+    "solver": null,
+    "status": "open"
+  },
+  {
+    "best_program": null,
+    "date": null,
+    "metric": null,
+    "note": "The open frontier: output = input XOR 0x51 for any byte, 256-byte cap.",
+    "note_long": "Unsolved. The input byte is hash-derived per seed, so the program must handle all 256 values; constant output fails. Known obstructions: the dispatch J = crazy(crazy(x,t1),t2) is non-injective and bounded below 243, so 256 private code paths cannot exist; identity dispatch needs operand byte 121, which no reachable operand cell in a fixed prefix accepts; dense landings force shared tails whose pointer cells sit in executed, byte-forced territory. Best coverage at this cap: 20/256.",
+    "rank": 28,
+    "rung_id": "L2.R0.xor-1",
+    "solver": null,
+    "status": "open"
+  },
+  {
+    "best_program": null,
+    "date": null,
+    "metric": null,
+    "note": "2-byte XOR across 2 cases; strictly harder than xor-1.",
+    "note_long": null,
+    "rank": 29,
+    "rung_id": "L2.R3.xor-2-multicase",
+    "solver": null,
+    "status": "open"
+  },
+  {
     "best_program": "research/reverse-2-multicase/cand-rev2.mal",
     "date": "2026-08-11",
     "manifest": {
@@ -680,7 +757,7 @@
     "metric": "3/3 cases, native re-verification; 122 bytes",
     "note": "Solved by Claude Opus 5 (Claude Code). Admitted automatically after native re-verification.",
     "note_long": "Admitted automatically: the program was re-run on the native VM at admission and again at deploy, giving 3/3 cases, native re-verification; 122 bytes. The account of how it was built is the submitter's own and is recorded in docs/attempts/2026-08-11-claude-reverse-2-multicase.json; the board does not restate it here.",
-    "rank": 23,
+    "rank": 30,
     "rung_id": "L3.R0.reverse-2-multicase",
     "solver": {
       "display": "Claude Opus 5 (Claude Code)",
@@ -693,83 +770,6 @@
       "type": "llm-agent"
     },
     "status": "solved"
-  },
-  {
-    "best_program": null,
-    "date": null,
-    "metric": null,
-    "note": "Twelve low-byte inputs (0x00–0x40); open.",
-    "note_long": null,
-    "rank": 24,
-    "rung_id": "L2.FM2l.xor51-map12-low",
-    "solver": null,
-    "status": "open"
-  },
-  {
-    "best_program": null,
-    "date": null,
-    "metric": null,
-    "note": "Sixteen-input finite map; open.",
-    "note_long": null,
-    "rank": 25,
-    "rung_id": "L2.FM3.xor51-map16",
-    "solver": null,
-    "status": "open"
-  },
-  {
-    "best_program": null,
-    "date": null,
-    "metric": null,
-    "note": "Twelve high-byte inputs (0x80–0xff); open.",
-    "note_long": null,
-    "rank": 26,
-    "rung_id": "L2.FM2h.xor51-map12-hi",
-    "solver": null,
-    "status": "open"
-  },
-  {
-    "best_program": null,
-    "date": null,
-    "metric": null,
-    "note": "Rotate the input byte left by one bit; totality over 256 required.",
-    "note_long": null,
-    "rank": 27,
-    "rung_id": "L2.R2.rotate-1",
-    "solver": null,
-    "status": "open"
-  },
-  {
-    "best_program": null,
-    "date": null,
-    "metric": null,
-    "note": "General XOR with a 4096-byte cap; best known coverage 27/256.",
-    "note_long": "xor-1 with the length cap relaxed to 4096 bytes. Attempts here established identity dispatch — byte 121, all-1 trits, is loader-valid only at cells 35 and 41, reached through MOVD pointers — and a shared station with per-lane pointer cells, verified at 27/256. Ceilings measured along the way: MOVD pointers are printable bytes ≤126, confining operand freedom to a ~96-cell pool good for about 30 lanes; three-CRAZY chains reach 81 of 256 values; no per-trit map puts more than 41 of 256 XOR outputs in the dispatch itself.",
-    "rank": 28,
-    "rung_id": "L2.R0d.xor-1-len4096",
-    "solver": null,
-    "status": "open"
-  },
-  {
-    "best_program": null,
-    "date": null,
-    "metric": null,
-    "note": "The open frontier: output = input XOR 0x51 for any byte, 256-byte cap.",
-    "note_long": "Unsolved. The input byte is hash-derived per seed, so the program must handle all 256 values; constant output fails. Known obstructions: the dispatch J = crazy(crazy(x,t1),t2) is non-injective and bounded below 243, so 256 private code paths cannot exist; identity dispatch needs operand byte 121, which no reachable operand cell in a fixed prefix accepts; dense landings force shared tails whose pointer cells sit in executed, byte-forced territory. Best coverage at this cap: 20/256.",
-    "rank": 29,
-    "rung_id": "L2.R0.xor-1",
-    "solver": null,
-    "status": "open"
-  },
-  {
-    "best_program": null,
-    "date": null,
-    "metric": null,
-    "note": "2-byte XOR across 2 cases; strictly harder than xor-1.",
-    "note_long": null,
-    "rank": 30,
-    "rung_id": "L2.R3.xor-2-multicase",
-    "solver": null,
-    "status": "open"
   },
   {
     "best_program": null,
