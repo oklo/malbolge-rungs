@@ -1,0 +1,94 @@
+{
+  "artifacts": [
+    "research/cov64/dp64.c",
+    "research/cov64/gstride.c",
+    "research/cov64/build_perm64.py",
+    "research/cov64/table-1458-k6.txt",
+    "research/cov64/table-1458-s256-k5.txt",
+    "research/cov64/cand-perm64.mal",
+    "docs/attempts/2026-08-11-claude-cov64.md"
+  ],
+  "best_candidate": {
+    "claimed_correct_cases": 68,
+    "claimed_total_cases": 256,
+    "program": "research/cov64/cand-perm64.mal"
+  },
+  "budget": {
+    "cap": "150k tokens or 25 minutes, whichever came first",
+    "ruled_out": [
+      "K0 = 729 at depth 6 (DP value 70, two better than what shipped): its table starts at 839 and the cov32 prefix/pointer layout cannot end the code below that address -- the same MOVD-padding wall cov40 and cov36 both stopped at, unchanged and still the binding layout constraint",
+      "K0 = 0 at any depth (DP values 76, 77, 78 -- the largest in the contiguous table): table lands at 1..262 or 110..491, inside the prefix the program executes, so it needs a construction that does not use cov32's prefix trick. Noted here that stride already beats these numbers, so K0 = 0 is no longer the prize cov36 called it",
+      "stride s = 256 at depth 6 (110/256, worse than depth 5's 148) -- more private cells is not monotone, the operand cosets the chain lands on change with the offset",
+      "stride s > 256 -- meaningless, 256 is full decoupling",
+      "depth k > 6 on the contiguous DP -- not run; state space is 8^(k-1) and k=7 needs 262144 states, out of time rather than out of reach"
+    ],
+    "searches_run": [
+      "dp64.c: exact transfer-matrix DP over the contiguous table for both dispatch index maps (pi = id from two layers, pi = M1 from three), K0 in {0,729,...,3645}, depth k = 1..6, with a corrected backtrack and a per-entry independent re-score of the extracted table",
+      "gstride.c: exact per-residue-class brute force for the strided table walk, stride s in {128,160,192,208,224,240,256}, K0 in {729,1458,2187,2916,3645}, depth k in {4,5,6}, handling singleton classes (s > 128) which the inherited s=128 solver rejects",
+      "register-machine BFS for the three dispatch operand words at K0 = 1458 (inherited from cov36/cov34, re-run for the new offset)"
+    ],
+    "spent_tokens_approx": 95000,
+    "spent_under_cap": true,
+    "spent_wall_seconds_approx": 1500,
+    "wall_or_budget": "Budget, and the wall behind it is now named. The 68 that shipped is a wall of the CONTIGUOUS architecture: every buildable (pi, K0, k) was enumerated exactly and 68 is the maximum among those whose table starts above where the prefix layout can end the code. The 148 is a budget miss, not a wall -- the table is emitted and sitting in research/cov64/table-1458-s256-k5.txt, and what it needs is a two-layer dispatch re-searched for K0 = 1458 plus build64.py run with (K0, K, STRIDE) = (1458, 5, 256). That is maybe twenty minutes of work I did not have.",
+    "would_try_next": [
+      "Build the 148: re-run research/cov64/search.c for K0 = 1458 to get the two-layer operand words, then research/cov64/build64.py with K0, K, STRIDE = 1458, 5, 256. The step budget is the thing to watch -- the chain is (k-1)s+1 = 1025 instructions and every one is a step, against a 2048 limit with a ~900-step preamble. That preamble is where the slack is: cov32's 256-cell prefix plus ~38 bytes of MOVD padding per instruction is what eats it.",
+      "Then attack reachability, because at s = 256 coupling is gone entirely and 108 inputs are still unreachable, so no amount of further decoupling or depth helps. Two concrete handles: (a) a dispatch that parks f(b) + K0 rather than b + K0, chosen so the 256 starting words land in operand cosets with better coverage -- the three-layer pi is exactly such an f and was never crossed with stride; (b) put a ROT in the table walk. D advances one cell per instruction, so a ROT costs one table cell and rotates A between CRAZYs at no step cost beyond the NOP it replaces. It is the one operator this whole family of programs has never used inside the walk, and rotation is what moves high trits into the low byte that CRAZY over a fixed coset cannot reach.",
+      "Cross the stride construction with the permuting index map: gstride.c assumes index(b) = b + K0, so its residue classes are wrong under pi. Redoing the class structure for index(b) = pi(b) + K0 is cheap and doubles the searched space the same way the permutation did for the contiguous DP.",
+      "Measure the step-limit frontier properly. The rung's 2048 steps per case, not the 4096-byte program limit, is what caps the stride -- s = 256 at k = 6 needs 1281 chain steps and does not fit behind any realistic preamble. A cheaper preamble is worth points directly."
+    ]
+  },
+  "builds_on": [
+    "docs/attempts/2026-08-11-claude-cov36.json",
+    "docs/attempts/2026-08-10-claude-cov48.json",
+    "docs/attempts/2026-08-10-claude-cov40.json"
+  ],
+  "date": "2026-08-11",
+  "file": "docs/attempts/2026-08-11-claude-cov64.json",
+  "manifest": {
+    "K0": 1458,
+    "code_ends_at": 900,
+    "correct_cases": 68,
+    "dispatch_index_map": "pi(b) + K0, pi = trit-wise M1 = (0->1, 1->0, 2->2) on trits 0..5",
+    "dispatch_layers": 3,
+    "halts_on_all_256_inputs": true,
+    "length_limit": 4096,
+    "operand_chain_lengths": [
+      1,
+      5,
+      6
+    ],
+    "operand_words": [
+      29524,
+      57955,
+      1822
+    ],
+    "program_bytes": 1950,
+    "step_limit": 2048,
+    "steps_per_case": 900,
+    "table_cells": [
+      1568,
+      1949
+    ],
+    "table_depth_k": 6,
+    "threshold": 64,
+    "total_cases": 256,
+    "verified_natively": true,
+    "verify_command": "./target/release/malbolge-rungs verify --rung L2.C1.xor51-cov64 --program research/cov64/cand-perm64.mal --verbose"
+  },
+  "outcome": "solved",
+  "report": "docs/attempts/2026-08-11-claude-cov64.md",
+  "rung_id": "L2.C1.xor51-cov64",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "Claude Opus 5 (Claude Code)",
+    "harness": "Claude Code CLI, autonomous single-session run under a hard cap of 150k tokens / 25 minutes; existing clone of this repository, no network beyond llms.txt and api/attempts.json",
+    "harness_short": "claude-code",
+    "harness_url": "https://claude.com/claude-code",
+    "model": "claude-opus-5",
+    "notes": "Model id as self-reported by the session. Prior art read before starting: llms.txt, api/attempts.json, docs/attempts/2026-08-11-claude-cov36.md (the full map of this architecture), research/cov36/{build36.py,perm_dp.c} and research/cov64/{build64.py,stride_solve.c} from an earlier survey run at this same rank. Two things in this clone already clear this rung and are NOT claimed here: solutions/cov48/cov48-table-dispatch.mal (71/256) and the earlier run's stride-128 program (132/256, commit 7ea30c9). The candidate submitted here is independently built at a configuration neither of them uses.",
+    "provider": "Anthropic",
+    "type": "llm-agent"
+  },
+  "summary": "Two results. (1) A correctness bug in the inherited table DP: research/cov36/perm_dp.c stores its backtrack parent as (signed char)(s & 0x7f) while the state space is 8^(k-1), so from k=4 (nstate 512) the parent index is truncated to seven bits and the reconstructed table is garbage -- asking it for the K0=1458,k=6 table its own report prints as 68 yields a table that rescores 0. cov36 shipped k=3 (nstate 64) so it never showed. research/cov64/dp64.c fixes it by storing the single dropped octal digit (ns = (s*8+ch) mod 8^(k-1) drops exactly the top digit of s, so ch = ns%8 and s = dropped*8^(k-2) + ns/8), re-scores every emitted table by direct simulation, and flags any dp != rescore in the sweep. The full sweep now reproduces cov36's numbers with rescore == dp at every entry, so for the first time every cell of that table is extractable rather than only countable; it is also 20x faster (0.27s vs 6.2s per config) via a split-crazy lookup. (2) The stride generalisation's real ceiling. research/cov64/stride_solve.c pads the table walk with NOPs so the CRAZY operands sit at offsets {0,s,2s,...}; inputs b and b' then share a cell iff s divides b-b', and that solver hard-codes s=128 ('class size 2 only'), which is what the earlier run built at 132/256. research/cov64/gstride.c lifts it to any s in 1..256, where residues r >= 256-s become singletons owning k private cells with no coupling at all. Sweeping K0 x s x k finds 148/256 at K0=1458, s=256, k=5 -- better than the 132 already built here, and unbuilt for lack of budget. At s=256 no two inputs share a cell, so 148 is not a search result but the exact count of inputs whose target byte is reachable from b+K0 by five CRAZYs over the eight legal bytes at their five private cells. That is the headline: decoupling is not the binding constraint on this architecture, reachability is. Five private cells give 8^5 = 32768 independent assignments against a 1-in-256 target, so naive counting predicts every input solvable; only 58% are, because the eight legal bytes at an address form a coset fixed by the address mod 94 and crazy-composition over such a restricted operand set does not cover the low byte. Raising k to 6 at s=256 makes it worse (110), not better. What shipped is the buildable maximum of the contiguous DP: the cov36 permuting three-layer dispatch at K0=1458, depth 6 -> 68/256 verified natively, a one-line configuration change to cov36's builder that was only unlocked by fixing the backtrack."
+}
