@@ -191,6 +191,10 @@ enum AttemptsCmd {
         #[arg(long)]
         dry_run: bool,
     },
+    /// Re-credit every rung to the smallest program on hand that passes it.
+    /// Idempotent repair pass for records admitted before admission swept the
+    /// whole ladder.
+    Recredit,
 }
 
 #[derive(Subcommand)]
@@ -602,11 +606,9 @@ fn cmd_attempts(what: AttemptsCmd) -> Result<ExitCode> {
                     for f in &a.files {
                         println!("    {f}");
                     }
-                    if a.solved {
-                        println!(
-                            "    SOLVE VERIFIED — leaderboard flipped: {}",
-                            a.metric.as_deref().unwrap_or("")
-                        );
+                    for (rung, metric, displaced) in &a.credited {
+                        let verb = if *displaced { "RE-CREDITED" } else { "SOLVED" };
+                        println!("    {verb} {rung}: {metric}");
                     }
                     Ok(ExitCode::SUCCESS)
                 }
@@ -616,6 +618,17 @@ fn cmd_attempts(what: AttemptsCmd) -> Result<ExitCode> {
                     Ok(ExitCode::FAILURE)
                 }
             }
+        }
+        AttemptsCmd::Recredit => {
+            let repo = std::path::PathBuf::from(concat!(env!("CARGO_MANIFEST_DIR"), "/../.."));
+            let changes = harness::admit::recredit_all(&repo)?;
+            if changes.is_empty() {
+                println!("every rung already credited to the smallest program that passes it");
+            }
+            for (rung, was, now, metric) in &changes {
+                println!("{rung}\n    {was}\n  → {now}  ({metric})");
+            }
+            Ok(ExitCode::SUCCESS)
         }
     }
 }

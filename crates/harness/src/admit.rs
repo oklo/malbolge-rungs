@@ -40,10 +40,10 @@ pub struct Admission {
     pub rung_id: String,
     /// Repo-relative paths written (empty on a dry run or a rejection).
     pub files: Vec<String>,
-    /// Set when the record claimed a solve and our own verifier agreed.
-    pub solved: bool,
-    /// Metric produced by our verifier, never copied from the submission.
-    pub metric: Option<String>,
+    /// Every rung this submission's program was credited on, as
+    /// (rung_id, metric, displaced_a_standing_credit). A program is evidence
+    /// about any rung it clears, so this is usually more than the named one.
+    pub credited: Vec<(String, String, bool)>,
 }
 
 /// A path is admissible if it is repo-relative, traversal-free, drawn from a
@@ -172,8 +172,7 @@ pub fn admit_bundle(repo: &Path, bundle_path: &Path, dry_run: bool) -> Result<Ad
             bundle: bundle_path.display().to_string(),
             rung_id: rec.rung_id.clone(),
             files: targets.into_iter().map(|(_, _, rel)| rel).collect(),
-            solved: false,
-            metric: None,
+            credited: Vec::new(),
         });
     }
 
@@ -210,16 +209,17 @@ pub fn admit_bundle(repo: &Path, bundle_path: &Path, dry_run: bool) -> Result<Ad
     };
 
     match finish() {
-        Ok((solved, metric)) => {
-            if solved {
-                update_leaderboard(repo, &rec, metric.as_deref().unwrap_or(""), &record_rel)?;
-            }
+        Ok((solved, _)) => {
+            let credited = if solved {
+                update_leaderboard(repo, &rec, &record_rel)?
+            } else {
+                Vec::new()
+            };
             Ok(Admission {
                 bundle: bundle_path.display().to_string(),
                 rung_id: rec.rung_id.clone(),
                 files: targets.into_iter().map(|(_, _, rel)| rel).collect(),
-                solved,
-                metric,
+                credited,
             })
         }
         Err(e) => {
@@ -269,58 +269,136 @@ fn verify_claim(repo: &Path, rec: &AttemptRecord) -> Result<(bool, String)> {
     Ok((outcome.passed, metric))
 }
 
-/// Flip a leaderboard record to solved. Board voice is generated here from
-/// verified facts; the submitter's account stays in their attempt record.
-fn update_leaderboard(repo: &Path, rec: &AttemptRecord, metric: &str, record_rel: &str) -> Result<()> {
+/// Credit a submitted program on every rung it passes, not only the one its
+/// record names.
+///
+/// A program is evidence about any rung it clears. Considering only the named
+/// rung understated the board twice in one day: cov36 kept a 3178-byte credit
+/// when a 1717-byte program passed it, and a 1950-byte program that solved
+/// cov64 also cleared cov48 and cov48-len2048 without anyone noticing. The rule
+/// applied here is the one the board already states — the verifier is the judge,
+/// and a rung goes to the smallest program that passes it.
+///
+/// So: sweep the candidate across the ladder, claim open rungs it clears, and
+/// displace a standing credit only when this program is strictly smaller.
+/// Rungs already held by something smaller are left alone.
+fn update_leaderboard(
+    repo: &Path,
+    rec: &AttemptRecord,
+    record_rel: &str,
+) -> Result<Vec<(String, String, bool)>> {
+    let cand = rec.best_candidate.as_ref().context("solved record needs a candidate")?;
+    let cand_path = crate::fspath::resolve_within_repo(repo, &cand.program)
+        .map_err(|e| anyhow::anyhow!("candidate {e}"))?;
+    let bytes = std::fs::read(&cand_path)?;
+
     let path = repo.join("leaderboard/leaderboard.json");
     let text = std::fs::read_to_string(&path).context("reading leaderboard")?;
     let mut board: serde_json::Value = serde_json::from_str(&text)?;
     let arr = board.as_array_mut().context("leaderboard is not an array")?;
 
-    let entry = arr
-        .iter_mut()
-        .find(|e| e.get("rung_id").and_then(|v| v.as_str()) == Some(rec.rung_id.as_str()))
-        .with_context(|| format!("no leaderboard record for {}", rec.rung_id))?;
-
-    if entry.get("status").and_then(|s| s.as_str()) == Some("solved") {
-        // Already solved: the attempt record still lands, the claim does not
-        // displace the standing one.
-        return Ok(());
-    }
-
-    let cand = rec.best_candidate.as_ref().context("solved record needs a candidate")?;
     let display = rec
         .solver
         .as_ref()
         .map(|s| s.display.clone())
         .unwrap_or_else(|| "unattributed submission".to_string());
 
-    let obj = entry.as_object_mut().context("leaderboard entry is not an object")?;
-    obj.insert("status".into(), serde_json::json!("solved"));
-    obj.insert("best_program".into(), serde_json::json!(cand.program));
-    obj.insert("date".into(), serde_json::json!(rec.date));
-    obj.insert("metric".into(), serde_json::json!(metric));
-    if let Some(s) = &rec.solver {
-        obj.insert("solver".into(), serde_json::to_value(s)?);
+    let mut changed = Vec::new();
+    for entry in arr.iter_mut() {
+        let rung_id = match entry.get("rung_id").and_then(|v| v.as_str()) {
+            Some(s) => s.to_string(),
+            None => continue,
+        };
+        let solved_now = entry.get("status").and_then(|s| s.as_str()) == Some("solved");
+
+        let own = rung_id == rec.rung_id;
+
+        // An incidental pass never displaces a standing credit. map8's program
+        // clears map4, map6, map7a and map7b because their inputs are subsets of
+        // its own — crediting it on size alone would erase four solves that
+        // people actually aimed at those rungs, and with them the board's record
+        // of who did what. An incidental pass may only fill an OPEN rung.
+        if solved_now && !own {
+            continue;
+        }
+        // On its own rung, a submission displaces the standing credit only by
+        // being smaller. That is what lets an aimed solve replace one held by
+        // subsumption.
+        if solved_now {
+            let held = entry
+                .get("best_program")
+                .and_then(|p| p.as_str())
+                .and_then(|p| crate::fspath::resolve_within_repo(repo, p).ok())
+                .and_then(|p| std::fs::metadata(p).ok())
+                .map(|m| m.len() as usize);
+            match held {
+                Some(n) if n <= bytes.len() => continue,
+                _ => {}
+            }
+        }
+
+        let Some(rung) = crate::registry::find_rung(&rung_id) else { continue };
+        let outcome = crate::verify::verify_rung(&rung, &bytes, 1);
+        if !outcome.passed {
+            continue;
+        }
+        let Some(first) = outcome.epochs.first() else { continue };
+        let metric = if outcome.coverage {
+            format!(
+                "{}/{} correct (>= {} required), native re-verification; {} bytes",
+                first.correct_cases, first.total_cases, outcome.required_correct, bytes.len()
+            )
+        } else {
+            format!(
+                "{}/{} cases, native re-verification; {} bytes",
+                first.correct_cases, first.total_cases, bytes.len()
+            )
+        };
+
+        let obj = entry.as_object_mut().context("leaderboard entry is not an object")?;
+        obj.insert("status".into(), serde_json::json!("solved"));
+        obj.insert("best_program".into(), serde_json::json!(cand.program));
+        obj.insert("date".into(), serde_json::json!(rec.date));
+        obj.insert("metric".into(), serde_json::json!(metric.clone()));
+        if let Some(s) = &rec.solver {
+            obj.insert("solver".into(), serde_json::to_value(s)?);
+        }
+        if let Some(m) = &rec.manifest {
+            obj.insert("manifest".into(), serde_json::to_value(m)?);
+        }
+        obj.insert(
+            "note".into(),
+            serde_json::json!(if own {
+                format!("Solved by {display}. Admitted automatically after native re-verification.")
+            } else {
+                format!(
+                    "Solved by {display}'s {} program, which clears this threshold too.",
+                    rec.rung_id
+                )
+            }),
+        );
+        obj.insert(
+            "note_long".into(),
+            serde_json::json!(if own {
+                format!(
+                    "Admitted automatically: the program was re-run on the native VM at admission and \
+                     again at deploy, giving {metric}. The account of how it was built is the \
+                     submitter's own and is recorded in {record_rel}; the board does not restate it here."
+                )
+            } else {
+                format!(
+                    "Not solved by a construction aimed at this rung. The program submitted for {} \
+                     passes this threshold as well, giving {metric}, and a rung is credited to the \
+                     smallest program that clears it. The submitter's account is in {record_rel}.",
+                    rec.rung_id
+                )
+            }),
+        );
+        changed.push((rung_id, metric, solved_now));
     }
-    if let Some(m) = &rec.manifest {
-        obj.insert("manifest".into(), serde_json::to_value(m)?);
-    }
-    obj.insert(
-        "note".into(),
-        serde_json::json!(format!("Solved by {display}. Admitted automatically after native re-verification.")),
-    );
-    obj.insert(
-        "note_long".into(),
-        serde_json::json!(format!(
-            "Admitted automatically: the program was re-run on the native VM at admission and again at \
-             deploy, giving {metric}. The account of how it was built is the submitter's own and is \
-             recorded in {record_rel}; the board does not restate it here."
-        )),
-    );
 
     std::fs::write(&path, serde_json::to_string_pretty(&board)? + "\n")?;
-    Ok(())
+    Ok(changed)
 }
 
 #[cfg(test)]
@@ -368,4 +446,126 @@ mod tests {
         assert!(check_path(&r, "research/x/$(whoami).py").is_err());
         assert!(check_path(&r, "research/x/a b.py").is_err());
     }
+}
+
+/// Re-credit every rung to the smallest program on hand that passes it.
+///
+/// Admission sweeps a submission across the ladder, but records admitted before
+/// that behaviour existed were only ever checked against the rung they named.
+/// This is the repair pass, and it is idempotent: gather every candidate program
+/// the repository knows about — shipped solutions and every attempt record's
+/// best candidate — and give each rung to the smallest one the native VM says
+/// passes it. Attribution follows the program: whichever record claims it.
+pub fn recredit_all(repo: &Path) -> Result<Vec<(String, String, String, String)>> {
+    // program path -> owning record (for attribution)
+    let mut owner: std::collections::BTreeMap<String, AttemptRecord> = Default::default();
+    let mut programs: std::collections::BTreeSet<String> = Default::default();
+
+    for rec in crate::attempts::load_attempts() {
+        if let Some(c) = &rec.best_candidate {
+            programs.insert(c.program.clone());
+            owner.entry(c.program.clone()).or_insert(rec.clone());
+        }
+    }
+    for entry in glob_solutions(repo) {
+        programs.insert(entry);
+    }
+
+    let path = repo.join("leaderboard/leaderboard.json");
+    let mut board: serde_json::Value = serde_json::from_str(&std::fs::read_to_string(&path)?)?;
+    let mut changes = Vec::new();
+
+    for entry in board.as_array_mut().context("leaderboard is not an array")? {
+        let rung_id = match entry.get("rung_id").and_then(|v| v.as_str()) {
+            Some(s) => s.to_string(),
+            None => continue,
+        };
+        let Some(rung) = crate::registry::find_rung(&rung_id) else { continue };
+
+        // Smallest passing program wins the rung.
+        let mut best: Option<(usize, String, String)> = None;
+        for p in &programs {
+            let Ok(abs) = crate::fspath::resolve_within_repo(repo, p) else { continue };
+            let Ok(bytes) = std::fs::read(&abs) else { continue };
+            if best.as_ref().is_some_and(|(n, _, _)| *n <= bytes.len()) {
+                continue;
+            }
+            let outcome = crate::verify::verify_rung(&rung, &bytes, 1);
+            if !outcome.passed {
+                continue;
+            }
+            let first = outcome.epochs.first().context("no epochs")?;
+            let metric = if outcome.coverage {
+                format!(
+                    "{}/{} correct (>= {} required), native re-verification; {} bytes",
+                    first.correct_cases, first.total_cases, outcome.required_correct, bytes.len()
+                )
+            } else {
+                format!("{}/{} cases, native re-verification; {} bytes",
+                        first.correct_cases, first.total_cases, bytes.len())
+            };
+            best = Some((bytes.len(), p.clone(), metric));
+        }
+
+        let Some((_, prog, metric)) = best else { continue };
+        let current = entry.get("best_program").and_then(|p| p.as_str()).unwrap_or("");
+        if current == prog {
+            continue;
+        }
+        // Same rule as admission: an incidental pass fills an open rung and
+        // never displaces a standing credit, so a subset-input solve cannot
+        // quietly take over the rungs beneath it.
+        let solved_now = entry.get("status").and_then(|s| s.as_str()) == Some("solved");
+        let aimed = owner.get(&prog).is_some_and(|r| r.rung_id == rung_id);
+        if solved_now && !aimed {
+            continue;
+        }
+        let was = if current.is_empty() { "(open)".to_string() } else { current.to_string() };
+
+        let obj = entry.as_object_mut().context("entry is not an object")?;
+        obj.insert("status".into(), serde_json::json!("solved"));
+        obj.insert("best_program".into(), serde_json::json!(prog));
+        obj.insert("metric".into(), serde_json::json!(metric.clone()));
+        if let Some(rec) = owner.get(&prog) {
+            obj.insert("date".into(), serde_json::json!(rec.date));
+            if let Some(s) = &rec.solver {
+                obj.insert("solver".into(), serde_json::to_value(s)?);
+            }
+            let display = rec.solver.as_ref().map(|s| s.display.as_str()).unwrap_or("a submission");
+            let own = rec.rung_id == rung_id;
+            obj.insert("note".into(), serde_json::json!(if own {
+                format!("Solved by {display}.")
+            } else {
+                format!("Solved by {display}'s {} program, the smallest on the board that clears this threshold.", rec.rung_id)
+            }));
+            obj.insert("note_long".into(), serde_json::json!(format!(
+                "Credited to the smallest program the board holds that passes this rung, re-verified \
+                 natively at {metric}. It was submitted for {}; a rung goes to the smallest program \
+                 that clears it, whatever it was aimed at. The submitter's account is in {}.",
+                rec.rung_id, rec.path
+            )));
+        }
+        changes.push((rung_id, was, prog, metric));
+    }
+
+    std::fs::write(&path, serde_json::to_string_pretty(&board)? + "\n")?;
+    Ok(changes)
+}
+
+fn glob_solutions(repo: &Path) -> Vec<String> {
+    let mut out = Vec::new();
+    let root = repo.join("solutions");
+    let Ok(dirs) = std::fs::read_dir(&root) else { return out };
+    for d in dirs.filter_map(|e| e.ok()) {
+        let Ok(files) = std::fs::read_dir(d.path()) else { continue };
+        for f in files.filter_map(|e| e.ok()) {
+            let p = f.path();
+            if p.extension().is_some_and(|x| x == "mal") {
+                if let Ok(rel) = p.strip_prefix(repo) {
+                    out.push(rel.to_string_lossy().to_string());
+                }
+            }
+        }
+    }
+    out
 }
