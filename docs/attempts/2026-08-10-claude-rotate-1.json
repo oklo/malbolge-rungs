@@ -1,0 +1,60 @@
+{
+  "artifacts": [
+    "research/rotate-1/dp.c",
+    "research/rotate-1/dp2.c",
+    "research/rotate-1/dp-results.txt",
+    "docs/attempts/2026-08-10-claude-rotate-1.md"
+  ],
+  "best_candidate": null,
+  "budget": {
+    "best_ceiling_over_all_configurations": 63,
+    "best_model_level_count_found": 63,
+    "best_natively_verified_count": 0,
+    "candidate_program_bytes": null,
+    "candidate_steps": null,
+    "ceiling_note": "63/256 is an exact optimum for k <= 7 over all free tables, computed not searched, under three assumptions stated in the report: the walk is CRZ-only (no ROT), the dispatch is the two-CRZ K0 = 0 form, and table cells at addresses >= 256 follow the crazy-fill. It is not a claim that rotate-1 is impossible in Malbolge -- only that the architecture which solved every coverage rung on this board cannot reach it, and that the gap is a factor of four rather than a margin.",
+    "epochs_verified": 0,
+    "exact_optima_by_depth": {
+      "2": 31,
+      "3": 50,
+      "4": 49,
+      "5": 58,
+      "6": 52,
+      "7": 63
+    },
+    "table_depths_swept": "k = 2..7, each solved to exact optimum by transfer-matrix DP; k = 8 (8^7 states) not run",
+    "table_offsets_swept": "K0 = 0 only -- proved to be the sole reachable offset, since K0 is a multiple of 729 and max_program_len = 256 cannot reach address 729",
+    "token_cap": 150000,
+    "wall_cap_seconds": 1500,
+    "what_more_budget_would_have_bought": "Not more table. The DP is exact and the freedom is capped at 765 bits against 2048 bits of constraint, so no arrangement of a k-deep crazy walk over a free 255-cell table reaches 256/256; more budget spent there buys nothing and I would spend none of it on deeper k, on other K0 (there are none), or on operand-chain search. Three things are worth buying, in order. (1) A ROT inside the walk, which map16's record also names as the one lever that leaves its ceiling: ROT rotates the whole ten-trit word, so it moves the accumulator's high trits into the byte-visible positions and is the only cheap way to get carry-like motion out of a tritwise op. It costs a table cell (ROT writes mem[d]) and turns the per-input state space from 8^k choices into a 59049-state reachability, still trivial in C; it should be measured before anything else, because if the ceiling moves at all it moves here. (2) A second dispatch stage: after the first MOVD leaves D = b+1, cell b is itself a program byte, so a second MOVD gives D = mem[b]+1 -- a genuine 256-entry pointer table, but into only 94 distinct targets, so the real question is how many inputs can be separated after collisions and whether the 8 bytes per address can be chosen to make the collision classes agree on their required output. That is a small exact computation, not a search. (3) Only if both fail: the actual architecture this rung wants, an iterated shift. 2048 steps and 256 bytes are enough room for a loop; the obstruction is that Malbolge enciphers mem[c] after every executed instruction, so a loop body is destroyed on its second pass unless every instruction in it sits at an address where the encipher table cycles it back to a byte decoding to the same op. Enumerating the addresses and bytes with that fixed-point property, and what op each admits, is a 94 x 94 table that has to exist before any loop can be written, and it does not exist anywhere in this repo yet. Building it is the single most reusable artifact for ranks 24-33, all of which are full transforms or hash prefixes and none of which the table-dispatch family can reach."
+  },
+  "builds_on": [
+    "docs/attempts/2026-08-10-claude-cov48.json",
+    "docs/attempts/2026-08-10-claude-map16.json"
+  ],
+  "date": "2026-08-10",
+  "file": "docs/attempts/2026-08-10-claude-rotate-1.json",
+  "manifest": {
+    "cpu_workers": 1,
+    "harness": "claude-code",
+    "model_version": "claude-opus-5",
+    "native_binary": "target/release/malbolge-rungs",
+    "reasoning_effort": null,
+    "wall_seconds": null
+  },
+  "outcome": "unsolved",
+  "report": "docs/attempts/2026-08-10-claude-rotate-1.md",
+  "rung_id": "L2.R2.rotate-1",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "Claude Opus 5 (Claude Code)",
+    "harness": null,
+    "harness_short": "claude-code",
+    "harness_url": "https://claude.com/claude-code",
+    "model": "claude-opus-5",
+    "notes": "Model id as reported by the session's own environment. Run under a fixed 150k-token / 25-minute cap as part of a board-calibration survey.",
+    "provider": "Anthropic",
+    "type": "llm-agent"
+  },
+  "summary": "No verified candidate; the contribution is an exact ceiling that removes the coverage-rung architecture from this rung. Transform-family inputs are seed-derived, so the single case is a different random byte each epoch and the honest target is 256/256, not one epoch. The binding constraint is max_program_len = 256 (cov48 had 4096, cov64 shipped 3813 bytes). That cap forces the cov40/cov48 dispatch offset to K0 = 0, which is actually the most favourable case ever available: two CRZs against operands congruent to 364 mod 729 leave v = b exactly, the MOVD puts D at b+1, and the k-cell table then lies at addresses 1..255+k -- inside the program, where every cell is freely choosable with 8 loader-valid bytes, instead of at K0 = 729..3645 with the alphabet fixed by address mod 94. An exact transfer-matrix DP over all such tables (state = last k-1 cell choices, terminal states scored against the forced crazy-fill continuation for addresses >= 256) gives maxima of 31, 50, 49, 58, 52, 63 out of 256 for k = 2..7. These are optima, not search results, so the table-dispatch family provably cannot solve this rung; it is off by a factor of four. The counting reason it cannot climb: the table is 255 cells x 3 bits = 765 bits of freedom against 256 x 8 = 2048 bits of constraint, and depth adds sharing, not freedom. cov48's 71/256 for xor51 and this 63/256 for rotate are the same number to within noise -- the ceiling is a property of the architecture, not the transform. rotate_left(b,1) = 2b mod 255 is carry-propagating, local in no base and least of all in the VM's base 3, so this rung needs iterated computation over the 2048-step budget rather than a wider table."
+}
