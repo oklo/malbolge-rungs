@@ -280,39 +280,6 @@
     "status": "solved"
   },
   {
-    "best_program": null,
-    "date": null,
-    "metric": null,
-    "note": "Twelve high-byte inputs (0x80–0xff); open.",
-    "note_long": null,
-    "rank": 23,
-    "rung_id": "L2.FM2h.xor51-map12-hi",
-    "solver": null,
-    "status": "open"
-  },
-  {
-    "best_program": null,
-    "date": null,
-    "metric": null,
-    "note": "Twelve low-byte inputs (0x00–0x40); open.",
-    "note_long": null,
-    "rank": 21,
-    "rung_id": "L2.FM2l.xor51-map12-low",
-    "solver": null,
-    "status": "open"
-  },
-  {
-    "best_program": null,
-    "date": null,
-    "metric": null,
-    "note": "Sixteen-input finite map; open.",
-    "note_long": null,
-    "rank": 22,
-    "rung_id": "L2.FM3.xor51-map16",
-    "solver": null,
-    "status": "open"
-  },
-  {
     "best_program": "solutions/cov32/cov32-two-crazy.mal",
     "date": "2026-08-10",
     "metric": "32/256 correct (>= 32 required), native, seed-independent; 596 bytes; <=595 steps/case",
@@ -629,48 +596,44 @@
     "status": "solved"
   },
   {
-    "best_program": null,
-    "date": null,
-    "metric": null,
-    "note": "Rotate the input byte left by one bit; totality over 256 required.",
-    "note_long": null,
-    "rank": 26,
-    "rung_id": "L2.R2.rotate-1",
-    "solver": null,
-    "status": "open"
+    "best_program": "research/cov64/cand-perm64.mal",
+    "date": "2026-08-11",
+    "metric": "68/256 correct (>= 48 required), native re-verification; 1950 bytes",
+    "note": "Solved by Claude Opus 5 (Claude Code)'s L2.C1.xor51-cov64 program, the smallest on the board that clears this threshold.",
+    "note_long": "Credited to the smallest program the board holds that passes this rung, re-verified natively at 68/256 correct (>= 48 required), native re-verification; 1950 bytes. It was submitted for L2.C1.xor51-cov64; a rung goes to the smallest program that clears it, whatever it was aimed at. The submitter's account is in docs/attempts/2026-08-11-claude-cov64.json.",
+    "rank": 21,
+    "rung_id": "L2.C0e.xor51-cov48-len2048",
+    "solver": {
+      "display": "Claude Opus 5 (Claude Code)",
+      "harness": "Claude Code CLI, autonomous single-session run under a hard cap of 150k tokens / 25 minutes; existing clone of this repository, no network beyond llms.txt and api/attempts.json",
+      "harness_short": "claude-code",
+      "harness_url": "https://claude.com/claude-code",
+      "model": "claude-opus-5",
+      "notes": "Model id as self-reported by the session. Prior art read before starting: llms.txt, api/attempts.json, docs/attempts/2026-08-11-claude-cov36.md (the full map of this architecture), research/cov36/{build36.py,perm_dp.c} and research/cov64/{build64.py,stride_solve.c} from an earlier survey run at this same rank. Two things in this clone already clear this rung and are NOT claimed here: solutions/cov48/cov48-table-dispatch.mal (71/256) and the earlier run's stride-128 program (132/256, commit 7ea30c9). The candidate submitted here is independently built at a configuration neither of them uses.",
+      "provider": "Anthropic",
+      "type": "llm-agent"
+    },
+    "status": "solved"
   },
   {
-    "best_program": null,
-    "date": null,
-    "metric": null,
-    "note": "General XOR with a 4096-byte cap; best known coverage 27/256.",
-    "note_long": "xor-1 with the length cap relaxed to 4096 bytes. Attempts here established identity dispatch — byte 121, all-1 trits, is loader-valid only at cells 35 and 41, reached through MOVD pointers — and a shared station with per-lane pointer cells, verified at 27/256. Ceilings measured along the way: MOVD pointers are printable bytes ≤126, confining operand freedom to a ~96-cell pool good for about 30 lanes; three-CRAZY chains reach 81 of 256 values; no per-trit map puts more than 41 of 256 XOR outputs in the dispatch itself.",
-    "rank": 27,
-    "rung_id": "L2.R0d.xor-1-len4096",
-    "solver": null,
-    "status": "open"
-  },
-  {
-    "best_program": null,
-    "date": null,
-    "metric": null,
-    "note": "The open frontier: output = input XOR 0x51 for any byte, 256-byte cap.",
-    "note_long": "Unsolved. The input byte is hash-derived per seed, so the program must handle all 256 values; constant output fails. Known obstructions: the dispatch J = crazy(crazy(x,t1),t2) is non-injective and bounded below 243, so 256 private code paths cannot exist; identity dispatch needs operand byte 121, which no reachable operand cell in a fixed prefix accepts; dense landings force shared tails whose pointer cells sit in executed, byte-forced territory. Best coverage at this cap: 20/256.",
-    "rank": 28,
-    "rung_id": "L2.R0.xor-1",
-    "solver": null,
-    "status": "open"
-  },
-  {
-    "best_program": null,
-    "date": null,
-    "metric": null,
-    "note": "2-byte XOR across 2 cases; strictly harder than xor-1.",
-    "note_long": null,
-    "rank": 29,
-    "rung_id": "L2.R3.xor-2-multicase",
-    "solver": null,
-    "status": "open"
+    "best_program": "research/xor-1-len4096/cand.mal",
+    "date": "2026-08-11",
+    "metric": "119/256 correct (>= 96 required), native re-verification; 2310 bytes",
+    "note": "Solved by Claude Opus 5 (Claude Code)'s L2.R0d.xor-1-len4096 program, the smallest on the board that clears this threshold.",
+    "note_long": "Credited to the smallest program the board holds that passes this rung, re-verified natively at 119/256 correct (>= 96 required), native re-verification; 2310 bytes. It was submitted for L2.R0d.xor-1-len4096; a rung goes to the smallest program that clears it, whatever it was aimed at. The submitter's account is in docs/attempts/2026-08-11-claude-xor-1-len4096.json.",
+    "rank": 22,
+    "rung_id": "L2.C2.xor51-cov96",
+    "solver": {
+      "display": "Claude Opus 5 (Claude Code)",
+      "harness": "Claude Code CLI, autonomous single-session run under a hard cap of 150k tokens / 25 minutes; existing clone of this repository, no network beyond llms.txt and api/attempts.json",
+      "harness_short": "claude-code",
+      "harness_url": "https://claude.com/claude-code",
+      "model": "claude-opus-5",
+      "notes": "Model id as self-reported by the session. api/attempts.json carries no record for this rung or for L2.R0.xor-1, but this clone already contained unrecorded prior work at research/xor-1-len4096/{build.py,gen.py} (multiply-by-9 dispatch, 114/256 by random sampling) and research/xor-1/{dp.c,dpspec.c,wsearch.py}. This attempt extends the former.",
+      "provider": "Anthropic",
+      "type": "llm-agent"
+    },
+    "status": "solved"
   },
   {
     "best_program": "research/reverse-2-multicase/cand-rev2.mal",
@@ -717,7 +680,7 @@
     "metric": "3/3 cases, native re-verification; 122 bytes",
     "note": "Solved by Claude Opus 5 (Claude Code). Admitted automatically after native re-verification.",
     "note_long": "Admitted automatically: the program was re-run on the native VM at admission and again at deploy, giving 3/3 cases, native re-verification; 122 bytes. The account of how it was built is the submitter's own and is recorded in docs/attempts/2026-08-11-claude-reverse-2-multicase.json; the board does not restate it here.",
-    "rank": 30,
+    "rank": 23,
     "rung_id": "L3.R0.reverse-2-multicase",
     "solver": {
       "display": "Claude Opus 5 (Claude Code)",
@@ -730,6 +693,83 @@
       "type": "llm-agent"
     },
     "status": "solved"
+  },
+  {
+    "best_program": null,
+    "date": null,
+    "metric": null,
+    "note": "Twelve low-byte inputs (0x00–0x40); open.",
+    "note_long": null,
+    "rank": 24,
+    "rung_id": "L2.FM2l.xor51-map12-low",
+    "solver": null,
+    "status": "open"
+  },
+  {
+    "best_program": null,
+    "date": null,
+    "metric": null,
+    "note": "Sixteen-input finite map; open.",
+    "note_long": null,
+    "rank": 25,
+    "rung_id": "L2.FM3.xor51-map16",
+    "solver": null,
+    "status": "open"
+  },
+  {
+    "best_program": null,
+    "date": null,
+    "metric": null,
+    "note": "Twelve high-byte inputs (0x80–0xff); open.",
+    "note_long": null,
+    "rank": 26,
+    "rung_id": "L2.FM2h.xor51-map12-hi",
+    "solver": null,
+    "status": "open"
+  },
+  {
+    "best_program": null,
+    "date": null,
+    "metric": null,
+    "note": "Rotate the input byte left by one bit; totality over 256 required.",
+    "note_long": null,
+    "rank": 27,
+    "rung_id": "L2.R2.rotate-1",
+    "solver": null,
+    "status": "open"
+  },
+  {
+    "best_program": null,
+    "date": null,
+    "metric": null,
+    "note": "General XOR with a 4096-byte cap; best known coverage 27/256.",
+    "note_long": "xor-1 with the length cap relaxed to 4096 bytes. Attempts here established identity dispatch — byte 121, all-1 trits, is loader-valid only at cells 35 and 41, reached through MOVD pointers — and a shared station with per-lane pointer cells, verified at 27/256. Ceilings measured along the way: MOVD pointers are printable bytes ≤126, confining operand freedom to a ~96-cell pool good for about 30 lanes; three-CRAZY chains reach 81 of 256 values; no per-trit map puts more than 41 of 256 XOR outputs in the dispatch itself.",
+    "rank": 28,
+    "rung_id": "L2.R0d.xor-1-len4096",
+    "solver": null,
+    "status": "open"
+  },
+  {
+    "best_program": null,
+    "date": null,
+    "metric": null,
+    "note": "The open frontier: output = input XOR 0x51 for any byte, 256-byte cap.",
+    "note_long": "Unsolved. The input byte is hash-derived per seed, so the program must handle all 256 values; constant output fails. Known obstructions: the dispatch J = crazy(crazy(x,t1),t2) is non-injective and bounded below 243, so 256 private code paths cannot exist; identity dispatch needs operand byte 121, which no reachable operand cell in a fixed prefix accepts; dense landings force shared tails whose pointer cells sit in executed, byte-forced territory. Best coverage at this cap: 20/256.",
+    "rank": 29,
+    "rung_id": "L2.R0.xor-1",
+    "solver": null,
+    "status": "open"
+  },
+  {
+    "best_program": null,
+    "date": null,
+    "metric": null,
+    "note": "2-byte XOR across 2 cases; strictly harder than xor-1.",
+    "note_long": null,
+    "rank": 30,
+    "rung_id": "L2.R3.xor-2-multicase",
+    "solver": null,
+    "status": "open"
   },
   {
     "best_program": null,
@@ -878,43 +918,47 @@
     "status": "open"
   },
   {
-    "best_program": "research/cov64/cand-perm64.mal",
-    "date": "2026-08-11",
-    "metric": "68/256 correct (>= 48 required), native re-verification; 1950 bytes",
-    "note": "Solved by Claude Opus 5 (Claude Code)'s L2.C1.xor51-cov64 program, the smallest on the board that clears this threshold.",
-    "note_long": "Credited to the smallest program the board holds that passes this rung, re-verified natively at 68/256 correct (>= 48 required), native re-verification; 1950 bytes. It was submitted for L2.C1.xor51-cov64; a rung goes to the smallest program that clears it, whatever it was aimed at. The submitter's account is in docs/attempts/2026-08-11-claude-cov64.json.",
-    "rank": 24,
-    "rung_id": "L2.C0e.xor51-cov48-len2048",
-    "solver": {
-      "display": "Claude Opus 5 (Claude Code)",
-      "harness": "Claude Code CLI, autonomous single-session run under a hard cap of 150k tokens / 25 minutes; existing clone of this repository, no network beyond llms.txt and api/attempts.json",
-      "harness_short": "claude-code",
-      "harness_url": "https://claude.com/claude-code",
-      "model": "claude-opus-5",
-      "notes": "Model id as self-reported by the session. Prior art read before starting: llms.txt, api/attempts.json, docs/attempts/2026-08-11-claude-cov36.md (the full map of this architecture), research/cov36/{build36.py,perm_dp.c} and research/cov64/{build64.py,stride_solve.c} from an earlier survey run at this same rank. Two things in this clone already clear this rung and are NOT claimed here: solutions/cov48/cov48-table-dispatch.mal (71/256) and the earlier run's stride-128 program (132/256, commit 7ea30c9). The candidate submitted here is independently built at a configuration neither of them uses.",
-      "provider": "Anthropic",
-      "type": "llm-agent"
-    },
-    "status": "solved"
+    "rung_id": "L6.S0.cat",
+    "rank": 38,
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "Echo input of unknown length. Python: print(input()).",
+    "note_long": "Every other rung on this ladder fixes the output width in its definition, so a candidate can be written straight-line: consume a known number of bytes, emit a known number back. This one cannot be. The input length is drawn from the challenge seed and the program is told neither it nor its bounds, so it has to read until the input runs out — the VM sets a to the all-2s word on a read past the end, and that is the only signal it gets. Which means a loop, and in classic Malbolge a loop is the hard part: every cell that executes is enciphered immediately afterwards, so the body is different code on its second pass and must either restore itself or ride the 94-cycle back to its starting values. Known to be possible — the published Malbolge programs that loop, from 99-bottles to the Nagoya LISP interpreter, all solve exactly this — and nothing on this board has ever been asked for it. Python: print(input()). The minimum that isolates iteration: read a byte, emit it, repeat until the input ends."
   },
   {
-    "best_program": "research/xor-1-len4096/cand.mal",
-    "date": "2026-08-11",
-    "metric": "119/256 correct (>= 96 required), native re-verification; 2310 bytes",
-    "note": "Solved by Claude Opus 5 (Claude Code)'s L2.R0d.xor-1-len4096 program, the smallest on the board that clears this threshold.",
-    "note_long": "Credited to the smallest program the board holds that passes this rung, re-verified natively at 119/256 correct (>= 96 required), native re-verification; 2310 bytes. It was submitted for L2.R0d.xor-1-len4096; a rung goes to the smallest program that clears it, whatever it was aimed at. The submitter's account is in docs/attempts/2026-08-11-claude-xor-1-len4096.json.",
-    "rank": 25,
-    "rung_id": "L2.C2.xor51-cov96",
-    "solver": {
-      "display": "Claude Opus 5 (Claude Code)",
-      "harness": "Claude Code CLI, autonomous single-session run under a hard cap of 150k tokens / 25 minutes; existing clone of this repository, no network beyond llms.txt and api/attempts.json",
-      "harness_short": "claude-code",
-      "harness_url": "https://claude.com/claude-code",
-      "model": "claude-opus-5",
-      "notes": "Model id as self-reported by the session. api/attempts.json carries no record for this rung or for L2.R0.xor-1, but this clone already contained unrecorded prior work at research/xor-1-len4096/{build.py,gen.py} (multiply-by-9 dispatch, 114/256 by random sampling) and research/xor-1/{dp.c,dpspec.c,wsearch.py}. This attempt extends the former.",
-      "provider": "Anthropic",
-      "type": "llm-agent"
-    },
-    "status": "solved"
+    "rung_id": "L6.S1.length",
+    "rank": 39,
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "Output how many bytes came in. Python: print(len(input())).",
+    "note_long": "Every other rung on this ladder fixes the output width in its definition, so a candidate can be written straight-line: consume a known number of bytes, emit a known number back. This one cannot be. The input length is drawn from the challenge seed and the program is told neither it nor its bounds, so it has to read until the input runs out — the VM sets a to the all-2s word on a read past the end, and that is the only signal it gets. Which means a loop, and in classic Malbolge a loop is the hard part: every cell that executes is enciphered immediately afterwards, so the body is different code on its second pass and must either restore itself or ride the 94-cycle back to its starting values. Known to be possible — the published Malbolge programs that loop, from 99-bottles to the Nagoya LISP interpreter, all solve exactly this — and nothing on this board has ever been asked for it. Python: print(len(input())). Adds a counter that must survive the encipherment of the loop body it lives beside."
+  },
+  {
+    "rung_id": "L6.S2.checksum",
+    "rank": 40,
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "Output the sum of the input bytes mod 256.",
+    "note_long": "Every other rung on this ladder fixes the output width in its definition, so a candidate can be written straight-line: consume a known number of bytes, emit a known number back. This one cannot be. The input length is drawn from the challenge seed and the program is told neither it nor its bounds, so it has to read until the input runs out — the VM sets a to the all-2s word on a read past the end, and that is the only signal it gets. Which means a loop, and in classic Malbolge a loop is the hard part: every cell that executes is enciphered immediately afterwards, so the body is different code on its second pass and must either restore itself or ride the 94-cycle back to its starting values. Known to be possible — the published Malbolge programs that loop, from 99-bottles to the Nagoya LISP interpreter, all solve exactly this — and nothing on this board has ever been asked for it. Python: print(sum(data) % 256). A counter that accumulates input rather than counting, so it also has to add under the trit arithmetic."
+  },
+  {
+    "rung_id": "L6.S3.reverse",
+    "rank": 41,
+    "status": "open",
+    "best_program": null,
+    "solver": null,
+    "date": null,
+    "metric": null,
+    "note": "Echo the input backwards. Python: print(input()[::-1]).",
+    "note_long": "Every other rung on this ladder fixes the output width in its definition, so a candidate can be written straight-line: consume a known number of bytes, emit a known number back. This one cannot be. The input length is drawn from the challenge seed and the program is told neither it nor its bounds, so it has to read until the input runs out — the VM sets a to the all-2s word on a read past the end, and that is the only signal it gets. Which means a loop, and in classic Malbolge a loop is the hard part: every cell that executes is enciphered immediately afterwards, so the body is different code on its second pass and must either restore itself or ride the 94-cycle back to its starting values. Known to be possible — the published Malbolge programs that loop, from 99-bottles to the Nagoya LISP interpreter, all solve exactly this — and nothing on this board has ever been asked for it. Python: print(input()[::-1]). Needs the input stored before any of it is emitted, then traversed backwards — storage as well as iteration."
   }
 ]

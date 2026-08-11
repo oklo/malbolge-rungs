@@ -19,6 +19,18 @@ pub enum Family {
     /// Like `Transform` but cases enumerate all 256 input bytes; a rung passes
     /// when at least `min_correct_cases` cases are correct.
     CoverageTransform,
+    /// Input is a seed-derived byte string whose LENGTH is also drawn from the
+    /// seed, and the output is computed over the whole of it.
+    ///
+    /// Every other family fixes the output width in the rung definition, so a
+    /// program can be written straight-line: read a known number of bytes, emit
+    /// a known number back. A stream rung cannot be, because the program does
+    /// not know how much input it will get — it has to loop until the input
+    /// runs out. That is the one thing thirty-seven rungs never asked for, and
+    /// in Malbolge it is the hard part: every cell that executes is enciphered
+    /// afterwards, so a loop body is different code on its second pass and must
+    /// either restore itself or ride the 94-cycle back.
+    Stream,
 }
 
 /// Per-byte transforms applied by the `Transform` / `FiniteMap` /
@@ -32,6 +44,10 @@ pub enum Transform {
     CrazyMask,
     RotateLeft,
     NibbleMap,
+    /// Stream only: output is one byte, the number of input bytes.
+    Length,
+    /// Stream only: output is one byte, the sum of the input bytes mod 256.
+    Checksum,
 }
 
 /// One rung of the MAL-51 ladder. Serializes to the same JSON shape it
@@ -52,6 +68,13 @@ pub struct Rung {
     /// Only present for `CoverageTransform` rungs.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub min_correct_cases: Option<u32>,
+    /// `Stream` only: inclusive bounds on the seed-drawn input length. The
+    /// program is told neither the length nor the bounds — it must detect the
+    /// end of input itself.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub min_input_len: Option<u32>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub max_input_len: Option<u32>,
     /// Seed epochs a candidate must pass before the rung counts as solved.
     /// Coverage and finite-map rungs enumerate fixed inputs, so one epoch is
     /// definitive and this stays unset. Transform and hash-prefix rungs redraw

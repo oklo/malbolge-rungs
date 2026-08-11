@@ -40,6 +40,27 @@ pub fn derive_cases(rung: &Rung, seed: &Hash32) -> Vec<ChallengeCase> {
             // Coverage cases enumerate the full single-byte domain in order,
             // independent of the challenge seed.
             Family::CoverageTransform => vec![(index % 256) as u8],
+            // Stream: draw the LENGTH from the seed too, so the program cannot
+            // be written against a length it knows in advance.
+            Family::Stream => {
+                let lo = rung.min_input_len.unwrap_or(1).max(1);
+                let hi = rung.max_input_len.unwrap_or(lo).max(lo);
+                let len_hash = hash_serialized("malbolge-coin:mal51:v0:stream-len", &(*seed, index));
+                let span = u32::from(hi - lo + 1);
+                let len = lo + (u32::from(len_hash.0[0]) % span);
+                let mut bytes = Vec::with_capacity(len as usize);
+                let mut block = 0u32;
+                while bytes.len() < len as usize {
+                    let h = hash_serialized(
+                        "malbolge-coin:mal51:v0:stream-input",
+                        &(*seed, index, block),
+                    );
+                    bytes.extend_from_slice(&h.0);
+                    block += 1;
+                }
+                bytes.truncate(len as usize);
+                bytes
+            }
             _ => {
                 let input_hash =
                     hash_serialized("malbolge-coin:mal51:v0:input", &(*seed, index));
@@ -72,6 +93,15 @@ fn derive_expected_output(seed: &Hash32, input: &[u8], index: u32, rung: &Rung) 
         Family::Transform | Family::FiniteMap | Family::CoverageTransform => {
             transform_bytes(&prefix, rung.transform)
         }
+        // Computed over the whole input, not a fixed-width prefix — that is what
+        // makes the output length unknown to the program in advance.
+        Family::Stream => match rung.transform {
+            Transform::Length => vec![(input.len() % 256) as u8],
+            Transform::Checksum => {
+                vec![input.iter().fold(0u8, |acc, b| acc.wrapping_add(*b))]
+            }
+            other => transform_bytes(input, other),
+        },
     }
 }
 
@@ -86,5 +116,10 @@ fn transform_bytes(input: &[u8], transform: Transform) -> Vec<u8> {
             .collect(),
         Transform::RotateLeft => input.iter().map(|byte| byte.rotate_left(1)).collect(),
         Transform::NibbleMap => input.iter().map(|byte| (byte << 4) | (byte >> 4)).collect(),
+        // Whole-input transforms; handled by the Stream arm, which knows the
+        // full input. Reaching here means a rung paired them with a
+        // fixed-width family, where they have no meaning.
+        Transform::Length => vec![(input.len() % 256) as u8],
+        Transform::Checksum => vec![input.iter().fold(0u8, |acc, b| acc.wrapping_add(*b))],
     }
 }

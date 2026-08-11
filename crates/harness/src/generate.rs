@@ -211,6 +211,8 @@ pub fn generate_finite_map(
         output_bytes: 1,
         cases: k as u32,
         // Fixed inputs, so one epoch is definitive.
+        min_input_len: None,
+        max_input_len: None,
         min_epochs: None,
         min_correct_cases: None,
         max_program_len: max_program_len.unwrap_or_else(|| default_program_len(k)),
@@ -272,6 +274,8 @@ pub fn generate_coverage(
         output_bytes: 1,
         cases: 256,
         min_correct_cases: Some(threshold),
+        min_input_len: None,
+        max_input_len: None,
         min_epochs: None,
         max_program_len,
         max_steps_per_case,
