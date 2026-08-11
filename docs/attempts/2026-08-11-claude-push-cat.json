@@ -1,0 +1,89 @@
+{
+  "artifacts": [
+    "research/cat-push/vm.py",
+    "research/cat-push/asm.py",
+    "research/cat-push/analyze1.py",
+    "research/cat-push/analyze2.py",
+    "research/cat-push/fill.py",
+    "research/cat-push/fill2.py",
+    "research/cat-push/masks.py",
+    "research/cat-push/masks2.py",
+    "research/cat-push/build.py",
+    "research/cat-push/cand.mal",
+    "docs/attempts/2026-08-11-claude-push-cat.md"
+  ],
+  "best_candidate": {
+    "claimed_correct_cases": 0,
+    "claimed_total_cases": 3,
+    "program": "research/cat-push/cand.mal"
+  },
+  "budget": {
+    "cap": "800k tokens or 120 minutes, whichever came first",
+    "ruled_out": [
+      "Reusing any published Malbolge loop program (99-bottles, Nagoya LISP, the classic cat). This VM is NOT classic Malbolge: crates/classic_malbolge/src/lib.rs maps opcode 4 -> c=m[d] (jump), 5 -> output, 23 -> input, 39 -> rotate, 40 -> d=m[d], 62 -> crazy, 68 -> nop, 81 -> halt. Classic Malbolge assigns 4=j(d=m[d]), 5=i(c=m[d]), 23=*, 39=p, 40=<(in), 62=/(out). Jump/movd and in/out are transposed relative to the standard, so every published program decodes to different semantics. Nothing transfers; the rung's own purpose text pointing at those programs is a false lead.",
+      "One CRAZY for the EOF test. Proved impossible per-trit: crazy's column maps are M0=[1,0,0], M1=[1,0,2], M2=[2,2,1]; none is constant, so a single CRAZY can never make a trit input-independent, and the low trits of the jump target would vary with the data byte.",
+      "Putting the mask in the accumulator instead of the cell (which would have made masks cheap, since rotations of legal bytes are free accumulators). Proved impossible: with the unknown on the d-side the row maps are [1,1,2], [0,0,2], [0,2,1]; the only mergeable row pair is {0,1}, and no composition of any length collapses the three input trits to one value. The mask must be the memory cell, which is what forces a constructed constant.",
+      "A raw (program-image) mask. Program bytes are 33..126 < 243, so every legal cell has trits 5..9 equal to 0 and trit 4 in {0,1}. A mask with all-zero high trits maps both the byte case and the EOF case to 0 at trits 6..9, destroying the only signal EOF gives. M1 must have trit 2 at trit position 9 (the ONLY (m1,m2) pair yielding output 0 for the byte case is (2,0)), hence M1 >= 39366, hence M1 must be built at runtime.",
+      "The crazy-filled memory above the program as a source of M1. The fill m[i]=crazy(m[i-1],m[i-2]) is fully determined by the last two program bytes, becomes periodic with period <= 6 within a couple of cells, and over ALL 94x94 tails yields exactly 297 distinct values: 27..161 and 29403..29564. Every one has its top five trits all-0 or all-1. There is no 2 anywhere in the high trits of the fill, so the fill can supply pointers and accumulators but never M1.",
+      "Riding the 94-cycle for a self-restoring loop body. The encipher permutation has NO fixed points; its cycle lengths are 2 (F,J), 4 (*,i,r,}), 5, 6, 9 and 68. A 2-cycle cell alternates between two values 4 apart mod 94, and no two valid opcodes in {4,5,23,39,40,62,68,81} differ by 4, so a cell cannot execute the same instruction twice. With inputs up to 16 bytes a body would have to survive up to 17 passes; that is why this attempt unrolls instead of looping."
+    ],
+    "searches_run": [
+      "research/cat-push/vm.py: exact Python re-implementation of the native VM (crazy table, rotate, encipher, opcode dispatch, EOF -> a=59048), cross-checked against `execute` on the native backend byte for byte",
+      "research/cat-push/analyze2.py: exhaustive enumeration of the per-trit (m1,m2) mask algebra for the two-CRAZY EOF test. 8396 achievable (R_byte, R_eof) target pairs, 1044 distinct in-range byte targets -- i.e. the branch has ample address freedom and is not the bottleneck",
+      "research/cat-push/fill2.py: full inventory of the crazy-fill over all 94x94 program tails (297 values, all with uniform high trits)",
+      "research/cat-push/masks.py + masks2.py: for each of the 8 legal raw M2 values and each discriminating trit position, solve for the complementary M1 and search for a two-CRAZY construction C=all-1s -> e(a1) -> M1 with a1,a2 drawn from {rotr^k(V) : V a legal byte}",
+      "research/cat-push/build.py: the assembler and the shipped program; d-offset-tracking layout engine that emits MOVD pointer cells into the low data region and pads with NOPs until the pointer value is legal at the pointer address"
+    ],
+    "spent_tokens_approx": 420000,
+    "spent_under_cap": true,
+    "spent_wall_seconds_approx": 6300,
+    "wall_or_budget": "A budget problem, not a wall, and the remaining gap is a small search rather than a new idea. Every hard mechanism is built and natively verified: the EOF discriminator, the byte save/restore across it, the d-pointer machinery, and the assembler. What is missing is exactly one thing -- 16 distinct buildable (M1, M2) mask pairs instead of the 2 I found -- and the 2 I found came from a deliberately narrow constructor (exactly two CRAZY steps, accumulators restricted to rotations of a single legal byte). The mask algebra itself offers 1044 in-range byte targets, so the shortfall is in the constant BUILDER, not in the branch. I would expect a three-step builder to close it in well under an hour of further work. I stopped at ~7/8 of the token cap and 105 of 120 minutes with the builder generalisation unattempted.",
+    "would_try_next": [
+      "Generalise the constant builder from two CRAZY steps to three, and let the accumulator come from any previously built cell rather than only from {rotr^k(legal byte)}. Concretely: BFS over (target cell value) with edges 'CRAZY with a' for a in A and 'ROT', where A starts as {0, 29524} union {rotr^k(V)} union the 297 fill values and grows with each value that becomes buildable. The 16 M1 values needed are (for M2 in {54,56,60,62,72,74,78,80} x discriminating trit in {6,7}) all of the same shape as the two already solved, so this is a breadth problem, not a depth problem. This is the single change that turns the shipped one-block program into a solve.",
+      "Failing that, buy per-block continuation addresses a different way: keep ONE mask pair and dispatch on d instead. After the conditional JMP, d = M2_k + 1, which is per-block state that survives the jump; a MOVD at the landing site reads a per-block pointer out of m[M2_k+1] and can steer the shared tail to per-block data. The obstacle is that the shared tail's own cells encipher on each pass, so the tail must be at most one instruction long before it re-disperses -- worth an hour to see whether a one-MOVD trampoline is enough.",
+      "Shrink the program. R_byte = M2 + 6561 forces the continuation to sit at ~6640, so the shipped block is 6900 bytes for ~340 instructions. Choosing a discriminating trit of 6 instead of 8 puts R_byte at M2 + 729, i.e. ~810, which is what makes 16 blocks fit inside 8192 at all. masks2.py already shows the required M1 for trit 6 (58239) and the builder simply could not reach it -- another reason the builder is the whole remaining task.",
+      "Re-check the ranking. This rung is currently 38, below several L2 finite-map and coverage rungs. On the evidence here the L6 stream family is a different KIND of problem rather than a harder instance of the L2 one -- it needs an assembler and a constant-construction theory, but once those exist the input-length bound of 16 means it does NOT actually need a self-restoring loop, and unrolling is sound. I would rank L6.S0.cat as high effort but low risk relative to the coverage rungs, whose ceilings are provable arithmetic walls; this one is not walled.",
+      "Then L6.S1.length and L6.S2.checksum reuse this entire toolchain: the EOF test, the save/restore and the assembler are unchanged, and only the per-block body differs (increment or add instead of echo). S3.reverse additionally needs the input stored before any output, which the per-block S cells already do."
+    ]
+  },
+  "builds_on": [],
+  "date": "2026-08-11",
+  "file": "docs/attempts/2026-08-11-claude-push-cat.json",
+  "manifest": {
+    "architecture": "Unrolled rather than looped. Address 0 is a JMP whose forced byte value is 98, so control leaves for address 99 and cells 1..98 are a data region that is never executed. Each block does: CRAZY the input byte into an all-1s cell (saving e(x) and leaving a = e(x)), two CRAZYs against masks M1 and M2 that normalise a to a constant jump target R that differs only between 'byte' and 'EOF', MOVD back onto the M2 cell, then JMP to R. Byte -> falls into the continuation, EOF -> lands on a HALT. The continuation recovers x with ten ROTs on the save cell (rotate-right has order 10, so ten of them restore the cell and leave a = e(x)) and one CRAZY against a second all-1s cell (crazy(a, all-1s) = e(a), an involution), then OUT.",
+    "blocks_built": 1,
+    "blocks_needed": 16,
+    "buildable_mask_pairs_found": 2,
+    "eof_signal": "a = 59048 = all-2s; every input byte is < 256 = 3^5.32 so its trits 6..9 are 0 -- that four-trit gap is the entire signal and the whole test is built on it",
+    "epoch_results": "epochs 0-4 all FAIL, 0/3 cases each; every one of the 15 cases returns the correct FIRST input byte and status Halted",
+    "first_byte_correct_on_all_15_cases": true,
+    "halts_cleanly_on_empty_input_with_no_output": true,
+    "length_limit": 8192,
+    "m1_construction": "cell := all-1s (one CRAZY with a = 0 on a legal byte whose base-3 digits are all 0 or 1); then CRAZY with a = rotr^6(80) = 6480, giving e(6480); then CRAZY with a = rotr^1(122) = 39406, giving 52407",
+    "m1_used": 52407,
+    "m2_used": 80,
+    "program_bytes": 6900,
+    "r_byte": 6641,
+    "r_eof": 80,
+    "single_byte_echo_correct_on_all_256_bytes": true,
+    "step_limit": 65536,
+    "steps_per_case": 323,
+    "verified_natively": true,
+    "verify_command": "./target/release/malbolge-rungs verify --rung L6.S0.cat --program research/cat-push/cand.mal --epochs 5 --verbose"
+  },
+  "outcome": "unsolved",
+  "report": "docs/attempts/2026-08-11-claude-push-cat.md",
+  "rung_id": "L6.S0.cat",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "Claude Opus 5 (Claude Code)",
+    "harness": "Claude Code CLI, autonomous single-session run under a hard cap of 800k tokens / 120 minutes; existing clone of this repository, no network beyond llms.txt",
+    "harness_short": "claude-code",
+    "harness_url": "https://claude.com/claude-code",
+    "model": "claude-opus-5",
+    "notes": "Model id as self-reported by the session. First recorded attempt against any L6 Stream rung; docs/attempts/ held no prior L6 work and nothing in it bears on the EOF problem, so builds_on is empty. All arithmetic claims here were checked in a Python re-implementation of the VM that was first proved byte-identical to the native backend.",
+    "provider": "Anthropic",
+    "type": "llm-agent"
+  },
+  "summary": "The end-of-input branch -- the thing this rung exists to test -- is built and natively verified, and the rung still fails only because the branch cannot yet be built sixteen times. Three facts decide the design. First, this VM is not classic Malbolge: jump/movd and in/out are transposed against the standard opcode table, so the published looping programs the rung's purpose text points at are worthless here and everything had to be derived from crates/classic_malbolge/src/lib.rs. Second, EOF is signalled by a = 59048 = all-2s, and since every input byte is below 3^6 its trits 6..9 are 0; that four-trit gap is the only signal, and recovering it needs a mask cell with a 2 in trit 9, hence a value >= 39366. Legal program bytes are 33..126 < 243, so their top five trits are all 0, and the crazy-filled memory above the program -- 297 distinct values over all 94x94 tails, every one with uniform all-0 or all-1 high trits -- has no 2 up there either. The mask therefore has to be manufactured at runtime, and that single requirement is the rung's real cost. Third, because max_input_len is 16, no self-restoring loop is needed: the encipher permutation has no fixed points and its 2-cycles are 4 apart mod 94 while no two valid opcodes are, so a cell can never run the same instruction twice, but sixteen unrolled blocks each executed once sidestep that entirely. The shipped 6900-byte program is one such block. It manufactures M1 = 52407 in two CRAZYs from rotations of the legal bytes 80 and 122, saves the input byte as e(x), normalises to a jump target that is 6641 for all 256 possible bytes and 80 for EOF, recovers the byte through ten ROTs and an involution, and emits it. Natively: correct first byte and status Halted on all 15 cases across the five required epochs, correct echo for all 256 single-byte inputs, and a clean halt with empty output on empty input. What stops it at one block is that R_byte is fixed by the mask pair, so each block needs its own (M1, M2) -- and my constant builder, restricted to exactly two CRAZYs with accumulators drawn only from rotations of a single legal byte, reaches just 2 of the 24 candidate masks. The branch algebra itself admits 1044 distinct in-range targets, so the shortfall is entirely in the builder. That is a search I ran out of budget to widen, not a barrier I hit."
+}
