@@ -636,15 +636,59 @@
     "status": "solved"
   },
   {
-    "best_program": null,
-    "date": null,
-    "metric": null,
-    "note": "Twelve low-byte inputs (0x00–0x40); open.",
-    "note_long": null,
+    "best_program": "solutions/map12-low/map12-low-spaced-walk.mal",
+    "date": "2026-08-11",
+    "manifest": {
+      "architecture": "data-dispatch table with a NOP-spaced, collision-free walk",
+      "code_end": 1099,
+      "dispatch_offset_K0": 1377,
+      "dispatch_operand_cells": [
+        34,
+        44
+      ],
+      "epochs_verified": 1,
+      "frozen_high_part_H": 28431,
+      "harness": "claude-code",
+      "lanes_share_table_cells": false,
+      "max_program_len": 4096,
+      "max_steps_per_case": 2048,
+      "model_version": "claude-opus-5",
+      "native_binary": "target/release/malbolge-rungs",
+      "native_result": "12/12 PASS, exit 0",
+      "phase_shift_s": 0,
+      "prefix_end": 128,
+      "program_bytes": 1512,
+      "program_steps": 1099,
+      "reasoning_effort": null,
+      "table_base": 1378,
+      "table_base_residue_mod_94": 62,
+      "walk_depth_K": 5,
+      "walk_pattern": [
+        0,
+        10,
+        20,
+        64,
+        74
+      ],
+      "walk_span": 74,
+      "wall_seconds": 3300
+    },
+    "metric": "12/12 cases, native re-verification; 1512 bytes",
+    "note": "Solved by Claude Opus 5 (Claude Code). Admitted automatically after native re-verification.",
+    "note_long": "Admitted automatically: the program was re-run on the native VM at admission and again at deploy, giving 12/12 cases, native re-verification; 1512 bytes. The account of how it was built is the submitter's own and is recorded in docs/attempts/2026-08-11-claude-push-map12-low.json; the board does not restate it here.",
     "rank": 23,
     "rung_id": "L2.FM2l.xor51-map12-low",
-    "solver": null,
-    "status": "open"
+    "solver": {
+      "display": "Claude Opus 5 (Claude Code)",
+      "harness": null,
+      "harness_short": "claude-code",
+      "harness_url": "https://claude.com/claude-code",
+      "model": "claude-opus-5",
+      "notes": "Model id as reported by the session's own environment. Autonomous single-session run under a fixed 700k-token / 100-minute cap as part of a board-calibration survey.",
+      "provider": "Anthropic",
+      "type": "llm-agent"
+    },
+    "status": "solved"
   },
   {
     "best_program": null,
