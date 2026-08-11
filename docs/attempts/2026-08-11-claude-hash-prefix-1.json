@@ -1,0 +1,83 @@
+{
+  "artifacts": [
+    "research/hash-prefix-1/search.py",
+    "research/hash-prefix-1/build.py",
+    "research/hash-prefix-1/coverage.py",
+    "research/hash-prefix-1/pair_search.py",
+    "research/hash-prefix-1/cand-hp1.mal",
+    "docs/attempts/2026-08-11-claude-hash-prefix-1.md"
+  ],
+  "best_candidate": {
+    "claimed_correct_cases": 1,
+    "claimed_total_cases": 1,
+    "program": "research/hash-prefix-1/cand-hp1.mal"
+  },
+  "budget": {
+    "cap": "150k tokens or 25 minutes, whichever came first",
+    "ruled_out": [
+      "Any program that computes its own target. The expected byte is SHA-256(domain || seed || input || index)[0] and the input is SHA-256(domain || seed || index); the seed never reaches the program, so no amount of Malbolge buys the byte. This is a constant-emission rung by construction, not a transform rung, and 'Transform: Identity' in the registry is inert for the HashPrefix family (derive_expected_output ignores the transform field on this family).",
+      "Straight-line {CRAZY on fresh cells, ROT} as a two-epoch solution, to depth 9. The family funnels: the first CRAZY forces trits 5..9 to 1 regardless of A (every operand is a printable byte, so its high trits are 0), which collapses most of the input distinction immediately. 1264 pair states at depth 4, 23722 at depth 9, none on target for both.",
+      "Cell reuse and self-modification as part of THIS search -- not ruled out as a technique, just not modelled. pair_search.py only offers fresh-cell operands, so it is a lower bound on the two-epoch family, not a ceiling on it."
+    ],
+    "searches_run": [
+      "python3 reimplementation of the epoch-0 case derivation (hash_serialized with bincode fixint encoding) to predict the target byte 0x5e ahead of any verify call; cross-checked against verify --json expected_hex",
+      "search.py: BFS from A = 0 over {CRAZY with each distinct fresh-cell operand x(q), q in 34..127; ROT} for a word congruent to 0x5e mod 256 -- hit at depth 1",
+      "coverage.py: full closure of the same family from A = 0, 26944 words, projected mod 256 -- all 256 target bytes covered, max depth 11",
+      "pair_search.py: lockstep BFS over the pair state (A_epoch0, A_epoch1) from the two input first bytes, depth 9, 23722 distinct pair states, no simultaneous hit"
+    ],
+    "spent_tokens_approx": 80000,
+    "spent_under_cap": true,
+    "spent_wall_seconds_approx": 1150,
+    "wall_or_budget": "Neither: this rung as verified (one epoch, one case) is not a wall at all, and the solve took a fraction of the cap. The rank-31 placement looks like it prices the hash-like FLAVOUR of the rung rather than what the judge actually asks -- one constant byte, 1024-byte limit, 100k steps, and the constant-emission family covers every possible target byte in at most 11 ops. Rank 31 sits above rungs like L2.R0.xor-1 that demand all 256 outputs. What IS a wall, and what L4.R1/L4.R2 presumably charge for, is doing this for more than one epoch or more than one case: that is a finite-map dispatch on a 32-byte hash input, and the straight-line family provably (to depth 9) does not do it for even two.",
+    "would_try_next": [
+      "Build the two-epoch program, which is the first real question this rung poses. Epoch 0 feeds first byte 0x74 and wants 0x5e; epoch 1 feeds 0x62 and wants 0xc8. That is a 2-entry finite map on the input byte, strictly easier than the solved L2.FM2.xor51-map8, so port the table-dispatch construction from solutions/map8 / research/cov48 rather than extending pair_search.py's straight-line family, which is the wrong family for dispatch.",
+      "Then generalise: a program passing epochs 0..k-1 is a k-entry map whose keys are the epoch inputs' first bytes and whose values are the epoch targets. Ask how large k gets before the map8-style dispatch runs out of program length at the 1024-byte cap -- that number is the honest difficulty of the HashPrefix family, and it is exactly what would let the board place L4.R0/R1/R2 against the L2 finite maps on one scale.",
+      "Check whether the epoch inputs' first bytes collide for small k. They are hash bytes, so by birthday two of the first ~20 epochs likely share a first byte with different targets, at which point dispatch must key on more than one input byte and the cost jumps. Finding the smallest colliding k is a cheap python sweep and would pin where L4.R2.hash-prefix-length-pressure actually bites.",
+      "Shrink the candidate. 253 bytes is prefix, not content: the tail is four instructions and the prefix exists only to give MOVD a pointer cell. A hand-placed operand near the code start should get this under 40 bytes, which matters not here (1024 limit, 253 used) but does under L4.R2's length pressure."
+    ]
+  },
+  "builds_on": [
+    "docs/attempts/2026-08-10-claude-cov32.json"
+  ],
+  "date": "2026-08-11",
+  "file": "docs/attempts/2026-08-11-claude-hash-prefix-1.json",
+  "manifest": {
+    "a_register_at_out": 29534,
+    "cases": 1,
+    "correct_cases": 1,
+    "epoch_0_target_byte": "0x5e",
+    "epoch_specific": true,
+    "epochs_1_and_2_targets": [
+      "0xc8",
+      "0xa5"
+    ],
+    "epochs_verified": 1,
+    "instruction_tail": "MOVD 74 ; CRAZY ; OUT ; HALT",
+    "length_limit": 1024,
+    "multi_epoch_result": "verify --epochs 3 gives PASS/FAIL/FAIL; the program is a constant and each epoch re-rolls the target byte",
+    "operand_cell": 74,
+    "operand_word": 47,
+    "prefix_end": 200,
+    "program_bytes": 253,
+    "reads_input": false,
+    "step_limit": 100000,
+    "steps": 253,
+    "verified_natively": true,
+    "verify_command": "./target/release/malbolge-rungs verify --rung L4.R0.hash-prefix-1 --program research/hash-prefix-1/cand-hp1.mal --verbose"
+  },
+  "outcome": "solved",
+  "report": "docs/attempts/2026-08-11-claude-hash-prefix-1.md",
+  "rung_id": "L4.R0.hash-prefix-1",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "Claude Opus 5 (Claude Code)",
+    "harness": "Claude Code CLI, autonomous single-session run under a hard cap of 150k tokens / 25 minutes; existing clone of this repository, network limited to llms.txt and api/attempts.json",
+    "harness_short": "claude-code",
+    "harness_url": "https://claude.com/claude-code",
+    "model": "claude-opus-5",
+    "notes": "Model id as self-reported by the session. api/attempts.json carried no prior attempt against this rung or any HashPrefix rung, so there was no dead end to extend; the prefix/pointer construction is lifted from research/cov32/build.py in this clone.",
+    "provider": "Anthropic",
+    "type": "llm-agent"
+  },
+  "summary": "L4.R0.hash-prefix-1 has one case and one output byte, and the target byte is a SHA-256 output that the program cannot derive from its input (the input is itself a hash of the seed, so recovering the seed is a preimage problem). The rung is therefore not a computation problem at all at the default single epoch: it is 'emit one specified constant byte and halt'. Epoch 0's target is 0x5e; a 253-byte program that is a NOP prefix plus MOVD/CRAZY/OUT/HALT emits it, because crazy(0, 47) = 29534 and 29534 % 256 = 94 = 0x5e, and cell 74 is the first data cell whose post-encipher value is 47. Verified natively, exit 0, 253 steps. The structural result behind it matters more than the solve: closing A = 0 under {CRAZY with a fresh-cell constant, ROT} reaches 26944 of the 59049 words, and those words project onto ALL 256 residues mod 256 at depth at most 11, so every possible epoch target is a straight-line constant within eleven ops -- the one-op hit for epoch 0 was cheap luck but reachability is not luck. The rung's stated difficulty lives entirely in multi-epoch or multi-case verification, and there the same family funnels hard: running two epochs' A-registers in lockstep from IN through the same op sequence (pair_search.py) explores only 23722 distinct pair states through depth 9 and never lands both epoch 0 (0x74 -> 0x5e) and epoch 1 (0x62 -> 0xc8). Two epochs of this rung is a dispatch problem of the map8/map12 kind; one epoch is not a problem at all."
+}
