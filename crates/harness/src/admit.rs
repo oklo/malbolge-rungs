@@ -81,11 +81,18 @@ fn check_path(repo: &Path, rel: &str) -> Result<PathBuf> {
             ALLOWED_PREFIXES.join(", ")
         );
     }
-    let abs = repo.join(rel);
-    if abs.exists() {
-        bail!("path {rel:?} already exists — admission never overwrites");
-    }
-    Ok(abs)
+    Ok(repo.join(rel))
+}
+
+/// What to do with a submitted path that already exists in the repository.
+enum Existing {
+    /// Byte-identical to what is already there: the submission cites prior art
+    /// rather than trying to replace it, which is the compounding the board
+    /// exists to encourage. Skip the write and keep the bundle.
+    Identical,
+    /// Different content under a path already in use. This is the case the
+    /// no-overwrite rule is for.
+    Conflict,
 }
 
 /// Materialise one bundle into `repo`. On any failure every file written by this
@@ -172,8 +179,21 @@ pub fn admit_bundle(repo: &Path, bundle_path: &Path, dry_run: bool) -> Result<Ad
         if content.len() > MAX_FILE_BYTES {
             bail!("{rel} is {} bytes, over the per-file cap", content.len());
         }
+        let abs = check_path(repo, rel)?;
+        if abs.exists() {
+            let same = std::fs::read_to_string(&abs)
+                .map(|on_disk| on_disk == *content)
+                .unwrap_or(false);
+            match if same { Existing::Identical } else { Existing::Conflict } {
+                Existing::Identical => continue,
+                Existing::Conflict => bail!(
+                    "path {rel:?} already exists with different content — \
+                     admission never overwrites"
+                ),
+            }
+        }
         total += content.len();
-        targets.push((check_path(repo, rel)?, content.clone(), rel.clone()));
+        targets.push((abs, content.clone(), rel.clone()));
     }
     if total > MAX_TOTAL_BYTES {
         bail!("bundle writes {total} bytes, over the total cap");
@@ -259,9 +279,15 @@ fn verify_claim(repo: &Path, rec: &AttemptRecord) -> Result<(bool, String)> {
         .with_context(|| format!("reading candidate {}", cand.program))?;
     let outcome = crate::verify::verify_rung(&rung, &bytes, epochs_for(&rung));
 
+    // Report the epoch that decided the outcome. Reporting epoch 0 on a failure
+    // produces "claims a solve that does not pass the rung: 2/2 cases", naming
+    // the one epoch that passed — which is exactly the draw a lookup table gets
+    // lucky on, and the reason the rejection needs to point at the other four.
     let first = outcome
         .epochs
-        .first()
+        .iter()
+        .find(|e| !e.passed)
+        .or_else(|| outcome.epochs.first())
         .context("verifier returned no epochs")?;
     let metric = if outcome.coverage {
         format!(
@@ -440,10 +466,11 @@ mod tests {
     }
 
     #[test]
-    fn refuses_to_overwrite_an_existing_file() {
+    fn allows_an_existing_path_for_the_identical_bytes_check() {
+        // check_path no longer decides this; admit_bundle compares content, so
+        // citing prior art resolves to a skip and only differing bytes conflict.
         let r = repo();
-        // A shipped solution must not be displaceable by a submission.
-        assert!(check_path(&r, "solutions/cov32/cov32-two-crazy.mal").is_err());
+        assert!(check_path(&r, "solutions/cov32/cov32-two-crazy.mal").is_ok());
     }
 
     #[test]
