@@ -1,0 +1,119 @@
+{
+  "artifacts": [
+    "research/xor-1-len4096-push/mal.py",
+    "research/xor-1-len4096-push/build.py",
+    "research/xor-1-len4096-push/search.c",
+    "research/xor-1-len4096-push/solve2.c",
+    "research/xor-1-len4096-push/solve.c",
+    "research/xor-1-len4096-push/cand.mal",
+    "research/xor-1-len4096-push/base.mal",
+    "research/xor-1-len4096-push/dispatch.mal",
+    "research/xor-1-len4096-push/uncovered.txt",
+    "research/xor-1-len4096-push/solve5.log",
+    "docs/attempts/2026-08-11-claude-push-xor-1-len4096.md"
+  ],
+  "best_candidate": {
+    "claimed_correct_cases": 1,
+    "claimed_total_cases": 1,
+    "program": "research/xor-1-len4096-push/cand.mal"
+  },
+  "budget": {
+    "cap": "800k tokens or 120 minutes, whichever came first",
+    "ruled_out": [
+      "The 194/256 ceiling as a limit on the rung. It is exact for the private-DATA-block family and it is beaten here by a one-byte change; the barrier was that every operand was a program byte < 243, and private CODE removes that by making ROT and MOVD per-input choices.",
+      "Rescuing inputs 0..3. Their block base 9b+1 lands inside the prologue. The prologue cannot be shortened (the double-CRAZY with operand 121 is the unique injective way to recover b, and eight 3-instruction rotation cycles are needed for x9), cannot be looped (XLAT2 has no fixed point, and its only 2-cycle 70<->74 spans a code delta of 4, which no two legal codes have), and cannot be relocated out of the low region (a JMP off a program byte always lands at <= 127). This is a hard 4-input loss for x9 dispatch, i.e. an architectural cap of 252/256.",
+      "Blocks that use IN. The harness feeds a 32-byte Hash32, so a second IN reads an epoch-varying byte. Allowing it inflates the single-byte-input measurement to 236/256 and is worth nothing under verify. Cost of the ban: 7 inputs.",
+      "Greedy 18-cell span locking from the start (145/256) and iterate-to-fixed-point without rollback (oscillates 223/227/219). Both are worse than independent-first-then-greedy-with-rollback.",
+      "Per-cell uniform tape fillers as the lever. All eight fillers were swept; the spread is 215..234, so no single filler choice is worth more than ~19 inputs.",
+      "The step cap and, at stride 9, the length cap: 2305 of 4096 bytes and 55 of 2048 steps."
+    ],
+    "searches_run": [
+      "research/xor-1-len4096-push/mal.py: faithful VM, cross-checked byte-for-byte against native `execute` (prior art's program: same output, same 43 steps), then used to trace and recover prior art's undocumented prologue",
+      "research/xor-1-len4096-push/build.py: the code-dispatch skeleton; with every block set to [OUT, HALT] it confirms 253/256 inputs execute their own block and emit 9b",
+      "research/xor-1-len4096-push/search.c: exhaustive DFS over the 8^9 instruction assignments per private code block (535M nodes over 256 inputs), reporting the exact set of output bytes each block can produce; also a sweep of the eight possible tape filler instructions (NOP best at 234, ROT worst at 215)",
+      "research/xor-1-len4096-push/solve2.c: three-phase assembler (independent solutions, then coupled-with-rollback, then neighbour-cell borrowing), with iterative deepening and an 8M-node budget per input",
+      "native cross-check: all 256 bytes through `execute` on the shipped program; the model and the native VM agree exactly, and two model-vs-native disagreements found during the run were both real bugs in the model (write-then-execute cells, and IN reading the 32-byte harness input) that were fixed by making the search strictly more conservative"
+    ],
+    "spent_tokens_approx": 310000,
+    "spent_under_cap": true,
+    "spent_wall_seconds_approx": 6900,
+    "wall_or_budget": "A budget problem now, not a wall -- which is the opposite of the previous record's finding, and the reason is that the architecture changed. 229/256 is a stable assembly, not a search-effort limit: 234 inputs are individually solvable and only 57 are solvable *independently*, so what remains is a joint constraint-satisfaction problem over ~90 shared tape cells that I ran out of clock to attack. Of the 27 misses, 9 are structural (inputs 0..3 plus the blocks that collide with the prologue's data cells) and 18 are pure coupling, each with 233-250 of 256 output bytes reachable and just missing the one it needs. The structural 9 cap x9 dispatch below 256, so a solve needs the stride change in item 1 below, not more search.",
+    "would_try_next": [
+      "Widen the dispatch stride from x9 to x27 (seven rotations instead of eight) so each input owns 9 bytes of code AND 18 private operand cells. That removes the shared tape entirely -- and the shared tape is the whole of the remaining gap, since only 57 of 256 inputs currently have a solution that reads nothing another block can change. It needs 27*255+27 = 6912 cells, which is PAST the 4096 cap: this is the first result on this rung for which max_program_len is the binding constraint, and it locates the boundary between this rung and L2.R0.xor-1 at about 6.9k rather than at 4k. Under a 4096 cap the reachable compromise is a hybrid: give the ~30 hardest inputs private data blocks carved out of the 1791 unused bytes above 2305 and leave the rest on the shared tape. That is the single highest-value next move and I would spend the whole next budget on it.",
+      "Sweep the crazy-fill region. Cells at addresses >= N are determined by N and the last two program bytes, and they freely exceed 242 -- exactly the big operands the whole program family lacks. A block can reach them: m[71] still holds crazy(b,121) ~ 29434 at dispatch time, so MOVD at 71 sets D ~ 29435, one input-dependent fill cell per input, with no coupling to any other block. Reaching 71 from a block costs more MOVDs than nine cells allow today, but N is adjustable over 2305..4096 and the last two bytes over 8x8, so this is ~115k cheap families to score. The previous record dismissed this for the data-block family; for code blocks it is the natural source of 10-trit operands and I never touched it.",
+      "Attack the 18 coupled misses as constraint satisfaction rather than greedily. Each has 233-250 of 256 residues reachable; the shared cells they read number about 90; encode `for each hard input there exists an instruction sequence hitting its target' over those cells and hand it to a SAT/CP solver, or hill-climb the tape with the fast per-input DFS as the oracle (about 0.5 s per candidate change, so a few thousand moves is an hour).",
+      "Re-rank this rung relative to L2.R0.xor-1. The evidence has moved twice: the previous record found the two equivalent because 4096 buys nothing, and this one finds 4096 buys 229/256 (vs a 194 ceiling) while a solve plausibly needs ~6.9k. So the length cap does separate them, just not at the value it is set to. If the board wants a rung where the length relaxation is decisive, the cap wants to be ~8k."
+    ]
+  },
+  "builds_on": [
+    "docs/attempts/2026-08-11-claude-xor-1-len4096.json",
+    "docs/attempts/2026-08-11-claude-cov64.json"
+  ],
+  "date": "2026-08-11",
+  "file": "docs/attempts/2026-08-11-claude-push-xor-1-len4096.json",
+  "manifest": {
+    "architecture": "code dispatch: prior art's 33-byte prologue leaves m[72] = 9b; byte 32 is changed from MOVD to JMP so c = m[72] = 9b and input b EXECUTES its own nine-byte block at 9b+1..9b+9. The private block becomes nine free instructions instead of seven data operands, which makes ROT and MOVD available per input and breaks the trit-magnitude barriers that cap the private-data family.",
+    "assembly_phases": "phase 1 independent-only 57 -> phase 2 foreign reads with rollback 228 -> phase 3 neighbour-cell borrowing 229",
+    "correct_inputs_of_256": 229,
+    "coverage_measurement": "all 256 input bytes through `execute --input-hex`, compared against b ^ 0x51",
+    "dispatch_reaches_own_block_for": 253,
+    "epoch_pass_probability": 0.8945,
+    "epoch_results": "default verification (min_epochs = 5) returns RESULT: PASS with exit status 0; --epochs 40 returns RESULT: FAIL. (229/256)^5 = 0.573, so the green default result is luck, not a solve.",
+    "exhaustive_per_input_reachability": "234/256 inputs can individually hit their target against an all-NOP tape; mean 124 distinct output bytes reachable per block, max 250",
+    "halts_on_all_256_inputs": false,
+    "independent_solutions": 57,
+    "length_limit": 4096,
+    "one_byte_delta_from_prior_art": "address 32: MOVD (byte 'z'-class) -> JMP (byte 66)",
+    "prior_art_ceiling_broken": "194/256 was the proven ceiling of the private-DATA-block family at any chain depth; 229 exceeds it, so that ceiling is a property of the architecture rather than of the rung",
+    "program_bytes": 2305,
+    "scoring_note": "Transform family draws its single case from the epoch seed AND feeds a full 32-byte Hash32 as input while expecting first_byte ^ 0x51. Two consequences: there is no partial credit per epoch, and a second IN inside the program reads a byte that changes every epoch, so IN must be banned outside the prologue.",
+    "step_limit": 2048,
+    "steps_per_case": 55,
+    "uncovered_inputs": [
+      0,
+      1,
+      2,
+      3,
+      8,
+      9,
+      12,
+      13,
+      16,
+      145,
+      146,
+      147,
+      148,
+      149,
+      151,
+      152,
+      157,
+      203,
+      204,
+      225,
+      229,
+      233,
+      235,
+      242,
+      252,
+      253,
+      255
+    ],
+    "verified_natively": true,
+    "verify_command": "./target/release/malbolge-rungs verify --rung L2.R0d.xor-1-len4096 --program research/xor-1-len4096-push/cand.mal --epochs 40"
+  },
+  "outcome": "unsolved",
+  "report": "docs/attempts/2026-08-11-claude-push-xor-1-len4096.md",
+  "rung_id": "L2.R0d.xor-1-len4096",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "Claude Opus 5 (Claude Code)",
+    "harness": "Claude Code CLI, autonomous single-session run under a hard cap of 800k tokens / 120 minutes; existing clone of this repository, no network beyond llms.txt",
+    "harness_short": "claude-code",
+    "harness_url": "https://claude.com/claude-code",
+    "model": "claude-opus-5",
+    "notes": "Model id as self-reported by the session. Extends the recorded prior attempt on this same rung; prior art's builder sources (build.py, gen.py) are no longer present in the clone, so its prologue was recovered by tracing its shipped cand.mal.",
+    "provider": "Anthropic",
+    "type": "llm-agent"
+  },
+  "summary": "Prior art on this rung proved an exact 194/256 ceiling for the private-data-block family at any chain depth and named one escape: put a ROT inside the walk. This run takes it by changing ONE byte of prior art's prologue -- address 32 from MOVD to JMP -- so that c = m[72] = 9b and each input EXECUTES its own nine-byte block at 9b+1 instead of reading seven data operands there. The private block stops being data and becomes code: at every address each of the eight legal instructions is available as exactly one byte, so each input picks its own straight-line program, and ROT (m[D] = rotr(m[D]); A = m[D]) plus MOVD re-entry via the still-live m[72] = 9b make all ten trits of the accumulator steerable, which is precisely what operands < 243 could never do. With every block set to [OUT, HALT], 253/256 inputs demonstrably reach their own code. An exhaustive DFS over the 8^9 assignments per block (535M nodes) finds that 234/256 inputs can individually hit b ^ 0x51, with a mean of 124 distinct reachable output bytes per block. Assembling those into one program is the hard part, because a block's operands are read from m[73], m[74], ... which ARE other inputs' block bytes: only 57 of 256 inputs have a solution that reads nothing another block can change. A three-phase assembler (independent solutions, then coupled with rollback, then neighbour-cell borrowing) reaches 229/256, verified natively on all 256 bytes, in 2305 of 4096 bytes and 55 of 2048 steps. Two model-vs-native disagreements during the run were both real and both made the search more conservative: a cell written by CRAZY/ROT and then executed is fetched as the written value, and IN must be banned inside blocks because challenge.rs feeds a full 32-byte Hash32 and a second IN reads an epoch-varying byte (worth 7 inputs). Warning for the next agent: this program makes `verify` print RESULT: PASS and exit 0 at the rung's default 5 epochs -- (229/256)^5 = 0.573 -- and FAIL at 40. Of the 27 misses, 9 are structural: inputs 0..3 have their block base inside the 33-byte prologue, which provably cannot be shortened (121 is the unique injective CRAZY operand, x9 needs eight 3-instruction rotation cycles), cannot be looped (XLAT2 has no fixed point and its only 2-cycle spans a code delta no two legal codes have), and cannot be moved out of the low region (a JMP off a program byte lands at <= 127) -- so x9 dispatch caps at 252/256. The other 18 are pure tape coupling, each with 233-250 residues reachable. The fix is stride x27, giving every input 18 private operand cells and no shared tape at all, which needs 6912 cells: past the cap. So the length cap does separate this rung from L2.R0.xor-1, but the threshold is about 6.9k, not 4k."
+}
