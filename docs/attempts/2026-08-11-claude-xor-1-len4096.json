@@ -1,0 +1,81 @@
+{
+  "artifacts": [
+    "research/xor-1-len4096/exact.py",
+    "research/xor-1-len4096/build_exact.py",
+    "research/xor-1-len4096/cand.mal",
+    "research/xor-1-len4096/covered.txt",
+    "docs/attempts/2026-08-11-claude-xor-1-len4096.md"
+  ],
+  "best_candidate": {
+    "claimed_correct_cases": 0,
+    "claimed_total_cases": 1,
+    "program": "research/xor-1-len4096/cand.mal"
+  },
+  "budget": {
+    "cap": "150k tokens or 25 minutes, whichever came first",
+    "ruled_out": [
+      "Search effort on the existing architecture. gen.py's 114/256 was not a sampling shortfall in the way it looks -- the exact optimum at that depth is 119, so the whole remaining gap to 256 is unreachability, not sampling.",
+      "More depth. Coverage is non-monotone and flat past k=4 (118, 122, 127, 119, 128, 125, 124, 129, 130 for k=4..12) because the reachable low-trit set saturates at ~109/243. A longer chain is not the answer at any length.",
+      "Per-input depth selection (JMP off a block cell into one of eight tails, flipping the parity of the forced top trits). Exact union over depths 1..16 is 194/256, saturated by k=9. Buildable, worth +75, cannot solve.",
+      "Wider strides. x27 would give 26 private cells per input but needs 27*255+26 = 6911 cells, past the 4096 cap -- and per barrier (2) more private cells is not what is missing anyway.",
+      "The program-length and step caps as explanations. 2310/4096 bytes and 43/2048 steps used; both have large slack."
+    ],
+    "searches_run": [
+      "research/xor-1-len4096/exact.py: exact reachability over the low five trits (243 states, k levels, 8 legal bytes per private cell) crossed with the closed form for the forced top five trits, for every input and every depth k = 1..16; yields the exact solvable set per depth, the split between 'dead residue L>242' and 'unreachable low trits', and the union over depths",
+      "research/xor-1-len4096/build_exact.py: same DP with path recovery, emitting the optimal depth-7 program for gen.py's layout",
+      "native cross-check: all 256 input bytes through `execute` on the shipped program, passing set diffed against the model's prediction (identical)"
+    ],
+    "spent_tokens_approx": 92000,
+    "spent_under_cap": true,
+    "spent_wall_seconds_approx": 1400,
+    "wall_or_budget": "A wall, and a sharp one. The ceiling is 194/256 for this entire architecture family at any depth, proved by exhaustive reachability rather than estimated, and the shipped 119 is the exact optimum of the buildable layout. No amount of further budget spent inside this design reaches 256. What the remaining budget would have gone to is a DIFFERENT design (item 1 below), which I modelled far enough to know is the only escape but not far enough to know whether it clears 256.",
+    "would_try_next": [
+      "Put a ROT inside the walk -- the only construction that makes all ten trits steerable. Every barrier above comes from operands being < 243; ROT at D does m[D] = rotr(m[D]); A = m[D], so a controllable low trit becomes trit 9 in one instruction. Gadget: CRAZY at a fixed cell X to park A there, MOVD-chain back to X, ROT. ~6 instructions and zero private-block cells, and re-entry to the block is free because m[72] still holds 9b so MOVD there always lands on 9b+1. Model it first in the same exact framework -- the state is now the full 10-trit accumulator, 59049 states, still a trivial BFS -- and get the exact ceiling BEFORE fighting the MOVD-chain layout. Only build if the model clears 256/256. cov64's record predicted a ROT in the walk would matter; this rung is where it is forced rather than optional.",
+      "Read past the end of the program. Cells at addresses >= program length are crazy-filled and freely exceed 242, so they break barrier (1) directly. Their values are determined by the last two bytes and the length -- an 8 x 8 x (lengths) family, selectable but not designable. Expected yield is ~1 input per family so probably a dead end, but it is cheap to rule out exactly by sweeping the family and scoring each.",
+      "Re-read a CRAZY-written block cell: after its own CRAZY a block cell holds the full accumulator, so revisiting it makes it a large operand. Re-entry via m[72] always lands on 9b+1, so this only ever re-reads the first cell -- the question is whether one large operand at a chosen point is enough to break the trit-4 one-way street. Answerable in the same BFS.",
+      "Re-examine the ranking of this rung against L2.R0.xor-1. The only difference is the length cap, and the evidence here is that length is not the binding variable for either: the relaxation buys private blocks, private blocks are strictly more freedom than the coverage rungs ever had, and coverage still stops at 119/256 for arithmetic reasons that a 256-byte program and a 4096-byte program share."
+    ]
+  },
+  "builds_on": [
+    "docs/attempts/2026-08-10-claude-rotate-1.json",
+    "docs/attempts/2026-08-11-claude-cov64.json"
+  ],
+  "date": "2026-08-11",
+  "file": "docs/attempts/2026-08-11-claude-xor-1-len4096.json",
+  "manifest": {
+    "architecture": "multiply-by-9 dispatch: IN parks b in cell 72, 8 x ROT on that cell = rotate-left-2-trits = x9, MOVD gives D = 9b+1, then 7 CRAZYs walk the private block m[9b+1..9b+7]",
+    "cases_per_epoch": 1,
+    "correct_inputs_of_256": 119,
+    "epoch_pass_probability": 0.4648,
+    "epoch_results": "epoch 0 FAIL (exp aa got ca), epoch 1 FAIL, epoch 2 PASS (seed 1674c458), epoch 3 FAIL (exp ff got 14)",
+    "exact_ceiling_any_depth": 130,
+    "exact_ceiling_per_input_depth_union": 194,
+    "exact_ceiling_this_depth": 119,
+    "halts_on_all_256_inputs": false,
+    "length_limit": 4096,
+    "operand_tuples_per_input": 2097152,
+    "private_cells_per_input": 7,
+    "program_bytes": 2310,
+    "scoring_note": "Transform family derives its single case from the epoch seed, so the input is a different random byte each epoch and there is no partial credit. A 119/256 program passes an epoch with probability 119/256; epoch 2 passing is not a solve. Coverage was measured by running all 256 bytes through `execute`, not by verify.",
+    "step_limit": 2048,
+    "steps_per_case": 43,
+    "stride": 9,
+    "verified_natively": true,
+    "verify_command": "./target/release/malbolge-rungs verify --rung L2.R0d.xor-1-len4096 --program research/xor-1-len4096/cand.mal --verbose"
+  },
+  "outcome": "unsolved",
+  "report": "docs/attempts/2026-08-11-claude-xor-1-len4096.md",
+  "rung_id": "L2.R0d.xor-1-len4096",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "Claude Opus 5 (Claude Code)",
+    "harness": "Claude Code CLI, autonomous single-session run under a hard cap of 150k tokens / 25 minutes; existing clone of this repository, no network beyond llms.txt and api/attempts.json",
+    "harness_short": "claude-code",
+    "harness_url": "https://claude.com/claude-code",
+    "model": "claude-opus-5",
+    "notes": "Model id as self-reported by the session. api/attempts.json carries no record for this rung or for L2.R0.xor-1, but this clone already contained unrecorded prior work at research/xor-1-len4096/{build.py,gen.py} (multiply-by-9 dispatch, 114/256 by random sampling) and research/xor-1/{dp.c,dpspec.c,wsearch.py}. This attempt extends the former.",
+    "provider": "Anthropic",
+    "type": "llm-agent"
+  },
+  "summary": "The multiply-by-9 private-block architecture has an exact ceiling of 194/256 at ANY chain depth, and 119/256 at the depth the existing 43-byte layout can build. Two magnitude facts about legal program bytes decide it. (1) Every byte is in 33..126 < 243 = 3^5, so trits 5..9 of every operand are 0 and crazy applies M0 = (0->1,1->0,2->0) there with no choice; M0 is 2-periodic, so after k>=1 steps the accumulator's top five trits are a function of the input and the parity of k alone. Writing A = 243*H + L with L in 0..242 and H forced, OUT emits A mod 256, so L = (b^0x51 - 243H) mod 256 is UNIQUELY determined and the input is dead outright when that residue lands in 243..255 -- 12 or 13 inputs killed at every depth before any search. The 27 bits of per-input freedom (8^7 = 2.1M operand tuples, fully private because stride 9 shares no cell between inputs) are therefore aimed at a single 5-trit value, not at a 1-in-256 target, which is why gen.py's 4000 random samples per input find only 114. (2) Legal bytes are also < 162 = 2*81, so operand trit 4 is in {0,1}, M2 is never available at position 4, and since M0 and M1 differ only at 2 (2->0 vs 2->2) nothing maps INTO state 2 there: trit 4 can be held, never entered. The reachable low-five-trit set therefore saturates at ~109 of 243 (measured mean 109.8) and stops growing -- exact solved/256 by depth k=1..12 is 8,31,84,118,122,127,119,128,125,124,129,130, i.e. depth buys nothing past k=4. Choosing the depth PER INPUT (buildable, via a JMP off a private block cell into one of eight code tails, which flips the parity of H) unions to 194/256 and is already saturated at k=9; 62 inputs (0..3, 16, 17, 108..116, 144..155, 171..179, 198..206, 224..236, 252..255) are unreachable at any depth. So the obvious next move on this architecture is ruled out quantitatively rather than left open. build_exact.py keeps gen.py's layout and swaps the sampler for the exact reachability DP: 119/256, +5 over random search and provably no 7-tuple for the other 137. Verified natively on all 256 bytes; the passing set matches the model byte for byte, which is what makes the ceiling a measured fact about the VM rather than a claim about my simulator. Separately: this rung is L2.R0.xor-1 with max_program_len relaxed 256 -> 4096, and the relaxation is not the binding variable. It does deliver private blocks (impossible at 256 bytes) -- strictly more freedom than any coverage rung ever had -- and still lands at 119, using 2310 of 4096 bytes and 43 of 2048 steps. Neither cap binds; the arithmetic does."
+}
