@@ -309,12 +309,22 @@ pub fn generate_site(out_dir: &Path, epochs: u32) -> Result<()> {
             .filter(|a| a.rung_id == record.rung_id)
             .collect();
         let agg = aggregates.get(&record.rung_id);
+        // A rung can be solved by a program submitted for a different rung — an
+        // incidental pass. Nothing then names this rung as its rung_id, so the
+        // attempts section is empty and the page shows a solve with no visible
+        // provenance. Find the record that owns the winning program.
+        let origin: Option<&AttemptRecord> = record.best_program.as_deref().and_then(|prog| {
+            attempts.iter().find(|a| {
+                a.rung_id != record.rung_id
+                    && a.best_candidate.as_ref().is_some_and(|c| c.program == prog)
+            })
+        });
         std::fs::write(
             out_dir.join("s").join(format!("{}.html", record.rung_id)),
             page(
                 &record.rung_id,
                 1,
-                &detail_body(record, &rung, entry, &rung_attempts, agg, &generated),
+                &detail_body(record, &rung, entry, &rung_attempts, origin, agg, &generated),
             ),
         )?;
     }
@@ -375,14 +385,24 @@ attempt maps what was already tried, where it stopped, and often ships the\n\
 search code that got there. Recent progress has come from reading the last\n\
 attempt and taking one step further.\n\
 \n\
-Rungs come in three kinds, and the ladder is ordered easiest to hardest —\n\
+Rungs come in four kinds, and the ladder is ordered easiest to hardest —\n\
 difficulty is the rank, not how simple the transform sounds. Finite-map rungs\n\
 (`xor51-mapN`) fix a few input bytes, one output each; they are the lowest-ranked\n\
-open rungs and where every solve so far happened — start here. Coverage rungs\n\
+open rungs and where most solves have happened — start here. Coverage rungs\n\
 (`xor51-covNN`) score all 256 inputs and pass at a threshold, so partial progress\n\
-counts as real data even short of a solve. Full transforms (`xor-1`, `rotate-1`)\n\
-demand all 256 outputs and are hardest. `feasibility --rung <id>` estimates a\n\
-finite map's difficulty.\n\
+counts as real data even short of a solve; the whole cov32..cov96 band is solved,\n\
+and one program clears most of it. Full transforms (`xor-1`, `rotate-1`) demand\n\
+all 256 outputs and are hardest of the fixed-width kinds. Stream rungs (`cat`,\n\
+`length`, `checksum`, `reverse`) draw the INPUT LENGTH from the seed and never\n\
+tell the program what it is, so a candidate cannot be straight-line — it has to\n\
+read until the input runs out, which means a loop, which in this machine means\n\
+code that has been enciphered by its own first pass. Nothing on the board has\n\
+solved one yet. `feasibility --rung <id>` estimates a finite map's difficulty.\n\
+\n\
+Some rungs carry a `min_epochs`. Their inputs and targets are redrawn from the\n\
+challenge seed every epoch, so one lucky draw proves nothing and a constant-output\n\
+program is not a solve. `verify` runs at least that many for you whatever you\n\
+pass, and `registry show --rung <id>` prints it. Passing locally is passing here.\n\
 \n\
 The ordering among the unsolved rungs is an estimate. It is drawn from\n\
 feasibility counts, recorded attempts, and structural results, and it gets\n\
@@ -1019,6 +1039,7 @@ fn detail_body(
     rung: &Rung,
     entry: Option<&SolvedEntry>,
     attempts: &[&AttemptRecord],
+    origin: Option<&AttemptRecord>,
     aggregate: Option<&crate::stats::RungAggregate>,
     generated: &str,
 ) -> String {
@@ -1188,6 +1209,23 @@ fn detail_body(
             esc(record.best_program.as_deref().unwrap_or("")),
             entry.outcome.epochs.len()
         );
+        // A rung nobody aimed at still has a provenance: the record of the
+        // attempt whose program happened to clear it. Without this the page
+        // shows a solve, zero attempts, and no way to reach the work behind it.
+        if let Some(o) = origin {
+            let _ = writeln!(b, "<h2>Where this came from</h2>");
+            let _ = writeln!(
+                b,
+                "<p class=\"long\">No attempt was filed against this rung. It is cleared by the \
+                 program submitted for <a href=\"{}.html\">{}</a>, whose record — including \
+                 whether that attempt succeeded on its own rung — is at \
+                 <a href=\"{REPO_URL}/blob/main/{}\">{}</a>.</p>",
+                esc(&o.rung_id),
+                esc(&o.rung_id),
+                esc(&o.path),
+                esc(&o.path),
+            );
+        }
         render_attempt_summary(&mut b, false, aggregate);
         render_attempts(&mut b, attempts);
     } else {
