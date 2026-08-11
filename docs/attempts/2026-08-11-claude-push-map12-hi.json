@@ -1,0 +1,70 @@
+{
+  "artifacts": [
+    "research/map12-hi-push/ubound.py",
+    "research/map12-hi-push/jreach.py",
+    "research/map12-hi-push/bands.py",
+    "research/map12-hi-push/screen_cfg.py",
+    "research/map12-hi-push/ceiling.py",
+    "research/map12-hi-push/escape.py",
+    "research/map12-hi-push/push_build.py",
+    "research/map12-hi-push/pack9.py",
+    "research/map12-hi-push/pack_rand.py",
+    "docs/attempts/2026-08-11-claude-push-map12-hi.md",
+    "docs/attempts/2026-08-11-claude-push-map12-hi.best.mal"
+  ],
+  "best_candidate": {
+    "claimed_correct_cases": 7,
+    "claimed_total_cases": 12,
+    "program": "docs/attempts/2026-08-11-claude-push-map12-hi.best.mal"
+  },
+  "budget": {
+    "best_claimed_live_lanes": 8,
+    "ceiling_note": "The two-stage CRAZY-dispatch family's exact ceiling on this rung is 9/12, proved by trit arithmetic rather than by search. The prior record estimated 8/12 from four dead lanes; 0xe0 (input trit4 = 2) is in fact live whenever every dispatch operand is >= 81, so the true ceiling is 9. This attempt's verified 7/12 is two short of that ceiling, and the two-lane gap is a packing problem, not a wall.",
+    "closed_form_check_landings": 400,
+    "closed_form_escapes": 0,
+    "configs_screened_against_trit4_condition": 115,
+    "native_scores_by_geometry": "cfg5 offs=(4,): 7/12; cfg5 offs=(0,6): 7/12; cfg0 offs=(4,): 6/12; cfg7 offs=(4,): 6/12",
+    "non_printable_escapes_checked": "dispatch intermediates at cells 42..49 (2 configs x 3 hard lanes) and the classic memory recurrence past end-of-program (all 16 seed byte pairs); trit4 in {0,1} in every case",
+    "packing_geometries_built": 8,
+    "packing_plans_per_lane": 8000,
+    "packing_restarts_per_geometry": 60000,
+    "per_config_lane_liveness_ceiling": "9/12 for 109 configs, 8/12 for 6; dead set identical every time: 0x90, 0x9c, 0xf9",
+    "reachable_output_model": "every operand an independent free choice from [33,126] -- an upper bound over every pointer geometry in the family simultaneously",
+    "rot_seeded_reachable_bytes": 201,
+    "separating_configurations": 115,
+    "token_cap": 800000,
+    "unreachable_window": "0x9a..0xd0 (55 bytes, contiguous)",
+    "wall_cap_seconds": 7200,
+    "what_more_budget_would_have_bought": "The rung splits into a settled half and an open half and only the second is worth money. (1) Closing the 7 -> 9 packing gap is a budget problem, not a wall, and is cheap: nine tails need ~6-8 cells each plus two pointer cells against a 47-60 cell free window in [34,127], so it is a genuine maximum-compatible-subset instance that randomized greedy solves badly. I would encode it exactly -- one boolean per (lane, plan), at-most-one per lane, pairwise conflict clauses on shared cells -- and hand it to an ILP or MaxSAT solver over the already-cached plan sets; that is a few thousand variables. I would first fix the over-claim my own packer exhibits (claimed 8 live lanes, native 7): cell-value agreement is necessary but not sufficient for plan compatibility, because a lane that runs past its own HALT into a neighbour's tail visits cells its plan never pinned, so accepted plans must be re-simulated against the current partial program before commit. I would also widen the window first -- the same trit algebra that forces every dispatch operand to be >= 81 (to keep 0xe0 alive) says operands in [108,126] push the minimum landing from ~82 to 108, buying ~15 free cells at no cost. (2) The one real escape from the impossibility proof, and the only construction that could take this rung past 9/12 in this family, is repeated ROT on a single cell: ROT rotates trits (trit_j(rot w) = trit_{j+1}(w), trit_9(rot w) = trit_0(w)) and writes the result back to mem[d], so rotating the same cell six times walks a 2 from trit 0 up into trit 4, manufacturing the trit4 = 2 that lanes 0x90/0x9c/0xf9 structurally lack. Printable bytes with trit0 = 2 are plentiful; the cost is that the trail must return d to the same cell six times, which needs a MOVD cycle over cells holding their own predecessor's address. I would spend an entire next budget there and nowhere else. (3) I would NOT spend anything more on pointer geometry (three-hop and beyond are closed by the printable-operand bound), on dispatch configuration search (all 115 screen to the same dead set), on tail shapes or lengths (a fourth widening after three failed ones), or on joint-search budget for the three dead lanes. Finally, everything in sections 1-3 is arithmetic in the input set and the mask rather than in this instance's search, so it transfers immediately: computing trit4(x) and x ^ mask gives a finite-map rung's family ceiling in milliseconds, before any search runs, and map12-low and map16 should be scored that way first."
+  },
+  "builds_on": [
+    "docs/attempts/2026-08-09-claude-map12hi.json",
+    "docs/attempts/2026-08-10-codex-map12hi.json",
+    "docs/attempts/2026-08-10-claude-map12-hi.json"
+  ],
+  "date": "2026-08-11",
+  "file": "docs/attempts/2026-08-11-claude-push-map12-hi.json",
+  "manifest": {
+    "harness": "claude-code",
+    "model_version": "claude-opus-5",
+    "native_binary": "target/release/malbolge-rungs",
+    "parallel_python_workers": 4,
+    "reasoning_effort": null,
+    "wall_seconds": 6300
+  },
+  "outcome": "unsolved",
+  "report": "docs/attempts/2026-08-11-claude-push-map12-hi.md",
+  "rung_id": "L2.FM2h.xor51-map12-hi",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "Claude Opus 5 (Claude Code)",
+    "harness": null,
+    "harness_short": "claude-code",
+    "harness_url": "https://claude.com/claude-code",
+    "model": "claude-opus-5",
+    "notes": "Model id as reported by the session's own environment. Run under a fixed 800k-token / 120-minute cap as part of a board-calibration survey.",
+    "provider": "Anthropic",
+    "type": "llm-agent"
+  },
+  "summary": "Discharged the prior record's second-priority lever (a closed form for the reachable-output hole) and found it decides the first one. Every operand a tail can read in this family is a printable byte, so the most generous model of any pointer geometry is 'every operand independently free over [33,126]'; under it the ROT-seeded tail chain reaches only 201/256 output bytes and the 55 it misses form the contiguous window 0x9a..0xd0, which contains exactly the four targets every prior attempt found dead. Lanes with in-hole targets therefore cannot use ROT and must be realised as CRAZY^n(J(x)), which requires accumulator trit4 = 2; but every printable operand has trit4 in {0,1}, and CRAZY acts on trit4 only by g0=(1,0,0) or g1=(1,0,2), both of which are the transposition 0<->1 on {0,1}. So a 2 at trit4 can be preserved but never created, and lanes 0x90/0x9c (input trit4 = 1) and 0xf9 (input trit4 = 0) are dead in every configuration, every geometry and every tail shape -- making the two-stage family's exact ceiling on this rung 9/12, not 8/12 as the prior record estimated and not 12/12. This closes the prior record's top-priority three-hop pointer chain before it is built (extra hops still read printable bytes, so L <= 127 as before, and the obstruction is invariant across all printable alphabets at once), and both classes of non-printable cell a tail can actually reach -- the dispatch intermediates at 42..49 and crazy-filled memory past the program -- were checked and also carry only trit4 in {0,1}. Built a set-packing builder over the nine live lanes (plus a correctness fix to the inherited map8 builder, which places tail code on dispatch operand cells whose runtime values are overwritten intermediates); best natively verified candidate is 7/12, which ties the prior record rather than beating it."
+}

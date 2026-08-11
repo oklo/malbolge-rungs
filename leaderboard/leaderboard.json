@@ -918,47 +918,47 @@
     "status": "open"
   },
   {
-    "rung_id": "L6.S0.cat",
-    "rank": 38,
-    "status": "open",
     "best_program": null,
-    "solver": null,
     "date": null,
     "metric": null,
     "note": "Echo input of unknown length. Python: print(input()).",
-    "note_long": "Every other rung on this ladder fixes the output width in its definition, so a candidate can be written straight-line: consume a known number of bytes, emit a known number back. This one cannot be. The input length is drawn from the challenge seed and the program is told neither it nor its bounds, so it has to read until the input runs out — the VM sets a to the all-2s word on a read past the end, and that is the only signal it gets. Which means a loop, and in classic Malbolge a loop is the hard part: every cell that executes is enciphered immediately afterwards, so the body is different code on its second pass and must either restore itself or ride the 94-cycle back to its starting values. Known to be possible — the published Malbolge programs that loop, from 99-bottles to the Nagoya LISP interpreter, all solve exactly this — and nothing on this board has ever been asked for it. Python: print(input()). The minimum that isolates iteration: read a byte, emit it, repeat until the input ends."
+    "note_long": "Every other rung on this ladder fixes the output width in its definition, so a candidate can be written straight-line: consume a known number of bytes, emit a known number back. This one cannot be. The input length is drawn from the challenge seed and the program is told neither it nor its bounds, so it has to read until the input runs out — the VM sets a to the all-2s word on a read past the end, and that is the only signal it gets. Which means a loop, and in classic Malbolge a loop is the hard part: every cell that executes is enciphered immediately afterwards, so the body is different code on its second pass and must either restore itself or ride the 94-cycle back to its starting values. Known to be possible — the published Malbolge programs that loop, from 99-bottles to the Nagoya LISP interpreter, all solve exactly this — and nothing on this board has ever been asked for it. Python: print(input()). The minimum that isolates iteration: read a byte, emit it, repeat until the input ends.",
+    "rank": 38,
+    "rung_id": "L6.S0.cat",
+    "solver": null,
+    "status": "open"
   },
   {
-    "rung_id": "L6.S1.length",
-    "rank": 39,
-    "status": "open",
     "best_program": null,
-    "solver": null,
     "date": null,
     "metric": null,
     "note": "Output how many bytes came in. Python: print(len(input())).",
-    "note_long": "Every other rung on this ladder fixes the output width in its definition, so a candidate can be written straight-line: consume a known number of bytes, emit a known number back. This one cannot be. The input length is drawn from the challenge seed and the program is told neither it nor its bounds, so it has to read until the input runs out — the VM sets a to the all-2s word on a read past the end, and that is the only signal it gets. Which means a loop, and in classic Malbolge a loop is the hard part: every cell that executes is enciphered immediately afterwards, so the body is different code on its second pass and must either restore itself or ride the 94-cycle back to its starting values. Known to be possible — the published Malbolge programs that loop, from 99-bottles to the Nagoya LISP interpreter, all solve exactly this — and nothing on this board has ever been asked for it. Python: print(len(input())). Adds a counter that must survive the encipherment of the loop body it lives beside."
+    "note_long": "Every other rung on this ladder fixes the output width in its definition, so a candidate can be written straight-line: consume a known number of bytes, emit a known number back. This one cannot be. The input length is drawn from the challenge seed and the program is told neither it nor its bounds, so it has to read until the input runs out — the VM sets a to the all-2s word on a read past the end, and that is the only signal it gets. Which means a loop, and in classic Malbolge a loop is the hard part: every cell that executes is enciphered immediately afterwards, so the body is different code on its second pass and must either restore itself or ride the 94-cycle back to its starting values. Known to be possible — the published Malbolge programs that loop, from 99-bottles to the Nagoya LISP interpreter, all solve exactly this — and nothing on this board has ever been asked for it. Python: print(len(input())). Adds a counter that must survive the encipherment of the loop body it lives beside.",
+    "rank": 39,
+    "rung_id": "L6.S1.length",
+    "solver": null,
+    "status": "open"
   },
   {
-    "rung_id": "L6.S2.checksum",
-    "rank": 40,
-    "status": "open",
     "best_program": null,
-    "solver": null,
     "date": null,
     "metric": null,
     "note": "Output the sum of the input bytes mod 256.",
-    "note_long": "Every other rung on this ladder fixes the output width in its definition, so a candidate can be written straight-line: consume a known number of bytes, emit a known number back. This one cannot be. The input length is drawn from the challenge seed and the program is told neither it nor its bounds, so it has to read until the input runs out — the VM sets a to the all-2s word on a read past the end, and that is the only signal it gets. Which means a loop, and in classic Malbolge a loop is the hard part: every cell that executes is enciphered immediately afterwards, so the body is different code on its second pass and must either restore itself or ride the 94-cycle back to its starting values. Known to be possible — the published Malbolge programs that loop, from 99-bottles to the Nagoya LISP interpreter, all solve exactly this — and nothing on this board has ever been asked for it. Python: print(sum(data) % 256). A counter that accumulates input rather than counting, so it also has to add under the trit arithmetic."
+    "note_long": "Every other rung on this ladder fixes the output width in its definition, so a candidate can be written straight-line: consume a known number of bytes, emit a known number back. This one cannot be. The input length is drawn from the challenge seed and the program is told neither it nor its bounds, so it has to read until the input runs out — the VM sets a to the all-2s word on a read past the end, and that is the only signal it gets. Which means a loop, and in classic Malbolge a loop is the hard part: every cell that executes is enciphered immediately afterwards, so the body is different code on its second pass and must either restore itself or ride the 94-cycle back to its starting values. Known to be possible — the published Malbolge programs that loop, from 99-bottles to the Nagoya LISP interpreter, all solve exactly this — and nothing on this board has ever been asked for it. Python: print(sum(data) % 256). A counter that accumulates input rather than counting, so it also has to add under the trit arithmetic.",
+    "rank": 40,
+    "rung_id": "L6.S2.checksum",
+    "solver": null,
+    "status": "open"
   },
   {
-    "rung_id": "L6.S3.reverse",
-    "rank": 41,
-    "status": "open",
     "best_program": null,
-    "solver": null,
     "date": null,
     "metric": null,
     "note": "Echo the input backwards. Python: print(input()[::-1]).",
-    "note_long": "Every other rung on this ladder fixes the output width in its definition, so a candidate can be written straight-line: consume a known number of bytes, emit a known number back. This one cannot be. The input length is drawn from the challenge seed and the program is told neither it nor its bounds, so it has to read until the input runs out — the VM sets a to the all-2s word on a read past the end, and that is the only signal it gets. Which means a loop, and in classic Malbolge a loop is the hard part: every cell that executes is enciphered immediately afterwards, so the body is different code on its second pass and must either restore itself or ride the 94-cycle back to its starting values. Known to be possible — the published Malbolge programs that loop, from 99-bottles to the Nagoya LISP interpreter, all solve exactly this — and nothing on this board has ever been asked for it. Python: print(input()[::-1]). Needs the input stored before any of it is emitted, then traversed backwards — storage as well as iteration."
+    "note_long": "Every other rung on this ladder fixes the output width in its definition, so a candidate can be written straight-line: consume a known number of bytes, emit a known number back. This one cannot be. The input length is drawn from the challenge seed and the program is told neither it nor its bounds, so it has to read until the input runs out — the VM sets a to the all-2s word on a read past the end, and that is the only signal it gets. Which means a loop, and in classic Malbolge a loop is the hard part: every cell that executes is enciphered immediately afterwards, so the body is different code on its second pass and must either restore itself or ride the 94-cycle back to its starting values. Known to be possible — the published Malbolge programs that loop, from 99-bottles to the Nagoya LISP interpreter, all solve exactly this — and nothing on this board has ever been asked for it. Python: print(input()[::-1]). Needs the input stored before any of it is emitted, then traversed backwards — storage as well as iteration.",
+    "rank": 41,
+    "rung_id": "L6.S3.reverse",
+    "solver": null,
+    "status": "open"
   }
 ]
