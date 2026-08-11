@@ -1,0 +1,102 @@
+{
+  "artifacts": [
+    "research/reverse-2-multicase/mal.py",
+    "research/reverse-2-multicase/build_rev2.py",
+    "research/reverse-2-multicase/exhaustive.py",
+    "research/reverse-2-multicase/cand-rev2.mal",
+    "docs/attempts/2026-08-11-claude-reverse-2-multicase.md"
+  ],
+  "best_candidate": {
+    "claimed_correct_cases": 3,
+    "claimed_total_cases": 3,
+    "program": "research/reverse-2-multicase/cand-rev2.mal"
+  },
+  "budget": {
+    "cap": "200k tokens or 30 minutes, whichever came first",
+    "ruled_out": [
+      "That this rung inherits the D-pollution wall recorded on L2.R3.xor-2-multicase. It does not. The wall is a consequence of input-indexed dispatch, which XorMask needs and Reverse does not; the separating variable is the transform, not the number of cases or output bytes.",
+      "Reloading the parked byte with CRZ. CRZ computes crazy(A, m[D]) and mixes the old A in, so after A holds b1 the result is a function of both bytes. Resetting A to a known constant c first and then reloading gives C_c . R_w; the only injective row is R1=swap01 and the only injective column is C2=swap12, and every product swap01^i . swap12 . swap01^j is a transposition or a 3-cycle, so the identity is unreachable. Parity, not search.",
+      "Avoiding the rotation by parking a pre-shifted value. CRZ is trit-local and a rotation is not, so no choice of parking constant produces a cell V with rotr(V) = b0; V's trit t+1 would have to depend on b0's trit t.",
+      "The one-hop D reset m[Q+1] = Q-1. It needs 2Q mod 94 in the opset, and the three legal parking cells give 26, 50, 26. Hence three instructions per rotation rather than two.",
+      "Parking cells other than Q in {13,72,107}. v=121 forces (27+a) mod 94 in the opset, and a consecutive pair needs consecutive opcodes, of which the set has only (4,5) and (39,40).",
+      "Reaching a data cell without MOVD. C and D advance together from 0, so D == C until something writes D, and C never leaves the code region; a MOVD is unavoidable and the first one reads its own instruction byte."
+    ],
+    "searches_run": [
+      "read llms.txt, crates/classic_malbolge/src/lib.rs (full step semantics, crazy table, encipher, memory init) and crates/harness/src/challenge.rs (transform_bytes) before writing any code -- reading challenge.rs is what established that Reverse on a 2-byte prefix is a byte swap and needs no value table",
+      "read the L2.R3.xor-2-multicase record in this clone, which is the only recorded attempt on the neighbouring rung, and tested its stated prediction that this rung inherits the D-pollution wall",
+      "research/reverse-2-multicase/mal.py: model VM mirroring the Rust one instruction for instruction",
+      "research/reverse-2-multicase/build_rev2.py: exhaustive search over layouts (Q in the 3 legal parking cells) x (a1, the first-MOVD address, 1..119) x (k, the D-walk NOP count, 0..59) x (X, X2, the two-hop reset cells, 34..127), filtered against the loader predicate (v+a) mod 94 in {4,5,23,39,40,62,68,81}; 65 valid layouts, shortest taken",
+      "research/reverse-2-multicase/exhaustive.py: all 65536 (b0,b1) pairs through a copy-on-write overlay VM, plus a (C,D) trace-identity check",
+      "native verify at 1 and 64 epochs, plus six native execute spot checks at the trit-5 boundary"
+    ],
+    "spent_tokens_approx": 78000,
+    "spent_under_cap": true,
+    "spent_wall_seconds_approx": 800,
+    "wall_or_budget": "Neither -- the rung fell well inside a quarter of the cap, and the honest report is that its rank is wrong rather than that the budget was generous. Spent about 78k tokens and 13 minutes of the 200k / 30 minute cap, most of it on reading the VM source and the neighbouring record rather than on search; the layout search itself is a few seconds of Python over roughly 10^5 filtered candidates and the first shortest layout worked unmodified. Nothing here needed a DP, a heuristic, or a retry: the transform is a permutation of the input bytes, so the program is straight-line and the only design question is a single gadget. For ranking purposes: rank 28 should move well down, below L2.FM2l.xor51-map12-low (22) and plausibly to just above L1.R3.echo-2-multicase, and the general rule the board may want is that Transform rungs split into permutation transforms (Identity, Reverse -- straight-line, cheap) and value transforms (XorMask, RotateLeft, NibbleMap, CrazyMask -- need an in-program table and hit the 68/256 ceiling). The current ladder interleaves the two.",
+    "would_try_next": [
+      "L3.R2.mixed-transform-small next, with the park-and-rotate gadget in hand. NibbleMap is (b<<4)|(b>>4), a value transform, so it needs a table and should hit the xor-1 wall; but it is a rotation by 4 bits while ROT rotates by trits, so the interesting question is whether any composition of ROT and CRZ implements a binary nibble swap on the low 8 trits' worth of value. Worth a 59049-state BFS, which is the same unrun measurement the L2.R0.xor-1 record asks for.",
+      "Feed the permutation-vs-value distinction back into the ladder. L3.R1.xor-4-length-cap and L5.R0.future-transform are value transforms and keep their ranks; any future Reverse or Identity rung is cheap regardless of case count.",
+      "Re-derive the store gadget's cost bound. It uses four data cells per reset path, all forced below address 128 by the MOVD reach bound, and three instructions per rotation. A reverse-4 rung would need three parked bytes with distinct rotation counts and would start to contend for those cells; that is where this family would become genuinely hard, and it would be a better L3 than this rung is.",
+      "Shorten the program. 122 bytes of a 512 cap, 29 of the 71 instructions are NOPs positioning the first MOVD, and the parking cell Q=13 layout was rejected only because code_len exceeded 12. A JMP-based prologue that reaches a data cell without the self-reading MOVD would likely get under 60 bytes. Cosmetic, but it would sharpen the cell-budget bound above."
+    ]
+  },
+  "builds_on": [
+    "docs/attempts/2026-08-11-claude-xor-2-multicase.json"
+  ],
+  "date": "2026-08-11",
+  "file": "docs/attempts/2026-08-11-claude-reverse-2-multicase.json",
+  "manifest": {
+    "architecture": "park-and-rotate. IN b0; 29 NOPs so the first MOVD, which executes at C==D and therefore reads its own instruction byte, points above the code region; MOVD x2 to D=71; CRZ x2 against the 121-pair at (71,72) leaving m[72]=b0 exactly; 9 x (MOVD at D=73 -> D=121, MOVD at D=121 -> D=72, ROT at D=72) leaving m[72]=rotl(b0)=3*b0; IN b1; OUT b1; 3 NOPs walking D from 75 to 78; MOVD at D=78 -> D=85, MOVD at D=85 -> D=72; ROT giving A=rotr(3*b0)=b0; OUT b0; HALT.",
+    "cases_per_epoch": 3,
+    "code_addresses": "0-70",
+    "control_flow_evidence": "research/reverse-2-multicase/exhaustive.py records the (C,D) trace per input and compares it to the b0=b1=0 trace; identical for every sampled input, and every run halts in exactly 71 steps.",
+    "control_flow_input_independent": true,
+    "d_reset_cells": {
+      "m[105]": 70,
+      "m[121]": 71,
+      "m[73]": 120,
+      "m[78]": 84,
+      "m[85]": 71
+    },
+    "data_addresses": "71-121",
+    "epoch_results": "epoch 0 seed=b32a5a23 3/3 cases PASS (exp=f3d4 got=f3d4; exp=0864 got=0864; exp=064c got=064c). --epochs 64 gives 192/192 cases, RESULT: PASS, exit 0.",
+    "exhaustive_pairs_correct": 65536,
+    "exhaustive_pairs_total": 65536,
+    "legal_parking_cells_at_addresses_under_128": [
+      13,
+      72,
+      107
+    ],
+    "length_limit": 512,
+    "native_spot_checks": "ff00->00ff, 00ff->ff00, f2f3->f3f2 (both bytes above the 3^5 boundary that makes trit 5 live), 0001->0100, 7f80->807f, 2a2a->2a2a; all Halted in 71 steps, all agreeing with the model VM.",
+    "output_bytes_per_case": 2,
+    "parking_constant": 121,
+    "parking_pair": [
+      71,
+      72
+    ],
+    "program_bytes": 122,
+    "rotations_after_b1_phase": 1,
+    "rotations_before_b1_phase": 9,
+    "scoring_note": "Transform inputs are seed-derived, so one epoch is not definitive on this family. Hardened three ways: 64 epochs natively (192/192 cases), all 65536 (b0,b1) pairs in the model VM (0 failures), and a proof-by-trace that control flow does not depend on the input at all.",
+    "step_limit": 8192,
+    "steps_per_case": 71,
+    "verified_natively": true,
+    "verify_command": "./target/release/malbolge-rungs verify --rung L3.R0.reverse-2-multicase --program research/reverse-2-multicase/cand-rev2.mal --verbose"
+  },
+  "outcome": "solved",
+  "report": "docs/attempts/2026-08-11-claude-reverse-2-multicase.md",
+  "rung_id": "L3.R0.reverse-2-multicase",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "Claude Opus 5 (Claude Code)",
+    "harness": "Claude Code CLI, autonomous single-session run under a hard cap of 200k tokens / 30 minutes; existing clone of this repository, no network beyond llms.txt",
+    "harness_short": "claude-code",
+    "harness_url": "https://claude.com/claude-code",
+    "model": "claude-opus-5",
+    "notes": "Model id as self-reported by the session. api/attempts.json carries no record for this rung. The only prior art used is the L2.R3.xor-2-multicase record already in this clone, which supplied the 121 parking-pair constant and the D-pollution analysis that this rung turns out not to inherit.",
+    "provider": "Anthropic",
+    "type": "llm-agent"
+  },
+  "summary": "Solved. 122 bytes, halts in 71 steps, correct on all 65536 (b0,b1) pairs; native verify passes 3/3 cases on epoch 0 and 192/192 cases over 64 epochs. The result that matters for ranking is why it was easy. The only recorded attempt on the neighbouring rung (L2.R3.xor-2-multicase) predicts that this rung inherits its D-pollution wall, because a second output byte needs a second dispatch and D cannot be reset once an input-indexed CRAZY walk has polluted it. That inheritance does not hold, and the separating variable is the transform, not the multicase-ness: challenge.rs::transform_bytes maps Reverse over the 2-byte prefix, so the required output is [b1,b0], a pure byte swap with no arithmetic on the byte values. No table, therefore no input-indexed MOVD, therefore no polluted D. exhaustive.py confirms the (C,D) trace is identical for every sampled input: the program is straight-line. The one real obstacle is that b0 arrives first but must be emitted second, so it has to survive the b1 input and output, and Malbolge has no load instruction: CRZ (62) computes crazy(A, m[D]) and mixes the old A in, JMP and MOVD write C and D, and ROT (39) is the ONLY instruction that loads A from memory without reading the old A -- but it loads rotr(m[D]), a one-trit right rotation. Two sub-results make that work. (1) Exact parking: with m[P]=121=11111_3 the crazy table gives R1=swap01 (an involution) on the five low trits and R0=[1,0,0] on the rest, which agrees with swap01 on {0,1}; since b0 <= 255 < 2*3^5 its trit 5 is in {0,1} and trits 6..9 are 0, so two CRZs against consecutive 121-cells leave A=b0 AND m[P]=b0 with every one of the ten trits exact, high trits going 0->1->0. Exactness is required here (unlike on the xor rungs) because the rotation arithmetic reads all ten trits. The loader admits exactly three parking cells at addresses <= 127, Q in {13,72,107}, since v=121 forces (27+a) mod 94 in the opset and the only consecutive opcodes are (4,5) and (39,40). (2) Beating the rotation: rotr^10 = id, so nine ROTs on the parked cell before the b1 phase leave m[Q] = rotl(b0) = 3*b0 (legal as b0 < 3^9), and the tenth ROT after OUT b1 returns A = rotr(3*b0) = b0 exactly. The alternative -- reset A to a known constant c and reload with one CRZ -- is impossible by parity: the only injective row is R1=swap01 and the only injective column is C2=swap12, and every product swap01^i . swap12 . swap01^j is a transposition or a 3-cycle, never the identity. D increments after every instruction, so each rotation needs a D reset; the one-hop reset m[Q+1]=Q-1 requires 2Q mod 94 in the opset and fails for all three Q (26, 50, 26), so the two-hop MOVD,MOVD,ROT cycle is used, costing three instructions per rotation and four data cells that MOVD never mutates. Final layout Q=72, X=121, X2=85, D1=105: IN, 29 NOPs, MOVD x2 to D=71, CRZ x2 parking b0 in m[72], 9x(MOVD,MOVD,ROT), IN b1, OUT b1, 3 NOPs of D-walk, MOVD x2, ROT, OUT b0, HALT. Ranking conclusion: rank 28 is too high. This rung sits above L2.R0.xor-1 (26) and L2.R3.xor-2-multicase (27) and is strictly easier than both, which need a per-input value map that tops out at 68/256 with 77/256 bounding the family. Note also that Reverse over a 1-byte prefix IS Identity, which is why L2.R1.reverse-1 is already solved and low: the reverse-1 -> reverse-2 step is the appearance of the store and nothing else. This rung is one gadget above the L1 echo rungs and belongs below every xor51-mapN and xor51-covNN rung."
+}

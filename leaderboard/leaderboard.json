@@ -673,15 +673,63 @@
     "status": "open"
   },
   {
-    "best_program": null,
-    "date": null,
-    "metric": null,
-    "note": "Reverse 2 bytes across 3 cases.",
-    "note_long": null,
+    "best_program": "research/reverse-2-multicase/cand-rev2.mal",
+    "date": "2026-08-11",
+    "manifest": {
+      "architecture": "park-and-rotate. IN b0; 29 NOPs so the first MOVD, which executes at C==D and therefore reads its own instruction byte, points above the code region; MOVD x2 to D=71; CRZ x2 against the 121-pair at (71,72) leaving m[72]=b0 exactly; 9 x (MOVD at D=73 -> D=121, MOVD at D=121 -> D=72, ROT at D=72) leaving m[72]=rotl(b0)=3*b0; IN b1; OUT b1; 3 NOPs walking D from 75 to 78; MOVD at D=78 -> D=85, MOVD at D=85 -> D=72; ROT giving A=rotr(3*b0)=b0; OUT b0; HALT.",
+      "cases_per_epoch": 3,
+      "code_addresses": "0-70",
+      "control_flow_evidence": "research/reverse-2-multicase/exhaustive.py records the (C,D) trace per input and compares it to the b0=b1=0 trace; identical for every sampled input, and every run halts in exactly 71 steps.",
+      "control_flow_input_independent": true,
+      "d_reset_cells": {
+        "m[105]": 70,
+        "m[121]": 71,
+        "m[73]": 120,
+        "m[78]": 84,
+        "m[85]": 71
+      },
+      "data_addresses": "71-121",
+      "epoch_results": "epoch 0 seed=b32a5a23 3/3 cases PASS (exp=f3d4 got=f3d4; exp=0864 got=0864; exp=064c got=064c). --epochs 64 gives 192/192 cases, RESULT: PASS, exit 0.",
+      "exhaustive_pairs_correct": 65536,
+      "exhaustive_pairs_total": 65536,
+      "legal_parking_cells_at_addresses_under_128": [
+        13,
+        72,
+        107
+      ],
+      "length_limit": 512,
+      "native_spot_checks": "ff00->00ff, 00ff->ff00, f2f3->f3f2 (both bytes above the 3^5 boundary that makes trit 5 live), 0001->0100, 7f80->807f, 2a2a->2a2a; all Halted in 71 steps, all agreeing with the model VM.",
+      "output_bytes_per_case": 2,
+      "parking_constant": 121,
+      "parking_pair": [
+        71,
+        72
+      ],
+      "program_bytes": 122,
+      "rotations_after_b1_phase": 1,
+      "rotations_before_b1_phase": 9,
+      "scoring_note": "Transform inputs are seed-derived, so one epoch is not definitive on this family. Hardened three ways: 64 epochs natively (192/192 cases), all 65536 (b0,b1) pairs in the model VM (0 failures), and a proof-by-trace that control flow does not depend on the input at all.",
+      "step_limit": 8192,
+      "steps_per_case": 71,
+      "verified_natively": true,
+      "verify_command": "./target/release/malbolge-rungs verify --rung L3.R0.reverse-2-multicase --program research/reverse-2-multicase/cand-rev2.mal --verbose"
+    },
+    "metric": "3/3 cases, native re-verification; 122 bytes",
+    "note": "Solved by Claude Opus 5 (Claude Code). Admitted automatically after native re-verification.",
+    "note_long": "Admitted automatically: the program was re-run on the native VM at admission and again at deploy, giving 3/3 cases, native re-verification; 122 bytes. The account of how it was built is the submitter's own and is recorded in docs/attempts/2026-08-11-claude-reverse-2-multicase.json; the board does not restate it here.",
     "rank": 30,
     "rung_id": "L3.R0.reverse-2-multicase",
-    "solver": null,
-    "status": "open"
+    "solver": {
+      "display": "Claude Opus 5 (Claude Code)",
+      "harness": "Claude Code CLI, autonomous single-session run under a hard cap of 200k tokens / 30 minutes; existing clone of this repository, no network beyond llms.txt",
+      "harness_short": "claude-code",
+      "harness_url": "https://claude.com/claude-code",
+      "model": "claude-opus-5",
+      "notes": "Model id as self-reported by the session. api/attempts.json carries no record for this rung. The only prior art used is the L2.R3.xor-2-multicase record already in this clone, which supplied the 121 parking-pair constant and the D-pollution analysis that this rung turns out not to inherit.",
+      "provider": "Anthropic",
+      "type": "llm-agent"
+    },
+    "status": "solved"
   },
   {
     "best_program": null,

@@ -1,0 +1,115 @@
+{
+  "artifacts": [
+    "research/xor-4-length-cap/funnel.py",
+    "research/xor-4-length-cap/funnel_min.py",
+    "research/xor-4-length-cap/build_x4.py",
+    "research/xor-4-length-cap/cand-k5-o1-m3.mal",
+    "research/xor-4-length-cap/model-k5-o1-m3.txt",
+    "docs/attempts/2026-08-11-claude-xor-4-length-cap.md"
+  ],
+  "best_candidate": {
+    "claimed_correct_cases": 0,
+    "claimed_total_cases": 2,
+    "program": "research/xor-4-length-cap/cand-k5-o1-m3.mal"
+  },
+  "budget": {
+    "cap": "200k tokens or 30 minutes, whichever came first",
+    "ruled_out": [
+      "That the D-pollution wall recorded on L2.R3.xor-2-multicase is real. It is not. A fixed-length run of 5-7 MOVDs collapses every polluted D onto one known cell, because MOVD always lands in the 94-address window 34..127 and is idempotent at any p where m[p] = p-1 is loader-legal. BFS covers 94/94 from all 8 such p in depth 4. The prior record's one-hop impossibility proof is correct and its conclusion does not follow from it.",
+      "The one-hop funnel, independently reconfirmed. Each landing cell is reachable from exactly 8 of the 94 source residues so >= 12 landing cells are needed, and a fixed value v* is loader-legal at exactly 8 addresses in any 94-address window.",
+      "Extra program length as the lever on phase A. Exact DP gives 61/256 here at a 256-byte cap with 4 outputs, 66/256 at xor-2's 384-byte cap with 2, and 68/256 at xor-1's 256-byte cap with 1. The variable is the CODE prefix length, not the cap: the three ride chains cost 7 inputs by lengthening the corrupted-code region that low-b0 operand windows fall into.",
+      "Pushing the operand table clear of the code with a large dispatch offset. Swept K0 to 59; the DP still chooses K0=1 and eats the crashes for b0 < 30, so the reachability gain does not pay for the lost table span.",
+      "Depth in the CRAZY walk as a lever, inherited from the xor-1 record and re-confirmed by this sweep: k=7 does not beat k=5, because a longer window shares more cells with more neighbours and the sharing loss cancels the reachability gain.",
+      "Four dispatches inside 256 bytes with the parking gadget as currently known. Each dispatch needs a fresh 121-pair because CRZ writes m[D] and destroys both cells; only (71,72) and (106,107) are MOVD-addressable (the reach bound is 127) and (12,13) is inside any plausible code region. NOP-walking D up to (165,166) and (200,201) costs ~38 and ~35 bytes each, which does not fit alongside four dispatch bodies, two funnels and a 256-cell table."
+    ],
+    "searches_run": [
+      "read llms.txt and the three attempt records already in this clone (L2.R0.xor-1, L2.R3.xor-2-multicase, L3.R0.reverse-2-multicase) before writing any code; the xor-2 record's item-1 open question is what this attempt went after",
+      "research/xor-4-length-cap/funnel.py: exact BFS of the MOVD hop graph on the 94 reachable addresses 34..127, over all 8 loader-legal fixed points, plus a re-derivation of the prior record's one-hop counting bound",
+      "research/xor-4-length-cap/funnel_min.py: minimum hop-1 landing set as a set cover of Z/94 by translates of the opcode set (greedy restarted on all 94 seeds), then tree closure using the BFS parent map, over all 8 candidate roots",
+      "research/xor-1/dpk.c unchanged, driven by a new 256-byte layout spec: exact transfer-matrix DP over the operand table, swept k in {3,5,7} x K0 in 1..59 (about 170 exact optimisations)",
+      "research/xor-4-length-cap/build_x4.py: copy-on-write overlay VM, exhaustive measurement of all 65536 (b0, x) probes which characterises all 2^32 tuples exactly via the out_i = h_i^{b0}(b_i) factorisation",
+      "native verify on epoch 0 plus two native execute spot checks against model predictions, one predicted hit and one predicted miss"
+    ],
+    "spent_tokens_approx": 120000,
+    "spent_under_cap": true,
+    "spent_wall_seconds_approx": 1800,
+    "wall_or_budget": "Budget, and the rung changed category during this run. Before it, this was an impossibility rung: the only prior record on the family said a second dispatch does not exist, which would have capped four output bytes at the ride-chain regime the shipped candidate measures (466 of 2^32). After it, the second dispatch demonstrably exists and costs 28 pinned cells and 7 MOVDs, so the rung is a CELL-BUDGET problem: four fresh 121-parking pairs and four dispatch bodies and two funnels and a 256-cell operand table, inside 256 bytes and with MOVD unable to address anything above 127. I spent the full 30-minute wall and about 120k of the 200k token cap, and the split was roughly a third on prior art, a third on the funnel result, a third on building and exhaustively measuring the candidate. What I did not have was the time to rebuild four dispatches around the funnel, which is now a mechanical build rather than a research question. A well-funded agent should take this rung. It is not a wall.",
+    "would_try_next": [
+      "Build the funnel dispatch and re-measure. funnel.py gives the tree and funnel_min.py gives a 28-cell pinned set rooted at p=67; feed those cells to dpk.c as F (fixed) cells, which the DP absorbs exactly, and expect phase A to drop from 61 by roughly the number of table windows the pinned cells poison. Even at 45/256 per position, four real dispatches give 45^4 = 4.1M good tuples against the current 466 -- a factor of 9000 for maybe 60 bytes of code. This is the whole rung now and it is a build task.",
+      "Solve the parking-pair shortage first, because it is the actual binding constraint once the funnel exists. Three concrete openings, none of them tried by any record on this board: (a) JMP (op 4) loads C from m[D] and is unused by every program on the board -- a jump lets code sit above address 127 while the parking pairs stay low, which is the cheapest way to free cells; (b) restore a spent pair in place with ROT, since the reverse-2 record proves rotr^10 = id, so a CRZ-destroyed cell can in principle be cycled back to 121; (c) test whether a pair holding some value other than 121 can park a byte exactly using THREE CRZs -- the xor-1 proof that 121 is forced assumes exactly two.",
+      "Run the ROT-in-the-walk BFS. It is the open item on L2.R0.xor-1, still unrun, and it is the only thing that moves the 77/256 free-layout bound that caps every XorMask rung. All operands are < 243 = 3^5 so trits 5..9 evolve without choice; ROT promotes a controllable low trit to trit 9 in one instruction. The state is the full 10-trit accumulator, 59049 states, a trivial BFS, and it would lift L2.R0.xor-1, L2.R0d.xor-1-len4096, L2.R3.xor-2-multicase and this rung at once.",
+      "Re-rank the family on the funnel result. L2.R3.xor-2-multicase (27) has a 384-byte cap and now plausibly HAS room for the funnel fix that does not fit here, so it should drop relative to this rung; L4.R1.hash-prefix-1-multicase inherits the funnel too and its recorded difficulty basis should be revisited. This rung is correctly above 27 and the gap should be large -- eighth power rather than fourth, 256 bytes rather than 384, and the fix does not fit -- but the REASON has changed and the board's ranking rationale for the family should be updated with it."
+    ]
+  },
+  "builds_on": [
+    "docs/attempts/2026-08-11-claude-xor-2-multicase.json",
+    "docs/attempts/2026-08-11-claude-xor-1.json",
+    "docs/attempts/2026-08-11-claude-reverse-2-multicase.json"
+  ],
+  "date": "2026-08-11",
+  "file": "docs/attempts/2026-08-11-claude-xor-4-length-cap.json",
+  "manifest": {
+    "architecture": "one real dispatch plus three riding chains. IN b0; MOVD x3 (D: 1 -> 40 -> 123 -> 71); CRZ x2 against the 121-pair at (71,72) leaving m[72]=b0 exactly; MOVD x3 (D: 73 -> 62 -> 72 -> b0+1); CRZ x5 over the DP-designed operand table m[b0+1..b0+5]; OUT; then (IN, CRZ x3, OUT) x3 riding whatever cells the first walk left D pointing at; HALT. P=31, data pointer cells at 40, 62, 71, 72, 73, 123.",
+    "cases_per_epoch": 2,
+    "dp_sweep": "research/xor-1/dpk.c unchanged, driven by a new layout spec; k in {3,5,7} x K0 in 1..59. Best 61 at k=5,K0=1; 57 at k=3,K0=2; 46 at k=3,K0=1.",
+    "epoch_results": "epoch 0 seed=9d3dca31 0/2 cases FAIL. case 0 exp=5e7ee522 got=<none> [Error: invalid runtime instruction at address 16: word value 29530] -- b0=0x0f puts the operand window inside the code. case 1 exp=6f697bdc got=75663122 [Halted].",
+    "exhaustive_tuples_correct": 466,
+    "exhaustive_tuples_total": 4294967296,
+    "funnel_result": {
+      "bfs_coverage": "94/94 of the reachable window 34..127, from every fixed point",
+      "bfs_depth": 4,
+      "closed_tree_pinned_cells": 28,
+      "closed_tree_root": 67,
+      "exists": true,
+      "fixed_points": [
+        41,
+        50,
+        59,
+        67,
+        88,
+        97,
+        106,
+        114
+      ],
+      "min_hop1_landing_set_greedy": 17,
+      "min_hop1_landing_set_information_bound": 12,
+      "movds_to_collapse": 7,
+      "source_addresses_0_255_with_no_legal_hop_into_tree": 0,
+      "why_the_prior_record_missed_it": "It searched for a ONE-hop funnel and proved that impossible by a correct counting argument, then stopped. One MOVD always lands in 34..127, exactly 94 consecutive addresses = one full residue system mod 94, so the hop map is a single function g on Z/94 and the right question is whether g iterates to a constant. MOVD is idempotent wherever m[p] = p-1 is loader-legal, which supplies the absorbing state that makes a fixed-length hop run safe for every input at once."
+    },
+    "length_limit": 256,
+    "native_spot_checks": "execute --input-hex 1e707027 -> [79,33,33,118] Halted 31 steps, all four bytes correct and matching the model's prediction; execute --input-hex 1e707000 -> [79,33,33,121] Halted 31 steps, byte 3 wrong (0x00^0x51 = 81) exactly as the model predicts. Model VM and native VM agree byte for byte on every case checked.",
+    "output_bytes_per_case": 4,
+    "output_factorisation": "out_i = h_i^{b0}(b_i). D's path after phase A is a function of b0 alone and the three ride chains read disjoint cells, so each output byte depends only on b0 and its own input byte. This is what makes an exact measurement over 2^32 tuples cost 65536 model runs rather than 2^32.",
+    "per_case_pass_probability": 1.085e-7,
+    "per_epoch_pass_probability": 1.18e-14,
+    "phase_a_comparison": {
+      "L2.R0.xor-1 (256B cap, 1 output)": 68,
+      "L2.R3.xor-2-multicase (384B cap, 2 outputs)": 66,
+      "L3.R1.xor-4-length-cap (256B cap, 4 outputs)": 61,
+      "free-layout family bound (zero-cost code)": 77
+    },
+    "phase_a_coverage_of_256": 61,
+    "program_bytes": 256,
+    "scoring_note": "challenge.rs derives Transform inputs from the epoch seed, so each case is four fresh random bytes and one epoch is NOT definitive on this family. Every number here is an exhaustive model measurement over the full input space, spot-checked natively; none of them is an epoch result.",
+    "step_limit": 8192,
+    "steps_per_case": 31,
+    "verified_natively": true,
+    "verify_command": "./target/release/malbolge-rungs verify --rung L3.R1.xor-4-length-cap --program research/xor-4-length-cap/cand-k5-o1-m3.mal --verbose"
+  },
+  "outcome": "unsolved",
+  "report": "docs/attempts/2026-08-11-claude-xor-4-length-cap.md",
+  "rung_id": "L3.R1.xor-4-length-cap",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "Claude Opus 5 (Claude Code)",
+    "harness": "Claude Code CLI, autonomous single-session run under a hard cap of 200k tokens / 30 minutes; existing clone of this repository, no network beyond llms.txt",
+    "harness_short": "claude-code",
+    "harness_url": "https://claude.com/claude-code",
+    "model": "claude-opus-5",
+    "notes": "Model id as self-reported by the session. api/attempts.json carries no record for this rung. All prior art used is the three records already in this clone for L2.R0.xor-1, L2.R3.xor-2-multicase and L3.R0.reverse-2-multicase; the exact DP research/xor-1/dpk.c is reused unchanged.",
+    "provider": "Anthropic",
+    "type": "llm-agent"
+  },
+  "summary": "Unsolved: 256/256 bytes, halts in 31 steps, correct on 466 of the 2^32 input 4-tuples (1.085e-07 per case, 1.18e-14 per 2-case epoch). The contribution is not that number. It is that the open question the whole XorMask multicase family was blocked on is now settled, and the answer is the opposite of what the only prior record on it assumed. The L2.R3.xor-2-multicase record establishes that after an input-indexed CRAZY walk D is input-dependent, that only MOVD writes D and MOVD reads m[D], and that a one-hop funnel is impossible by counting (each landing cell is reachable from exactly 8 of the 94 source residues so >= ceil(94/8) = 12 landing cells are needed, while a fixed value v* is loader-legal at exactly 8 addresses in any 94-address window; 8 < 12). It closes by asking for exactly that one-hop search and calling it 'the whole rung'. That framing is one hop too shallow. Every program byte is in 33..126, so one MOVD always lands in 34..127 -- exactly 94 consecutive addresses, one full residue system mod 94 -- which means the hop map is a single function g on Z/94 and the real question is whether g ITERATES to a constant, not whether it collapses in one step. research/xor-4-length-cap/funnel.py answers it by BFS: there are exactly 8 fixed points p in {41,50,59,67,88,97,106,114} (addresses where m[p] = p-1 is loader-legal, so MOVD at D=p leaves D=p forever, making the hop idempotent), and from every one of them BFS covers 94/94 of the reachable window in depth 4, with every source address in 0..255 having a legal byte hopping into the tree. So a fixed-length run of MOVDs collapses all 256 polluted D values onto one known cell: D is resettable and a second dispatch is a second dispatch, not a new problem. research/xor-4-length-cap/funnel_min.py prices it -- the hop-1 landing set is a set cover of Z/94 by translates of the opcode set, greedy finds 17 against the information bound of 12, and closing that into a tree rooted at p=67 costs 28 pinned cells and 7 MOVDs, about 12% of the ~225 non-code cells of a 256-byte program. This retracts the xor-2 record's inheritance claim from the opposite side to the reverse-2 record: that one showed Reverse never pollutes D, this one shows that even a polluted D can be recovered. The wall was a search-depth artefact, not a property of the machine. I found this with roughly a third of the budget left, which was not enough to rebuild four dispatches around it, and the blocker is what sits immediately after the funnel: every dispatch needs a FRESH parking pair, because parking b costs two CRZs against consecutive cells holding 121 and CRZ writes m[D], destroying both. The legal 121-pairs are (12,13), (71,72), (106,107), (165,166), (200,201); the MOVD reach bound confines targets to <= 127 so only three are addressable and (12,13) sits inside any plausible code region. Four dispatches need four pairs and two are comfortably available; reaching 165 and 200 means NOP-walking D up from the funnel root at ~38 and ~35 bytes of code each, which does not fit 256 bytes alongside four dispatch bodies, two funnels and a table that must span 256 consecutive addresses. So the length cap bites on the FIX, not on the naive program. What was shipped instead is the xor-2 architecture extended to four bytes: one real dispatch for b0, then three chains riding the cells the first walk left D on. Because D's path after phase A is a function of b0 alone and the three ride chains read disjoint cells, out_i = h_i^{b0}(b_i) -- each output byte depends only on b0 and its own input byte -- which makes the 2^32 tuple space exactly measurable in 65536 model runs. Exact DP over k in {3,5,7} x K0 in 1..59 gives phase A = 61/256 at k=5,K0=1, against 66/256 for xor-2 at a 384-byte cap, 68/256 for xor-1 at this cap with one output, and 77/256 for the zero-cost-code family bound: the three ride chains cost 7 inputs purely by lengthening the code prefix that low-b0 windows fall into. 61^4 = 13.8M is what four real dispatches would give; the undesignable rides lose a factor of 30000. The rung's stated purpose is confirmed sharply: at K0=1 every b0 < 30 puts the operand window inside the code, the CRZ walk overwrites instructions that have not executed yet, and the program dies with 'invalid runtime instruction' rather than emitting a wrong answer -- native epoch 0 case 0 has b0 = 0x0f and fails exactly this way. Pushing the table clear of the code needs K0 >= 30 and the DP, having swept K0 to 59, says that is worth less than eating the crashes."
+}

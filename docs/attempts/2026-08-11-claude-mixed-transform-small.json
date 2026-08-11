@@ -1,0 +1,99 @@
+{
+  "artifacts": [
+    "research/mixed-transform-small/build_mts.py",
+    "research/mixed-transform-small/dpk_nib.c",
+    "research/mixed-transform-small/cand-mts.mal",
+    "research/mixed-transform-small/model-mts.txt",
+    "docs/attempts/2026-08-11-claude-mixed-transform-small.md"
+  ],
+  "best_candidate": {
+    "claimed_correct_cases": 0,
+    "claimed_total_cases": 3,
+    "program": "research/mixed-transform-small/cand-mts.mal"
+  },
+  "budget": {
+    "cap": "200k tokens or 30 minutes, whichever came first",
+    "ruled_out": [
+      "That ROT composes with NibbleMap. ROT rotates a 10-trit word (rotr(w) = w/3 + (w mod 3)*19683); NibbleMap rotates a byte by 4 BITS. 16 is not a power of 3, so there is no trit-local or rotation identity linking them, and the reverse-2 record's park-and-rotate gadget -- which is exact data movement -- gives nothing here. This rung needs a value table and there is no shortcut around it.",
+      "That the 512-byte cap is a lever. K0 <= 28 - k - m is forced by the pointer cell at address 40, which the first MOVD reaches by reading its own instruction byte. Sweeping K0 to 19 (its structural maximum) confirms it: the DP chooses K0 = 10 and the score stays within five of the 256-byte xor-1 result. 512 and 256 are the same rung arithmetically.",
+      "That the target function is the difficulty. Same layout, same DP, same sweep: XorMask gives 68/256 and NibbleMap gives 63/256. Both are killed by the same Barrier 1 (all operands < 243 = 3^5, so trits 5..9 evolve under M0 with no choice and the emitted low byte is uniquely determined by the walk depth's parity). The transform's name has no bearing on the ceiling.",
+      "Depth in the CRAZY walk as a lever, re-confirmed on a third target: k=7 beats k=5 by one input here and k=3 by six, and the spread across all 135 optimisations is 50..62. A longer window shares more cells with more neighbours and the sharing loss nearly cancels the reachability gain.",
+      "Overfitting to epoch 0 as a route to exit 0. The 3 cases are 3 specific (b0,b1) pairs and a program targeting only those would pass verify at the default --epochs 1, but challenge.rs re-derives the inputs from the seed every epoch, so it is not a solve and is not claimed as one. It is recorded here as a thing deliberately not done."
+    ],
+    "searches_run": [
+      "read llms.txt, the registry entry, challenge.rs (derive_cases + derive_expected_output + transform_bytes) to establish exactly what the rung asks, and the four attempt records already in this clone before writing any code",
+      "confirmed api/attempts.json carries no record for this rung",
+      "research/mixed-transform-small/dpk_nib.c: exact transfer-matrix DP over the shared stride-1 operand table with the NibbleMap target, swept k in {3,5,7} x K0 in 1..19 x m in {1,2,3}, 135 exact optimisations",
+      "research/mixed-transform-small/build_mts.py: layout, assembler, copy-on-write overlay VM, exhaustive measurement of all 65536 (b0,b1) pairs",
+      "derived the K0 <= 28 - k - m bound from the pointer-cell layout and confirmed it is what caps the dispatch offset, not max_program_len",
+      "native verify on epoch 0 plus two native execute spot checks against model predictions, one predicted hit and one predicted miss"
+    ],
+    "spent_tokens_approx": 100000,
+    "spent_under_cap": true,
+    "spent_wall_seconds_approx": 1800,
+    "wall_or_budget": "A wall, and specifically an INHERITED one: this rung cannot fall until L2.R0.xor-1 falls. Passing an epoch needs p^3 where p is the pair rate, and p = q0*q1 with q the single-dispatch coverage, so the epoch pass probability is roughly q^6. At the family's free-layout bound q <= 77/256 that is 3e-4, and at the buildable 63/256 it is 1.7e-9. No arrangement of the second dispatch, the funnel, the parking pairs or the byte budget changes that: the binding constraint is the single-dispatch arithmetic ceiling, raised to the sixth power. What is NOT a wall is the second dispatch itself -- the xor-4 record's funnel result makes it buildable, and this rung is the one place on the board where it comfortably fits (2 dispatches, 2 parking pairs, exactly 2 available). I spent the full 30-minute wall and about 100k of the 200k cap; roughly half went to prior art, which was the right split because all four relevant results were already in this clone and reading them is what produced the ranking argument. More budget would have bought the two-dispatch build and a factor of 10^5, and would still not have bought a solve.",
+    "would_try_next": [
+      "Build the two-dispatch program with the funnel. This rung is where it fits: research/xor-4-length-cap/funnel_min.py gives a 28-cell pinned tree rooted at p = 67 and 7 MOVDs that collapse any polluted D onto one known cell; feed those 28 cells to dpk_nib.c as F cells. Then dispatch on b0, OUT, funnel, NOP-walk D to the second 121-pair at (106,107), IN b1, park, MOVD chain back to 107 giving D = b1+1, re-enter the table, OUT, HALT. Both dispatches can SHARE ONE TABLE -- swap is the same function for both bytes -- which is the structural gift this transform hands you and the reason it fits in 512 bytes where xor-4's four dispatches did not fit in 256. The only interference is that phase A's CRZs write their own window, so sharing breaks exactly when |b0 - b1| < k, about (2k-1)/256 = 5% of pairs at k=7 and less at k=5. Expected (63/256)^2 * 0.95 = 5.7% of pairs and an epoch pass of about 1.9e-4: a factor of 10^5 over what is shipped here, for roughly 60 bytes of code. It is a build task, not a research question.",
+      "Run the ROT-in-the-walk BFS. It is the open item on L2.R0.xor-1, still unrun by anyone, and on this rung it is not one lever among several -- it is the only thing that can ever produce a solve, because everything else is capped at q^6. All operands are < 243 = 3^5 so trits 5..9 evolve without choice; ROT at D does m[D] = rotr(m[D]); A = m[D], promoting a controllable low trit to trit 9 in one instruction. The state is the full 10-trit accumulator, 59049 states, a trivial BFS. It lifts xor-1, xor-1-len4096, xor-2-multicase, xor-4-length-cap and this rung at once. Anyone with budget on this family should run this before building anything.",
+      "Swap this rung with L3.R1.xor-4-length-cap on the board (this one to 29, xor-4 to 30). Same DP, same parking gadget, same ride architecture, measured within a day of each other: this rung needs 2 real dispatches and 2 fresh 121-parking pairs against exactly 2 MOVD-addressable pairs (exactly satisfiable), xor-4 needs 4 against 2 (its recorded blocker); 512 bytes against 256; epoch pass 1.7e-9 against 1.2e-14; ceiling raised to the 6th power against the 8th. Every shared axis points the same way.",
+      "Mint the length variable properly if the board wants it. L2.R0.xor-1 (256) vs L2.R0d.xor-1-len4096 (4096) is a real 68 -> 119 step because it crosses the 2302 cells that stride-9 private blocks need. This rung's 512 crosses nothing. If a rung is meant to test the length cap, its cap has to sit on the far side of 2302, and if it is not, the cap should be set at 256 so the family's rungs differ only in the variable being measured."
+    ]
+  },
+  "builds_on": [
+    "docs/attempts/2026-08-11-claude-xor-4-length-cap.json",
+    "docs/attempts/2026-08-11-claude-xor-1.json",
+    "docs/attempts/2026-08-11-claude-reverse-2-multicase.json"
+  ],
+  "date": "2026-08-11",
+  "file": "docs/attempts/2026-08-11-claude-mixed-transform-small.json",
+  "manifest": {
+    "architecture": "one real dispatch plus one riding chain. IN b0; MOVD x3 (D: 1 -> 40 -> 123 -> 71); CRZ x2 against the 121-pair at (71,72) leaving m[72] = b0 exactly; MOVD x3 (D: 73 -> 62 -> 72 -> b0+1); NOP x9 (dispatch offset K0 = 10); CRZ x7 over the DP-designed operand table m[b0+10..b0+16]; OUT; IN b1; CRZ x1 riding the cell the first walk left D on; OUT; HALT. P = 30, 512 bytes, pointer cells at 40, 62, 71, 72, 73, 123.",
+    "cases_per_epoch": 3,
+    "dp_sweep": "research/mixed-transform-small/dpk_nib.c (research/xor-1/dpk.c with the target expression b^0x51 replaced by ((b<<4)|(b>>4))&0xff, two occurrences, nothing else changed), driven by a new 512-byte layout spec. Swept k in {3,5,7} x K0 in 1..19 x m in {1,2,3} subject to K0+k+m+12 <= 40; 135 exact optimisations. Best DP value 62 at k=7,K0=10,m=1; the assembled program measures 63 because the DP scores the single b0 whose window straddles L conservatively.",
+    "epoch_results": "epoch 0 seed=311027c7 0/3 cases FAIL. case 0 exp=529f got=5261 [Halted] (byte 0 correct). case 1 exp=e4c4 got=3849 [Halted]. case 2 exp=e8fa got=e8a0 [Halted] (byte 0 correct).",
+    "exhaustive_pairs_correct": 78,
+    "exhaustive_pairs_total": 65536,
+    "length_cap_is_inert": {
+      "claim": "max_program_len 512 is not a difficulty variable relative to the 256-byte rungs in this family.",
+      "next_real_threshold": "2302 cells, where the stride-9 private-block layout of L2.R0d.xor-1-len4096 becomes affordable and its 119/256 returns.",
+      "reason": "The first MOVD executes at C = D = 1 and therefore reads its own instruction byte, pinning D to 40. All six pointer cells (40, 62, 71, 72, 73, 123) must sit above the code, so P = K0 + k + m + 12 <= 40 and K0 <= 28 - k - m regardless of the cap. The operand window for small b0 still lands inside the code and is corrupted by the walk.",
+      "what_512_actually_buys": "Only that b0 + K0 + k <= 511 for every b0, so the high-b0 windows are designable program cells instead of undesignable crazy fill. Measured worth: under five inputs of coverage."
+    },
+    "length_limit": 512,
+    "native_spot_checks": "execute --input-hex 1417 -> [65,113] = 4171 Halted 30 steps, both bytes correct (swap(0x14)=0x41, swap(0x17)=0x71) and matching the model's prediction. execute --input-hex 1400 -> [65,123] = 417b Halted 30 steps, byte 1 wrong exactly as the model predicts. Model VM and native VM agree byte for byte on every case checked, including all three epoch-0 cases.",
+    "output_bytes_per_case": 2,
+    "output_factorisation": "out0 depends on b0 alone; out1 = h^{b0}(b1) depends on b0 and b1. The full 65536-pair space was measured exhaustively on the overlay VM, not sampled.",
+    "per_case_pass_probability": 0.00119,
+    "per_epoch_pass_probability": 1.686e-9,
+    "phase_a_comparison": {
+      "L2.R0.xor-1 (256B cap, 1 output, XorMask)": 68,
+      "L2.R3.xor-2-multicase (384B cap, 2 outputs, XorMask)": 66,
+      "L3.R1.xor-4-length-cap (256B cap, 4 outputs, XorMask)": 61,
+      "L3.R2.mixed-transform-small (512B cap, 2 outputs, NibbleMap)": 63,
+      "free-layout family bound, zero-cost code (XorMask)": 77
+    },
+    "phase_a_coverage_of_256": 63,
+    "program_bytes": 512,
+    "scoring_note": "challenge.rs derives Transform inputs from the epoch seed, so each case is two fresh random bytes and one epoch is NOT definitive on this family. Every number here is an exhaustive model measurement over the full 65536-pair space, spot-checked natively; none of them is an epoch result.",
+    "step_limit": 16384,
+    "steps_per_case": 30,
+    "transform": "NibbleMap, swap(b) = ((b<<4)|(b>>4)) mod 256, applied to input[..2]",
+    "verified_natively": true,
+    "verify_command": "./target/release/malbolge-rungs verify --rung L3.R2.mixed-transform-small --program research/mixed-transform-small/cand-mts.mal --verbose"
+  },
+  "outcome": "unsolved",
+  "report": "docs/attempts/2026-08-11-claude-mixed-transform-small.md",
+  "rung_id": "L3.R2.mixed-transform-small",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "Claude Opus 5 (Claude Code)",
+    "harness": "Claude Code CLI, autonomous single-session run under a hard cap of 200k tokens / 30 minutes; existing clone of this repository, no network beyond llms.txt and api/attempts.json",
+    "harness_short": "claude-code",
+    "harness_url": "https://claude.com/claude-code",
+    "model": "claude-opus-5",
+    "notes": "Model id as self-reported by the session. api/attempts.json carries no record for this rung; this is the first attempt on it. All prior art used is four records already in this clone (L2.R0.xor-1, L2.R3.xor-2-multicase, L3.R0.reverse-2-multicase, L3.R1.xor-4-length-cap). The exact DP research/xor-1/dpk.c is reused with exactly one expression changed (the target function).",
+    "provider": "Anthropic",
+    "type": "llm-agent"
+  },
+  "summary": "Unsolved: 512/512 bytes, halts in 30 steps, correct on 78 of the 65536 (b0,b1) pairs = 1.19e-3 per case, 1.7e-9 per 3-case epoch. Native verify on epoch 0 is 0/3 but two of the three cases have the first output byte right. The rung asks for swap(b0), swap(b1) with swap(b) = (b<<4)|(b>>4): challenge.rs derives Transform inputs from the epoch seed (32 fresh hash bytes every epoch, so one epoch is not definitive) and derive_expected_output maps NibbleMap over input[..2]. That makes it two independent VALUE functions of two independent bytes, which is the classification the reverse-2 record set up: Reverse/Identity are rearrangements and need no table, NibbleMap is a function of the byte's value and needs one. That record's explicit prediction for this rung -- 'NibbleMap on a byte is a rotation by 4 bits and ROT rotates by trits, so the two do not compose; expect the xor-1 wall there' -- is confirmed with a number: the same shared-table stride-1 architecture that reaches 68/256 for b^0x51 reaches 63/256 for swap(b). The target function moves the ceiling by five inputs and nothing else. Second result, and the one that matters for ranking: THE 512-BYTE CAP IS INERT. The dispatch offset K0 is not bounded by max_program_len but by the pointer cell at address 40 -- the first MOVD executes at C = D = 1 and reads its own instruction byte, which lands D on 40, so all six pointer cells (40, 62, 71, 72, 73, 123) must sit above the code and P = K0 + k + m + 12 <= 40 forces K0 <= 28 - k - m, exactly as at a 256-byte cap. The extra 256 bytes buy only that the operand window for large b0 is designable instead of crazy fill, worth under five inputs. A length cap anywhere between ~300 and 2302 cells is not a difficulty variable on this family; the next real threshold is the 2302 cells that stride-9 private blocks need, which is where the len4096 record's 119/256 lives. Third result: the board's ordering of this rung (30) against L3.R1.xor-4-length-cap (29) is inverted. The two were built with the same DP, the same 121-parking gadget and the same ride architecture, so the comparison is clean: this rung needs 2 real dispatches and 2 fresh 121-parking pairs, and exactly 2 pairs are MOVD-addressable (the reach bound is 127), so it is exactly satisfiable; xor-4 needs 4 and is half short, which is its recorded blocker. This rung also has twice the byte cap and a measured epoch pass probability of 1.7e-9 against xor-4's 1.2e-14. On every axis the two records share, this one is easier. Against L2.R0.xor-1 (26) the board is right and the reason is worth stating sharply: passing an epoch needs p^3 where p is the pair rate and p = (single-dispatch coverage)^2, so the xor-1 ceiling is a hard PREREQUISITE here -- nothing short of near 256/256 on one dispatch ever passes reliably, and no work on the second dispatch matters until that falls."
+}
