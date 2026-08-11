@@ -1,0 +1,57 @@
+{
+  "artifacts": [
+    "research/map16/lanes.py",
+    "research/map16/search.py",
+    "research/map16/trit4.py",
+    "research/map16/chain.c",
+    "docs/attempts/2026-08-10-claude-map16.md"
+  ],
+  "best_candidate": null,
+  "budget": {
+    "architecture_configurations_swept_for_ceiling": 80,
+    "best_ceiling_over_all_configurations": 15,
+    "best_model_level_count_found": 12,
+    "best_natively_verified_count": 0,
+    "candidate_program_bytes": null,
+    "candidate_steps": null,
+    "ceiling_note": "15/16 is an exact ceiling for the data-dispatch table architecture with a CRZ/NOP walk, proved by the trit-4 forcing law over all 80 realisable configurations, not by search. It rests on two assumptions: every walk operand is a program byte in 33..126, and the accumulator's trit 4 is only ever touched by CRAZY. A ROT inside the walk leaves the second assumption and the ceiling does not apply there. 16/16 was not shown impossible in Malbolge, only in this architecture.",
+    "dead_lane_in_every_15_of_16_configuration": "0xa7",
+    "dispatch_configs_screened": 0,
+    "dispatch_family_separating_configs_reported_by_tool": 0,
+    "table_depths_swept": "K = 2..8, plus reach-saturation probes to K = 14",
+    "table_offsets_swept": "K0 = 243..3645 step 243 (all multiples of 243 that fit the table under the 4096-byte program cap)",
+    "token_cap": 200000,
+    "walk_geometry": "NOP-spaced: CRZ offsets O chosen so that (O - O) misses all 94 pairwise differences of the reduced inputs, making the sixteen lane windows disjoint",
+    "wall_cap_seconds": 1800,
+    "what_more_budget_would_have_bought": "This rung is a budget problem in the near term and a wall at the top. The near term: the entire gap between 0 verified cases and roughly 12 is one mechanical builder change. research/map16/chain.c finds the operand pair (e.g. K0=3402, W1=19318, W2=26122, 8 ops) but its leg 2 leaves W2 as a rotation of W1 in the same cell, so the two operands cannot coexist; the fix is to give the chain search an explicit cell per op, as research/map12-low/build.py already does, so leg 2 opens with a CRAZY into a fresh cell and every later ROT names that cell. Bounded, no search. Second, the five 15/16 configurations were never given a real offset search -- the 12/16 came from greedy-minimal offsets under identity g4 -- and because the lanes are independent the right beam objective is per-lane hit probability, planning the final offset first and searching backwards, not the total-reach objective that measured worse (4/16). Third, and the only idea that can beat 15/16: put a ROT inside the walk. ROT rotates the whole ten-trit word, moving trit 4 out of the pinned position and a free trit in, which dissolves both the trit-4 forcing law and the frozen-high-part relation at the cost of a 59049-state per-lane DP instead of 243 -- trivial in C. It must model that ROT writes the cell at [d], so a ROT in the walk consumes a table cell too. Fourth, non-identity dispatch maps on trits 0..3, checked for injectivity on this input set the same way trit 4 was, give more address layouts and change every lane's candidate bytes at once -- cheap and orthogonal to O. I would not spend anything on dispatch geometries, on window-overlap DPs, or on K0 values that are not multiples of 243."
+  },
+  "builds_on": [
+    "docs/attempts/2026-08-10-claude-map12-low.json",
+    "docs/attempts/2026-08-10-claude-cov48.json"
+  ],
+  "date": "2026-08-10",
+  "file": "docs/attempts/2026-08-10-claude-map16.json",
+  "manifest": {
+    "cpu_workers": 1,
+    "harness": "claude-code",
+    "model_version": "claude-opus-5",
+    "native_binary": "target/release/malbolge-rungs",
+    "reasoning_effort": null,
+    "wall_seconds": null
+  },
+  "outcome": "unsolved",
+  "report": "docs/attempts/2026-08-10-claude-map16.md",
+  "rung_id": "L2.FM3.xor51-map16",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "Claude Opus 5 (Claude Code)",
+    "harness": null,
+    "harness_short": "claude-code",
+    "harness_url": "https://claude.com/claude-code",
+    "model": "claude-opus-5",
+    "notes": "Model id as reported by the session's own environment. Run under a fixed 200k-token / 30-minute cap as part of a board-calibration survey.",
+    "provider": "Anthropic",
+    "type": "llm-agent"
+  },
+  "summary": "No verified candidate; the contribution is an exact ceiling. The dispatch family is a wall here (0 separating configs of 143808, by the board's own tool), so this attempt takes the cov48/map12-low data-dispatch table and implements the lever map12-low's record names as its item 2: NOP-spaced walks. Two structural results. (1) K0 may be any multiple of 243 on this rung, not 729 -- the sixteen inputs are pairwise distinct mod 243, so trit 5 can be crushed to a constant and the addresses stay distinct, giving fifteen usable offsets. (2) Spacing the K CRAZYs so that no input difference lies in O - O makes the lane windows disjoint, which turns the joint table problem into sixteen independent 243-state reachability problems. Window overlap, the thing that killed map12-low, is therefore not what limits this rung. What limits it is a trit law: every table operand is a printable byte 33..126, so its trit 4 is never 2, and the two crazy rows trit 4 can select, T[0]=(1,0,0) and T[1]=(1,0,2), agree on a=0 and a=1. Once the accumulator's trit 4 leaves 2 it alternates 1,0,1,0 deterministically and no table byte can change it -- measured directly, the reachable low-5-trit set saturates at 81 of 243 with trit 4 pinned. Trit 4 of each lane's required value L* = (target - H) mod 256 is therefore decided before any table exists. The dispatch's only lever is the per-trit map g = M[w2] o M[w1], which takes eight values of which five keep the sixteen addresses distinct at trit 4; sweeping all 5 maps x 2 parities x 8 reachable high parts = 80 configurations gives a best ceiling of 15/16, with input 0xa7 dead in every one. Model-level best over the offsets actually searched is 12/16 (K0=3402, K=8), unverified: the run ended inside the operand-chain builder, where leg 2 of the chain leaves W2 as a rotation of W1 in the same cell so the two operands cannot coexist."
+}
