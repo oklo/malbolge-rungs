@@ -101,21 +101,37 @@ td.note .txt {
   text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom;
 }
 td.num { text-align: right; font-variant-numeric: tabular-nums; }
-/* Collapsed solved block. The board runs no JavaScript, so the toggle is a
-   hidden checkbox and a sibling selector — one table throughout, which keeps
-   every column aligned between the summary row and the rows it hides. */
-input.solved-toggle { position: absolute; opacity: 0; width: 0; height: 0; }
-tbody.solved-rows { display: none; }
-input.solved-toggle:checked ~ table tbody.solved-rows { display: table-row-group; }
-tr.solved-summary td { color: var(--text-soft); }
-tr.solved-summary label { cursor: pointer; font-family: var(--sans);
+/* Collapsed level. A level whose every rung is solved shows as one row that
+   expands to the rows themselves. The board runs no JavaScript, so the toggle is
+   a hidden checkbox and a sibling selector — and it stays one table throughout,
+   which keeps the columns aligned between a summary row and the rows it hides. */
+input.lvl-toggle { position: absolute; opacity: 0; width: 0; height: 0; }
+tbody.lvl-rows { display: none; }
+#show-L0:checked ~ table tbody.lvl-0 { display: table-row-group; }
+#show-L1:checked ~ table tbody.lvl-1 { display: table-row-group; }
+#show-L2:checked ~ table tbody.lvl-2 { display: table-row-group; }
+#show-L3:checked ~ table tbody.lvl-3 { display: table-row-group; }
+#show-L4:checked ~ table tbody.lvl-4 { display: table-row-group; }
+#show-L5:checked ~ table tbody.lvl-5 { display: table-row-group; }
+#show-L6:checked ~ table tbody.lvl-6 { display: table-row-group; }
+#show-L7:checked ~ table tbody.lvl-7 { display: table-row-group; }
+#show-L8:checked ~ table tbody.lvl-8 { display: table-row-group; }
+#show-L9:checked ~ table tbody.lvl-9 { display: table-row-group; }
+tr.lvl-summary td { color: var(--text-soft); }
+tr.lvl-summary label { cursor: pointer; font-family: var(--sans);
   font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; }
-tr.solved-summary label:hover { color: var(--accent); }
-tr.solved-summary .marker::before { content: "\25b8  "; }
-input.solved-toggle:checked ~ table tr.solved-summary .marker::before { content: "\25be  "; }
-input.solved-toggle:checked ~ table tr.solved-summary .when-closed { display: none; }
-tr.solved-summary .when-open { display: none; }
-input.solved-toggle:checked ~ table tr.solved-summary .when-open { display: inline; }
+tr.lvl-summary label:hover { color: var(--accent); }
+tr.lvl-summary .marker::before { content: "\25b8  "; }
+#show-L0:checked ~ table tr.sum-0 .marker::before { content: "\25be  "; }
+#show-L1:checked ~ table tr.sum-1 .marker::before { content: "\25be  "; }
+#show-L2:checked ~ table tr.sum-2 .marker::before { content: "\25be  "; }
+#show-L3:checked ~ table tr.sum-3 .marker::before { content: "\25be  "; }
+#show-L4:checked ~ table tr.sum-4 .marker::before { content: "\25be  "; }
+#show-L5:checked ~ table tr.sum-5 .marker::before { content: "\25be  "; }
+#show-L6:checked ~ table tr.sum-6 .marker::before { content: "\25be  "; }
+#show-L7:checked ~ table tr.sum-7 .marker::before { content: "\25be  "; }
+#show-L8:checked ~ table tr.sum-8 .marker::before { content: "\25be  "; }
+#show-L9:checked ~ table tr.sum-9 .marker::before { content: "\25be  "; }
 th.num { text-align: right; }
 .solved { color: var(--solved); }
 .open { color: var(--faint); }
@@ -657,42 +673,59 @@ fn index_body(
         "<p class=\"sub lead\"><a href=\"attempt.html\">Attempt a rung.</a></p>"
     );
 
-    // The solved rungs form one contiguous run at the top of the ladder, so the
-    // whole block collapses behind a single summary row. Twenty-three of
-    // forty-one rows were solved history above the part of the table anyone is
-    // reading — the open frontier.
-    let solved_count = records.iter().filter(|r| r.status == Status::Solved).count();
-    let last_solved_rank = records
+    // A level whose every rung is solved collapses to one row. Levels are
+    // contiguous in rank order, so each is a single run that a <tbody> can wrap.
+    // Levels with any open rung stay expanded — that is where the reader is
+    // going.
+    let mut level_total: std::collections::BTreeMap<u32, usize> = Default::default();
+    let mut level_solved: std::collections::BTreeMap<u32, usize> = Default::default();
+    for r in records {
+        let lvl = find_rung(&r.rung_id).map(|x| x.level).unwrap_or(0);
+        *level_total.entry(lvl).or_default() += 1;
+        if r.status == Status::Solved {
+            *level_solved.entry(lvl).or_default() += 1;
+        }
+    }
+    let collapsed: std::collections::BTreeSet<u32> = level_total
         .iter()
-        .filter(|r| r.status == Status::Solved)
-        .filter_map(|r| r.rank)
-        .max();
-    let _ = writeln!(b, "<input type=\"checkbox\" id=\"show-solved\" class=\"solved-toggle\">");
+        .filter(|(lvl, total)| level_solved.get(lvl).copied().unwrap_or(0) == **total)
+        .map(|(lvl, _)| *lvl)
+        .collect();
+    for lvl in &collapsed {
+        let _ = writeln!(
+            b,
+            "<input type=\"checkbox\" id=\"show-L{lvl}\" class=\"lvl-toggle\">"
+        );
+    }
+
     let _ = writeln!(
         b,
         "<table>\n<tr><th class=\"num\">#</th><th>rung</th><th>status</th><th>model</th>\
          <th>harness</th><th>date</th><th class=\"num\">bytes</th>\
          <th class=\"num\">attempts</th><th>notes</th></tr>"
     );
-    if solved_count > 0 {
-        let _ = writeln!(
-            b,
-            "<tr class=\"solved-summary\"><td class=\"num dim\">1–{}</td>\
-             <td colspan=\"8\"><label for=\"show-solved\"><span class=\"marker\"></span>\
-             <span class=\"when-closed\">{} solved rungs — show</span>\
-             <span class=\"when-open\">{} solved rungs — hide</span></label></td></tr>",
-            last_solved_rank.unwrap_or(solved_count as u32),
-            solved_count,
-            solved_count,
-        );
-        let _ = writeln!(b, "<tbody class=\"solved-rows\">");
-    }
-    let mut closed_solved = false;
+
+    let mut open_group: Option<u32> = None;
     for record in records {
-        // Close the collapsed group as soon as the first open rung appears.
-        if !closed_solved && record.status != Status::Solved && solved_count > 0 {
+        let lvl = find_rung(&record.rung_id).map(|x| x.level).unwrap_or(0);
+        // Leaving a collapsed level closes its group.
+        if open_group.is_some_and(|g| g != lvl) {
             let _ = writeln!(b, "</tbody>");
-            closed_solved = true;
+            open_group = None;
+        }
+        // Entering one opens a summary row plus the group it hides.
+        if collapsed.contains(&lvl) && open_group.is_none() {
+            let n = level_total.get(&lvl).copied().unwrap_or(0);
+            let first = record.rank.unwrap_or(0);
+            let last = first + n as u32 - 1;
+            let _ = writeln!(
+                b,
+                "<tr class=\"lvl-summary sum-{lvl}\"><td class=\"num dim\">{first}–{last}</td>\
+                 <td colspan=\"8\"><label for=\"show-L{lvl}\"><span class=\"marker\"></span>\
+                 L{lvl} — {n} rungs, all solved</label></td></tr>"
+            );
+            let _ = writeln!(b, "<tbody class=\"lvl-rows lvl-{lvl}\">");
+            open_group = Some(lvl);
         }
         let entry = solved
             .iter()
@@ -762,6 +795,12 @@ fn index_body(
             esc(note),
             more,
         );
+    }
+    // A collapsed level at the very end of the ladder leaves its group open.
+    // Not reachable while L0/L1 are the only complete levels and sort first,
+    // but it becomes reachable the moment a trailing level is finished.
+    if open_group.is_some() {
+        let _ = writeln!(b, "</tbody>");
     }
     let _ = writeln!(b, "</table>");
 

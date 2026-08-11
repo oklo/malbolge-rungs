@@ -60,32 +60,12 @@
     "status": "solved"
   },
   {
-    "best_program": "solutions/echo/echo-first-byte.mal",
-    "date": null,
-    "metric": "1/1 case, 5 seeds",
-    "note": "1-byte reverse is the identity, so ubO passes; the registry marks this a transform-family sanity check.",
-    "note_long": null,
-    "rank": 4,
-    "rung_id": "L2.R1.reverse-1",
-    "solver": {
-      "display": "ubO (canonical)",
-      "harness": null,
-      "harness_short": "canonical",
-      "harness_url": null,
-      "model": null,
-      "notes": "Minimal 3-instruction classic-Malbolge program (IN, OUT, HALT); long predates this project.",
-      "provider": null,
-      "type": "canonical"
-    },
-    "status": "solved"
-  },
-  {
     "best_program": "solutions/echo/echo-2.mal",
     "date": null,
     "metric": "1/1 case, 5 seeds",
     "note": "Echo the first 2 input bytes; 5-byte straight-line program.",
     "note_long": null,
-    "rank": 5,
+    "rank": 4,
     "rung_id": "L1.R1.echo-2",
     "solver": {
       "display": "HeLL-Lite (tool)",
@@ -105,7 +85,7 @@
     "metric": "1/1 case, 5 seeds",
     "note": "Echo the first 4 input bytes; 9-byte straight-line program.",
     "note_long": null,
-    "rank": 6,
+    "rank": 5,
     "rung_id": "L1.R2.echo-4",
     "solver": {
       "display": "HeLL-Lite (tool)",
@@ -125,7 +105,7 @@
     "metric": "2/2 cases, 5 seeds",
     "note": "Same 5-byte echo-2 program; fresh VM per case.",
     "note_long": null,
-    "rank": 7,
+    "rank": 6,
     "rung_id": "L1.R3.echo-2-multicase",
     "solver": {
       "display": "HeLL-Lite (tool)",
@@ -136,6 +116,26 @@
       "notes": "First-use opcode encoding of the straight-line IN/OUT sequence; each address has exactly one printable byte per opcode.",
       "provider": null,
       "type": "tool"
+    },
+    "status": "solved"
+  },
+  {
+    "best_program": "solutions/echo/echo-first-byte.mal",
+    "date": null,
+    "metric": "1/1 case, 5 seeds",
+    "note": "1-byte reverse is the identity, so ubO passes; the registry marks this a transform-family sanity check.",
+    "note_long": null,
+    "rank": 7,
+    "rung_id": "L2.R1.reverse-1",
+    "solver": {
+      "display": "ubO (canonical)",
+      "harness": null,
+      "harness_short": "canonical",
+      "harness_url": null,
+      "model": null,
+      "notes": "Minimal 3-instruction classic-Malbolge program (IN, OUT, HALT); long predates this project.",
+      "provider": null,
+      "type": "canonical"
     },
     "status": "solved"
   },
