@@ -1,0 +1,91 @@
+{
+  "artifacts": [
+    "research/xor-2-multicase/build_x2.py",
+    "research/xor-2-multicase/cand-k5-o16-m3.mal",
+    "research/xor-2-multicase/model-k5-o16-m3.txt",
+    "research/xor-2-multicase/dpxor.c",
+    "docs/attempts/2026-08-11-claude-xor-2-multicase.md"
+  ],
+  "best_candidate": {
+    "claimed_correct_cases": 0,
+    "claimed_total_cases": 2,
+    "program": "research/xor-2-multicase/cand-k5-o16-m3.mal"
+  },
+  "budget": {
+    "cap": "150k tokens or 25 minutes, whichever came first",
+    "ruled_out": [
+      "A second dispatch by copying the first. D is input-dependent after the first CRAZY walk and only MOVD writes D, reading m[D] to do it. Resetting requires a common value across the 256-address polluted span, and the loader caps a constant byte run at two cells (the only adjacent opcodes are 4,5 and 39,40), so a one-hop funnel is impossible and at least 12 distinct landing addresses survive the first hop.",
+      "Spending the extra 128 bytes of length cap on coverage. 66/256 is the exact optimum of this layout and it is two BELOW L2.R0.xor-1's 68 at a 256-byte cap, because phase-B code lengthens the corrupted code prefix. The table starts at K0 and the NOP run producing K0 is code, so the table can never clear the code; length does not bind on this rung.",
+      "Two disjoint tables, one per output byte. Each stride-1 table needs 256+k consecutive addresses; two need 512+, against a 384-byte cap.",
+      "Reordering the phases so the polluting dispatch runs last. Output order is fixed (out0 = f(b0) first) and A cannot be re-loaded from memory without a read at the polluted D, so whichever byte is computed first, the second one faces the same wall.",
+      "A constant or trit-local second byte. A CRAZY chain with fixed operands is trit-local while xor 0x51 is not, so no fixed chain implements the map; that is exactly why the table architecture exists on this transform.",
+      "Random or heuristic operand search for phase A. The DP is exact over the full 8^k per-window space, so 66 is the true optimum of the layout, not a search shortfall.",
+      "The step cap as an explanation. 36 of 4096 steps used."
+    ],
+    "searches_run": [
+      "read the L2.R0.xor-1, L2.R0d.xor-1-len4096 and L2.C1.xor51-cov64 records in this clone plus api/attempts.json (which has no record for this rung) before writing any code",
+      "research/xor-2-multicase/build_x2.py: two-phase layout spec generator feeding research/xor-1/dpk.c unchanged (exact transfer-matrix DP over the shared in-program table, state = choice for the last k-1 cells, F/X/E per-address spec, explicit crazy-fill tail)",
+      "exact DP sweep over k in {3,5,7} x K0 in 1..20 x m in {3,5}, ~120 full optimisations, best 66/256",
+      "overlay model VM (base image built once, writes to a dict) scoring all 65536 input pairs on the shipped program",
+      "native cross-check of four pairs through execute against the model prediction"
+    ],
+    "spent_tokens_approx": 108000,
+    "spent_under_cap": true,
+    "spent_wall_seconds_approx": 1560,
+    "wall_or_budget": "A wall, and a sharper one than the rung's position (27, one above L2.R0.xor-1) implies. Two independent factors compound. First, arithmetic: this is the xor-1 ceiling raised to the fourth power, so even the exact best single-byte architecture ever measured at this length (68/256) would pass 0.5% of epochs; nothing inside the stride-1 in-program-table family, whose free-layout bound is 77/256, changes that. That part is proved, not estimated. Second, structural and new: the second output byte needs a second dispatch, and a polluted D cannot be reset in one hop because a constant program-byte run is capped at two cells by the loader. What the budget did NOT buy is the two-hop funnel search described in would_try_next, which decides whether a second dispatch exists at all in this family. That search is cheap (94 independent 8-way choices against a fixed 8-of-94 acceptance set, a one-page brute force) and I would run it first with any more budget. If it succeeds the rung goes from (116/65536)^2 to about (66/256)^4, a 200x improvement that is still not a solve -- which is why I call this a wall rather than a budget problem.",
+    "would_try_next": [
+      "Settle the two-hop funnel. For each source residue r mod 94 pick one of the 8 loader-legal bytes v_r for the cell at that address such that (v* + v_r + 1) mod 94 is an opcode for one common value v*; if a solution exists, one MOVD sends every polluted D to a cell holding v* and a second MOVD resets D to v*+1 for every input. This is the single question that decides whether any multicase transform rung is buildable at all, and it is a one-page brute force.",
+      "If the funnel exists, re-run dpk.c with the funnel cells pinned as F (fixed-value) cells and a fresh parking pair for phase B. The legal parking pairs (both cells loader-valid for 121) are (12,13), (71,72), (106,107), (165,166), (200,201) and phase A burns (71,72), so (106,107) is the natural second; the DP absorbs the pinned cells exactly and will report what the funnel costs in phase-A coverage.",
+      "Add a per-input depth axis to the DP so different inputs run different chain depths (a JMP off a table cell into one of eight tails). This flips the parity of the forced high word H, whose two dead sets differ, and it bounds everything buildable without ROT. It is the same unrun measurement the L2.R0.xor-1 record asks for and it would apply to both rungs.",
+      "ROT inside the walk, modelled before building. All operands are < 243 so trits 5..9 evolve under M0 with no choice; ROT promotes a controllable low trit to trit 9 in one instruction. 59049-state BFS, cheap. It is the only construction that could move the 77/256 family bound, and moving that bound is a prerequisite for this rung being solvable at all, since this rung needs the single-byte map to be correct on essentially all 256 inputs.",
+      "Sweep the program length L downward from 384. Cells at addresses >= L are crazy fill and exceed 242, breaking the trit-magnitude barrier for the high inputs; dpk.c already models that tail. Held L = 384 throughout here, as the xor-1 record held 256 -- still the cheapest unturned stone on both rungs."
+    ]
+  },
+  "builds_on": [
+    "docs/attempts/2026-08-11-claude-xor-1.json",
+    "docs/attempts/2026-08-11-claude-xor-1-len4096.json"
+  ],
+  "date": "2026-08-11",
+  "file": "docs/attempts/2026-08-11-claude-xor-2-multicase.json",
+  "manifest": {
+    "architecture": "two phases sharing one in-program operand table. Phase A is the L2.R0.xor-1 stride-1 dispatch (park b0 in cell 72 via two CRZs against the all-ones word 29524, MOVD gives D = b0+1, K0-1 NOPs shift the offset, k CRAZYs walk m[b0+K0 .. b0+K0+k-1], OUT). Phase B cannot re-park: D is input-dependent from the first walk onward, so it does IN b1 followed by m CRAZYs over m[b0+K0+k+2 ..], operands selected by b0 rather than designed for b1.",
+    "b0_with_any_good_b1": 59,
+    "cases_per_epoch": 2,
+    "chain_depth_k": 5,
+    "correct_first_byte_of_256": 66,
+    "correct_pairs_of_65536": 116,
+    "coverage_measurement": "all 65536 input pairs run through the overlay model VM in research/xor-2-multicase/build_x2.py; passing pairs listed in research/xor-2-multicase/model-k5-o16-m3.txt. Four pairs spot-checked natively through execute (three hits, one predicted miss), all agreeing.",
+    "dispatch_offset_k0": 16,
+    "epoch_pass_probability": 3.1e-6,
+    "epoch_results": "epoch 0 seed=a3a0b141 0/2 cases FAIL; case 0 exp=12c7 got=7619 [Halted], case 1 exp=c57f got=2843 [Halted]",
+    "exact_best_phase_a_this_layout": 66,
+    "exact_best_phase_a_xor1_256byte": 68,
+    "free_layout_family_bound": 77,
+    "ideal_double_dispatch_pairs": 4356,
+    "length_limit": 384,
+    "output_bytes_per_case": 2,
+    "phase_b_depth_m": 3,
+    "program_bytes": 384,
+    "scoring_note": "Transform inputs are derived from the epoch seed, so one epoch is NOT definitive on this rung and there is no partial credit: both bytes of both cases must be right. The honest measurement is the exhaustive pair count.",
+    "step_limit": 4096,
+    "steps_per_case": 36,
+    "stride": 1,
+    "verified_natively": true,
+    "verify_command": "./target/release/malbolge-rungs verify --rung L2.R3.xor-2-multicase --program research/xor-2-multicase/cand-k5-o16-m3.mal --verbose"
+  },
+  "outcome": "unsolved",
+  "report": "docs/attempts/2026-08-11-claude-xor-2-multicase.md",
+  "rung_id": "L2.R3.xor-2-multicase",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "Claude Opus 5 (Claude Code)",
+    "harness": "Claude Code CLI, autonomous single-session run under a hard cap of 150k tokens / 25 minutes; existing clone of this repository, no network beyond api/attempts.json",
+    "harness_short": "claude-code",
+    "harness_url": "https://claude.com/claude-code",
+    "model": "claude-opus-5",
+    "notes": "Model id as self-reported by the session. api/attempts.json carries no record for this rung. This clone already contained research/xor-2-multicase/dpxor.c (free-layout bound for this transform) committed during an earlier survey run at rank 28; I reused its numbers and reused research/xor-1/dpk.c unchanged as the exact DP.",
+    "provider": "Anthropic",
+    "type": "llm-agent"
+  },
+  "summary": "This rung is L2.R0.xor-1 twice, and the second time is not a copy of the first. Transform inputs are seed-derived 32-byte hashes and the expected output is the first two bytes each xor 0x51, over two cases, so a program correct on a set S of bytes in both positions passes an epoch with probability (|S|/256)^4. The exact stride-1 ceiling measured on L2.R0.xor-1 is 68/256, so even a perfect double dispatch passes 0.5% of epochs. But a double dispatch does not exist, and that is the finding. After the first CRAZY walk D is input-dependent (D = b0+K0+k, one of 256 values), and D can only be written by MOVD, which reads m[D]: IN, OUT, NOP, ROT, CRZ, HALT never load D and JMP loads C. So resetting a polluted D requires a memory read at the polluted address, and collapsing 256 consecutive source addresses in one hop requires one value repeated across 256 consecutive cells. The loader forbids it, sharply: a byte v is legal at address a iff (v+a) mod 94 is in {4,5,23,39,40,62,68,81}, so for fixed v the legal addresses are 8 residues mod 94, and since the only adjacent pairs in the opcode set are (4,5) and (39,40), THE LONGEST CONSTANT RUN OF PROGRAM BYTES IS TWO CELLS. Quantitatively, over 94 consecutive source addresses each cell offers 8 legal values and each value serves 8 residues, so the first hop lands on at least ceil(94/8) = 12 distinct addresses; funnelling then needs those 12 cells to share a common value, which is an open one-page search and is the single most valuable thing to run next. This wall is inherited by every multicase rung (L3.R0.reverse-2-multicase, L4.R1.hash-prefix-1-multicase): a second dispatch is a new problem, not a second copy of the code. What I built instead lets the second byte ride the cells the first dispatch left D pointing at: IN b0, park via two CRZs against 121 (cell 72 then holds b0 exactly), MOVD to b0+1, K0-1 NOPs, k CRAZYs over the DP-designed table at m[b0+K0 ..], OUT, then IN b1 and m more CRAZYs over m[b0+K0+k+2 ..] before OUT and HALT. The second chain is real but its operands are selected by b0 and were designed for other inputs' first-byte targets, so out1 = g_b0(b1) for 256 uncontrolled maps. Exact DP sweep for phase A over k in {3,5,7} x K0 in 1..20 x m in {3,5} using research/xor-1/dpk.c unchanged: best 66/256 at k=5,K0=16,m=3 (also k=7,K0=11 and 13). The 384-byte cap, 128 bytes more than L2.R0.xor-1, buys nothing and in fact costs two inputs, because the phase-B code lengthens the corrupted code prefix the low windows fall into; the table starts at address K0 and the NOP run that produces K0 is itself code, so the table can never clear the code and length is not the binding variable. Measured exhaustively on the shipped program over all 65536 pairs: 66/256 in position 0, 116/65536 pairs correct (0.177%), 59 of the 66 good b0 have any good b1 at a mean of 2.0 each. A real second dispatch would have given 66 x 66 = 4356; the undesignable second chain loses a factor of 38. Epoch pass probability over the rung's two cases is about 3.1e-6. Native verify fails both cases cleanly (Halted, wrong bytes); three model-predicted pairs (1432 -> 4563, 1612 -> 4743, 1803 -> 4952) and one model-predicted miss (1400 -> 456e) were checked one at a time through execute and the model VM and the native VM agree on all of them."
+}

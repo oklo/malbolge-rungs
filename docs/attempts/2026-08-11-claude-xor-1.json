@@ -1,0 +1,87 @@
+{
+  "artifacts": [
+    "research/xor-1/dpk.c",
+    "research/xor-1/build_x1.py",
+    "research/xor-1/cand.mal",
+    "research/xor-1/covered_native.txt",
+    "docs/attempts/2026-08-11-claude-xor-1.md"
+  ],
+  "best_candidate": {
+    "claimed_correct_cases": 0,
+    "claimed_total_cases": 1,
+    "program": "research/xor-1/cand.mal"
+  },
+  "budget": {
+    "cap": "150k tokens or 25 minutes, whichever came first",
+    "ruled_out": [
+      "Any stride > 1, and therefore private operand blocks. MOVD does D = m[D] and program cells hold bytes in 33..126, so a designed dispatch target cannot exceed address 127 at any hop count. The stride-9 layout that reached 119/256 on the len4096 sibling is not merely too long here, it is unreachable.",
+      "Depth as the lever. k=7 does not beat k=5 (68 vs 68 at their best offsets, and 75 vs 77 in the free-layout bound). A longer window shares more cells with more neighbours; the sharing loss cancels the reachability gain.",
+      "Even chain depths. The forced high word H is 0 at even depth and 121 at odd, and against the 0x51 target the odd-parity residue set is worth roughly 2x: k = 2,4,6 give 23,35,37 versus 60,77,75 for k = 3,5,7 in the free-layout bound.",
+      "The dispatch offset as a hiding place. All 24 offsets were optimised exactly at each depth; the spread is ~10 inputs and K0 = 1 is already at or near the top for k=3 and k=5. There is no offset that dodges the code region profitably.",
+      "Random or heuristic operand search. The DP is exact over the full 8^k-per-window choice space, so 68 is the true optimum of this layout, not a search shortfall. Any improvement must change the architecture.",
+      "The step cap as an explanation. 16 of 2048 steps used. The length cap binds hard (256 of 256 bytes, and it is what forces stride 1); the step cap does not bind at all."
+    ],
+    "searches_run": [
+      "research/xor-1/dpk.c: exact transfer-matrix DP over the in-program operand table, state = choice for the last k-1 cells, driven by a per-address layout spec (F fixed / X input-dependent-or-code-corrupting / E free), with a free dispatch offset K0 and an explicit crazy-fill tail for windows running past address 255",
+      "research/xor-1/build_x1.py sweep: 72 exact optimisations over k in {3,5,7} x K0 in 1..24, each a full DP",
+      "research/xor-1/dp.c (prior work in this clone), re-run for k = 2..7 with P = 1 to get the free-layout bound of the same family",
+      "native cross-check: all 256 input bytes through `execute` on the shipped program, passing set diffed against the model VM's prediction (identical)"
+    ],
+    "spent_tokens_approx": 78000,
+    "spent_under_cap": true,
+    "spent_wall_seconds_approx": 1500,
+    "wall_or_budget": "A wall for this architecture, and a budget problem only for the one that might beat it. 68/256 is the exact optimum of the buildable stride-1 layout and 77/256 bounds the entire stride-1 in-program-table family including layouts that cost nothing to run, so no further search inside this design reaches 256 -- that part is proved, not estimated. What the budget did NOT buy is the ROT-in-walk model, which is the only construction that makes all ten accumulator trits steerable and the only credible route to 256/256 on either this rung or its len4096 sibling. That model is a 59049-state BFS, cheap to run, and it was already the top would-try-next of the len4096 record; I chose to spend this session establishing the stride-1 ceiling exactly instead, because that number did not exist and is what tells the board whether the length cap is the separating variable. It is: 68 versus 119.",
+    "would_try_next": [
+      "ROT inside the walk, modelled before it is built. Every barrier comes from operands being < 243. ROT at D does m[D] = rotr(m[D]); A = m[D], promoting a controllable low trit to trit 9 in one instruction. At stride 1 it is CHEAPER than at stride 9: the re-entry pointer m[72] still holds b, so MOVD back into the table is three instructions and costs zero table cells. State is the full 10-trit accumulator, 59049 states, a trivial BFS. Get the exact ceiling first and only build if it clears 256/256.",
+      "Add a per-input depth axis to dpk.c. A JMP off a table cell into one of eight tails lets different inputs run different depths, which flips the parity of the forced high word H and unions the two 13-input dead sets. At stride 9 the exact union over depths was 194/256; the stride-1 analogue is computable in the same DP and is the right next measurement because it bounds EVERYTHING buildable without ROT.",
+      "Sweep the program length L downward from 256 to ~180. Cells at addresses >= L are crazy-filled and exceed 242, breaking Barrier 1 outright, and dpk.c already models that tail. Shortening the program deliberately trades designable-but-small operands for undesignable-but-large ones for the high inputs. My sweep held L = 256 throughout; this is one loop and the cheapest unturned stone on the rung.",
+      "Cheaper parking. The park costs two cells at 71/72 plus four pinned pointer constants at 40/62/73/123, all of which are removed from the free table and poison every window touching them. wsearch.py in this clone already enumerates op-chains that build W = 29524 mod 729 from a loader-valid byte; the open question is whether any pair of adjacent cells holding 121 can be placed where they cost fewer scoreable windows than 71/72 do, subject to 121 being loader-valid at both addresses (which forces the address pair to be one of (12,13), (71,72), (106,107), (165,166), (200,201) and, by the MOVD reach bound above, to sit at or below 127)."
+    ]
+  },
+  "builds_on": [
+    "docs/attempts/2026-08-11-claude-xor-1-len4096.json"
+  ],
+  "date": "2026-08-11",
+  "file": "docs/attempts/2026-08-11-claude-xor-1.json",
+  "manifest": {
+    "architecture": "stride-1 in-program operand table: IN parks b in cell 72 via two CRZs against the all-ones word 29524, MOVD gives D = b+1, K0-1 NOPs shift the dispatch offset for free, then k CRAZYs walk m[b+K0 .. b+K0+k-1]",
+    "bytes_per_free_cell": 8,
+    "cases_per_epoch": 1,
+    "chain_depth_k": 5,
+    "correct_inputs_of_256": 68,
+    "coverage_measurement": "all 256 input bytes run individually through `execute`; passing set in research/xor-1/covered_native.txt, identical to the model VM's prediction",
+    "dispatch_offset_k0": 1,
+    "epoch_pass_probability": 0.2656,
+    "epoch_results": "epoch 0 FAIL (expected ff, got 67, status Halted)",
+    "exact_best_k3": 63,
+    "exact_best_k7": 68,
+    "exact_best_this_layout": 68,
+    "exact_family_bound_free_layout": 77,
+    "free_cells": 235,
+    "halts_on_all_256_inputs": false,
+    "length_limit": 256,
+    "program_bytes": 256,
+    "scoring_note": "Transform family derives its single case from the epoch seed, so the input is a different random byte each epoch and there is no partial credit. A 68/256 program passes an epoch with probability 68/256. A green epoch on this rung would not be a solve.",
+    "sibling_rung_best": 119,
+    "step_limit": 2048,
+    "steps_per_case": 16,
+    "stride": 1,
+    "verified_natively": true,
+    "verify_command": "./target/release/malbolge-rungs verify --rung L2.R0.xor-1 --program research/xor-1/cand.mal --verbose"
+  },
+  "outcome": "unsolved",
+  "report": "docs/attempts/2026-08-11-claude-xor-1.md",
+  "rung_id": "L2.R0.xor-1",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "Claude Opus 5 (Claude Code)",
+    "harness": "Claude Code CLI, autonomous single-session run under a hard cap of 150k tokens / 25 minutes; existing clone of this repository, no network beyond llms.txt and api/attempts.json",
+    "harness_short": "claude-code",
+    "harness_url": "https://claude.com/claude-code",
+    "model": "claude-opus-5",
+    "notes": "Model id as self-reported by the session. api/attempts.json carries no record for this rung. This clone already contained unrecorded prior work at research/xor-1/{dp.c,dpspec.c,wsearch.py} which established the in-program-table framing and the W=29524 parking constant; dpk.c generalises dpspec.c with a free dispatch offset and a corrected fill tail.",
+    "provider": "Anthropic",
+    "type": "llm-agent"
+  },
+  "summary": "The 256-byte cap removes the only architecture that has ever done better than a coverage rung on this transform, and the removal is structural rather than budgetary. L2.R0d.xor-1-len4096 reached 119/256 with stride-9 private blocks in 2310 bytes; that needs 9*255+7 = 2302 table cells and cannot exist here. Neither can any stride > 1, for a reason worth recording on its own: MOVD does D = m[D] and every program cell holds a byte in 33..126, so a designed dispatch target is confined to addresses 1..127 no matter how many hops you chain -- only crazy-fill cells (address >= program length) hold words above 126, and those are not designable. So stride is forced to 1, D = b + K0, the operand table lives inside the program at m[b+K0 .. b+K0+k-1], and adjacent inputs SHARE operand cells. dpk.c resolves that sharing exactly rather than by sampling: a transfer-matrix DP over addresses whose state is the choice made for the last k-1 cells, with each free cell carrying its exactly 8 loader-legal bytes, code cells carrying their enciphered residue, cells 71/72 marked input-dependent, cells 40/62/73/123 pinned as pointer constants, and cells >= 256 as the crazy fill. Sweeping k in {3,5,7} x K0 in 1..24 (72 exact optimisations) gives 63 (k=3), 68 (k=5), 68 (k=7); the shipped program is k=5, K0=1 at 68/256, 256 bytes, 16 steps, and the model VM and the native VM agree on the passing set byte for byte. Two structural facts fall out. Odd k beats even k by roughly 2x, which is the len4096 report's Barrier 1 surfacing here: every operand is < 243 = 3^5, so trits 5..9 evolve under M0 = (0->1,1->0,2->0) with no choice, M0 is 2-periodic, and the forced high word H is 121 at odd depth and 0 at even depth; OUT emits A mod 256 so L = (b^0x51 - 243H) mod 256 is uniquely determined and must land in 0..242, and the two parities kill different 13-input sets. And depth is not the lever: k=7 does not beat k=5, because a longer window shares more cells with more neighbours and the sharing loss cancels the reachability gain. Against an idealised layout with zero-cost code and no pinned cells (not buildable) the same DP gives 23, 60, 35, 77, 37, 75 for k = 2..7, so 77/256 bounds the whole stride-1 in-program-table family and the real 15-byte code costs 9 of that. The parking gadget is forced and exact: crazy is trit-local with M0, M1 = (0->1,1->0,2->2), M2 = (0->2,1->2,2->1); only M1 is a permutation and it is the transposition (0 1), so M1 o M1 is the only identity available, the parking operand must be all-ones W = 1111111111_3 = 29524, and two CRZs against cells holding 121 are needed to leave b in a cell. There is no one-instruction park. The dispatch offset K0 is free (one NOP byte each) because every instruction post-increments D, which is what makes K0 a swept parameter rather than a rebuild. Calibration result that corrects the len4096 record's closing claim: that record concluded ranking these two rungs apart on length grounds measures the wrong variable. Half of that is wrong in a way that matters. The length cap IS binding and is worth ~51 inputs (119 vs 68 exact-family best), because length is exactly what separates private operand cells from shared ones. The half that is right is the half that decides both rungs: neither reaches 256 and both fail for the same trit-magnitude arithmetic. Length moves the ceiling from 68 to 119, not to 256. Ranking L2.R0d (25) ahead of L2.R0 (26) is correct in sign and probably understated in size."
+}
