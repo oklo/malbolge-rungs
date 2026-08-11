@@ -101,6 +101,21 @@ td.note .txt {
   text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom;
 }
 td.num { text-align: right; font-variant-numeric: tabular-nums; }
+/* Collapsed solved block. The board runs no JavaScript, so the toggle is a
+   hidden checkbox and a sibling selector — one table throughout, which keeps
+   every column aligned between the summary row and the rows it hides. */
+input.solved-toggle { position: absolute; opacity: 0; width: 0; height: 0; }
+tbody.solved-rows { display: none; }
+input.solved-toggle:checked ~ table tbody.solved-rows { display: table-row-group; }
+tr.solved-summary td { color: var(--text-soft); }
+tr.solved-summary label { cursor: pointer; font-family: var(--sans);
+  font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; }
+tr.solved-summary label:hover { color: var(--accent); }
+tr.solved-summary .marker::before { content: "\25b8  "; }
+input.solved-toggle:checked ~ table tr.solved-summary .marker::before { content: "\25be  "; }
+input.solved-toggle:checked ~ table tr.solved-summary .when-closed { display: none; }
+tr.solved-summary .when-open { display: none; }
+input.solved-toggle:checked ~ table tr.solved-summary .when-open { display: inline; }
 th.num { text-align: right; }
 .solved { color: var(--solved); }
 .open { color: var(--faint); }
@@ -642,13 +657,43 @@ fn index_body(
         "<p class=\"sub lead\"><a href=\"attempt.html\">Attempt a rung.</a></p>"
     );
 
+    // The solved rungs form one contiguous run at the top of the ladder, so the
+    // whole block collapses behind a single summary row. Twenty-three of
+    // forty-one rows were solved history above the part of the table anyone is
+    // reading — the open frontier.
+    let solved_count = records.iter().filter(|r| r.status == Status::Solved).count();
+    let last_solved_rank = records
+        .iter()
+        .filter(|r| r.status == Status::Solved)
+        .filter_map(|r| r.rank)
+        .max();
+    let _ = writeln!(b, "<input type=\"checkbox\" id=\"show-solved\" class=\"solved-toggle\">");
     let _ = writeln!(
         b,
         "<table>\n<tr><th class=\"num\">#</th><th>rung</th><th>status</th><th>model</th>\
          <th>harness</th><th>date</th><th class=\"num\">bytes</th>\
          <th class=\"num\">attempts</th><th>notes</th></tr>"
     );
+    if solved_count > 0 {
+        let _ = writeln!(
+            b,
+            "<tr class=\"solved-summary\"><td class=\"num dim\">1–{}</td>\
+             <td colspan=\"8\"><label for=\"show-solved\"><span class=\"marker\"></span>\
+             <span class=\"when-closed\">{} solved rungs — show</span>\
+             <span class=\"when-open\">{} solved rungs — hide</span></label></td></tr>",
+            last_solved_rank.unwrap_or(solved_count as u32),
+            solved_count,
+            solved_count,
+        );
+        let _ = writeln!(b, "<tbody class=\"solved-rows\">");
+    }
+    let mut closed_solved = false;
     for record in records {
+        // Close the collapsed group as soon as the first open rung appears.
+        if !closed_solved && record.status != Status::Solved && solved_count > 0 {
+            let _ = writeln!(b, "</tbody>");
+            closed_solved = true;
+        }
         let entry = solved
             .iter()
             .find(|(id, _)| *id == record.rung_id)
