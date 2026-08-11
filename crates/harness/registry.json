@@ -442,6 +442,22 @@
     "purpose": "Coverage-ladder step between cov32 and cov64: all 256 single-byte inputs, at least 48 exact xor51 outputs required, failures elsewhere tolerated."
   },
   {
+    "id": "L2.C0e.xor51-cov48-len2048",
+    "title": "Xor-mask coverage over at least 48 of 256 inputs, in 2048 bytes",
+    "level": 2,
+    "status": "Calibration",
+    "family": "CoverageTransform",
+    "transform": "XorMask",
+    "output_bytes": 1,
+    "cases": 256,
+    "min_correct_cases": 48,
+    "max_program_len": 2048,
+    "max_steps_per_case": 2048,
+    "max_output_len": 1,
+    "max_memory_cells": 59049,
+    "purpose": "Length-pressure variant of cov48, added 2026-08-10 and strictly additive. Same threshold, half the space: the shipped cov48 program scores 71/256 in 3178 bytes, so this rung asks for the same coverage in less room. It isolates program size as its own axis, which is what separates the 256-byte transform rungs from the 4096-byte coverage rungs."
+  },
+  {
     "id": "L2.C1.xor51-cov64",
     "title": "Xor-mask coverage over at least 64 of 256 inputs",
     "level": 2,
@@ -621,5 +637,21 @@
     "max_output_len": 2,
     "max_memory_cells": 59049,
     "purpose": "Reserved for a future frontier hash-prefix rung after empirical calibration."
+  },
+  {
+    "id": "L2.C2.xor51-cov96",
+    "title": "Xor-mask coverage over at least 96 of 256 inputs",
+    "level": 2,
+    "status": "Calibration",
+    "family": "CoverageTransform",
+    "transform": "XorMask",
+    "output_bytes": 1,
+    "cases": 256,
+    "min_correct_cases": 96,
+    "max_program_len": 8192,
+    "max_steps_per_case": 2048,
+    "max_output_len": 1,
+    "max_memory_cells": 59049,
+    "purpose": "Coverage-ladder step above cov64, added 2026-08-10 and strictly additive. The 4096-byte cap is raised to 8192 here on purpose: the cov48 solve reached 71/256 using 3178 of its 4096 bytes at ~45 bytes per correct case, so a 96-case threshold under the old cap would test whether the program fits rather than how far coverage reaches. Program size is isolated instead by the cov48-len2048 rung."
   }
 ]
