@@ -1,0 +1,84 @@
+{
+  "artifacts": [
+    "research/cov36/perm_dp.c",
+    "research/cov36/build36.py",
+    "research/cov36/table-2187-k3.txt",
+    "docs/attempts/2026-08-11-claude-cov36.md"
+  ],
+  "best_candidate": {
+    "claimed_correct_cases": 51,
+    "claimed_total_cases": 256,
+    "program": "solutions/cov36/cov36-permuting-dispatch.mal"
+  },
+  "budget": {
+    "cap": "150k tokens or 25 minutes, whichever came first",
+    "searches_run": [
+      "perm_dp.c: exact transfer-matrix DP over the table for both dispatch index maps (pi = id from two layers, pi = M1 from three), every offset K0 in {0,729,...,3645} and depths k = 1..6; state = last k-1 cell choices, 8^(k-1) states, exact because the index is injective so at most one input ends its window at any cell. ~77s. Validated by reproducing research/cov48/table_dp2.c's pi=id rows exactly.",
+      "build36.py: cov34's register-machine BFS (A <- crazy(A, x(q)) on a fresh cell, A <- rot(A) on the cell just written) run as three chained legs over the 81 reachable candidate words for each layer, with seeds forbidden from reuse both across and WITHIN legs; best triple 1 + 6 + 6 ops.",
+      "layout sweep over prefix_end in {256, ..., 1280}; 256 fits"
+    ],
+    "spent_tokens_approx": 90000,
+    "spent_under_cap": true,
+    "spent_wall_seconds_approx": 1400,
+    "would_try_next_with_more": "Two concrete things, in order. (1) The exact-36 program: pi = M1, K0 = 729, k = 2 scores exactly 36 -- the cheapest tail on this architecture, two table cells -- and the only reason it is not what ships is that its table starts at address 839 while the setup, 21 MOVD-addressed instructions at ~38 bytes of NOP padding each, ends at 1063. That is a pure layout problem (cov40 named the same one) and 224 bytes is a small gap: I would spend the next budget on cheaper MOVD addressing -- reordering the operand chain so consecutive targets are close in the pointer walk, or choosing operand words by pointer cost rather than by chain length, neither of which the inherited builder does. (2) K0 = 0, which holds the two largest numbers in the whole DP (77 at pi=id k=5, 78 at pi=M1 k=6, both clear of cov64) and is blocked only because the table would land at addresses 1..262 or 110..487, i.e. inside the prefix that cov32's layout uses as its pointer table and that C executes. A construction that does not need that prefix, or a prefix whose bytes double as table entries, is the highest-value open item on this ladder. For RANKING: cov36 is not a wall and is not even a step -- it is strictly below cov40 and cov48, both of whose shipped programs pass it, and the mechanism that clears it is the cheapest point of an architecture that was already published. It should be closed or ranked below cov40. The genuine remaining difficulty on the coverage ladder is the layout/padding problem, not the mathematics, and it is the same single problem at every rung from here up."
+  },
+  "builds_on": [
+    "docs/attempts/2026-08-10-claude-cov48.json",
+    "docs/attempts/2026-08-10-claude-cov40.json",
+    "docs/attempts/2026-08-10-claude-cov34.json"
+  ],
+  "date": "2026-08-11",
+  "file": "docs/attempts/2026-08-11-claude-cov36.json",
+  "manifest": {
+    "K0": 2187,
+    "code_ends_at": 1063,
+    "correct_cases": 51,
+    "cross_checks": {
+      "L2.C0.xor51-cov32": "51/256 PASS",
+      "L2.C0a.xor51-cov34": "51/256 PASS",
+      "L2.C0c.xor51-cov40": "51/256 PASS",
+      "L2.C0d.xor51-cov48": "51/256 PASS",
+      "L2.C1.xor51-cov64": "51/256 FAIL (64 required)"
+    },
+    "dispatch_index_map": "pi(b) + K0, pi = trit-wise M1 = (0->1, 1->0, 2->2) on trits 0..5",
+    "dispatch_layers": 3,
+    "dispatch_operands": [
+      29524,
+      56497,
+      2551
+    ],
+    "halts_on_all_256_inputs": true,
+    "length_limit": 4096,
+    "movd_addressed_instructions": 21,
+    "operand_chain_ops": [
+      1,
+      6,
+      6
+    ],
+    "prefix_end": 256,
+    "program_bytes": 2676,
+    "search_used": true,
+    "table_cells": [
+      2297,
+      2675
+    ],
+    "table_depth_k": 3,
+    "threshold": 36,
+    "total_cases": 256
+  },
+  "outcome": "solved",
+  "report": "docs/attempts/2026-08-11-claude-cov36.md",
+  "rung_id": "L2.C0b.xor51-cov36",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "Claude Opus 5 (Claude Code)",
+    "harness": "Claude Code CLI, autonomous single-session run under a hard cap of 150k tokens / 25 minutes; existing clone of this repository, no network beyond llms.txt",
+    "harness_short": "claude-code",
+    "harness_url": "https://claude.com/claude-code",
+    "model": "claude-opus-5",
+    "notes": "Model id as self-reported by the session. Prior art read before starting: llms.txt and docs/attempts/2026-08-10-claude-{cov34,cov40,cov48}.md plus research/cov40/build.py and research/cov36/{family.py,...}. cov32's prefix/pointer layout and cov40's Builder class were reused; the dispatch mechanism, the DP extension and the operand search are new.",
+    "provider": "Anthropic",
+    "type": "llm-agent"
+  },
+  "summary": "cov36 was already implied by the shipped cov40 (43/256) and cov48 (71/256) programs, so this attempt asked the only question left: whether the dispatch architecture has an unused degree of freedom. It does. Both prior programs use a two-CRAZY-layer dispatch, which forces the composed map on trits 0..5 to be the identity (M1 is the only injective row and M1 o M1 = id), hence index(b) = b + K0 and 256 consecutive table cells with maximal sharing between neighbouring inputs. A three-layer dispatch forces the low map to be M1 itself (a product of three rows is injective only if all three are M1, and M1^3 = M1), giving index(b) = pi(b) + K0 with pi a trit-wise permutation that scatters the same 256 cells over a 377-wide window and loosens the coupling the table DP has to fight. perm_dp.c scores both index maps exactly for every offset and depth 1..6, reproducing cov48's table on the pi=id rows: the permutation is worth up to +28 at fixed depth (K0=2187, k=3: 23 -> 51) and, relevantly for this rung, no two-layer dispatch with a two-cell tail reaches 36 at any offset (max 35) while pi=M1 at K0=729, k=2 scores exactly 36. That minimal configuration puts the table at 839 and the 807-byte MOVD-padded setup does not fit under it, so what ships is the same mechanism at K0=2187, k=3: 51/256 natively, 2676 bytes."
+}
