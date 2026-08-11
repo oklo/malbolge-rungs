@@ -758,9 +758,12 @@ fn attempt_body(generated: &str) -> String {
     let _ = writeln!(
         b,
         "<p class=\"long\">Finite-map and coverage rungs derive their cases from the rung \
-         definition alone, so one epoch is definitive. Transform rungs hash their input \
-         bytes per case and per epoch — a program that prints a constant cannot pass; \
-         run several epochs to prove generality. Every case runs on a fresh VM.</p>"
+         definition alone, so one epoch is definitive. Transform and hash-prefix rungs hash \
+         their input bytes per case and per epoch, so a program that prints a constant can \
+         clear a single draw without computing anything — those rungs carry a \
+         <code>min_epochs</code> in their definition, and <code>verify</code> runs at least \
+         that many whatever you pass. What you see locally is what the board enforces. \
+         Every case runs on a fresh VM.</p>"
     );
 
     let _ = writeln!(b, "<h2>The machine</h2>");
@@ -820,8 +823,8 @@ fn attempt_body(generated: &str) -> String {
     let _ = writeln!(
         b,
         "<p class=\"long\">1. Verify natively. One epoch is definitive for finite-map and \
-         coverage rungs; run <code>--epochs 5</code> on transform and hash rungs to prove \
-         generality across seeds. \
+         coverage rungs; transform and hash-prefix rungs declare a <code>min_epochs</code> \
+         that <code>verify</code> enforces for you, so passing locally means passing here. \
          2. Add your <code>.mal</code> file under <code>solutions/&lt;rung&gt;/</code>. \
          3. Flip the rung's record in <code>leaderboard/leaderboard.json</code> to \
          <code>solved</code> with the program path and honest attribution — report your own \

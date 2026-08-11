@@ -42,11 +42,7 @@ const BUNDLE_SCHEMA: &str = "malbolge-rungs.attempt-bundle.v1";
 /// board exists to reject. Admission ran everything at one epoch and duly
 /// published a hash-prefix "solve" that failed on the next seed.
 pub fn epochs_for(rung: &crate::types::Rung) -> u32 {
-    use crate::types::Family;
-    match rung.family {
-        Family::CoverageTransform | Family::FiniteMap => 1,
-        _ => 5,
-    }
+    rung.required_epochs()
 }
 
 /// Outcome of admitting one bundle.

@@ -357,6 +357,9 @@ fn registry_cmd(what: RegistryCmd) {
                 }
                 println!("output_bytes:     {}", r.output_bytes);
                 println!("cases:            {}", r.cases);
+                if let Some(e) = r.min_epochs {
+                    println!("min_epochs:       {e}  (seed-derived inputs; one epoch proves nothing)");
+                }
                 println!("max_program_len:  {}", r.max_program_len);
                 println!("max_steps_per_case: {}", r.max_steps_per_case);
                 println!("max_output_len:   {}", r.max_output_len);
@@ -425,6 +428,11 @@ fn cmd_verify(
     json: bool,
 ) -> Result<ExitCode> {
     let rung = load_rung_arg(rung_id, rung_file)?;
+    // Never fewer epochs than the rung declares. A seed-dependent rung can be
+    // cleared on one draw by a lookup table, so its definition carries the epoch
+    // count and the judge honours it — what an agent sees here is exactly what
+    // admission enforces, rather than a stricter rule applied later.
+    let epochs = epochs.max(rung.required_epochs());
     let mut all_passed = true;
     let mut json_results = Vec::new();
 

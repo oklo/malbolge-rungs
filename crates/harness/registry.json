@@ -102,7 +102,8 @@
     "max_steps_per_case": 2048,
     "max_output_len": 1,
     "max_memory_cells": 59049,
-    "purpose": "Apply the v0 xor-mask transform to the first byte."
+    "purpose": "Apply the v0 xor-mask transform to the first byte.",
+    "min_epochs": 5
   },
   {
     "id": "L2.R0d.xor-1-len4096",
@@ -117,7 +118,8 @@
     "max_steps_per_case": 2048,
     "max_output_len": 1,
     "max_memory_cells": 59049,
-    "purpose": "Same v0 xor-mask task as L2.R0.xor-1, with only the program-length cap relaxed for calibration."
+    "purpose": "Same v0 xor-mask task as L2.R0.xor-1, with only the program-length cap relaxed for calibration.",
+    "min_epochs": 5
   },
   {
     "id": "L2.R0c.crazy-mask-1",
@@ -132,7 +134,8 @@
     "max_steps_per_case": 2048,
     "max_output_len": 1,
     "max_memory_cells": 59049,
-    "purpose": "Apply output = crazy(input, 0x51) mod 256 to the first byte. The transform is per-trit realizable inside a CRAZY-chain dispatch, so this rung demands totality over all 256 inputs without XOR's binary-carry obstruction. It sits between the finite-map rungs and full xor-1."
+    "purpose": "Apply output = crazy(input, 0x51) mod 256 to the first byte. The transform is per-trit realizable inside a CRAZY-chain dispatch, so this rung demands totality over all 256 inputs without XOR's binary-carry obstruction. It sits between the finite-map rungs and full xor-1.",
+    "min_epochs": 5
   },
   {
     "id": "L2.FM0.xor51-map2",
@@ -486,7 +489,8 @@
     "max_steps_per_case": 2048,
     "max_output_len": 1,
     "max_memory_cells": 59049,
-    "purpose": "One-byte reverse is behaviorally trivial but useful as a transform-family sanity check."
+    "purpose": "One-byte reverse is behaviorally trivial but useful as a transform-family sanity check.",
+    "min_epochs": 5
   },
   {
     "id": "L2.R2.rotate-1",
@@ -501,7 +505,8 @@
     "max_steps_per_case": 2048,
     "max_output_len": 1,
     "max_memory_cells": 59049,
-    "purpose": "Rotate the first input byte left by one bit."
+    "purpose": "Rotate the first input byte left by one bit.",
+    "min_epochs": 5
   },
   {
     "id": "L2.R3.xor-2-multicase",
@@ -516,7 +521,8 @@
     "max_steps_per_case": 4096,
     "max_output_len": 2,
     "max_memory_cells": 59049,
-    "purpose": "Discourage constant-output shortcuts by requiring a transform over two cases."
+    "purpose": "Discourage constant-output shortcuts by requiring a transform over two cases.",
+    "min_epochs": 5
   },
   {
     "id": "L3.R0.reverse-2-multicase",
@@ -531,7 +537,8 @@
     "max_steps_per_case": 8192,
     "max_output_len": 2,
     "max_memory_cells": 59049,
-    "purpose": "A small but real input-dependent transformation over several cases."
+    "purpose": "A small but real input-dependent transformation over several cases.",
+    "min_epochs": 5
   },
   {
     "id": "L3.R1.xor-4-length-cap",
@@ -546,7 +553,8 @@
     "max_steps_per_case": 8192,
     "max_output_len": 4,
     "max_memory_cells": 59049,
-    "purpose": "Four-byte transform with a cap intended to expose brittle generated code."
+    "purpose": "Four-byte transform with a cap intended to expose brittle generated code.",
+    "min_epochs": 5
   },
   {
     "id": "L3.R2.mixed-transform-small",
@@ -561,7 +569,8 @@
     "max_steps_per_case": 16384,
     "max_output_len": 2,
     "max_memory_cells": 59049,
-    "purpose": "Draft rung for compact deterministic byte remapping tasks."
+    "purpose": "Draft rung for compact deterministic byte remapping tasks.",
+    "min_epochs": 5
   },
   {
     "id": "L4.R0.hash-prefix-1",
@@ -576,7 +585,8 @@
     "max_steps_per_case": 100000,
     "max_output_len": 1,
     "max_memory_cells": 59049,
-    "purpose": "Exact one-byte SHA-256-derived target; use carefully because it becomes hash-like."
+    "purpose": "Exact one-byte SHA-256-derived target; use carefully because it becomes hash-like.",
+    "min_epochs": 5
   },
   {
     "id": "L4.R1.hash-prefix-1-multicase",
@@ -591,7 +601,8 @@
     "max_steps_per_case": 250000,
     "max_output_len": 1,
     "max_memory_cells": 59049,
-    "purpose": "The same program must hit several SHA-256-derived one-byte outputs."
+    "purpose": "The same program must hit several SHA-256-derived one-byte outputs.",
+    "min_epochs": 5
   },
   {
     "id": "L4.R2.hash-prefix-length-pressure",
@@ -606,7 +617,8 @@
     "max_steps_per_case": 250000,
     "max_output_len": 1,
     "max_memory_cells": 59049,
-    "purpose": "Hash-prefix calibration with an intentionally tight program-length cap."
+    "purpose": "Hash-prefix calibration with an intentionally tight program-length cap.",
+    "min_epochs": 5
   },
   {
     "id": "L5.R0.future-transform",
@@ -621,7 +633,8 @@
     "max_steps_per_case": 1000000,
     "max_output_len": 4,
     "max_memory_cells": 59049,
-    "purpose": "Reserved for a future calibrated transform rung."
+    "purpose": "Reserved for a future calibrated transform rung.",
+    "min_epochs": 5
   },
   {
     "id": "L5.R1.future-hash-prefix",
@@ -636,7 +649,8 @@
     "max_steps_per_case": 2000000,
     "max_output_len": 2,
     "max_memory_cells": 59049,
-    "purpose": "Reserved for a future frontier hash-prefix rung after empirical calibration."
+    "purpose": "Reserved for a future frontier hash-prefix rung after empirical calibration.",
+    "min_epochs": 5
   },
   {
     "id": "L2.C2.xor51-cov96",

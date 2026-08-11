@@ -52,6 +52,14 @@ pub struct Rung {
     /// Only present for `CoverageTransform` rungs.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub min_correct_cases: Option<u32>,
+    /// Seed epochs a candidate must pass before the rung counts as solved.
+    /// Coverage and finite-map rungs enumerate fixed inputs, so one epoch is
+    /// definitive and this stays unset. Transform and hash-prefix rungs redraw
+    /// their inputs and targets from the challenge seed every epoch, so a single
+    /// epoch can be cleared by a lookup table that got one lucky draw — this is
+    /// what stops that being a solve.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub min_epochs: Option<u32>,
     pub max_program_len: u64,
     pub max_steps_per_case: u64,
     pub max_output_len: u64,
@@ -77,5 +85,11 @@ impl Rung {
     /// all cases when unset). Meaningless for non-coverage rungs.
     pub fn required_correct(&self) -> u32 {
         self.min_correct_cases.unwrap_or(self.cases)
+    }
+
+    /// Seed epochs this rung requires (defaults to 1). `verify` runs at least
+    /// this many, so what an agent sees locally is what admission enforces.
+    pub fn required_epochs(&self) -> u32 {
+        self.min_epochs.unwrap_or(1)
     }
 }
