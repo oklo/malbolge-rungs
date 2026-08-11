@@ -244,6 +244,12 @@ pub fn generate_site(out_dir: &Path, epochs: u32) -> Result<()> {
                 .map_err(|e| anyhow::anyhow!("{}: {e}", record.rung_id))?;
         let program = std::fs::read(&safe_path)
             .with_context(|| format!("{}: reading {program_rel}", record.rung_id))?;
+        // Never publish on fewer epochs than the rung's family needs. The
+        // flat count applied here was 3, while the board's own instructions tell
+        // submitters to run 5 on transform and hash rungs — so the gate was
+        // weaker than the advice it prints, and a seed-dependent claim could
+        // pass one draw and publish.
+        let epochs = epochs.max(crate::admit::epochs_for(&rung));
         let outcome = verify_rung(&rung, &program, epochs);
         if !outcome.passed {
             let reason = outcome

@@ -33,6 +33,22 @@ const ALLOWED_PREFIXES: [&str; 3] = ["docs/attempts/", "research/", "solutions/"
 
 const BUNDLE_SCHEMA: &str = "malbolge-rungs.attempt-bundle.v1";
 
+/// Epochs needed before a pass means anything on this rung.
+///
+/// Coverage and finite-map rungs enumerate fixed inputs, so one epoch is
+/// definitive. Transform and hash-prefix rungs derive their inputs and targets
+/// from the challenge seed on every epoch, so a single epoch can be passed by a
+/// program that got lucky on one draw — which is the constant-output overfit the
+/// board exists to reject. Admission ran everything at one epoch and duly
+/// published a hash-prefix "solve" that failed on the next seed.
+pub fn epochs_for(rung: &crate::types::Rung) -> u32 {
+    use crate::types::Family;
+    match rung.family {
+        Family::CoverageTransform | Family::FiniteMap => 1,
+        _ => 5,
+    }
+}
+
 /// Outcome of admitting one bundle.
 #[derive(Debug)]
 pub struct Admission {
@@ -178,7 +194,7 @@ pub fn admit_bundle(repo: &Path, bundle_path: &Path, dry_run: bool) -> Result<Ad
 
     // --- write, and unwind completely on any later failure -------------------
     let mut written: Vec<PathBuf> = Vec::new();
-    let mut finish = || -> Result<(bool, Option<String>)> {
+    let mut finish = || -> Result<bool> {
         for (abs, content, rel) in &targets {
             if let Some(parent) = abs.parent() {
                 std::fs::create_dir_all(parent)
@@ -195,22 +211,23 @@ pub fn admit_bundle(repo: &Path, bundle_path: &Path, dry_run: bool) -> Result<Ad
             bail!("record does not validate: {}", problems.join("; "));
         }
 
-        let mut solved = false;
-        let mut metric = None;
+        // A record claiming a solve must actually pass its own rung.
         if rec.outcome == "solved" {
             let (ok, m) = verify_claim(repo, &rec)?;
             if !ok {
                 bail!("record claims a solve that does not pass the rung: {m}");
             }
-            solved = true;
-            metric = Some(m);
         }
-        Ok((solved, metric))
+        // Sweep whatever program the attempt reached, whether or not it claimed
+        // a solve. An attempt that fails its own rung can still clear others:
+        // the xor-1-len4096 attempt missed a rung demanding all 256 cases and
+        // its candidate passed the entire coverage ladder up to cov96.
+        Ok(rec.best_candidate.is_some())
     };
 
     match finish() {
-        Ok((solved, _)) => {
-            let credited = if solved {
+        Ok(has_candidate) => {
+            let credited = if has_candidate {
                 update_leaderboard(repo, &rec, &record_rel)?
             } else {
                 Vec::new()
@@ -244,7 +261,7 @@ fn verify_claim(repo: &Path, rec: &AttemptRecord) -> Result<(bool, String)> {
         .map_err(|e| anyhow::anyhow!("candidate {e}"))?;
     let bytes = std::fs::read(&program_path)
         .with_context(|| format!("reading candidate {}", cand.program))?;
-    let outcome = crate::verify::verify_rung(&rung, &bytes, 1);
+    let outcome = crate::verify::verify_rung(&rung, &bytes, epochs_for(&rung));
 
     let first = outcome
         .epochs
@@ -338,7 +355,7 @@ fn update_leaderboard(
         }
 
         let Some(rung) = crate::registry::find_rung(&rung_id) else { continue };
-        let outcome = crate::verify::verify_rung(&rung, &bytes, 1);
+        let outcome = crate::verify::verify_rung(&rung, &bytes, epochs_for(&rung));
         if !outcome.passed {
             continue;
         }
@@ -482,6 +499,37 @@ pub fn recredit_all(repo: &Path) -> Result<Vec<(String, String, String, String)>
         };
         let Some(rung) = crate::registry::find_rung(&rung_id) else { continue };
 
+        // Revoke a standing credit that no longer holds. Admission once ran
+        // every rung at a single epoch, which let a seed-dependent rung be
+        // credited to a program that passed one lucky draw. A repair pass that
+        // can only add credits cannot undo that, so check the incumbent first.
+        if entry.get("status").and_then(|s| s.as_str()) == Some("solved") {
+            let holds = entry
+                .get("best_program")
+                .and_then(|p| p.as_str())
+                .and_then(|p| crate::fspath::resolve_within_repo(repo, p).ok())
+                .and_then(|abs| std::fs::read(abs).ok())
+                .map(|b| crate::verify::verify_rung(&rung, &b, epochs_for(&rung)).passed)
+                .unwrap_or(false);
+            if !holds {
+                let was = entry
+                    .get("best_program").and_then(|p| p.as_str())
+                    .unwrap_or("(unknown)").to_string();
+                let obj = entry.as_object_mut().context("entry is not an object")?;
+                obj.insert("status".into(), serde_json::json!("open"));
+                obj.insert("best_program".into(), serde_json::Value::Null);
+                obj.insert("solver".into(), serde_json::Value::Null);
+                obj.insert("date".into(), serde_json::Value::Null);
+                obj.insert("metric".into(), serde_json::Value::Null);
+                obj.insert("note".into(), serde_json::json!(
+                    "Open. A previous credit here did not survive re-verification at full epochs."));
+                obj.remove("note_long");
+                changes.push((rung_id.clone(), was, "(revoked — open)".to_string(),
+                              format!("failed re-verification at {} epochs", epochs_for(&rung))));
+                continue;
+            }
+        }
+
         // Smallest passing program wins the rung.
         let mut best: Option<(usize, String, String)> = None;
         for p in &programs {
@@ -490,7 +538,7 @@ pub fn recredit_all(repo: &Path) -> Result<Vec<(String, String, String, String)>
             if best.as_ref().is_some_and(|(n, _, _)| *n <= bytes.len()) {
                 continue;
             }
-            let outcome = crate::verify::verify_rung(&rung, &bytes, 1);
+            let outcome = crate::verify::verify_rung(&rung, &bytes, epochs_for(&rung));
             if !outcome.passed {
                 continue;
             }

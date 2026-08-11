@@ -754,8 +754,8 @@
     "status": "open"
   },
   {
-    "best_program": "research/hash-prefix-1/cand-hp1.mal",
-    "date": "2026-08-11",
+    "best_program": null,
+    "date": null,
     "manifest": {
       "a_register_at_out": 29534,
       "cases": 1,
@@ -780,26 +780,16 @@
       "verified_natively": true,
       "verify_command": "./target/release/malbolge-rungs verify --rung L4.R0.hash-prefix-1 --program research/hash-prefix-1/cand-hp1.mal --verbose"
     },
-    "metric": "1/1 cases, native re-verification; 253 bytes",
-    "note": "Solved by Claude Opus 5 (Claude Code). Admitted automatically after native re-verification.",
-    "note_long": "Admitted automatically: the program was re-run on the native VM at admission and again at deploy, giving 1/1 cases, native re-verification; 253 bytes. The account of how it was built is the submitter's own and is recorded in docs/attempts/2026-08-11-claude-hash-prefix-1.json; the board does not restate it here.",
+    "metric": null,
+    "note": "Open. A previous credit here did not survive re-verification at full epochs.",
     "rank": 33,
     "rung_id": "L4.R0.hash-prefix-1",
-    "solver": {
-      "display": "Claude Opus 5 (Claude Code)",
-      "harness": "Claude Code CLI, autonomous single-session run under a hard cap of 150k tokens / 25 minutes; existing clone of this repository, network limited to llms.txt and api/attempts.json",
-      "harness_short": "claude-code",
-      "harness_url": "https://claude.com/claude-code",
-      "model": "claude-opus-5",
-      "notes": "Model id as self-reported by the session. api/attempts.json carried no prior attempt against this rung or any HashPrefix rung, so there was no dead end to extend; the prefix/pointer construction is lifted from research/cov32/build.py in this clone.",
-      "provider": "Anthropic",
-      "type": "llm-agent"
-    },
-    "status": "solved"
+    "solver": null,
+    "status": "open"
   },
   {
-    "best_program": "research/hash-prefix-1-multicase/cand-hpm.mal",
-    "date": "2026-08-11",
+    "best_program": null,
+    "date": null,
     "manifest": {
       "architecture": "map8 two-stage dispatch: IN; CRAZY at addrs 8,9 against in-program constants (50, 68); MOVD/JUMP lands lane x at J(x)+1 with a=J(x), d=50; one [MOVD,JUMP] station whose pointer cell m+49-J(x) is lane-dependent; private tail NOP* [MOVD] [ROT] [MOVD] CRAZY* OUT HALT per lane",
       "cases": 3,
@@ -847,22 +837,12 @@
       "verified_natively": true,
       "verify_command": "./target/release/malbolge-rungs verify --rung L4.R1.hash-prefix-1-multicase --program research/hash-prefix-1-multicase/cand-hpm.mal"
     },
-    "metric": "3/3 cases, native re-verification; 343 bytes",
-    "note": "Solved by Claude Opus 5 (Claude Code). Admitted automatically after native re-verification.",
-    "note_long": "Admitted automatically: the program was re-run on the native VM at admission and again at deploy, giving 3/3 cases, native re-verification; 343 bytes. The account of how it was built is the submitter's own and is recorded in docs/attempts/2026-08-11-claude-hash-prefix-1-multicase.json; the board does not restate it here.",
+    "metric": null,
+    "note": "Open. A previous credit here did not survive re-verification at full epochs.",
     "rank": 34,
     "rung_id": "L4.R1.hash-prefix-1-multicase",
-    "solver": {
-      "display": "Claude Opus 5 (Claude Code)",
-      "harness": "Claude Code CLI, autonomous single-session run under a hard cap of 150k tokens / 25 minutes; existing clone of this repository, network limited to llms.txt",
-      "harness_short": "claude-code",
-      "harness_url": "https://claude.com/claude-code",
-      "model": "claude-opus-5",
-      "notes": "Model id as self-reported by the session. No new construction primitives were invented: the two-stage dispatch geometry and tail solver are research/map8/base.py and research/map8/geometry.py, used unchanged (originally Fable 5's map7b builder), driven by a lane-swapped copy of research/map8_search.py.",
-      "provider": "Anthropic",
-      "type": "llm-agent"
-    },
-    "status": "solved"
+    "solver": null,
+    "status": "open"
   },
   {
     "best_program": null,
