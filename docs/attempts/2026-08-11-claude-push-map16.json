@@ -1,0 +1,67 @@
+{
+  "artifacts": [
+    "research/map16-push/model.py",
+    "research/map16-push/spec.py",
+    "research/map16-push/chain.py",
+    "research/map16-push/scan.py",
+    "research/map16-push/chainfind.py",
+    "research/map16-push/chainfind2.py",
+    "research/map16-push/solve.py",
+    "research/map16-push/build.py",
+    "docs/attempts/2026-08-11-claude-push-map16.best.mal",
+    "docs/attempts/2026-08-11-claude-push-map16.md"
+  ],
+  "best_candidate": {
+    "claimed_correct_cases": 15,
+    "claimed_total_cases": 16,
+    "program": "docs/attempts/2026-08-11-claude-push-map16.best.mal"
+  },
+  "budget": {
+    "architecture_configurations_swept_for_ceiling": 262144,
+    "best_ceiling_over_all_configurations": 15,
+    "best_model_level_count_found": 15,
+    "best_natively_verified_count": 15,
+    "candidate_program_bytes": 1988,
+    "candidate_steps": 1107,
+    "ceiling_note": "15/16 is an exact ceiling for the data-dispatch table architecture with a two-CRAZY dispatch and a CRZ/NOP walk, over the FULL spec space: all 8^6 = 262144 per-trit dispatch specs (3094 of which keep the sixteen addresses distinct) x all 81 constant choices for trits 6..9 x walk depths 2..9. The dead lane is 0xa7 in every one of them. The prior record's 80-configuration sweep is a strict subset and reaches the same number. The underlying obstruction is an arc argument that does not involve the table at all: the four trit-4-pinned targets span an arc of 101 on the 256-circle and the pinned trit-4 band is only 81 wide, so at most three of the four can ever be in range, for any reachable frozen high part.",
+    "code_end_address": 1107,
+    "dead_lane_in_every_15_of_16_configuration": "0xa7",
+    "dispatch_chain_ops": 10,
+    "model_exactness": "every build in this run predicted its native score case-for-case: 13/16 model -> 13/16 native, 15/16 model -> 15/16 native, with the identity of the failing lane matching in both",
+    "new_forcing_law": "trit 3. A lane needing final trit 4 = 2 must take every walk operand from the bytes >= 81; those bytes satisfy v-81 <= 45 < 54, so their trit 3 is 0 or 1 and never 2, and trit 3 is therefore pinned to (start + K) mod 2 exactly as trit 4 is one level up. Adding this cut the 15/16 configurations from 4088 to 408 and is the difference between a build that stalls at 13/16 and one that reaches 15/16.",
+    "refuted_prior_recommendation": "the 2026-08-10 record's item 3, 'put a ROT inside the walk ... the only idea on the list that can beat 15/16'. ROT is a = memory[d] = rotate_right(memory[d]): it overwrites the accumulator rather than combining with it, so a walk ROT discards the accumulation. Worse for the stated purpose, rot_r of a printable byte has trit 4 = 0 identically, so a walk ROT pins every lane's trit 4 to the same value and is strictly weaker than the drop-out freedom it was meant to replace.",
+    "token_cap": 700000,
+    "walk_depths_verified_at_15_of_16": "K = 3, 5 and 7 (odd depths share the same frozen high part, so depth above the parity is free)",
+    "wall_cap_seconds": 6000,
+    "what_more_budget_would_have_bought": "Inside this architecture the rung is now a wall, not a budget problem: 15/16 is exact, the dead lane is 0xa7, and no parameter of the family moves it - not the dispatch spec (all 262144 swept), not the walk depth, not the walk pattern, not the phase shift, and not a walk ROT. The single thing I would spend a further session on is a JMP staircase, which breaks the one assumption everything above rests on - that every lane executes the same number of CRAZYs, so the trit-4 and trit-3 parities are shared. The VM's op 4 is c = memory[d]; after the dispatch, cell Q_W2 holds A0(b), so navigating D there and executing JMP instead of MOVD sets c = A0(b) and then c++, and lane b starts executing at its own table address while d stays at the lane-independent Q_W2+1. All lanes then run forward to one common OUT/HALT, so lane b executes E - A0(b) instructions and a CRAZY placed between two lanes' entry addresses is executed by one and not the other. All consecutive gaps between the sixteen addresses are at least 1, so any monotone profile of CRAZY counts - and in particular any assignment of parities - is realisable, which makes H and both forcing laws per-lane. The cost to model is that the operand at step j is cell Q_W2+1+j, shared as a sequence but aligned to each lane's own start, and the first J - Q_W2 of those cells lie in the already-executed sled and are pinned to their encrypted values; push Q_W2 toward 127 and the JMP as early as the chain allows and the rest of the operand array is free. I would not spend anything on dispatch geometries, window-overlap DPs, larger walk depth, beam searches over the walk pattern (the per-lane DP is exact and cheap, so patterns should be enumerated), or ROT anywhere in the walk."
+  },
+  "builds_on": [
+    "docs/attempts/2026-08-10-claude-map16.json",
+    "docs/attempts/2026-08-11-claude-push-map12-low.json"
+  ],
+  "date": "2026-08-11",
+  "file": "docs/attempts/2026-08-11-claude-push-map16.json",
+  "manifest": {
+    "cpu_workers": 1,
+    "harness": "claude-code",
+    "model_version": "claude-opus-5",
+    "native_binary": "target/release/malbolge-rungs",
+    "reasoning_effort": null,
+    "wall_seconds": null
+  },
+  "outcome": "unsolved",
+  "report": "docs/attempts/2026-08-11-claude-push-map16.md",
+  "rung_id": "L2.FM3.xor51-map16",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "Claude Opus 5 (Claude Code)",
+    "harness": null,
+    "harness_short": "claude-code",
+    "harness_url": "https://claude.com/claude-code",
+    "model": "claude-opus-5",
+    "notes": "Model id as reported by the session's own environment. Run under a fixed 700k-token / 100-minute cap as part of a board-calibration survey.",
+    "provider": "Anthropic",
+    "type": "llm-agent"
+  },
+  "summary": "First program ever emitted on this rung, and it lands on the architecture's exact ceiling: 15/16 natively verified, failing only case 6 (input 0xa7). The prior record had zero verified cases, a model-level best of 12/16, and stalled inside its operand-chain builder; that blocker is fixed here by requiring leg 2 of the chain to OPEN with a CRAZY into a fresh cell (its filter demanded a CRAZY at the end, which is the wrong end of the leg), which turns the whole chain problem into a two-second BFS over a 26944-word graph. Two assumptions both prior records on this family carried are dropped - identity dispatch on trits 0..3 and a crushed trit 5 - because W1 and W2 are ordinary memory words, so the trit map may be chosen independently per trit; that does not raise the ceiling but it is what makes a 15/16 spec buildable in ten chain ops. Sweeping the full space (all 262144 per-trit specs, 3094 of which keep the addresses distinct, x 81 constant choices x walk depths) confirms 15/16 as exact, with 0xa7 dead in every configuration; the underlying obstruction is an arc argument independent of the table, since the four trit-4-pinned targets span 101 of the 256-circle and the pinned band is 81 wide. A new second forcing law is reported, on trit 3: lanes needing final trit 4 = 2 must take every operand from the bytes >= 81, whose trit 3 is never 2, so trit 3 is pinned the same way one level down; adding it cut the 15/16 configurations from 4088 to 408 and is exactly the difference between a build that stalls at 13/16 (verified natively, failing the two lanes the law predicts) and one that reaches 15/16. Finally the prior record's headline recommendation is refuted: a ROT inside the walk cannot beat 15/16, because ROT overwrites the accumulator instead of combining with it and pins every lane's trit 4 to 0."
+}
