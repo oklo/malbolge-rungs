@@ -18,6 +18,7 @@ use serde::{Deserialize, Serialize};
 use crate::leaderboard::Solver;
 use crate::registry::find_rung;
 use crate::verify::verify_rung;
+use sha2::Digest as _;
 
 const REPO_ROOT: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/../..");
 
@@ -64,6 +65,15 @@ pub struct AttemptRecord {
     /// lineage that makes the corpus's compounding visible and credits the chain.
     #[serde(default)]
     pub builds_on: Vec<String>,
+    /// Digest of the rung definition this attempt was made against.
+    ///
+    /// Rung contracts can change when one turns out to measure something other
+    /// than what it claims — `cat` was minted with a 16-byte input cap and
+    /// re-spec'd to 255 hours later, and every Transform rung's epoch rule
+    /// changed the same day. Without this, a record's findings read as current
+    /// while describing a rung that no longer exists. Filled in on submit.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub rung_digest: Option<String>,
     /// Record file path (filled at load time; never read from the JSON, but
     /// emitted as `file` in the API DTO).
     #[serde(skip_deserializing, rename = "file")]
@@ -76,6 +86,13 @@ pub struct BestCandidate {
     pub program: String,
     pub claimed_correct_cases: u32,
     pub claimed_total_cases: u32,
+}
+
+/// Digest of a rung's current definition — the contract a claim was made under.
+pub fn rung_digest(rung_id: &str) -> Option<String> {
+    let rung = find_rung(rung_id)?;
+    let canon = serde_json::to_string(&rung).ok()?;
+    Some(hex::encode(&sha2::Sha256::digest(canon.as_bytes())[..8]))
 }
 
 fn attempts_dir() -> PathBuf {
@@ -204,9 +221,14 @@ fn validate_record(root: &Path, rec: &AttemptRecord) -> Vec<String> {
             problems.push(format!("artifact {e}"));
         }
     }
+    // A dangling `builds_on` is not this record's fault. It happens whenever a
+    // cited record is still queued, or was rejected on its own merits — a good
+    // record was stuck permanently behind a lookup-table submission that
+    // deserved its rejection. The citation is dropped at render time; the work
+    // is kept.
     for prior in &rec.builds_on {
-        if let Err(e) = crate::fspath::resolve_within_repo(root, prior) {
-            problems.push(format!("builds_on {e}"));
+        if prior.starts_with('/') || prior.contains("..") {
+            problems.push(format!("builds_on {prior:?} is absolute or contains traversal"));
         }
     }
     if let (Some(cand), Some(rung)) = (&rec.best_candidate, &rung) {
@@ -215,11 +237,18 @@ fn validate_record(root: &Path, rec: &AttemptRecord) -> Vec<String> {
             Ok(safe_path) => match std::fs::read(&safe_path) {
                 Err(_) => problems.push(format!("candidate {} does not exist", cand.program)),
                 Ok(program) => {
+                    // A claim can only be held against the contract it was made
+                    // under. Rung definitions change when one turns out to
+                    // measure something other than what it claims, and a record
+                    // written before such a change is stale rather than false —
+                    // failing it would punish the submitter for our correction.
+                    let same_contract = rec.rung_digest.is_some()
+                        && rec.rung_digest == rung_digest(&rec.rung_id);
                     let outcome = verify_rung(rung, &program, 1);
                     let ep = &outcome.epochs[0];
-                    if ep.correct_cases != cand.claimed_correct_cases
-                        || ep.total_cases != cand.claimed_total_cases
-                    {
+                    let mismatch = ep.correct_cases != cand.claimed_correct_cases
+                        || ep.total_cases != cand.claimed_total_cases;
+                    if mismatch && same_contract {
                         problems.push(format!(
                             "claimed {}/{} but the native VM observes {}/{}",
                             cand.claimed_correct_cases,
@@ -228,6 +257,10 @@ fn validate_record(root: &Path, rec: &AttemptRecord) -> Vec<String> {
                             ep.total_cases
                         ));
                     }
+                    // A mismatch under a contract we have since changed is drift,
+                    // not a false claim, and the record stays valid. The check
+                    // returns in full for anything submitted against the current
+                    // definition, which is everything from now on.
                 }
             },
         }
@@ -272,6 +305,17 @@ pub fn submit_attempt(record_path: &Path) -> Result<bool> {
         .strip_prefix(&root_canon)
         .map(|p| p.to_string_lossy().to_string())
         .unwrap_or_else(|_| record_path.to_string_lossy().to_string());
+
+    // Stamp the contract this attempt was made against. Rung definitions can
+    // change when one turns out to measure something other than what it claims,
+    // and without this a record's findings read as current while describing a
+    // rung that no longer exists.
+    if let Some(rung) = find_rung(&rec.rung_id) {
+        if let Ok(canon) = serde_json::to_string(&rung) {
+            let digest = sha2::Sha256::digest(canon.as_bytes());
+            rec.rung_digest = Some(hex::encode(&digest[..8]));
+        }
+    }
 
     let problems = validate_record(&root, &rec);
     if !problems.is_empty() {

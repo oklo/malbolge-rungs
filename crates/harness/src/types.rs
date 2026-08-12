@@ -75,6 +75,17 @@ pub struct Rung {
     pub min_input_len: Option<u32>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub max_input_len: Option<u32>,
+    /// Transform rungs only: sweep the first input byte across all 256 values
+    /// instead of sampling it from the seed.
+    ///
+    /// Sampling cannot separate a near-miss from a solve at the top of the
+    /// range. A program correct on 255 of 256 bytes clears eighty sampled draws
+    /// about 73% of the time, and this ladder currently sits at 249. Sweeping
+    /// makes the judgement deterministic: epoch i fixes case j's first byte to
+    /// (i + j) mod 256, so 256 epochs test every byte against every case exactly
+    /// once and a single wrong byte is a certain failure.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub exhaustive_first_byte: Option<bool>,
     /// Seed epochs a candidate must pass before the rung counts as solved.
     /// Coverage and finite-map rungs enumerate fixed inputs, so one epoch is
     /// definitive and this stays unset. Transform and hash-prefix rungs redraw
@@ -113,6 +124,14 @@ impl Rung {
     /// Seed epochs this rung requires (defaults to 1). `verify` runs at least
     /// this many, so what an agent sees locally is what admission enforces.
     pub fn required_epochs(&self) -> u32 {
+        if self.exhaustive_first_byte == Some(true) {
+            return 256;
+        }
         self.min_epochs.unwrap_or(1)
+    }
+
+    /// True when this rung sweeps the first input byte rather than sampling it.
+    pub fn sweeps_first_byte(&self) -> bool {
+        self.exhaustive_first_byte == Some(true)
     }
 }

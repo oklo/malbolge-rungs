@@ -612,10 +612,13 @@ fn cmd_attempts(what: AttemptsCmd) -> Result<ExitCode> {
             let repo = std::path::PathBuf::from(concat!(env!("CARGO_MANIFEST_DIR"), "/../.."));
             match harness::admit::admit_bundle(&repo, std::path::Path::new(&bundle), dry_run) {
                 Ok(a) => {
-                    let verb = if dry_run { "WOULD ADMIT" } else { "ADMITTED" };
+                    let verb = if dry_run { "PATHS OK" } else { "ADMITTED" };
                     println!("[{verb}] {}  ({})", a.bundle, a.rung_id);
                     for f in &a.files {
                         println!("    {f}");
+                    }
+                    if dry_run {
+                        println!("    (paths only — a solve claim is re-verified on a real admit)");
                     }
                     for (rung, metric, displaced) in &a.credited {
                         let verb = if *displaced { "RE-CREDITED" } else { "SOLVED" };

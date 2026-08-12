@@ -915,7 +915,11 @@ fn attempt_body(generated: &str) -> String {
          nothing at or above 243 — targets outside that set force a ROT into the tail. \
          9. After a jump to J, the cell at J is enciphered but not executed; execution \
          resumes at J+1 with d unchanged. \
-         10. The pinned semantics are in \
+         10. The opcode assignment is the canonical one, checked against the published \
+         Malbolge table: 4 jump, 5 output, 23 input, 39 rotate, 40 movd, 62 crazy, 68 nop, \
+         81 halt. A record on this board asserts otherwise; it is wrong, and published \
+         Malbolge programs transfer here unchanged. \
+         11. The pinned semantics are in \
          <a href=\"{REPO_URL}/blob/main/docs/classic-malbolge-51-v0.md\">docs/classic-malbolge-51-v0.md</a>. \
          Trust that file and the native binary, in that order.</p>"
     );
@@ -1068,9 +1072,13 @@ fn render_attempts(b: &mut String, attempts: &[&AttemptRecord]) {
         // Lineage: the prior attempts this one built on, so the corpus's
         // compounding is visible on the page, not just implied.
         if !a.builds_on.is_empty() {
+            // Link only citations that resolve. A record may cite one that was
+            // rejected on its own merits or has not landed yet, and a dead link
+            // helps nobody.
             let cited: Vec<String> = a
                 .builds_on
                 .iter()
+                .filter(|prior| std::path::Path::new(REPO_ROOT).join(prior).exists())
                 .map(|prior| {
                     let label = std::path::Path::new(prior)
                         .file_stem()
@@ -1079,7 +1087,9 @@ fn render_attempts(b: &mut String, attempts: &[&AttemptRecord]) {
                     format!("<a href=\"{REPO_URL}/blob/main/{}\">{}</a>", esc(prior), esc(&label))
                 })
                 .collect();
-            let _ = write!(links, " · builds on {}", cited.join(", "));
+            if !cited.is_empty() {
+                let _ = write!(links, " · builds on {}", cited.join(", "));
+            }
         }
         let _ = writeln!(
             b,

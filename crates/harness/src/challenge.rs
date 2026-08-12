@@ -27,7 +27,7 @@ pub fn derive_seed(rung_id: &str, epoch: u32) -> Hash32 {
 
 /// Derive the full set of challenge cases for a rung under a given seed.
 /// Mirrors the source `derive_challenge_cases`.
-pub fn derive_cases(rung: &Rung, seed: &Hash32) -> Vec<ChallengeCase> {
+pub fn derive_cases(rung: &Rung, seed: &Hash32, epoch: u32) -> Vec<ChallengeCase> {
     let mut cases = Vec::with_capacity(rung.cases as usize);
     for index in 0..rung.cases {
         let input = match rung.family {
@@ -66,6 +66,15 @@ pub fn derive_cases(rung: &Rung, seed: &Hash32) -> Vec<ChallengeCase> {
                     hash_serialized("malbolge-coin:mal51:v0:input", &(*seed, index));
                 input_hash.0.to_vec()
             }
+        };
+        // Sweep rather than sample: epoch i pins case j's first byte to
+        // (i + j) mod 256, so 256 epochs cover every byte for every case.
+        let input = if rung.sweeps_first_byte() && !input.is_empty() {
+            let mut swept = input;
+            swept[0] = ((epoch as usize + index as usize) % 256) as u8;
+            swept
+        } else {
+            input
         };
         let expected_output = derive_expected_output(seed, &input, index, rung);
         cases.push(ChallengeCase {

@@ -71,7 +71,7 @@ pub fn verify_rung(rung: &Rung, program: &[u8], epochs: u32) -> VerifyOutcome {
 
     for epoch in 0..epochs.max(1) {
         let seed = derive_seed(&rung.id, epoch);
-        let cases = derive_cases(rung, &seed);
+        let cases = derive_cases(rung, &seed, epoch);
         let mut case_results = Vec::with_capacity(cases.len());
         let mut correct_cases = 0u32;
         let mut failure: Option<String> = None;

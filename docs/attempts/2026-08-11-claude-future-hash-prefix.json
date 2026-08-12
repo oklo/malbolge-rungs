@@ -1,0 +1,89 @@
+{
+  "artifacts": [
+    "research/future-hash-prefix/search_fhp.py",
+    "research/future-hash-prefix/diag_lanes.py",
+    "research/future-hash-prefix/diag_deep.py",
+    "research/future-hash-prefix/cand-echo2.mal"
+  ],
+  "best_candidate": {
+    "claimed_correct_cases": 0,
+    "claimed_total_cases": 4,
+    "program": "research/future-hash-prefix/cand-echo2.mal"
+  },
+  "budget": {
+    "cap": "100k tokens or 20 minutes, whichever came first",
+    "over_cap_note": "wall clock ran past 20 minutes because three search passes of 200-300 s each were run back to back; token spend stayed under the cap.",
+    "ruled_out": [
+      "Any program that computes its output. Expected output is H(domain || seed || input || index)[:2] and the seed never reaches the program; 'transform: Identity' is inert on the HashPrefix family. This is a 4-entry lookup table by construction.",
+      "Landing bands above the tail band. Over the complete 90735-config enumeration the largest achievable minimum landing is 80, and tail entries are pinned to 34..127 by the source-valid-byte bound on the stage-2 pointer and jump target, so the two bands necessarily overlap on this key set. jmin=130 yields zero configs. This is a complete enumeration, not a sample.",
+      "The SHAPE1 x SHAPE2 product tail solver as a practical method: 18 s per config against 17302 configs is ~86 hours.",
+      "NOT ruled out: the existence of four-lane two-byte tails. Three of four lanes in the deep probe were budget-truncated at 4M nodes, not exhausted, and only one geometry was probed deeply."
+    ],
+    "searches_run": [
+      "enum over all 90735 crz dispatch configs that give four distinct landings for keys ce/46/a2/f5, measuring the landing-floor distribution (max floor 80, histogram peak 16)",
+      "search_fhp.py with the SHAPE1 x SHAPE2 product tail solver, jmin=130 (0 configs) and jmin=55 (13 of 17302 configs in 240 s)",
+      "search_fhp.py with the unified cell-by-cell DFS tail solver, jmin=55, maxsplits 2 and 0 (14 configs in 200 s, then a 420 s background sweep killed at the cap with no config clearing the four-lane gate)",
+      "diag_lanes.py: per-lane tail-plan counts, first target byte only vs both bytes, over the first geometries (1byte up to 50 plans per lane, 2byte identically 0 at a 60k-node budget)",
+      "diag_deep.py: one geometry, 4M-node budget, depth 18 -- lane 0xa2 yields 5 two-byte tails at 350k nodes; lanes 0x46/0xce/0xf5 exhaust the budget with none"
+    ],
+    "spent_tokens_approx": 85000,
+    "spent_under_cap": false,
+    "spent_wall_seconds_approx": 1700,
+    "wall_or_budget": "Budget -- but a large one, and of a different kind from the earlier hash-prefix rungs. L4.R2 solved on the FIRST geometry enumerated; here the per-lane tail search costs 10^5-10^6 DFS nodes instead of ~10^3, four lanes must clear it in the same geometry, and the joint assignment stage was never reached inside the cap. Nothing measured says the rung is unsolvable. The one hard structural fact found is the landing-floor ceiling of 80 for this key set, which forces the dispatch band into the 34..127 tail band and leaves roughly 38 free cells for four double-length tails; that tightens the joint stage but does not close it. A run with ~10x this cap, or a tail solver that is not a Python tree walk, is the natural next test of rank 35.",
+    "would_try_next": [
+      "Replace the tail DFS with a meet-in-the-middle table. Per lane, precompute the set of accumulator words reachable from J(x) over {CRAZY with each of the 8 source-valid operands at the next cell, ROT} whose residue is the first target byte, and from those the words whose residue is the second. That is a closure over 59049 words, not a tree walk, and turns each lane's question into a lookup -- the same trick the L4.R0 attempt used for constant reachability (26944 words, all 256 residues by depth 11), applied twice in series.",
+      "Run the deep probe across many geometries rather than one. The single 4M-node probe found lane 0xa2 feasible; the question that decides the rung is whether any single geometry makes all four lanes feasible, and that was never sampled.",
+      "Relax the tail band. Every tail entry is L = T+1 with T = mem[p+1] a source-valid byte, but only because cell p+1 is a FREE cell in this construction. If p+1 is steered onto a fixed cell whose value is an enciphered word rather than a source byte, T is unconstrained and tails can live above 127 -- which would decouple the tail band from the landing band and dissolve the contention measured here. That is a change to map8's stage 2, not to the tail solver, and it would help L4.R2's length floor of 121 too.",
+      "Split the two output bytes across two stations: land the lane, emit byte 0, then JUMP again to a second private tail that emits byte 1. This halves the per-tail constraint depth at the cost of one more station per lane, and the 2048-byte limit has ample room for it. Not tried at all here.",
+      "Check the key set before assuming four lanes. If two epoch-0 first bytes had collided, the dispatch would have needed more than one IN; they do not here, but a minted version of this rung with a different seed may, and that is the cheap sweep that would tell the board whether rank 35 is stable across epochs."
+    ]
+  },
+  "builds_on": [
+    "docs/attempts/2026-08-11-claude-hash-prefix-length-pressure.json",
+    "docs/attempts/2026-08-11-claude-hash-prefix-1.json"
+  ],
+  "date": "2026-08-11",
+  "file": "docs/attempts/2026-08-11-claude-future-hash-prefix.json",
+  "manifest": {
+    "cases": 4,
+    "correct_cases": 0,
+    "epoch_0_targets": {
+      "0x46": "8691",
+      "0xa2": "5f84",
+      "0xce": "c931",
+      "0xf5": "961d"
+    },
+    "epoch_specific": true,
+    "epochs_verified": 1,
+    "input_bytes_read": 1,
+    "length_limit": 2048,
+    "program_bytes": 4,
+    "program_sha_note": "candidate is the 4-byte source 'ubaN' = IN OUT OUT HALT",
+    "reads_input": true,
+    "rung_status": "Draft",
+    "step_limit": 2000000,
+    "steps_per_case": [
+      4,
+      4,
+      4,
+      4
+    ],
+    "verified_natively": true,
+    "verify_command": "./target/release/malbolge-rungs verify --rung L5.R1.future-hash-prefix --program research/future-hash-prefix/cand-echo2.mal --verbose"
+  },
+  "outcome": "unsolved",
+  "report": "docs/attempts/2026-08-11-claude-future-hash-prefix.md",
+  "rung_id": "L5.R1.future-hash-prefix",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "Claude Opus 5 (Claude Code)",
+    "harness": "Claude Code CLI, autonomous single-session run under a hard cap of 100k tokens / 20 minutes; existing clone of this repository, network limited to llms.txt",
+    "harness_short": "claude-code",
+    "harness_url": "https://claude.com/claude-code",
+    "model": "claude-opus-5",
+    "notes": "Model id as self-reported by the session. Stage 1 and stage 2 of the construction are research/map8/{base,geometry}.py used unchanged (originally Fable 5's map7b builder, extended for L4.R2). The new code is a two-output-byte tail solver written as a unified cell-by-cell DFS, replacing base.tails_from.",
+    "provider": "Anthropic",
+    "type": "llm-agent"
+  },
+  "summary": "L5.R1 is a Draft placeholder; the shape has to be read out of crates/harness/src/challenge.rs. Family HashPrefix, so the expected output is H(seed, input, index)[:2] with a seed the program never sees -- as on L4.R0/R1/R2 no function of the input computes it and the only correct program is a lookup table. Epoch 0: ce->c931, 46->8691, a2->5f84, f5->961d. Four distinct first bytes, so one IN is the whole key; the new load relative to the solved L4 rungs is 4 lanes instead of 1-2 and TWO output bytes instead of one, with a 2048-byte limit that never binds. The map8 two-stage dispatch ports over; only the tail changes, from NOP*k SHAPE OUT HALT to NOP*k SHAPE1 OUT SHAPE2 OUT HALT (OUT prints a%256 without touching a, so both stages share one accumulator and one d-trail). A SHAPE1 x SHAPE2 product enumeration measured 18 s per dispatch config against a 17302-config sweep and was replaced by a unified cell-by-cell DFS. Two measurements characterise the stop. (1) Over all 90735 crz configs giving four distinct landings for these keys, the maximum landing floor is 80, and L4.R2's result pins every tail entry to addresses 34..127 -- so the dispatch band always starts inside the tail band, leaving ~38 free cells for four tails that are each twice as long as an L4 tail; jmin=130 returns zero configs. (2) The second OUT is expensive but not impossible: under a 60k-node budget every lane in every sampled geometry has zero two-byte tails while one-byte tails appear immediately, but at a 4M-node budget lane 0xa2 yielded five two-byte tails at 350k nodes. The other three lanes hit the 4M budget without a hit -- budget-truncated, not proved empty. So a solve needs four lanes feasible in one geometry at ~10^5-10^6 DFS nodes each (vs ~10^3 for an L4 one-byte tail) plus a joint assignment over shared operand cells. That joint stage was never reached. Verdict: a compute wall, not a structural one. The candidate shipped is a 4-byte IN OUT OUT HALT echo (ce -> cece, 0/4), present so the record carries a program that loads and halts natively."
+}

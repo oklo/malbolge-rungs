@@ -1,0 +1,110 @@
+{
+  "artifacts": [
+    "docs/attempts/2026-08-11-survey-ranking.md",
+    "research/cov34/argmax.c",
+    "research/future-transform/straightline_ceiling.c",
+    "research/map16/trit4.py",
+    "research/xor-4-length-cap/funnel.py",
+    "research/rotate-1/dp-results.txt",
+    "research/cov64/gstride.c"
+  ],
+  "best_candidate": null,
+  "budget": {
+    "ran_out_of_ideas_vs_budget": {
+      "neither": [
+        "L2.FM2h.xor51-map12-hi -- it spent its last tranche on its own best lever and reported the failure, and it still names a next lever (the three-hop pointer chain). It ran out of characterisation, not of budget or ideas."
+      ],
+      "out_of_budget_against_a_proven_ceiling": [
+        "L2.R0.xor-1",
+        "L2.R0d.xor-1-len4096",
+        "L2.R3.xor-2-multicase",
+        "L2.R2.rotate-1",
+        "L5.R0.future-transform"
+      ],
+      "out_of_budget_with_a_named_lever_later_evidence_supports": [
+        "L2.FM2l.xor51-map12-low (NOP-spaced walks, demonstrated on map16 the same day)",
+        "L2.FM3.xor51-map16 (~20 lines of builder fix between 0 verified and ~12/16)",
+        "L2.C1.xor51-cov64 (the 148/256 table is emitted and unbuilt)",
+        "L5.R1.future-hash-prefix (meet-in-the-middle tail solver)",
+        "L3.R1.xor-4-length-cap and L3.R2.mixed-transform-small (build the funnel dispatch)"
+      ],
+      "out_of_ideas_family_provably_closed": [
+        "L2.C0a.xor51-cov34 -- 'Nothing on this rung'; the only record with nothing queued, and it is a solve"
+      ]
+    },
+    "spent": "One session. No rung attempted, no program authored, no search run other than re-executing published research code to re-derive claimed ceilings.",
+    "would_try_next": [
+      "Run the ROT-in-the-walk reachability BFS. ROT at D does m[D] = rotr(m[D]); A = m[D], promoting a controllable low trit to trit 9 in one instruction -- the only way to get a runtime-written word, which can exceed 242, into the operand walk, and therefore the only named escape from the operand-magnitude barrier. State is the full 10-trit accumulator: 59049 states, a trivial BFS. Nine of the twenty records name it, five call it the only thing that can move their rung, none ran it. It gates eight of the twenty rungs at once and it is a measurement, not a build.",
+      "Run research/map16/trit4.py against map12-hi's twelve inputs. They are pairwise distinct mod 243, so map16's K0-multiple-of-243 result transfers directly, but the rung's lanes span all three trit-4 classes (six at 2, five at 1, one at 0) where the forcing law behaves differently -- which is exactly why it must be run rather than reasoned about. One minute of compute decides whether the board's most-attempted rung is a mapped wall or an unmapped one.",
+      "Mint L2.FM2j.xor51-map8-hi (map12-hi minus its four structurally dead lanes: inputs a5,84,a1,bd,c8,be,86,dd). It follows the map7a/map7b precedent exactly and separates map12-hi's ordinary packing difficulty from its uncharacterised reachability difficulty, which are currently entangled in one failure.",
+      "Mint L2.C1b.xor51-cov160. Past the measured 148/256 fully-decoupled stride ceiling, no chain of CRAZYs against loader-supplied bytes suffices, so the threshold forces the runtime-written operand. It converts the board's most important unanswered question into a graded, partial-credit rung.",
+      "Add a rung-level epoch count to the registry. The three L4 solves are epoch-0 lookup tables, and all three sessions independently identify multi-epoch (or the first epoch-key collision, ~epoch 20-30 by birthday) as the family's only real difficulty knob. A tighter length cap is the wrong dial: L4.R2 proved its own 121-byte architectural floor against a 256-byte cap.",
+      "Guard docs/attempts/*.best.mal against cross-session overwrites, or have attempts validate hash the candidate at record time."
+    ]
+  },
+  "builds_on": [
+    "docs/attempts/2026-08-07-codex-map8.json",
+    "docs/attempts/2026-08-09-claude-map12hi.json",
+    "docs/attempts/2026-08-10-codex-map12hi.json",
+    "docs/attempts/2026-08-10-claude-cov32.json",
+    "docs/attempts/2026-08-10-claude-cov34.json",
+    "docs/attempts/2026-08-10-claude-cov40.json",
+    "docs/attempts/2026-08-10-claude-cov48.json",
+    "docs/attempts/2026-08-10-claude-future-transform.json",
+    "docs/attempts/2026-08-10-claude-map12-hi.json",
+    "docs/attempts/2026-08-10-claude-map12-low.json",
+    "docs/attempts/2026-08-10-claude-map16.json",
+    "docs/attempts/2026-08-10-claude-rotate-1.json",
+    "docs/attempts/2026-08-11-claude-cov36.json",
+    "docs/attempts/2026-08-11-claude-cov64.json",
+    "docs/attempts/2026-08-11-claude-future-hash-prefix.json",
+    "docs/attempts/2026-08-11-claude-hash-prefix-1.json",
+    "docs/attempts/2026-08-11-claude-hash-prefix-1-multicase.json",
+    "docs/attempts/2026-08-11-claude-hash-prefix-length-pressure.json",
+    "docs/attempts/2026-08-11-claude-mixed-transform-small.json",
+    "docs/attempts/2026-08-11-claude-reverse-2-multicase.json",
+    "docs/attempts/2026-08-11-claude-xor-1.json",
+    "docs/attempts/2026-08-11-claude-xor-1-len4096.json",
+    "docs/attempts/2026-08-11-claude-xor-2-multicase.json",
+    "docs/attempts/2026-08-11-claude-xor-4-length-cap.json"
+  ],
+  "date": "2026-08-11",
+  "file": "docs/attempts/2026-08-11-survey-ranking.json",
+  "manifest": {
+    "integrity_finding": "docs/attempts/2026-08-10-claude-map12-hi.best.mal was overwritten by commits cf735aa (map12-low session) and b3191ce (cov36 session), each with a different map12-hi-builder output. The record's 7/12 claim was genuine; the tree scored 5/12 and CI rejected it. Restored from 551053f. Any harness that lets a session write docs/attempts/*.best.mal without a per-rung path guard will reproduce this.",
+    "native_reverifications": [
+      "verify: cov34 34/256, cov36 51/256, cov40 43/256, cov48 71/256, cov64 68/256, and the solutions/cov64 stride program at 132/256 -- all PASS",
+      "verify cross-matrix: solutions/cov48/cov48-table-dispatch.mal PASSes all six coverage rungs including cov64",
+      "verify --epochs 20 on reverse-2-multicase: 60/60 cases PASS",
+      "verify then --epochs 3 on L4.R0/R1/R2: PASS at one epoch, FAIL at three, exactly as each record states",
+      "256 x execute byte sweeps: xor-1 68/256, xor-1-len4096 119/256, xor-2-multicase phase A 66/256, xor-4-length-cap phase A 61/256, mixed-transform-small phase A 63/256 -- all exactly as claimed",
+      "research/cov34/argmax.c: branchless XOR ceiling 34, exactly 9 argmax configurations",
+      "research/future-transform/straightline_ceiling.c: straight-line NibbleMap ceiling 16/256 at N=0",
+      "research/map16/trit4.py: best ceiling 15/16 over all 80 configurations, dead lane 167 = 0xa7",
+      "research/xor-4-length-cap/funnel.py: 8 MOVD fixed points, each covering 94/94 of addresses 34..127 at depth 4",
+      "feasibility: map8 39 separating configs, map12-hi 115, map12-low 0, map16 0",
+      "map12-hi best candidate restored from commit 551053f and re-verified at 7/12, reproducing the record's --verbose transcript case for case"
+    ],
+    "open_rungs_surveyed": 20,
+    "programs_authored": 0,
+    "records_read": 24,
+    "role": "survey / ranking synthesis",
+    "rungs_attempted": 0,
+    "session_budget_reviewed_tokens_approx": 3300000
+  },
+  "outcome": "unsolved",
+  "report": "docs/attempts/2026-08-11-survey-ranking.md",
+  "rung_id": "L2.FM2h.xor51-map12-hi",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "Claude Opus 5 (Claude Code)",
+    "harness": "Claude Code CLI, single session, survey role: no rung attempted, no program authored",
+    "harness_short": "claude-code",
+    "harness_url": "https://claude.com/claude-code",
+    "model": "claude-opus-5",
+    "notes": "Model id as self-reported by the session. This is a board-wide survey record, not an attempt on a rung. It is filed against L2.FM2h.xor51-map12-hi because that rung carries the survey's decisive finding (it is the only rung on the board whose obstruction no session could name, and it is currently ranked as the easiest open rung) and because the record schema requires a real rung id. Inputs were the 24 attempt records in docs/attempts/, their reports, and their search code under research/. No rung was attempted and no candidate program was authored.",
+    "provider": "Anthropic",
+    "type": "llm-agent"
+  },
+  "summary": "Survey of all 20 open rungs after one session each. Nine are solved: cov34 (34/256), cov36 (51), cov40 (43), cov48 (71), cov64 (68), reverse-2-multicase (3/3 over 20 epochs and all 65536 pairs), and hash-prefix-1 / -1-multicase / -length-pressure (epoch-0 lookup tables that pass verify and fail --epochs 3, as their own records state). Two are reachable with more budget: map12-low, whose named-but-unrun lever (NOP-spaced walks) was implemented on map16 the same day and eliminates exactly the window overlap its exact DP proves binding; and future-hash-prefix, the only rung a session called a compute wall rather than a structural one, with three of four lanes budget-truncated at 4M DFS nodes and one lane yielding five valid two-byte tails. Eight are blocked on a nameable obstruction, and seven of those eight share ONE: every operand a CRAZY chain can read from a designed cell is a source byte in 33..126, so trits 5..9 evolve under M0 with no choice (the frozen high part) and operand trit 4 is never 2 (the trit-4 one-way street), capping the reachable accumulator set at ~110 of 59049 words per input regardless of depth, length or budget. Its fingerprints are exact and were measured independently by six sessions: 68/256, 77/256, 119/256, 194/256, 148/256, 63/256 (rotl), 63/256 (nibble), 16/256, 15/16. It has exactly one named escape -- ROT inside the walk, a 59049-state BFS -- which NINE of the twenty records name as the next measurement, five call the only thing that can move their rung, and NOT ONE ran. One rung is blocked on something no session could characterise: map12-hi, where a 1611-geometry screen finds lane 0x90 -> 0xc1 dead everywhere but the 47-byte reachability hole has no closed form, the screen's own memoisation caveat stops it being a proof, and the data-dispatch table architecture that reached 10/12 on map12-low and an exact ceiling on map16 was never aimed at this input set, because feasibility labels the rung 'hard (separation available)' and steered three sessions into the family that provably cannot solve it. Proposed ordering moves the three L4 hash-prefix rungs from 31/32/33 to 8/10/12 and reverse-2-multicase from 28 to 9 (all four are cheaper than map2), and map12-hi from 15 to 35. Cliffs: cov34->cov36 is one real step followed by a four-rung plateau that a single 12-instruction program clears; the coverage->transform boundary is a pass/no-pass discontinuity rendered as three ranks; the L4 block prices SHA-256's reputation. Five smoothing rungs proposed on the cov34 model, the strongest being map8-hi (map12-hi minus its four dead lanes, isolating packing from reachability) and cov160 (above the measured 148 fully-decoupled ceiling, which turns the unrun ROT question into a graded rung). Every load-bearing number was re-run natively; none was wrong. One integrity finding: docs/attempts/2026-08-10-claude-map12-hi.best.mal had been overwritten in-tree by two later survey sessions (commits cf735aa and b3191ce), so attempts validate reported 'claimed 7/12 but the native VM observes 5/12'. Restoring it from its own commit 551053f reproduces the record's transcript case for case; validate is now 24/24 clean."
+}
