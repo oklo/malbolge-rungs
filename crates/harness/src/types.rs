@@ -24,12 +24,13 @@ pub enum Family {
     ///
     /// Every other family fixes the output width in the rung definition, so a
     /// program can be written straight-line: read a known number of bytes, emit
-    /// a known number back. A stream rung cannot be, because the program does
-    /// not know how much input it will get — it has to loop until the input
-    /// runs out. That is the one thing thirty-seven rungs never asked for, and
-    /// in Malbolge it is the hard part: every cell that executes is enciphered
-    /// afterwards, so a loop body is different code on its second pass and must
-    /// either restore itself or ride the 94-cycle back.
+    /// a known number back. Stream rungs are designed to pressure iteration:
+    /// the program is not told how much input it will get, so the intended
+    /// solution loops until the input runs out — and in Malbolge that is the
+    /// hard part, because every cell that executes is enciphered afterwards, so
+    /// a loop body is different code on its second pass and must either restore
+    /// itself or ride the 94-cycle back. The cases are deterministic and
+    /// public, so a pass pressures a loop rather than proving one.
     Stream,
 }
 
@@ -69,8 +70,9 @@ pub struct Rung {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub min_correct_cases: Option<u32>,
     /// `Stream` only: inclusive bounds on the seed-drawn input length. The
-    /// program is told neither the length nor the bounds — it must detect the
-    /// end of input itself.
+    /// bounds are public (they are right here in the registry), but the length
+    /// of any given case is not knowable in advance — the program must detect
+    /// the end of input itself.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub min_input_len: Option<u32>,
     #[serde(default, skip_serializing_if = "Option::is_none")]

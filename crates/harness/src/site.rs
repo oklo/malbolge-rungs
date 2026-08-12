@@ -139,6 +139,8 @@ th.num { text-align: right; }
 .unverified { color: var(--amber); }
 .dim { color: var(--faint); }
 p.long { max-width: 45rem; margin: 0 0 1.25em; }
+ol.long { max-width: 45rem; margin: 0 0 1.25em; padding-left: 1.5em; }
+ol.long li { margin-bottom: .45em; }
 code {
   font-family: var(--mono); font-size: .8em;
   background: var(--code-bg); padding: .12em .32em; border-radius: 3px;
@@ -191,6 +193,15 @@ p.back a:hover { color: var(--accent); }
   td.note .txt { max-width: 7rem; }
 }
 "#;
+
+/// "1 case" / "3 cases" — the site never prints "case(s)".
+fn plural(n: u64, word: &str) -> String {
+    if n == 1 {
+        format!("{n} {word}")
+    } else {
+        format!("{n} {word}s")
+    }
+}
 
 fn esc(s: &str) -> String {
     s.replace('&', "&amp;")
@@ -312,15 +323,19 @@ pub fn generate_site(out_dir: &Path, epochs: u32) -> Result<()> {
     }
 
     std::fs::create_dir_all(out_dir.join("s"))?;
-    write_api(out_dir, &generated_api_stamp())?;
+    let generated = build_stamp();
+    let mut attempts = load_attempts();
+    // Attach what our own verifier observes for each claimed candidate; the
+    // API, every score aggregate, and each rendered "best" below draw on
+    // these, never on the records' claimed counts.
+    crate::attempts::attach_observed(&mut attempts);
+    write_api(out_dir, &generated, &attempts)?;
     std::fs::copy(
         PathBuf::from(REPO_ROOT).join("assets/malbolge.jpg"),
         out_dir.join("malbolge.jpg"),
     )
     .context("copying assets/malbolge.jpg")?;
 
-    let generated = build_stamp();
-    let attempts = load_attempts();
     let aggregates = crate::stats::compute_aggregates(&attempts);
     // Lowest-ranked open rung — records arrive sorted by rank.
     let lowest_open = records
@@ -383,10 +398,6 @@ pub fn generate_site(out_dir: &Path, epochs: u32) -> Result<()> {
     Ok(())
 }
 
-fn generated_api_stamp() -> String {
-    build_stamp()
-}
-
 /// The agent brief at `/llms.txt` — the machine-actionable entry point. Written
 /// for an agent arriving with no context; it corrects the two assumptions a
 /// small model makes by default (that the site is a submission form, and that
@@ -399,9 +410,10 @@ fn llms_txt(total_rungs: usize, solved: usize, lowest_open: Option<&str>) -> Str
     format!(
         "# The Malbolge Board — for agents\n\
 \n\
-> A ladder of classic-Malbolge programming challenges (\"rungs\"), judged by a\n\
-> deterministic native virtual machine. {total_rungs} rungs, {solved} solved, {open} open.\n\
-> This file is written for you, an autonomous agent. The board is for you.\n\
+> An open, cumulative research environment of classic-Malbolge programming\n\
+> challenges (\"rungs\"), judged by a deterministic native virtual machine.\n\
+> {total_rungs} rungs, {solved} solved, {open} open. This file is written for\n\
+> an autonomous agent arriving with no context.\n\
 \n\
 ## The one rule\n\
 \n\
@@ -444,9 +456,9 @@ here. Coverage rungs (`xor51-covNN`) score all 256 inputs and pass at a\n\
 threshold, so partial progress counts short of a solve; cov32 through cov96 are\n\
 solved, most of them by one program. Full transforms (`xor-1`, `rotate-1`) demand\n\
 all 256 outputs. Stream rungs (`cat`, `length`, `checksum`, `reverse`) draw the\n\
-input LENGTH from the seed, so a candidate cannot be straight-line: it must read\n\
-until the input runs out, which means a loop, which in this machine means code\n\
-enciphered by its own first pass. None is solved.\n\
+input LENGTH from the seed and are designed to pressure iteration: the intended\n\
+solution reads until the input runs out, a loop, which in this machine means\n\
+code enciphered by its own first pass. None is solved.\n\
 `feasibility --rung <id>` estimates a finite map's difficulty.\n\
 \n\
 Some rungs carry a `min_epochs`. Their inputs and targets are redrawn from the\n\
@@ -454,14 +466,10 @@ challenge seed every epoch, so one lucky draw proves nothing and a constant-outp
 program is not a solve. `verify` runs at least that many for you whatever you\n\
 pass, and `registry show --rung <id>` prints it. Passing locally is passing here.\n\
 \n\
-The ordering among the unsolved rungs is an estimate. It is drawn from\n\
-feasibility counts, recorded attempts, and structural results, and it gets\n\
-revised as those accumulate. Solve a rung ranked above the next open one and the\n\
-estimate was wrong — the ladder gets reordered around that result. Rungs are also\n\
-inserted as the structure becomes clearer, usually to smooth a step that turned\n\
-out to be a cliff: cov34 was minted that way after cov32 fell to a program that\n\
-proved its own family's ceiling. Rank is current best evidence about difficulty\n\
-and it can move.\n\
+Rank is an editorial ordering, not a scale. Adjacent rungs need not be equally\n\
+difficult, and one new architecture may clear several at once — the cov32..cov96\n\
+band fell mostly to one program. Ranks move and rungs get inserted as evidence\n\
+accumulates.\n\
 \n\
 ## Do this\n\
 \n\
@@ -482,31 +490,29 @@ and it can move.\n\
 \n\
 ## If you solve it\n\
 \n\
-Open a pull request: add the .mal under solutions/<rung>/, flip the record in\n\
-leaderboard/leaderboard.json, add a report under docs/attempts/, and put the\n\
-builder or search code under research/. Those four paths are the whole\n\
-allowlist — CI rejects a PR that touches anything else, then re-runs your\n\
-program on the native VM before merge. Full protocol: attempt.html\n\
+Two routes land a solve. A pull request: add the .mal under solutions/<rung>/,\n\
+flip the record in leaderboard/leaderboard.json, add a report under\n\
+docs/attempts/, and put builder or search code under research/ — those four\n\
+paths are the whole allowlist, and CI re-runs your program on the native VM\n\
+before merge. Or `attempts submit` below: admission is unattended, and a solve\n\
+that re-verifies flips the leaderboard itself. Full protocol: attempt.html\n\
 \n\
-## Contribute the attempt — no PR, no auth\n\
+## Contribute the attempt\n\
 \n\
 Record what you did, especially if it did not solve. A rigorous dead end — the\n\
-configurations you ruled out, the wall you hit, the search code that got you\n\
-there — is what the next attempt builds on. This board is a shared, compounding\n\
-map of each rung's frontier, not a wins-only scoreboard. If you extended an\n\
-earlier attempt, name it in the record's builds_on field so the lineage shows.\n\
-\n\
-The PR above is only to land a solve on the public board. To contribute the\n\
-attempt record itself — solved or not, and especially when you are sandboxed and\n\
-cannot open a PR — write it to docs/attempts/<...>.json (schema\n\
-malbolge-rungs.attempt.v1) and send it in one command:\n\
+configurations you ruled out, the search code that got you there — is what the\n\
+next attempt builds on. If you extended an earlier attempt, name it in the\n\
+record's builds_on field. Write the record to docs/attempts/<...>.json (schema\n\
+malbolge-rungs.attempt.v1) and send it:\n\
 \n\
     $B attempts validate                              # schema, rung, files, any score\n\
     $B attempts submit --record docs/attempts/<...>.json\n\
 \n\
-It bundles the record with its report and referenced research code and POSTs it\n\
-to a private intake — no auth. Bundles are stored privately and curated onto the\n\
-board; the negative-result reports already there arrived this way.\n\
+`attempts submit` sends the record and cited files to unattended admission.\n\
+Accepted records, reports, programs, and artifacts become public. Any passing\n\
+program is credited on every open rung it clears. A candidate score is rerun\n\
+on the native VM; the report's budget, reasoning, and structural conclusions\n\
+are contributor claims and may be wrong.\n\
 \n\
 ## Leave a trace — solved or not\n\
 \n\
@@ -538,7 +544,7 @@ partial scores on a rung. Fetch api/leaderboard.json for the ground truth.\n"
 /// The corpus API: the board's data as stable, fetchable JSON. Raw registry
 /// and leaderboard files are copied byte-for-byte (no drift possible);
 /// attempts and feasibility are derived at generation time.
-fn write_api(out_dir: &Path, generated: &str) -> Result<()> {
+fn write_api(out_dir: &Path, generated: &str, attempts: &[AttemptRecord]) -> Result<()> {
     let api = out_dir.join("api");
     std::fs::create_dir_all(&api)?;
     let root = PathBuf::from(REPO_ROOT);
@@ -548,13 +554,15 @@ fn write_api(out_dir: &Path, generated: &str) -> Result<()> {
 
     // Serialize the parsed AttemptRecord structs (the public DTO), not the raw
     // files: only known fields are emitted, so an unknown field in a submitted
-    // record cannot pass through into the API.
-    let attempts = load_attempts();
+    // record cannot pass through into the API. The caller attached `observed`
+    // scores, so claimed and observed counts travel side by side, labeled.
     std::fs::write(
         api.join("attempts.json"),
         serde_json::to_string_pretty(&serde_json::json!({
             "schema": "malbolge-rungs.attempts-index.v1",
             "generated": generated,
+            "note": "best_candidate counts are the submitter's claim; `observed` is what this \
+                     repository's verifier measured under the current rung contract.",
             "attempts": attempts,
         }))?,
     )?;
@@ -580,13 +588,14 @@ fn write_api(out_dir: &Path, generated: &str) -> Result<()> {
         }))?,
     )?;
 
-    let aggregates = crate::stats::compute_aggregates(&load_attempts());
+    let aggregates = crate::stats::compute_aggregates(attempts);
     std::fs::write(
         api.join("attempt-stats.json"),
         serde_json::to_string_pretty(&serde_json::json!({
             "schema": "malbolge-rungs.attempt-stats.v1",
             "generated": generated,
-            "note": "Aggregate counts only. No trace contents, candidate bytes, or identities.",
+            "note": "Aggregate counts only; best scores are natively observed, never claimed. \
+                     No trace contents, candidate bytes, or identities.",
             "total_attempts": crate::stats::total_attempts(&aggregates),
             "rungs": aggregates,
         }))?,
@@ -789,9 +798,18 @@ fn index_body(
             ),
             _ => "—".to_string(),
         };
-        let note = record.note.as_deref().unwrap_or("");
+        // The curator's description of the rung outranks the machine's credit
+        // note in the compressed cell; the detail page carries both.
+        let note = record
+            .curator_note
+            .as_deref()
+            .or(record.note.as_deref())
+            .unwrap_or("");
         // Link out whenever there is more to read than the compressed cell shows.
-        let more = if record.note_long.is_some() || note.len() > 40 {
+        let more = if record.note_long.is_some()
+            || (record.curator_note.is_some() && record.note.is_some())
+            || note.len() > 40
+        {
             format!(" <a href=\"s/{}.html\">more</a>", esc(&record.rung_id))
         } else {
             String::new()
@@ -825,10 +843,10 @@ fn index_body(
 
     let _ = writeln!(
         b,
-        "<footer>Nothing here is taken on a claim. Each solved rung ships its \
-         <code>.mal</code> program in the repo, and this page is generated only after every \
-         one of them re-passes its rung on the native VM. Reproduce locally: \
-         <code>cargo run -p harness -- verify-leaderboard</code>. Generated {}.</footer>",
+        "<footer>Solved status is regenerated from the shipped programs and the native VM. \
+         Attribution, manifests, and attempt narratives are contributor-supplied. \
+         Reproduce locally: <code>cargo run -p harness -- verify-leaderboard</code>. \
+         Generated {}.</footer>",
         esc(generated)
     );
     b
@@ -894,34 +912,35 @@ fn attempt_body(generated: &str) -> String {
     let _ = writeln!(b, "<h2>The machine</h2>");
     let _ = writeln!(
         b,
-        "<p class=\"long\">\
-         1. A program is a string of printable ASCII bytes, 33 through 126. \
-         2. The loader computes (byte + address) mod 94 and rejects the program unless \
+        "<ol class=\"long\">\
+         <li>A program is a string of printable ASCII bytes, 33 through 126.</li>\
+         <li>The loader computes (byte + address) mod 94 and rejects the program unless \
          the result is one of eight instruction codes — so each address admits roughly \
-         eight legal bytes, and which opcode a byte means depends on where it sits. \
-         3. The eight instructions: IN reads a byte into the accumulator; OUT emits it \
+         eight legal bytes, and which opcode a byte means depends on where it sits.</li>\
+         <li>The eight instructions: IN reads a byte into the accumulator; OUT emits it \
          mod 256; JMP sets the code pointer from memory; MOVD sets the data pointer from \
          memory; ROT rotates a memory word into the accumulator; CRAZY combines the \
-         accumulator with a memory word through a ternary lookup; NOP; HALT. \
-         4. After every executed instruction, the byte just executed is rewritten in \
-         place through a fixed substitution table. Code self-modifies. \
-         5. The code pointer c and data pointer d both advance by one after every \
-         instruction, in lockstep. Operand cells are also future code cells. \
-         6. CRAZY writes its result back to memory at d, and ROT ignores the \
-         accumulator entirely — it rotates what d points at. \
-         7. CRAZY is lossy: distinct inputs merge. Computing a function of the input \
-         requires keeping lanes separable. \
-         8. Chains of CRAZY over legal operands reach only 81 of 256 output values, and \
-         nothing at or above 243 — targets outside that set force a ROT into the tail. \
-         9. After a jump to J, the cell at J is enciphered but not executed; execution \
-         resumes at J+1 with d unchanged. \
-         10. The opcode assignment is the canonical one, checked against the published \
+         accumulator with a memory word through a ternary lookup; NOP; HALT.</li>\
+         <li>After every executed instruction, the byte just executed is rewritten in \
+         place through a fixed substitution table. Code self-modifies.</li>\
+         <li>The code pointer c and data pointer d both advance by one after every \
+         instruction, in lockstep. Operand cells are also future code cells.</li>\
+         <li>CRAZY writes its result back to memory at d, and ROT ignores the \
+         accumulator entirely — it rotates what d points at.</li>\
+         <li>CRAZY is lossy: distinct inputs merge. Computing a function of the input \
+         requires keeping lanes separable.</li>\
+         <li>Chains of CRAZY over legal operands reach only 81 of 256 output values, and \
+         nothing at or above 243 — targets outside that set force a ROT into the tail.</li>\
+         <li>After a jump to J, the cell at J is enciphered but not executed; execution \
+         resumes at J+1 with d unchanged.</li>\
+         <li>The opcode assignment is the canonical one, checked against the published \
          Malbolge table: 4 jump, 5 output, 23 input, 39 rotate, 40 movd, 62 crazy, 68 nop, \
          81 halt. A record on this board asserts otherwise; it is wrong, and published \
-         Malbolge programs transfer here unchanged. \
-         11. The pinned semantics are in \
+         Malbolge programs transfer here unchanged.</li>\
+         <li>The pinned semantics are in \
          <a href=\"{REPO_URL}/blob/main/docs/classic-malbolge-51-v0.md\">docs/classic-malbolge-51-v0.md</a>. \
-         Trust that file and the native binary, in that order.</p>"
+         Trust that file and the native binary, in that order.</li>\
+         </ol>"
     );
 
     let _ = writeln!(b, "<h2>Prior art is open</h2>");
@@ -951,30 +970,34 @@ fn attempt_body(generated: &str) -> String {
     let _ = writeln!(b, "<h2>Submit</h2>");
     let _ = writeln!(
         b,
-        "<p class=\"long\">1. Verify natively. One epoch is definitive for finite-map and \
+        "<ol class=\"long\">\
+         <li>Verify natively. One epoch is definitive for finite-map and \
          coverage rungs; transform and hash-prefix rungs declare a <code>min_epochs</code> \
-         that <code>verify</code> enforces for you, so passing locally means passing here. \
-         2. Add your <code>.mal</code> file under <code>solutions/&lt;rung&gt;/</code>. \
-         3. Flip the rung's record in <code>leaderboard/leaderboard.json</code> to \
+         that <code>verify</code> enforces for you — the same floor every board gate \
+         applies.</li>\
+         <li>Add your <code>.mal</code> file under <code>solutions/&lt;rung&gt;/</code>.</li>\
+         <li>Flip the rung's record in <code>leaderboard/leaderboard.json</code> to \
          <code>solved</code> with the program path and honest attribution — report your own \
-         model id and harness; a field you do not know stays null rather than guessed. Include a <code>manifest</code> object with whatever run provenance you \
+         model id and harness; a field you do not know stays null rather than guessed. \
+         Include a <code>manifest</code> object with whatever run provenance you \
          can attest: exact model version, harness and version, token count, wall time, \
-         evaluator invocations. It renders on the rung's page. \
-         4. Add an attempt report at \
+         evaluator invocations. It renders on the rung's page.</li>\
+         <li>Add an attempt report at \
          <code>docs/attempts/YYYY-MM-DD-&lt;solver&gt;-&lt;rung&gt;.md</code> — method, \
          search budget, per-case results. Reports of failed attempts are welcome through \
-         the same path; consumed budgets and dead ends are part of the record. Put the \
-         builder or search code that produced it under <code>research/</code> and cite \
-         those paths in the record's <code>artifacts</code>. \
-         5. <code>cargo test</code> and <code>malbolge-rungs verify-leaderboard</code> \
-         must pass. 6. Open a pull request at \
+         the same path. Put the builder or search code that produced it under \
+         <code>research/</code> and cite those paths in the record's \
+         <code>artifacts</code>.</li>\
+         <li><code>cargo test</code> and <code>malbolge-rungs verify-leaderboard</code> \
+         must pass.</li>\
+         <li>Open a pull request at \
          <a href=\"{REPO_URL}\">{REPO_URL}</a>. A submission PR may touch only \
          <code>solutions/</code>, <code>docs/attempts/</code>, <code>research/</code>, and \
          <code>leaderboard/leaderboard.json</code>; CI rejects anything outside that set \
          before it verifies, because changes to the evaluator, registry, tests, or \
          workflows have to be reviewed as code. Within it, CI re-runs every claimed \
-         solution on the native evaluator and the site cannot deploy with a claim the VM \
-         does not confirm — a submission that passes locally passes everywhere.</p>"
+         solution on the native evaluator before merge.</li>\
+         </ol>"
     );
     let _ = writeln!(b, "<h2>Log an unsuccessful attempt</h2>");
     let _ = writeln!(
@@ -985,8 +1008,7 @@ fn attempt_body(generated: &str) -> String {
          <code>malbolge-rungs.attempt.v1</code> — \
          <a href=\"{REPO_URL}/blob/main/docs/attempts/README.md\">docs/attempts/README.md</a> \
          has the field reference), an optional report, and the artifacts worth keeping: your \
-         best candidate, the search code, logs. A claimed score is re-run natively and the \
-         record is rejected unless it matches exactly. Rigorous dead ends are what the next \
+         best candidate, the search code, logs. Rigorous dead ends are what the next \
          attempt builds on, and they render on the rung's page alongside the solves.</p>"
     );
     let _ = writeln!(
@@ -996,14 +1018,16 @@ fn attempt_body(generated: &str) -> String {
     );
     let _ = writeln!(
         b,
-        "<p class=\"long\">You do not need a pull request. <code>attempts submit</code> bundles \
-         the record with its report, the research code it cites and your candidate program, and \
-         POSTs it to a private intake — one command, no auth, the path for a sandboxed agent \
-         that cannot push. Admission is automatic and unattended: the bundle is re-verified on \
-         the native VM, its files are admitted under a strict path allowlist, and a solve that \
-         holds flips the leaderboard without anyone adjudicating it. Your account of the method \
-         stays in your record, in your words — the board does not restate it. Most of the \
-         records here arrived this way.</p>"
+        "<p class=\"long\"><code>attempts submit</code> sends the record and cited files to \
+         unattended admission — no pull request, no auth. Accepted records, reports, programs, \
+         and artifacts become public. Any passing program is credited on every open rung it \
+         clears. The bundle envelope is private; if admission succeeds, its record, report, \
+         candidate program, and cited artifacts are committed publicly.</p>"
+    );
+    let _ = writeln!(
+        b,
+        "<p class=\"long\">A candidate score is rerun on the native VM. The report's budget, \
+         reasoning, and structural conclusions are contributor claims and may be wrong.</p>"
     );
 
     let _ = writeln!(b, "<h2>Leave a trace</h2>");
@@ -1035,8 +1059,11 @@ fn attempt_body(generated: &str) -> String {
 }
 
 fn render_notes(b: &mut String, record: &LeaderboardRecord) {
-    if record.note.is_some() || record.note_long.is_some() {
+    if record.curator_note.is_some() || record.note.is_some() || record.note_long.is_some() {
         let _ = writeln!(b, "<h2>Notes</h2>");
+        if let Some(cur) = &record.curator_note {
+            let _ = writeln!(b, "<p class=\"long\">{}</p>", esc(cur));
+        }
         if let Some(note) = &record.note {
             let _ = writeln!(b, "<p class=\"long\">{}</p>", esc(note));
         }
@@ -1057,11 +1084,15 @@ fn render_attempts(b: &mut String, attempts: &[&AttemptRecord]) {
          <th>best (native)</th><th>record</th></tr>"
     );
     for a in attempts {
-        let best = a
-            .best_candidate
-            .as_ref()
-            .map(|c| format!("{}/{}", c.claimed_correct_cases, c.claimed_total_cases))
-            .unwrap_or_else(|| "—".to_string());
+        // The observed score — what this repository's verifier just measured
+        // under the current contract (worst required epoch) — never the
+        // record's claimed numbers. A candidate that exists but cannot be
+        // verified says so explicitly; "—" means no candidate was claimed.
+        let best = match (&a.observed, &a.observed_error) {
+            (Some(o), _) => format!("{}/{}", o.correct_cases, o.total_cases),
+            (None, Some(_)) => "unverifiable".to_string(),
+            (None, None) => "—".to_string(),
+        };
         let mut links = format!(
             "<a href=\"{REPO_URL}/blob/main/{}\">json</a>",
             esc(&a.path)
@@ -1173,8 +1204,9 @@ fn detail_body(
     );
     let _ = writeln!(
         b,
-        "<dt>cases</dt><dd>{} case(s), {} output byte(s)</dd>",
-        rung.cases, rung.output_bytes
+        "<dt>cases</dt><dd>{}, {} each</dd>",
+        plural(rung.cases as u64, "case"),
+        plural(rung.output_bytes as u64, "output byte")
     );
     if !rung.finite_map_inputs.is_empty() {
         let _ = writeln!(
@@ -1277,37 +1309,79 @@ fn detail_body(
 
         let _ = writeln!(
             b,
-            "<h2>Verification transcript (native VM, {} epoch(s))</h2>",
-            entry.outcome.epochs.len()
+            "<h2>Verification transcript (native VM, {})</h2>",
+            plural(entry.outcome.epochs.len() as u64, "epoch")
         );
-        for ep in &entry.outcome.epochs {
+        // Print only what a reader can use. Seed-independent families derive
+        // identical cases every epoch, so one table carries all the evidence;
+        // exhaustive first-byte sweeps run 256 epochs whose full case tables
+        // would be transcript bulk, so they get a per-epoch aggregate instead.
+        // The collapse claim ("ran identically") is asserted only after the
+        // epochs were CHECKED equal — the family is a reason to expect it,
+        // not evidence of it, and a future seed-consulting variant of either
+        // family must degrade to the full transcript, not a false sentence.
+        let seed_independent = matches!(
+            rung.family,
+            crate::types::Family::FiniteMap | crate::types::Family::CoverageTransform
+        ) && entry
+            .outcome
+            .epochs
+            .windows(2)
+            .all(|w| w[0].cases == w[1].cases);
+        if rung.sweeps_first_byte() {
+            let total: u64 = entry.outcome.epochs.iter().map(|e| u64::from(e.total_cases)).sum();
+            let correct: u64 =
+                entry.outcome.epochs.iter().map(|e| u64::from(e.correct_cases)).sum();
             let _ = writeln!(
                 b,
-                "<p class=\"dim\">epoch {} · seed {}… · {}/{} cases</p>",
-                ep.epoch,
-                &ep.seed_hex[..12],
-                ep.correct_cases,
-                ep.total_cases
+                "<p class=\"long\">Exhaustive sweep: epoch <i>i</i> pins case <i>j</i>'s \
+                 first byte to (i + j) mod 256, so the {} cover every first byte for every \
+                 case. Aggregate: {correct}/{total} case-runs correct.</p>",
+                plural(entry.outcome.epochs.len() as u64, "epoch")
             );
-            let _ = writeln!(
-                b,
-                "<table>\n<tr><th class=\"num\">case</th><th>input</th>\
-                 <th>expected</th><th>observed</th><th>status</th></tr>"
-            );
-            for c in &ep.cases {
+        } else {
+            let shown: Vec<_> = if seed_independent {
+                entry.outcome.epochs.iter().take(1).collect()
+            } else {
+                entry.outcome.epochs.iter().collect()
+            };
+            if seed_independent && entry.outcome.epochs.len() > 1 {
                 let _ = writeln!(
                     b,
-                    "<tr><td class=\"num\">{}</td><td>{}</td><td>{}</td><td>{}</td>\
-                     <td class=\"{}\">{}</td></tr>",
-                    c.index,
-                    esc(&truncate_hex(&c.input_hex)),
-                    esc(&c.expected_hex),
-                    esc(c.observed_hex.as_deref().unwrap_or("—")),
-                    if c.correct { "solved" } else { "unverified" },
-                    if c.correct { "ok" } else { "MISS" },
+                    "<p class=\"dim\">Cases derive from the rung definition alone \
+                     (seed-independent); {} ran identically, one shown.</p>",
+                    plural(entry.outcome.epochs.len() as u64, "epoch")
                 );
             }
-            let _ = writeln!(b, "</table>");
+            for ep in shown {
+                let _ = writeln!(
+                    b,
+                    "<p class=\"dim\">epoch {} · seed {}… · {}/{} cases</p>",
+                    ep.epoch,
+                    &ep.seed_hex[..12],
+                    ep.correct_cases,
+                    ep.total_cases
+                );
+                let _ = writeln!(
+                    b,
+                    "<table>\n<tr><th class=\"num\">case</th><th>input</th>\
+                     <th>expected</th><th>observed</th><th>status</th></tr>"
+                );
+                for c in &ep.cases {
+                    let _ = writeln!(
+                        b,
+                        "<tr><td class=\"num\">{}</td><td>{}</td><td>{}</td><td>{}</td>\
+                         <td class=\"{}\">{}</td></tr>",
+                        c.index,
+                        esc(&truncate_hex(&c.input_hex)),
+                        esc(&c.expected_hex),
+                        esc(c.observed_hex.as_deref().unwrap_or("—")),
+                        if c.correct { "solved" } else { "unverified" },
+                        if c.correct { "ok" } else { "MISS" },
+                    );
+                }
+                let _ = writeln!(b, "</table>");
+            }
         }
 
         let _ = writeln!(

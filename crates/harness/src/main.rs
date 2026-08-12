@@ -190,11 +190,20 @@ enum AttemptsCmd {
         /// Check the bundle and report what it would write, without writing.
         #[arg(long)]
         dry_run: bool,
+        /// Repository to admit into (defaults to this binary's source
+        /// checkout). The admission worker points this at an isolated
+        /// worktree so a bad bundle never touches a tree anyone works in.
+        #[arg(long)]
+        repo: Option<String>,
     },
     /// Re-credit every rung to the smallest program on hand that passes it.
     /// Idempotent repair pass for records admitted before admission swept the
     /// whole ladder.
-    Recredit,
+    Recredit {
+        /// Repository to operate on (defaults to this binary's source checkout).
+        #[arg(long)]
+        repo: Option<String>,
+    },
 }
 
 #[derive(Subcommand)]
@@ -608,8 +617,10 @@ fn cmd_attempts(what: AttemptsCmd) -> Result<ExitCode> {
             let ok = submit_attempt(std::path::Path::new(&record))?;
             Ok(if ok { ExitCode::SUCCESS } else { ExitCode::FAILURE })
         }
-        AttemptsCmd::Admit { bundle, dry_run } => {
-            let repo = std::path::PathBuf::from(concat!(env!("CARGO_MANIFEST_DIR"), "/../.."));
+        AttemptsCmd::Admit { bundle, dry_run, repo } => {
+            let repo = repo
+                .map(std::path::PathBuf::from)
+                .unwrap_or_else(|| std::path::PathBuf::from(concat!(env!("CARGO_MANIFEST_DIR"), "/../..")));
             match harness::admit::admit_bundle(&repo, std::path::Path::new(&bundle), dry_run) {
                 Ok(a) => {
                     let verb = if dry_run { "PATHS OK" } else { "ADMITTED" };
@@ -633,8 +644,10 @@ fn cmd_attempts(what: AttemptsCmd) -> Result<ExitCode> {
                 }
             }
         }
-        AttemptsCmd::Recredit => {
-            let repo = std::path::PathBuf::from(concat!(env!("CARGO_MANIFEST_DIR"), "/../.."));
+        AttemptsCmd::Recredit { repo } => {
+            let repo = repo
+                .map(std::path::PathBuf::from)
+                .unwrap_or_else(|| std::path::PathBuf::from(concat!(env!("CARGO_MANIFEST_DIR"), "/../..")));
             let changes = harness::admit::recredit_all(&repo)?;
             if changes.is_empty() {
                 println!("every rung already credited to the smallest program that passes it");

@@ -46,6 +46,28 @@ jobs:
             echo "::error::Changes to the evaluator, registry, tests, tooling, or workflows must be reviewed as code — this job will not auto-verify them."
             exit 1
           fi
+      - name: Reject symlinks and submodules anywhere in the PR tree
+        env:
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        # Submission data is plain files. A committed symlink passes the path
+        # allowlist yet redirects later reads and writes (the no-auth admission
+        # worker writes with symlink refusal, but the tree must not carry the
+        # bait in the first place), and a submodule smuggles an unreviewed
+        # external tree. Mode 120000 is a symlink, 160000 a gitlink.
+        # Fail CLOSED: if the tree cannot be listed (GC'd head after a
+        # force-push race, a shallow fetch), the step fails rather than
+        # passing green having scanned nothing.
+        run: |
+          if ! tree="$(git ls-tree -r "$HEAD")"; then
+            echo "::error::git ls-tree $HEAD failed — refusing to pass an unscanned tree"
+            exit 1
+          fi
+          bad="$(printf '%s\n' "$tree" | awk '$1 == "120000" || $1 == "160000"')"
+          if [ -n "$bad" ]; then
+            echo "::error::The PR tree contains symlink or submodule entries:"
+            echo "$bad" | sed 's/^/::error::  /'
+            exit 1
+          fi
 
   verify:
     needs: guard
@@ -57,5 +79,7 @@ jobs:
       - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
       - name: Tests
         run: cargo test
-      - name: Re-verify every claimed solution (native VM, 5 epochs)
+      # The CLI raises the count to each rung's own required_epochs, so 5 is a
+      # floor for seed-dependent rungs, never a ceiling on stricter ones.
+      - name: Re-verify every claimed solution (native VM, at least each rung's declared epochs)
         run: cargo run --release -p harness -- verify-leaderboard --epochs 5

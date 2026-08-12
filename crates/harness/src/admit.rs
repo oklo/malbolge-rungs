@@ -28,6 +28,11 @@ use crate::attempts::AttemptRecord;
 const MAX_FILE_BYTES: usize = 1024 * 1024;
 /// Cap on everything one bundle may write.
 const MAX_TOTAL_BYTES: usize = 8 * 1024 * 1024;
+/// Cap on the number of files one bundle may materialise. A legitimate bundle
+/// is a record, a report, a candidate, and a handful of research files; the
+/// byte caps alone would let an 8 MiB bundle expand into thousands of tiny
+/// files and directories.
+const MAX_FILES_PER_BUNDLE: usize = 32;
 /// The only directories a submission may write into.
 const ALLOWED_PREFIXES: [&str; 3] = ["docs/attempts/", "research/", "solutions/"];
 
@@ -74,6 +79,15 @@ fn check_path(repo: &Path, rel: &str) -> Result<PathBuf> {
         .all(|c| c.is_ascii_alphanumeric() || matches!(c, '.' | '_' | '-' | '/'))
     {
         bail!("path {rel:?} uses characters outside [A-Za-z0-9._-/]");
+    }
+    // No dotfile components. A submission has no business writing .gitignore,
+    // .gitattributes, or anything else the toolchain interprets — a
+    // research/.gitignore could silently drop files from the admission commit.
+    if rel.split('/').any(|c| c.starts_with('.')) {
+        bail!("path {rel:?} contains a dot-prefixed component");
+    }
+    if rel.ends_with('/') {
+        bail!("path {rel:?} names a directory, not a file");
     }
     if !ALLOWED_PREFIXES.iter().any(|p| rel.starts_with(p)) {
         bail!(
@@ -146,8 +160,25 @@ pub fn admit_bundle(repo: &Path, bundle_path: &Path, dry_run: bool) -> Result<Ad
     ) {
         writes.push((report_rel.to_string(), report_text.to_string()));
     }
+    // A bundle may only materialise what its record declares: the artifacts
+    // list plus the candidate program. Without this closure, `artifacts` is an
+    // arbitrary write-anything-under-the-allowlist channel — every member was
+    // materialised whether or not the record cited it.
+    let declared: std::collections::BTreeSet<&str> = rec
+        .artifacts
+        .iter()
+        .map(|s| s.as_str())
+        .chain(rec.best_candidate.as_ref().map(|c| c.program.as_str()))
+        .collect();
     if let Some(arts) = bundle.get("artifacts").and_then(|a| a.as_object()) {
         for (rel, content) in arts {
+            if !declared.contains(rel.as_str()) {
+                bail!(
+                    "bundle ships {rel:?}, which the record neither lists in \
+                     artifacts nor names as its candidate — undeclared files \
+                     are not admitted"
+                );
+            }
             let text = content
                 .as_str()
                 .with_context(|| format!("artifact {rel} is not text"))?;
@@ -173,6 +204,12 @@ pub fn admit_bundle(repo: &Path, bundle_path: &Path, dry_run: bool) -> Result<Ad
         }
     }
 
+    if seen.len() > MAX_FILES_PER_BUNDLE {
+        bail!(
+            "bundle materialises {} files, over the {MAX_FILES_PER_BUNDLE}-file cap",
+            seen.len()
+        );
+    }
     let mut total = 0usize;
     let mut targets = Vec::new();
     for (rel, content) in &seen {
@@ -180,17 +217,29 @@ pub fn admit_bundle(repo: &Path, bundle_path: &Path, dry_run: bool) -> Result<Ad
             bail!("{rel} is {} bytes, over the per-file cap", content.len());
         }
         let abs = check_path(repo, rel)?;
-        if abs.exists() {
-            let same = std::fs::read_to_string(&abs)
-                .map(|on_disk| on_disk == *content)
-                .unwrap_or(false);
-            match if same { Existing::Identical } else { Existing::Conflict } {
-                Existing::Identical => continue,
-                Existing::Conflict => bail!(
-                    "path {rel:?} already exists with different content — \
-                     admission never overwrites"
-                ),
+        // Look at what is at the target WITHOUT following links. `exists()`
+        // follows symlinks and reports false for a broken one, so a planted
+        // symlink used to sail through to the write, which then wrote through
+        // it — a write outside the repository chosen by whoever planted it.
+        match std::fs::symlink_metadata(&abs) {
+            Ok(m) if m.file_type().is_symlink() => bail!(
+                "path {rel:?} is a symlink in the working tree — admission \
+                 never writes through links"
+            ),
+            Ok(m) if m.is_file() => {
+                let same = std::fs::read_to_string(&abs)
+                    .map(|on_disk| on_disk == *content)
+                    .unwrap_or(false);
+                match if same { Existing::Identical } else { Existing::Conflict } {
+                    Existing::Identical => continue,
+                    Existing::Conflict => bail!(
+                        "path {rel:?} already exists with different content — \
+                         admission never overwrites"
+                    ),
+                }
             }
+            Ok(_) => bail!("path {rel:?} exists and is not a regular file"),
+            Err(_) => {}
         }
         total += content.len();
         targets.push((abs, content.clone(), rel.clone()));
@@ -209,20 +258,26 @@ pub fn admit_bundle(repo: &Path, bundle_path: &Path, dry_run: bool) -> Result<Ad
     }
 
     // --- write, and unwind completely on any later failure -------------------
+    // Everything that mutates the repository happens inside this closure —
+    // including the leaderboard update, whose failure used to strand the
+    // record files on disk because it ran after the rollback scope had closed.
+    // The leaderboard file itself is replaced by atomic rename as the final
+    // mutation, so on any error the repository holds either the full admission
+    // or none of it.
     let mut written: Vec<PathBuf> = Vec::new();
-    let mut finish = || -> Result<bool> {
-        for (abs, content, rel) in &targets {
-            if let Some(parent) = abs.parent() {
-                std::fs::create_dir_all(parent)
-                    .with_context(|| format!("creating directory for {rel}"))?;
-            }
-            std::fs::write(abs, content).with_context(|| format!("writing {rel}"))?;
-            written.push(abs.clone());
+    let mut created_dirs: Vec<PathBuf> = Vec::new();
+    let mut finish = || -> Result<Vec<(String, String, bool)>> {
+        for (_, content, rel) in &targets {
+            let abs = create_new_no_symlinks(repo, rel, content, &mut created_dirs)?;
+            written.push(abs);
         }
 
-        // Our verifier, not their claim. validate_record re-runs the candidate
-        // natively and requires an exact match against the score asserted.
-        let problems = crate::attempts::validate_record_at(repo, &rec);
+        // Our verifier, not their claim, at the fresh-admission bar: the
+        // record's rung_digest must match the current rung definition and the
+        // claimed score must reproduce exactly on a fresh native run.
+        // Grandfathering across contract changes is for records already in the
+        // repository, never for a bundle arriving now.
+        let problems = crate::attempts::validate_record_fresh(repo, &rec);
         if !problems.is_empty() {
             bail!("record does not validate: {}", problems.join("; "));
         }
@@ -238,30 +293,134 @@ pub fn admit_bundle(repo: &Path, bundle_path: &Path, dry_run: bool) -> Result<Ad
         // a solve. An attempt that fails its own rung can still clear others:
         // the xor-1-len4096 attempt missed a rung demanding all 256 cases and
         // its candidate passed the entire coverage ladder up to cov96.
-        Ok(rec.best_candidate.is_some())
+        if rec.best_candidate.is_some() {
+            update_leaderboard(repo, &rec, &record_rel)
+        } else {
+            Ok(Vec::new())
+        }
     };
 
     match finish() {
-        Ok(has_candidate) => {
-            let credited = if has_candidate {
-                update_leaderboard(repo, &rec, &record_rel)?
-            } else {
-                Vec::new()
-            };
-            Ok(Admission {
-                bundle: bundle_path.display().to_string(),
-                rung_id: rec.rung_id.clone(),
-                files: targets.into_iter().map(|(_, _, rel)| rel).collect(),
-                credited,
-            })
-        }
+        Ok(credited) => Ok(Admission {
+            bundle: bundle_path.display().to_string(),
+            rung_id: rec.rung_id.clone(),
+            files: targets.into_iter().map(|(_, _, rel)| rel).collect(),
+            credited,
+        }),
         Err(e) => {
             for p in written.iter().rev() {
                 let _ = std::fs::remove_file(p);
             }
+            // Directories this admission created unwind too (deepest first);
+            // remove_dir refuses to delete anything non-empty, so a directory
+            // that gained unrelated content in the meantime survives.
+            for d in created_dirs.iter().rev() {
+                let _ = std::fs::remove_dir(d);
+            }
             Err(e)
         }
     }
+}
+
+/// Create the file for `rel` under `repo` with create-new semantics, making
+/// missing parent directories one component at a time and refusing to traverse
+/// any symlinked component. The final open is O_CREAT|O_EXCL (plus O_NOFOLLOW):
+/// it fails if anything — file, directory, or symlink, broken included —
+/// already sits at the target, so a planted link can neither be written
+/// through nor replaced. Directories created here are appended to
+/// `created_dirs` so a failed admission can unwind them.
+fn create_new_no_symlinks(
+    repo: &Path,
+    rel: &str,
+    content: &str,
+    created_dirs: &mut Vec<PathBuf>,
+) -> Result<PathBuf> {
+    use std::io::Write as _;
+    let parts: Vec<&str> = rel.split('/').filter(|p| !p.is_empty()).collect();
+    let (file_name, dirs) = parts.split_last().context("empty admission path")?;
+    let mut cur = repo.to_path_buf();
+    for d in dirs {
+        cur.push(d);
+        match std::fs::symlink_metadata(&cur) {
+            Ok(m) if m.file_type().is_symlink() => bail!(
+                "{} on the path of {rel:?} is a symlink — admission never \
+                 traverses links",
+                cur.display()
+            ),
+            Ok(m) if m.is_dir() => {}
+            Ok(_) => bail!("{} exists and is not a directory", cur.display()),
+            Err(_) => {
+                std::fs::create_dir(&cur)
+                    .with_context(|| format!("creating directory {}", cur.display()))?;
+                created_dirs.push(cur.clone());
+            }
+        }
+    }
+    cur.push(file_name);
+    let mut opts = std::fs::OpenOptions::new();
+    opts.write(true).create_new(true);
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::OpenOptionsExt;
+        opts.custom_flags(libc::O_NOFOLLOW);
+    }
+    let mut file = opts
+        .open(&cur)
+        .with_context(|| format!("creating {rel} (create-new refuses existing targets)"))?;
+    file.write_all(content.as_bytes())
+        .with_context(|| format!("writing {rel}"))?;
+    Ok(cur)
+}
+
+/// Build the board's metric string from the verifier's own counts — never from
+/// a submission. One implementation serves the solve check, the admission
+/// sweep, and the recredit repair pass, so the format cannot drift between
+/// paths.
+fn format_metric(
+    outcome: &crate::verify::VerifyOutcome,
+    epoch: &crate::verify::EpochResult,
+    program_len: usize,
+) -> String {
+    if outcome.coverage {
+        format!(
+            "{}/{} correct (>= {} required), native re-verification; {program_len} bytes",
+            epoch.correct_cases, epoch.total_cases, outcome.required_correct
+        )
+    } else {
+        format!(
+            "{}/{} cases, native re-verification; {program_len} bytes",
+            epoch.correct_cases, epoch.total_cases
+        )
+    }
+}
+
+/// Attribution follows the program in both directions: present fields are
+/// written, absent fields are REMOVED. Leaving them alone kept a displaced
+/// solver's name and manifest attached to a program they did not write. Both
+/// leaderboard writers go through here, so the next attribution rule change is
+/// one edit, not a synchronized pair.
+fn apply_attribution(
+    obj: &mut serde_json::Map<String, serde_json::Value>,
+    solver: &Option<crate::leaderboard::Solver>,
+    manifest: &Option<serde_json::Map<String, serde_json::Value>>,
+) -> Result<()> {
+    match solver {
+        Some(s) => {
+            obj.insert("solver".into(), serde_json::to_value(s)?);
+        }
+        None => {
+            obj.remove("solver");
+        }
+    }
+    match manifest {
+        Some(m) => {
+            obj.insert("manifest".into(), serde_json::to_value(m)?);
+        }
+        None => {
+            obj.remove("manifest");
+        }
+    }
+    Ok(())
 }
 
 /// Re-run the claimed program against its rung and build the metric ourselves
@@ -289,23 +448,7 @@ fn verify_claim(repo: &Path, rec: &AttemptRecord) -> Result<(bool, String)> {
         .find(|e| !e.passed)
         .or_else(|| outcome.epochs.first())
         .context("verifier returned no epochs")?;
-    let metric = if outcome.coverage {
-        format!(
-            "{}/{} correct (>= {} required), native re-verification; {} bytes",
-            first.correct_cases,
-            first.total_cases,
-            outcome.required_correct,
-            bytes.len()
-        )
-    } else {
-        format!(
-            "{}/{} cases, native re-verification; {} bytes",
-            first.correct_cases,
-            first.total_cases,
-            bytes.len()
-        )
-    };
-    Ok((outcome.passed, metric))
+    Ok((outcome.passed, format_metric(&outcome, first, bytes.len())))
 }
 
 /// Credit a submitted program on every rung it passes, not only the one its
@@ -362,7 +505,11 @@ fn update_leaderboard(
         }
         // On its own rung, a submission displaces the standing credit only by
         // being smaller. That is what lets an aimed solve replace one held by
-        // subsumption.
+        // subsumption. Fail CLOSED when the incumbent's size cannot be
+        // established (missing or unresolvable best_program): displacing on
+        // unknown would let any new submission take over a rung whose
+        // incumbent path happens not to resolve in this tree, erasing the
+        // standing credit — and its attribution — without a comparison.
         if solved_now {
             let held = entry
                 .get("best_program")
@@ -371,8 +518,8 @@ fn update_leaderboard(
                 .and_then(|p| std::fs::metadata(p).ok())
                 .map(|m| m.len() as usize);
             match held {
-                Some(n) if n <= bytes.len() => continue,
-                _ => {}
+                Some(n) if n > bytes.len() => {}
+                _ => continue,
             }
         }
 
@@ -382,53 +529,34 @@ fn update_leaderboard(
             continue;
         }
         let Some(first) = outcome.epochs.first() else { continue };
-        let metric = if outcome.coverage {
-            format!(
-                "{}/{} correct (>= {} required), native re-verification; {} bytes",
-                first.correct_cases, first.total_cases, outcome.required_correct, bytes.len()
-            )
-        } else {
-            format!(
-                "{}/{} cases, native re-verification; {} bytes",
-                first.correct_cases, first.total_cases, bytes.len()
-            )
-        };
+        let metric = format_metric(&outcome, first, bytes.len());
 
         let obj = entry.as_object_mut().context("leaderboard entry is not an object")?;
         obj.insert("status".into(), serde_json::json!("solved"));
         obj.insert("best_program".into(), serde_json::json!(cand.program));
         obj.insert("date".into(), serde_json::json!(rec.date));
         obj.insert("metric".into(), serde_json::json!(metric.clone()));
-        if let Some(s) = &rec.solver {
-            obj.insert("solver".into(), serde_json::to_value(s)?);
-        }
-        if let Some(m) = &rec.manifest {
-            obj.insert("manifest".into(), serde_json::to_value(m)?);
-        }
+        apply_attribution(obj, &rec.solver, &rec.manifest)?;
         obj.insert(
             "note".into(),
             serde_json::json!(if own {
-                format!("Solved by {display}. Admitted automatically after native re-verification.")
+                format!("Solved by {display}.")
             } else {
-                format!(
-                    "Solved by {display}'s {} program, which clears this threshold too.",
-                    rec.rung_id
-                )
+                format!("Solved by {display}'s {} program, which also passes this rung.", rec.rung_id)
             }),
         );
         obj.insert(
             "note_long".into(),
             serde_json::json!(if own {
                 format!(
-                    "Admitted automatically: the program was re-run on the native VM at admission and \
-                     again at deploy, giving {metric}. The account of how it was built is the \
-                     submitter's own and is recorded in {record_rel}; the board does not restate it here."
+                    "Re-verified on the native VM at admission and again at each deploy: {metric}. \
+                     The submitter's account is in {record_rel}."
                 )
             } else {
                 format!(
-                    "Not solved by a construction aimed at this rung. The program submitted for {} \
-                     passes this threshold as well, giving {metric}, and a rung is credited to the \
-                     smallest program that clears it. The submitter's account is in {record_rel}.",
+                    "The program submitted for {} passes this rung too ({metric}); a rung is \
+                     credited to the smallest passing program. The submitter's account is in \
+                     {record_rel}.",
                     rec.rung_id
                 )
             }),
@@ -436,8 +564,22 @@ fn update_leaderboard(
         changed.push((rung_id, metric, solved_now));
     }
 
-    std::fs::write(&path, serde_json::to_string_pretty(&board)? + "\n")?;
+    write_leaderboard_atomic(&path, &board)?;
     Ok(changed)
+}
+
+/// Replace the leaderboard via temp-file-plus-rename in its own directory, so
+/// a crash or full disk mid-write can never leave a truncated board — the file
+/// is always either the old version or the new one.
+fn write_leaderboard_atomic(path: &Path, board: &serde_json::Value) -> Result<()> {
+    let text = serde_json::to_string_pretty(board)? + "\n";
+    let tmp = path.with_extension(format!("json.tmp.{}", std::process::id()));
+    std::fs::write(&tmp, &text).with_context(|| format!("writing {}", tmp.display()))?;
+    std::fs::rename(&tmp, path).with_context(|| {
+        let _ = std::fs::remove_file(&tmp);
+        format!("renaming {} into place", tmp.display())
+    })?;
+    Ok(())
 }
 
 #[cfg(test)]
@@ -486,6 +628,340 @@ mod tests {
         assert!(check_path(&r, "research/x/$(whoami).py").is_err());
         assert!(check_path(&r, "research/x/a b.py").is_err());
     }
+
+    #[test]
+    fn rejects_dotfile_components() {
+        let r = repo();
+        assert!(check_path(&r, "research/.gitignore").is_err());
+        assert!(check_path(&r, "docs/attempts/.hidden/rec.json").is_err());
+        assert!(check_path(&r, "solutions/x/.DS_Store").is_err());
+        assert!(check_path(&r, "research/x/dir/").is_err());
+    }
+
+    // ---- end-to-end admission against a throwaway repository ----------------
+
+    const TEST_RUNG: &str = "L0.R0.hello-world";
+    const RECORD_REL: &str = "docs/attempts/2099-01-01-test-hello.json";
+    const CAND_REL: &str = "research/admtest/cand.mal";
+
+    struct TempRepo {
+        root: PathBuf,
+    }
+
+    impl TempRepo {
+        fn new(tag: &str) -> Self {
+            let root =
+                std::env::temp_dir().join(format!("mal-admit-{tag}-{}", std::process::id()));
+            let _ = std::fs::remove_dir_all(&root);
+            for d in ["docs/attempts", "solutions", "research", "leaderboard"] {
+                std::fs::create_dir_all(root.join(d)).unwrap();
+            }
+            std::fs::write(
+                root.join("leaderboard/leaderboard.json"),
+                serde_json::to_string_pretty(&serde_json::json!([
+                    {"rung_id": TEST_RUNG, "rank": 1, "status": "open"}
+                ]))
+                .unwrap(),
+            )
+            .unwrap();
+            Self { root }
+        }
+
+        fn bundle_path(&self, bundle: &serde_json::Value) -> PathBuf {
+            let p = self.root.join("bundle.json");
+            std::fs::write(&p, serde_json::to_string(bundle).unwrap()).unwrap();
+            p
+        }
+    }
+
+    impl Drop for TempRepo {
+        fn drop(&mut self) {
+            let _ = std::fs::remove_dir_all(&self.root);
+        }
+    }
+
+    /// The shipped halt program and its native epoch-0 score on TEST_RUNG.
+    fn passing_candidate() -> (String, u32, u32) {
+        let text =
+            std::fs::read_to_string(repo().join("solutions/hello-world/halt-no-output.mal"))
+                .unwrap();
+        let rung = crate::registry::find_rung(TEST_RUNG).unwrap();
+        let out = crate::verify::verify_rung(&rung, text.as_bytes(), 1);
+        let ep = &out.epochs[0];
+        (text, ep.correct_cases, ep.total_cases)
+    }
+
+    fn record(digest: Option<String>, correct: u32, total: u32) -> serde_json::Value {
+        serde_json::json!({
+            "schema": "malbolge-rungs.attempt.v1",
+            "rung_id": TEST_RUNG,
+            "date": "2099-01-01",
+            "outcome": "unsolved",
+            "best_candidate": {
+                "program": CAND_REL,
+                "claimed_correct_cases": correct,
+                "claimed_total_cases": total,
+            },
+            "rung_digest": digest,
+            "file": RECORD_REL,
+        })
+    }
+
+    fn bundle_for(rec: serde_json::Value, artifacts: serde_json::Value) -> serde_json::Value {
+        serde_json::json!({
+            "schema": BUNDLE_SCHEMA,
+            "record": rec,
+            "artifacts": artifacts,
+        })
+    }
+
+    #[test]
+    fn admits_a_valid_fresh_record_and_credits_open_rungs() {
+        let (text, c, t) = passing_candidate();
+        let tr = TempRepo::new("happy");
+        let digest = crate::attempts::rung_digest(TEST_RUNG);
+        let b = bundle_for(record(digest, c, t), serde_json::json!({CAND_REL: text}));
+        let adm = admit_bundle(&tr.root, &tr.bundle_path(&b), false).unwrap();
+        assert!(tr.root.join(RECORD_REL).is_file());
+        assert!(tr.root.join(CAND_REL).is_file());
+        assert!(adm.credited.iter().any(|(r, _, _)| r == TEST_RUNG));
+        let board =
+            std::fs::read_to_string(tr.root.join("leaderboard/leaderboard.json")).unwrap();
+        assert!(board.contains("\"solved\""));
+    }
+
+    #[test]
+    fn fresh_admission_requires_a_current_rung_digest() {
+        let (text, c, t) = passing_candidate();
+        for (tag, digest) in [("nodigest", None), ("stale", Some("00d1ge5700000000".to_string()))]
+        {
+            let tr = TempRepo::new(tag);
+            let b = bundle_for(record(digest, c, t), serde_json::json!({CAND_REL: text}));
+            let err = admit_bundle(&tr.root, &tr.bundle_path(&b), false).unwrap_err();
+            assert!(err.to_string().contains("rung_digest"), "{err:#}");
+            assert!(!tr.root.join(RECORD_REL).exists(), "rollback must remove the record");
+            assert!(
+                !tr.root.join("research/admtest").exists(),
+                "rollback must remove directories the admission created"
+            );
+        }
+    }
+
+    #[test]
+    fn fresh_admission_rejects_a_forged_score() {
+        let (text, c, t) = passing_candidate();
+        let tr = TempRepo::new("forged");
+        let digest = crate::attempts::rung_digest(TEST_RUNG);
+        let b = bundle_for(record(digest, c + 1, t + 1), serde_json::json!({CAND_REL: text}));
+        let err = admit_bundle(&tr.root, &tr.bundle_path(&b), false).unwrap_err();
+        assert!(err.to_string().contains("native VM observes"), "{err:#}");
+        assert!(!tr.root.join(RECORD_REL).exists());
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn refuses_to_write_through_a_planted_symlink() {
+        let (text, c, t) = passing_candidate();
+        let tr = TempRepo::new("symlink-final");
+        let outside =
+            std::env::temp_dir().join(format!("mal-admit-outside-f-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&outside);
+        std::fs::create_dir_all(&outside).unwrap();
+        std::fs::create_dir_all(tr.root.join("research/admtest")).unwrap();
+        // A broken symlink: exists() is false for it, so the old pre-check
+        // sailed past it and the write followed it out of the repository.
+        std::os::unix::fs::symlink(outside.join("evil.txt"), tr.root.join(CAND_REL)).unwrap();
+        let digest = crate::attempts::rung_digest(TEST_RUNG);
+        let b = bundle_for(record(digest, c, t), serde_json::json!({CAND_REL: text}));
+        let err = admit_bundle(&tr.root, &tr.bundle_path(&b), false).unwrap_err();
+        assert!(err.to_string().contains("symlink"), "{err:#}");
+        assert!(!outside.join("evil.txt").exists(), "nothing may appear outside the repo");
+        let _ = std::fs::remove_dir_all(&outside);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn refuses_a_symlinked_parent_directory() {
+        let (text, c, t) = passing_candidate();
+        let tr = TempRepo::new("symlink-parent");
+        let outside =
+            std::env::temp_dir().join(format!("mal-admit-outside-p-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&outside);
+        std::fs::create_dir_all(&outside).unwrap();
+        std::os::unix::fs::symlink(&outside, tr.root.join("research/admtest")).unwrap();
+        let digest = crate::attempts::rung_digest(TEST_RUNG);
+        let b = bundle_for(record(digest, c, t), serde_json::json!({CAND_REL: text}));
+        let err = admit_bundle(&tr.root, &tr.bundle_path(&b), false).unwrap_err();
+        assert!(err.to_string().contains("symlink"), "{err:#}");
+        assert!(
+            !outside.join("cand.mal").exists(),
+            "nothing may be written through a symlinked directory"
+        );
+        let _ = std::fs::remove_dir_all(&outside);
+    }
+
+    #[test]
+    fn rejects_undeclared_artifacts() {
+        let (text, c, t) = passing_candidate();
+        let tr = TempRepo::new("undeclared");
+        let digest = crate::attempts::rung_digest(TEST_RUNG);
+        let b = bundle_for(
+            record(digest, c, t),
+            serde_json::json!({
+                CAND_REL: text,
+                "research/admtest/uninvited.py": "print('hi')",
+            }),
+        );
+        let err = admit_bundle(&tr.root, &tr.bundle_path(&b), false).unwrap_err();
+        assert!(err.to_string().contains("undeclared"), "{err:#}");
+        assert!(!tr.root.join("research/admtest/uninvited.py").exists());
+    }
+
+    #[test]
+    fn rejects_duplicate_paths_with_conflicting_content() {
+        let (text, c, t) = passing_candidate();
+        let tr = TempRepo::new("duplicate");
+        let digest = crate::attempts::rung_digest(TEST_RUNG);
+        // The record's own landing path shipped again as a declared artifact
+        // with different bytes: last-writer-wins must not decide this.
+        let mut rec = record(digest, c, t);
+        rec["artifacts"] = serde_json::json!([RECORD_REL]);
+        let b = bundle_for(
+            rec,
+            serde_json::json!({CAND_REL: text, RECORD_REL: "not the record"}),
+        );
+        let err = admit_bundle(&tr.root, &tr.bundle_path(&b), false).unwrap_err();
+        assert!(err.to_string().contains("twice with different content"), "{err:#}");
+    }
+
+    #[test]
+    fn caps_the_files_one_bundle_may_create() {
+        let (text, c, t) = passing_candidate();
+        let tr = TempRepo::new("filecap");
+        let digest = crate::attempts::rung_digest(TEST_RUNG);
+        let mut rec = record(digest, c, t);
+        let mut arts = serde_json::Map::new();
+        arts.insert(CAND_REL.to_string(), serde_json::json!(text));
+        let mut declared = Vec::new();
+        for i in 0..MAX_FILES_PER_BUNDLE {
+            let rel = format!("research/admtest/part-{i}.txt");
+            arts.insert(rel.clone(), serde_json::json!("x"));
+            declared.push(rel);
+        }
+        rec["artifacts"] = serde_json::json!(declared);
+        let b = bundle_for(rec, serde_json::Value::Object(arts));
+        let err = admit_bundle(&tr.root, &tr.bundle_path(&b), false).unwrap_err();
+        assert!(err.to_string().contains("-file cap"), "{err:#}");
+        assert!(!tr.root.join("research/admtest").exists(), "the cap fires before any write");
+    }
+
+    #[test]
+    fn a_leaderboard_failure_rolls_back_every_file_written() {
+        let (text, c, t) = passing_candidate();
+        let tr = TempRepo::new("rollback");
+        std::fs::write(tr.root.join("leaderboard/leaderboard.json"), "not json").unwrap();
+        let digest = crate::attempts::rung_digest(TEST_RUNG);
+        let b = bundle_for(record(digest, c, t), serde_json::json!({CAND_REL: text}));
+        assert!(admit_bundle(&tr.root, &tr.bundle_path(&b), false).is_err());
+        assert!(!tr.root.join(RECORD_REL).exists(), "record must be rolled back");
+        assert!(!tr.root.join(CAND_REL).exists(), "candidate must be rolled back");
+        assert!(!tr.root.join("research/admtest").exists(), "created dirs must be rolled back");
+        assert_eq!(
+            std::fs::read_to_string(tr.root.join("leaderboard/leaderboard.json")).unwrap(),
+            "not json",
+            "a failed admission must leave the leaderboard byte-identical"
+        );
+    }
+
+    #[test]
+    fn identical_prior_art_is_cited_not_rewritten() {
+        let (text, c, t) = passing_candidate();
+        let tr = TempRepo::new("priorart");
+        std::fs::create_dir_all(tr.root.join("research/admtest")).unwrap();
+        std::fs::write(tr.root.join(CAND_REL), &text).unwrap();
+        let digest = crate::attempts::rung_digest(TEST_RUNG);
+        let b = bundle_for(record(digest, c, t), serde_json::json!({CAND_REL: text}));
+        let adm = admit_bundle(&tr.root, &tr.bundle_path(&b), false).unwrap();
+        assert!(
+            adm.files.iter().all(|f| f != CAND_REL),
+            "an identical existing file is skipped, not rewritten: {:?}",
+            adm.files
+        );
+    }
+
+    #[test]
+    fn an_unmeasurable_incumbent_is_never_displaced() {
+        let (text, c, t) = passing_candidate();
+        let tr = TempRepo::new("failclosed");
+        // A solved entry whose best_program does not resolve in this tree:
+        // with no size to compare, displacement must not happen at all.
+        std::fs::write(
+            tr.root.join("leaderboard/leaderboard.json"),
+            serde_json::to_string_pretty(&serde_json::json!([
+                {"rung_id": TEST_RUNG, "rank": 1, "status": "solved",
+                 "best_program": "solutions/hello-world/vanished.mal",
+                 "solver": {"display": "Standing Holder"}}
+            ]))
+            .unwrap(),
+        )
+        .unwrap();
+        let digest = crate::attempts::rung_digest(TEST_RUNG);
+        let b = bundle_for(record(digest, c, t), serde_json::json!({CAND_REL: text}));
+        let adm = admit_bundle(&tr.root, &tr.bundle_path(&b), false).unwrap();
+        assert!(
+            adm.credited.is_empty(),
+            "an incumbent whose size cannot be established keeps the rung: {:?}",
+            adm.credited
+        );
+        let board: serde_json::Value = serde_json::from_str(
+            &std::fs::read_to_string(tr.root.join("leaderboard/leaderboard.json")).unwrap(),
+        )
+        .unwrap();
+        assert_eq!(board[0]["solver"]["display"], "Standing Holder");
+    }
+
+    #[test]
+    fn displacement_clears_stale_attribution() {
+        let (text, c, t) = passing_candidate();
+        let tr = TempRepo::new("displace");
+        // Standing credit: a larger on-disk program (same bytes plus trailing
+        // whitespace, which the evaluator canonicalizes away) with a named
+        // solver and manifest attached.
+        std::fs::create_dir_all(tr.root.join("solutions/hello-world")).unwrap();
+        std::fs::write(tr.root.join("solutions/hello-world/big.mal"), format!("{text}\n\n"))
+            .unwrap();
+        std::fs::write(
+            tr.root.join("leaderboard/leaderboard.json"),
+            serde_json::to_string_pretty(&serde_json::json!([
+                {"rung_id": TEST_RUNG, "rank": 1, "status": "solved",
+                 "best_program": "solutions/hello-world/big.mal",
+                 "solver": {"display": "Previous Holder", "model": "old-model"},
+                 "manifest": {"tokens": 1},
+                 "date": "2098-01-01"}
+            ]))
+            .unwrap(),
+        )
+        .unwrap();
+        let digest = crate::attempts::rung_digest(TEST_RUNG);
+        let b = bundle_for(record(digest, c, t), serde_json::json!({CAND_REL: text}));
+        let adm = admit_bundle(&tr.root, &tr.bundle_path(&b), false).unwrap();
+        assert!(
+            adm.credited.iter().any(|(r, _, displaced)| r == TEST_RUNG && *displaced),
+            "the smaller aimed program must displace the standing credit: {:?}",
+            adm.credited
+        );
+        let board: serde_json::Value = serde_json::from_str(
+            &std::fs::read_to_string(tr.root.join("leaderboard/leaderboard.json")).unwrap(),
+        )
+        .unwrap();
+        let entry = &board[0];
+        assert!(
+            entry.get("solver").is_none(),
+            "the displaced solver's attribution must not survive onto a program \
+             they did not write: {entry}"
+        );
+        assert!(entry.get("manifest").is_none(), "stale manifest must be cleared");
+    }
 }
 
 /// Re-credit every rung to the smallest program on hand that passes it.
@@ -501,7 +977,11 @@ pub fn recredit_all(repo: &Path) -> Result<Vec<(String, String, String, String)>
     let mut owner: std::collections::BTreeMap<String, AttemptRecord> = Default::default();
     let mut programs: std::collections::BTreeSet<String> = Default::default();
 
-    for rec in crate::attempts::load_attempts() {
+    // The corpus of the tree being recredited — NOT the compile-time source
+    // checkout. With `--repo` pointing at the admission worktree the two
+    // differ, and mixing them attributes this tree's leaderboard from another
+    // tree's records while missing programs that exist only here.
+    for rec in crate::attempts::load_attempts_at(repo) {
         if let Some(c) = &rec.best_candidate {
             programs.insert(c.program.clone());
             owner.entry(c.program.clone()).or_insert(rec.clone());
@@ -566,16 +1046,7 @@ pub fn recredit_all(repo: &Path) -> Result<Vec<(String, String, String, String)>
                 continue;
             }
             let first = outcome.epochs.first().context("no epochs")?;
-            let metric = if outcome.coverage {
-                format!(
-                    "{}/{} correct (>= {} required), native re-verification; {} bytes",
-                    first.correct_cases, first.total_cases, outcome.required_correct, bytes.len()
-                )
-            } else {
-                format!("{}/{} cases, native re-verification; {} bytes",
-                        first.correct_cases, first.total_cases, bytes.len())
-            };
-            best = Some((bytes.len(), p.clone(), metric));
+            best = Some((bytes.len(), p.clone(), format_metric(&outcome, first, bytes.len())));
         }
 
         let Some((_, prog, metric)) = best else { continue };
@@ -597,29 +1068,41 @@ pub fn recredit_all(repo: &Path) -> Result<Vec<(String, String, String, String)>
         obj.insert("status".into(), serde_json::json!("solved"));
         obj.insert("best_program".into(), serde_json::json!(prog));
         obj.insert("metric".into(), serde_json::json!(metric.clone()));
-        if let Some(rec) = owner.get(&prog) {
-            obj.insert("date".into(), serde_json::json!(rec.date));
-            if let Some(s) = &rec.solver {
-                obj.insert("solver".into(), serde_json::to_value(s)?);
+        // Attribution follows the program that now holds the rung; whatever
+        // the displaced credit carried is removed, not inherited.
+        match owner.get(&prog) {
+            Some(rec) => {
+                obj.insert("date".into(), serde_json::json!(rec.date));
+                apply_attribution(obj, &rec.solver, &rec.manifest)?;
+                let display = rec.solver.as_ref().map(|s| s.display.as_str()).unwrap_or("an unattributed submission");
+                let own = rec.rung_id == rung_id;
+                obj.insert("note".into(), serde_json::json!(if own {
+                    format!("Solved by {display}.")
+                } else {
+                    format!("Solved by {display}'s {} program, the smallest on the board that passes this rung.", rec.rung_id)
+                }));
+                obj.insert("note_long".into(), serde_json::json!(format!(
+                    "Credited to the smallest program on the board that passes this rung ({metric}). \
+                     It was submitted for {}. The submitter's account is in {}.",
+                    rec.rung_id, rec.path
+                )));
             }
-            let display = rec.solver.as_ref().map(|s| s.display.as_str()).unwrap_or("a submission");
-            let own = rec.rung_id == rung_id;
-            obj.insert("note".into(), serde_json::json!(if own {
-                format!("Solved by {display}.")
-            } else {
-                format!("Solved by {display}'s {} program, the smallest on the board that clears this threshold.", rec.rung_id)
-            }));
-            obj.insert("note_long".into(), serde_json::json!(format!(
-                "Credited to the smallest program the board holds that passes this rung, re-verified \
-                 natively at {metric}. It was submitted for {}; a rung goes to the smallest program \
-                 that clears it, whatever it was aimed at. The submitter's account is in {}.",
-                rec.rung_id, rec.path
-            )));
+            None => {
+                // A shipped solution with no owning attempt record: the credit
+                // is real (the verifier just confirmed it) but carries no
+                // attribution, so none is shown.
+                apply_attribution(obj, &None, &None)?;
+                obj.insert("date".into(), serde_json::Value::Null);
+                obj.insert("note".into(), serde_json::json!(format!(
+                    "Credited to {prog}, the smallest shipped program that passes this rung."
+                )));
+                obj.remove("note_long");
+            }
         }
         changes.push((rung_id, was, prog, metric));
     }
 
-    std::fs::write(&path, serde_json::to_string_pretty(&board)? + "\n")?;
+    write_leaderboard_atomic(&path, &board)?;
     Ok(changes)
 }
 

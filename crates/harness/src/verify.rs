@@ -18,7 +18,7 @@ use classic_malbolge::{
 use crate::challenge::{derive_cases, derive_seed};
 use crate::types::Rung;
 
-#[derive(Clone, Debug, serde::Serialize)]
+#[derive(Clone, Debug, PartialEq, serde::Serialize)]
 pub struct CaseResult {
     pub index: u32,
     pub input_hex: String,

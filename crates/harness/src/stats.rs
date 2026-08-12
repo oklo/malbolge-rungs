@@ -83,8 +83,13 @@ pub fn compute_aggregates(public: &[AttemptRecord]) -> BTreeMap<String, RungAggr
     for rec in public {
         let agg = out.entry(rec.rung_id.clone()).or_default();
         agg.attempts += 1;
-        if let Some(c) = &rec.best_candidate {
-            agg.record_best(c.claimed_correct_cases, c.claimed_total_cases);
+        // Only counts our own verifier observed ([`attach_observed`]) reach the
+        // aggregate. A record's claimed score is the submitter's assertion —
+        // exact for anything admitted under the current contract, but possibly
+        // stale across a contract change and forgeable in a hostile record —
+        // so a claim that does not reproduce natively contributes nothing.
+        if let Some(o) = &rec.observed {
+            agg.record_best(o.correct_cases, o.total_cases);
         }
         agg.record_latest(&rec.date);
     }

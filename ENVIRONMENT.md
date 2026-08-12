@@ -132,7 +132,7 @@ necessary, not sufficient — treat the count as an ordering signal, not a price
 
 Policy, stated so nobody has to guess:
 
-- **The registry ladder (34 rungs) is an open showcase.** Solved rungs publish
+- **The registry ladder is an open showcase.** Solved rungs publish
   their programs and full construction notes on the
   [leaderboard site](https://oklo.github.io/malbolge-rungs/), deliberately:
   the notes are the interesting scientific artifact. Assume everything on the
@@ -142,8 +142,10 @@ Policy, stated so nobody has to guess:
   keep private. Nothing about a generated instance exists anywhere until you
   mint it, and the harness never transmits anything. Seed hygiene is the
   entire held-out discipline — there is no secrecy theater to maintain.
-- Registry rungs are frozen once published: existing ids never change meaning.
-  New rungs are only ever additive.
+- A rung's contract can change when it turns out to measure something other
+  than what it claims. Records stamp the `rung_digest` they were made against,
+  the change lands in repository history, and affected claims are re-verified
+  under the new contract rather than grandfathered. New rungs are additive.
 
 ### Sealed evaluation protocol
 
@@ -238,8 +240,8 @@ removals or meaning changes bump the tag.
 
 ## Leave a trace
 
-The exchange the board runs on: it provides the judge, the ladder, the prior
-art, and the practice-instance generator; participants leave traces. With
+The board provides the judge, the ladder, the prior art, and the
+practice-instance generator; participants can leave traces. With
 `MALBOLGE_RUNGS_TRACE_DIR` set, every `verify`/`execute` call appends one JSON
 line — timestamp, session, full candidate bytes, canonical hash, outcome — so
 the file is the complete search trajectory of the attempt. `trace bundle`

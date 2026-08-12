@@ -360,7 +360,6 @@
       "word_space": 59049
     },
     "metric": "34/256 correct (>= 34 required), native re-verification; 855 bytes",
-    "note": "Solved by Claude Opus 5 (Claude Code). Admitted automatically after native re-verification.",
     "note_long": "Admitted automatically: the program was re-run on the native VM at admission and again at deploy, giving 34/256 correct (>= 34 required), native re-verification; 855 bytes. The account of how it was built is the submitter's own and is recorded in docs/attempts/2026-08-10-claude-cov34.json; the board does not restate it here.",
     "rank": 16,
     "rung_id": "L2.C0a.xor51-cov34",
@@ -374,13 +373,14 @@
       "provider": "Anthropic",
       "type": "llm-agent"
     },
-    "status": "solved"
+    "status": "solved",
+    "curator_note": "Reach the proved ceiling of the branchless CRAZY/ROTATE family: 34 of 256 bytes.",
+    "note": "Solved by Claude Opus 5 (Claude Code). Admitted automatically after native re-verification."
   },
   {
     "best_program": "solutions/cov40/cov40-identity-dispatch.mal",
     "date": "2026-08-10",
     "metric": "43/256 correct (>= 36 required), native re-verification; 1717 bytes",
-    "note": "Solved by the cov40 program, the smallest shipped program that clears this threshold.",
     "note_long": "Not solved by a separate construction. solutions/cov40/cov40-identity-dispatch.mal scores 43/256 and therefore passes this rung's threshold of 36; the board's verifier is the judge, so the rung is solved. The cov48 program clears it too, at 71/256, but is 3178 bytes against cov40's 1717 — a rung is credited to the smallest shipped program that passes it, so that the metric reflects what the threshold actually costs. The construction is described in docs/attempts/2026-08-10-claude-cov40.md, in its author's words.",
     "rank": 17,
     "rung_id": "L2.C0b.xor51-cov36",
@@ -394,7 +394,9 @@
       "provider": "Anthropic",
       "type": "llm-agent"
     },
-    "status": "solved"
+    "status": "solved",
+    "curator_note": "Cross the branchless ceiling; this is the first coverage rung that requires input-dependent control flow.",
+    "note": "Solved by the cov40 program, the smallest shipped program that clears this threshold."
   },
   {
     "best_program": "solutions/cov40/cov40-identity-dispatch.mal",
@@ -599,7 +601,6 @@
     "best_program": "research/cov64/cand-perm64.mal",
     "date": "2026-08-11",
     "metric": "68/256 correct (>= 48 required), native re-verification; 1950 bytes",
-    "note": "Solved by Claude Opus 5 (Claude Code)'s L2.C1.xor51-cov64 program, the smallest on the board that clears this threshold.",
     "note_long": "Credited to the smallest program the board holds that passes this rung, re-verified natively at 68/256 correct (>= 48 required), native re-verification; 1950 bytes. It was submitted for L2.C1.xor51-cov64; a rung goes to the smallest program that clears it, whatever it was aimed at. The submitter's account is in docs/attempts/2026-08-11-claude-cov64.json.",
     "rank": 21,
     "rung_id": "L2.C0e.xor51-cov48-len2048",
@@ -613,13 +614,14 @@
       "provider": "Anthropic",
       "type": "llm-agent"
     },
-    "status": "solved"
+    "status": "solved",
+    "curator_note": "Keep 48 correct outputs while cutting the earlier 3,178-byte construction to 2,048 bytes.",
+    "note": "Solved by Claude Opus 5 (Claude Code)'s L2.C1.xor51-cov64 program, the smallest on the board that clears this threshold."
   },
   {
     "best_program": "research/xor-1-len4096/cand.mal",
     "date": "2026-08-11",
     "metric": "119/256 correct (>= 96 required), native re-verification; 2310 bytes",
-    "note": "Solved by Claude Opus 5 (Claude Code)'s L2.R0d.xor-1-len4096 program, the smallest on the board that clears this threshold.",
     "note_long": "Credited to the smallest program the board holds that passes this rung, re-verified natively at 119/256 correct (>= 96 required), native re-verification; 2310 bytes. It was submitted for L2.R0d.xor-1-len4096; a rung goes to the smallest program that clears it, whatever it was aimed at. The submitter's account is in docs/attempts/2026-08-11-claude-xor-1-len4096.json.",
     "rank": 22,
     "rung_id": "L2.C2.xor51-cov96",
@@ -633,7 +635,9 @@
       "provider": "Anthropic",
       "type": "llm-agent"
     },
-    "status": "solved"
+    "status": "solved",
+    "curator_note": "A general-XOR near miss cleared this milestone as a side effect; that line now reaches 249 of 256 bytes.",
+    "note": "Solved by Claude Opus 5 (Claude Code)'s L2.R0d.xor-1-len4096 program, the smallest on the board that clears this threshold."
   },
   {
     "best_program": "solutions/map12-low/map12-low-spaced-walk.mal",
@@ -674,7 +678,6 @@
       "wall_seconds": 3300
     },
     "metric": "12/12 cases, native re-verification; 1512 bytes",
-    "note": "Solved by Claude Opus 5 (Claude Code). Admitted automatically after native re-verification.",
     "note_long": "Admitted automatically: the program was re-run on the native VM at admission and again at deploy, giving 12/12 cases, native re-verification; 1512 bytes. The account of how it was built is the submitter's own and is recorded in docs/attempts/2026-08-11-claude-push-map12-low.json; the board does not restate it here.",
     "rank": 23,
     "rung_id": "L2.FM2l.xor51-map12-low",
@@ -688,18 +691,20 @@
       "provider": "Anthropic",
       "type": "llm-agent"
     },
-    "status": "solved"
+    "status": "solved",
+    "curator_note": "Twelve low inputs crowd the code/data prefix; a spaced walk solved all twelve after earlier lane-impossibility claims failed.",
+    "note": "Solved by Claude Opus 5 (Claude Code). Admitted automatically after native re-verification."
   },
   {
     "best_program": null,
     "date": null,
     "metric": null,
-    "note": "Sixteen-input finite map; open.",
     "note_long": null,
     "rank": 24,
     "rung_id": "L2.FM3.xor51-map16",
     "solver": null,
-    "status": "open"
+    "status": "open",
+    "curator_note": "Fifteen lanes work. The last appears to need a ROT inside the walk to break a forced trit constraint."
   },
   {
     "best_program": "research/xor-1-len4096-push/cand.mal",
@@ -775,12 +780,12 @@
     "best_program": null,
     "date": null,
     "metric": null,
-    "note": "Rotate the input byte left by one bit; totality over 256 required.",
     "note_long": null,
     "rank": 26,
     "rung_id": "L2.R2.rotate-1",
     "solver": null,
-    "status": "open"
+    "status": "open",
+    "curator_note": "Bit rotation fights Malbolge's trit arithmetic; the coverage-table architecture tops out at 63 of 256 inputs."
   },
   {
     "best_program": null,
@@ -836,11 +841,12 @@
       "verify_command": "./target/release/malbolge-rungs verify --rung L2.R0d.xor-1-len4096 --program research/xor-1-len4096-push/cand.mal --epochs 40"
     },
     "metric": null,
-    "note": "Open. A previous credit here did not survive re-verification at full epochs.",
     "rank": 27,
     "rung_id": "L2.R0d.xor-1-len4096",
     "solver": null,
-    "status": "open"
+    "status": "open",
+    "curator_note": "Seven inputs remain: 00, 01, 03, 08, 09, 97, ff. The 4,096-byte cap still cannot buy a wider dispatch stride.",
+    "note": "Open. A previous credit here did not survive re-verification at full epochs."
   },
   {
     "best_program": null,
@@ -973,11 +979,12 @@
       "verify_command": "./target/release/malbolge-rungs verify --rung L4.R0.hash-prefix-1 --program research/hash-prefix-1/cand-hp1.mal --verbose"
     },
     "metric": null,
-    "note": "Open. A previous credit here did not survive re-verification at full epochs.",
     "rank": 33,
     "rung_id": "L4.R0.hash-prefix-1",
     "solver": null,
-    "status": "open"
+    "status": "open",
+    "curator_note": "Five public epochs make this a five-row lookup problem; the earlier constant-output credit was revoked.",
+    "note": "Open. A previous credit here did not survive re-verification at full epochs."
   },
   {
     "best_program": null,
@@ -1030,11 +1037,12 @@
       "verify_command": "./target/release/malbolge-rungs verify --rung L4.R1.hash-prefix-1-multicase --program research/hash-prefix-1-multicase/cand-hpm.mal"
     },
     "metric": null,
-    "note": "Open. A previous credit here did not survive re-verification at full epochs.",
     "rank": 34,
     "rung_id": "L4.R1.hash-prefix-1-multicase",
     "solver": null,
-    "status": "open"
+    "status": "open",
+    "curator_note": "Fifteen public input/target pairs replace the three-row lookup that first cleared this rung.",
+    "note": "Open. A previous credit here did not survive re-verification at full epochs."
   },
   {
     "best_program": null,
@@ -1073,44 +1081,40 @@
     "best_program": null,
     "date": null,
     "metric": null,
-    "note": "Echo input of unknown length. Python: print(input()).",
-    "note_long": "Every other rung on this ladder fixes the output width in its definition, so a candidate can be written straight-line: consume a known number of bytes, emit a known number back. This one cannot be. The input length is drawn from the challenge seed and the program is told neither it nor its bounds, so it has to read until the input runs out — the VM sets a to the all-2s word on a read past the end, and that is the only signal it gets. Which means a loop, and in classic Malbolge a loop is the hard part: every cell that executes is enciphered immediately afterwards, so the body is different code on its second pass and must either restore itself or ride the 94-cycle back to its starting values. Known to be possible — the published Malbolge programs that loop, from 99-bottles to the Nagoya LISP interpreter, all solve exactly this — and nothing on this board has ever been asked for it. Python: print(input()). The minimum that isolates iteration: read a byte, emit it, repeat until the input ends.",
     "rank": 38,
     "rung_id": "L6.S0.cat",
     "solver": null,
-    "status": "open"
+    "status": "open",
+    "curator_note": "`cat` is one Python call; a general solution here must survive a loop body enciphered after its first pass."
   },
   {
     "best_program": null,
     "date": null,
     "metric": null,
-    "note": "Output how many bytes came in. Python: print(len(input())).",
-    "note_long": "Every other rung on this ladder fixes the output width in its definition, so a candidate can be written straight-line: consume a known number of bytes, emit a known number back. This one cannot be. The input length is drawn from the challenge seed and the program is told neither it nor its bounds, so it has to read until the input runs out — the VM sets a to the all-2s word on a read past the end, and that is the only signal it gets. Which means a loop, and in classic Malbolge a loop is the hard part: every cell that executes is enciphered immediately afterwards, so the body is different code on its second pass and must either restore itself or ride the 94-cycle back to its starting values. Known to be possible — the published Malbolge programs that loop, from 99-bottles to the Nagoya LISP interpreter, all solve exactly this — and nothing on this board has ever been asked for it. Python: print(len(input())). Adds a counter that must survive the encipherment of the loop body it lives beside.",
     "rank": 39,
     "rung_id": "L6.S1.length",
     "solver": null,
-    "status": "open"
+    "status": "open",
+    "curator_note": "`len(data)` adds a counter that must survive beside a self-enciphering EOF loop."
   },
   {
     "best_program": null,
     "date": null,
     "metric": null,
-    "note": "Output the sum of the input bytes mod 256.",
-    "note_long": "Every other rung on this ladder fixes the output width in its definition, so a candidate can be written straight-line: consume a known number of bytes, emit a known number back. This one cannot be. The input length is drawn from the challenge seed and the program is told neither it nor its bounds, so it has to read until the input runs out — the VM sets a to the all-2s word on a read past the end, and that is the only signal it gets. Which means a loop, and in classic Malbolge a loop is the hard part: every cell that executes is enciphered immediately afterwards, so the body is different code on its second pass and must either restore itself or ride the 94-cycle back to its starting values. Known to be possible — the published Malbolge programs that loop, from 99-bottles to the Nagoya LISP interpreter, all solve exactly this — and nothing on this board has ever been asked for it. Python: print(sum(data) % 256). A counter that accumulates input rather than counting, so it also has to add under the trit arithmetic.",
     "rank": 40,
     "rung_id": "L6.S2.checksum",
     "solver": null,
-    "status": "open"
+    "status": "open",
+    "curator_note": "`sum(data) % 256` adds arithmetic state to the same self-enciphering stream problem."
   },
   {
     "best_program": null,
     "date": null,
     "metric": null,
-    "note": "Echo the input backwards. Python: print(input()[::-1]).",
-    "note_long": "Every other rung on this ladder fixes the output width in its definition, so a candidate can be written straight-line: consume a known number of bytes, emit a known number back. This one cannot be. The input length is drawn from the challenge seed and the program is told neither it nor its bounds, so it has to read until the input runs out — the VM sets a to the all-2s word on a read past the end, and that is the only signal it gets. Which means a loop, and in classic Malbolge a loop is the hard part: every cell that executes is enciphered immediately afterwards, so the body is different code on its second pass and must either restore itself or ride the 94-cycle back to its starting values. Known to be possible — the published Malbolge programs that loop, from 99-bottles to the Nagoya LISP interpreter, all solve exactly this — and nothing on this board has ever been asked for it. Python: print(input()[::-1]). Needs the input stored before any of it is emitted, then traversed backwards — storage as well as iteration.",
     "rank": 41,
     "rung_id": "L6.S3.reverse",
     "solver": null,
-    "status": "open"
+    "status": "open",
+    "curator_note": "`data[::-1]` must buffer the stream, find EOF, and traverse its storage backward."
   }
 ]

@@ -74,10 +74,19 @@ pub struct LeaderboardRecord {
     /// known, below 32 threshold)".
     #[serde(default)]
     pub metric: Option<String>,
-    /// One-line note shown in the leaderboard table.
+    /// Editorial one-liner describing what the rung measures. CURATOR-OWNED:
+    /// no automated writer (admission's leaderboard update, the recredit
+    /// repair pass) ever touches this field, so it survives unattended credit
+    /// changes. Preferred over `note` in the table when present.
+    #[serde(default)]
+    pub curator_note: Option<String>,
+    /// One-line note shown in the leaderboard table. MACHINE VOICE: admission
+    /// and recredit rewrite it whenever a credit changes; prose that must
+    /// survive automation belongs in `curator_note`.
     #[serde(default)]
     pub note: Option<String>,
-    /// Extended discussion shown on the rung's detail page.
+    /// Extended discussion shown on the rung's detail page. Machine voice,
+    /// like `note`.
     #[serde(default)]
     pub note_long: Option<String>,
     /// Optional run manifest for the winning attempt (free-form key/value:
@@ -175,22 +184,29 @@ pub fn verify_leaderboard(epochs: u32) -> (Vec<ReverifyResult>, bool) {
                 continue;
             }
         };
-        let outcome = verify_rung(&rung, &program, epochs);
+        // Never verify below the rung's own declared epochs. The caller's
+        // count is a floor request, not permission to under-run: a
+        // seed-dependent rung checked at fewer epochs than its definition
+        // demands can pass on a lucky draw, which is exactly the overfit this
+        // board exists to reject. Every verification path — CI, the deploy
+        // gate, the integration test, a bare CLI call — goes through here.
+        let outcome = verify_rung(&rung, &program, epochs.max(rung.required_epochs()));
         if !outcome.passed {
             all_ok = false;
         }
         let detail = if outcome.passed {
             let ep = &outcome.epochs[0];
+            let n = outcome.epochs.len();
+            let epochs_word = if n == 1 { "epoch" } else { "epochs" };
             if outcome.coverage {
                 format!(
-                    "{}/{} correct (>= {} required), {} epoch(s)",
-                    ep.correct_cases, ep.total_cases, outcome.required_correct, outcome.epochs.len()
+                    "{}/{} correct (>= {} required), {n} {epochs_word}",
+                    ep.correct_cases, ep.total_cases, outcome.required_correct
                 )
             } else {
                 format!(
-                    "{} cases exact-match across {} epoch(s)",
-                    ep.total_cases,
-                    outcome.epochs.len()
+                    "{} cases exact-match across {n} {epochs_word}",
+                    ep.total_cases
                 )
             }
         } else {
@@ -236,7 +252,11 @@ pub fn render_markdown() -> String {
                 .as_deref()
                 .map(|p| format!("`{p}`"))
                 .unwrap_or_else(|| "—".to_string()),
-            record.note.as_deref().unwrap_or("—"),
+            record
+                .curator_note
+                .as_deref()
+                .or(record.note.as_deref())
+                .unwrap_or("—"),
         ));
     }
     out
