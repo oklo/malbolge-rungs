@@ -1,0 +1,124 @@
+{
+  "artifacts": [
+    "research/xor-1-len4096-hero2/sled.py",
+    "research/xor-1-len4096-hero2/swap.py",
+    "research/xor-1-len4096-hero2/hero9.c",
+    "research/xor-1-len4096-hero2/hero3.c",
+    "research/xor-1-len4096-hero2/hero4.c",
+    "research/xor-1-len4096-hero2/hero5.c",
+    "research/xor-1-len4096-hero2/hero6.c",
+    "research/xor-1-len4096-hero2/nc.sh",
+    "research/xor-1-len4096-hero2/one.sh",
+    "research/xor-1-len4096-hero2/fleet3.sh",
+    "research/xor-1-len4096-hero2/chain2.sh",
+    "research/xor-1-len4096-hero2/cand2.mal",
+    "research/xor-1-len4096-hero2/proof_b0.mal",
+    "research/xor-1-len4096-hero2/swap.mal",
+    "research/xor-1-len4096-hero2/swap_rep.mal",
+    "docs/attempts/2026-08-11-claude-hero2-xor-1-len4096.md"
+  ],
+  "best_candidate": {
+    "claimed_correct_cases": 1,
+    "claimed_total_cases": 1,
+    "program": "research/xor-1-len4096-hero2/cand2.mal"
+  },
+  "budget": {
+    "binding_constraint": "wall clock, not tokens -- roughly a third of the token cap was used when the 150-minute clock ran out",
+    "cap": "900k tokens or 150 minutes, whichever came first",
+    "ruled_out": [
+      "b = 0 as a structural wall. Proven reachable natively (proof_b0.mal, input 0x00 -> 0x51). No input on this rung is now known to be unreachable.",
+      "hero1's framing of b = 0 as a large prologue-phase search. Two forbidden cells out of 32; the fix is a swap, not an insert, and the chain route is forced.",
+      "b = 1 and b = 3 as prologue problems. Witnesses exist against prior art's unmodified prologue.",
+      "b = 151 as tape-limited in the architecture. Solved by an assembly pass on the swapped tape.",
+      "Step cap and span as a remaining lever ON HERO1'S TAPE. Assembly at (steps, span) = (26,16), (40,18), (40,27) and (60,27) all return exactly 249/256 with the identical miss set. hero1's '+2 per cap raise' trajectory is spent -- but the cap still matters structurally, because nothing below ~35 can see a sled route at all (b = 0's sled is 31 steps to the dispatch JMP).",
+      "Single-cell coordinate descent on the shared tape. A full sweep of [34,210] x 8 codes, each probe followed by exhaustive assembly repair and a reroll pass (68 s/pass), moves nothing from 249. hero1's sweep used a random repair_pass(120); an exact repair does not rescue the move class. The tape is at a strict single-cell local optimum and the useful moves are coordinated multi-cell ones.",
+      "The program-length and step caps as explanations: 2305 of 4096 bytes and at most 80 of 2048 steps."
+    ],
+    "searches_run": [
+      "research/xor-1-len4096-hero2/sled.py: the finite (sled entry x source code) -> enciphered code table that collapses hero1's four-dimensional prologue-phase search to two forbidden cells",
+      "research/xor-1-len4096-hero2/swap.py: derivation of the IN/MOVD swap and proof that m[42] = 91 is the unique one-hop chain route back to the forced (71,72) CRAZY pair",
+      "research/xor-1-len4096-hero2/hero9.c: hero1's simulator and optimiser with the JMP encipherment bug fixed, plus new modes -- `-map` (per-address reader counts, the contested surface), `-need B` (exhaustive DFS for one input over its own block plus the shared window, reporting which shared cells each witness demands), `-tape` (coordinate sweep with exhaustive assembly repair and a reroll pass, hero1's would_try_next #1), `-force B` and `-hunt` (apply a whole witness including its shared-cell changes as one coordinated move, least-disruptive first, gains compounding), `-solve1 B` (apply one witness verbatim with no repair, so a reachability claim can be checked natively rather than only in the model)",
+      "12-way parallel -force/-need probes on the four inputs hero1 left tape-limited, then two 13-way anneal -> assemble -> hunt -> assemble fleets on the swapped prologue (one before the DFS fix, one after); roughly 3 core-hours across 14 cores",
+      "research/xor-1-len4096-hero2/nc.sh: 14-way parallel all-256 native check, under a second per program, used for every number in this record"
+    ],
+    "spent_tokens_approx": 300000,
+    "spent_under_cap": true,
+    "spent_wall_seconds_approx": 8700,
+    "wall_or_budget": "Neither any more -- it is now a plain optimisation problem, and that is the finding. Every one of the 256 inputs has a demonstrated witness: b = 0 natively, the rest in a simulator that agrees with the native VM byte for byte at 113, 207, 240, 247 and 249. What remains is getting ONE tape to satisfy all of them simultaneously. This run spent its clock proving reachability and fixing the searcher rather than on coverage, which is why it ships 247 against hero1's 249. The swap is a two-byte edit to hero1's program (swap.mal IS hero1's 249 tape with the swapped prologue, scoring 207 natively, 240 after one assembly pass); it buys b = 0 and b = 151 but re-forces m[42] and m[92], which many inputs read, and re-optimising around them is most of a hero1-sized search that did not fit in the remaining clock. I would still rank this rung EASIER than its current position: the structure is now fully understood and nothing is impossible.",
+    "would_try_next": [
+      "Re-run hero1's full pipeline on the swapped prologue with the CORRECTED DFS and step cap >= 45, seeded from swap.mal. hero1 went 229 -> 249 in one session using a DFS that was unsound on four inputs and a cap that could not see the sleds; the same pipeline, fixed, is the obvious next run and is what did not fit here.",
+      "ESCAPE TO PRIVATE TAPE -- the highest-value untried idea on this rung. The re-dispatch for b = 0,1,2,3 lands at m[104] + 1 <= 127, deep in the contested region, which is why b = 0's witnesses rewrite 15-40 shared cells and cost ~130 other inputs. But CRZ writes crazy(A, m[d]), which can be any word up to 59048, so a block can compute a large value into a cell and then JMP or MOVD through it into private territory. The program is 2305 of an allowed 4096 bytes: give the hard inputs a private landing area at 2305..4095 and their solutions stop costing anything globally. hero1 tried N = 4096 only as a free crazy-fill tail and found it slightly worse; as a JUMP DESTINATION it is a different and much stronger use of the one cap that is not binding.",
+      "Tape annealing with the decomposed objective, which hero1 named and this run only half-built: with the shared window fixed, score a tape by 'number of inputs with an exhaustive block-local solution' (256 independent DFS calls) rather than by the assembled program, so assembly conflicts leave the landscape entirely. The -hunt mode here is the coordinated-move half; the decomposed objective is the other half.",
+      "Sweep the last two program bytes exhaustively (64 tail families). Still not done -- hero1 flagged it, this run treated them as ordinary sweep cells.",
+      "Audit the searcher, not just the simulator, on any future run. hero1 validated the simulator against the native VM meticulously and that validation was correct; the bug was one level down in the DFS that proposed candidates to it, and the pipeline's own safety check hid it for a whole session. Any reported witness should be applied verbatim with no repair and confirmed to flip the input."
+    ]
+  },
+  "builds_on": [
+    "docs/attempts/2026-08-11-claude-hero1-xor-1-len4096.json",
+    "docs/attempts/2026-08-11-claude-push-xor-1-len4096.json",
+    "docs/attempts/2026-08-11-claude-xor-1-len4096.json"
+  ],
+  "date": "2026-08-11",
+  "file": "docs/attempts/2026-08-11-claude-hero2-xor-1-len4096.json",
+  "manifest": {
+    "architecture": "hero1's private-CODE-block architecture with a two-byte prologue change: MOVD at address 0 and IN at address 1 instead of the reverse, so address 1's enciphered image is a runtime NOP rather than IN. Still 33 prologue bytes, JMP at address 32, block for input b at 9b+1..9b+9 entered with A = 9b and d = 73.",
+    "b0_native_proof": {
+      "command": "./target/release/malbolge-rungs execute --program research/xor-1-len4096-hero2/proof_b0.mal --input-hex 00",
+      "expected_hex": "51",
+      "output_hex": "51",
+      "overall_coverage": "113/256 -- this file is a PROOF that b = 0 is reachable, produced by applying one DFS witness verbatim with no repair, not a candidate",
+      "program": "research/xor-1-len4096-hero2/proof_b0.mal",
+      "status": "Halted",
+      "steps": 78
+    },
+    "beats_prior_art_coverage": false,
+    "cores": 14,
+    "correct_inputs_of_256": 247,
+    "dfs_bug_fixed": "research/xor-1-len4096-hero1/hero.c rec(): `case JMP: nC = mem[D]` followed by enciphering mem[C]. The VM (crates/classic_malbolge/src/lib.rs, step()) sets self.c = memory[self.d] and then calls encipher_cell(memory, self.c), enciphering the target. Fixed in hero9.c by enciphering mem[nC] and by branching on the jump target before encipherment.",
+    "epoch_pass_probability": 0.838,
+    "length_limit": 4096,
+    "native_measurement": "all 256 input bytes through `execute` (research/xor-1-len4096-hero2/nc.sh, 14-way parallel); model and native agree byte for byte at 113, 120, 207, 240, 247 and at hero1's 249",
+    "note_on_151": "b = 151, which hero1 reported as tape-limited with no block-local solution against its tape, is SOLVED in this candidate.",
+    "prior_art_correct_inputs_of_256": 249,
+    "program_bytes": 2305,
+    "prologue_change": "prog[0] = 40 (MOVD, unique legal byte), prog[1] = 116 (IN); d-chain re-seated at prog[42] = 91 and prog[92] = 70; cells 40 and 123 freed, 42 and 92 newly forced",
+    "retracted_claims": [
+      "docs/attempts/2026-08-11-claude-hero1-xor-1-len4096.md: 'b = 0, 1, 3 are the sled / prologue-phase problem'. b = 1 and b = 3 have witnesses against prior art's unmodified prologue (3 and 1057 respectively) and are tape problems; only b = 0 ever needed a prologue change.",
+      "docs/attempts/2026-08-11-claude-hero1-xor-1-len4096.md: b = 0 requires enumerating prologue phases over NOP padding x d-chain route x CRAZY pair x rotation pointer, 'hours of compute at most'. The safe/unsafe question is a 32-entry finite table with exactly two unsafe entries, and the fix is a two-byte swap plus two chain cells.",
+      "docs/attempts/2026-08-11-claude-hero1-xor-1-len4096.md: b = 151 is tape-limited. True of that tape only; it is solved by an assembly pass on the swapped tape and is correct in this run's candidate."
+    ],
+    "shared_surface_measured": "cell 73 is read by 233 of 256 inputs, 62 by 117, 74 by 120, 75 by 84; 367 cells are read by more than one input, reaching into the crazy-filled tail (research/xor-1-len4096-hero2 `-map` mode)",
+    "sled_table": "of 32 (sled entry, source code) pairs over addresses 1, 10, 19, 28, exactly 2 decode to a real instruction after encipherment: MOVD at 1 -> IN, ROT at 10 -> HLT",
+    "step_limit": 2048,
+    "steps_per_case_max": 80,
+    "uncovered_inputs": [
+      0,
+      1,
+      3,
+      4,
+      5,
+      8,
+      9,
+      10,
+      255
+    ],
+    "verified_natively": true,
+    "verify_command": "./target/release/malbolge-rungs verify --rung L2.R0d.xor-1-len4096 --program research/xor-1-len4096-hero2/cand2.mal --verbose",
+    "verify_default_result": "FAIL (native evaluator) on the run recorded here -- epoch 1 drew a case this program misses. At 247/256 the default 5-epoch run passes with probability (247/256)^5 = 0.84, so a green verify on this rung is a sampling event either way; hero1's 249 returns PASS and is not a solve."
+  },
+  "outcome": "unsolved",
+  "report": "docs/attempts/2026-08-11-claude-hero2-xor-1-len4096.md",
+  "rung_id": "L2.R0d.xor-1-len4096",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "Claude Opus 5 (Claude Code)",
+    "harness": "Claude Code CLI, autonomous single-session run under a hard cap of 900k tokens / 150 minutes; existing clone of this repository, 14 CPU cores, no network beyond llms.txt",
+    "harness_short": "claude-code",
+    "harness_url": "https://claude.com/claude-code",
+    "model": "claude-opus-5",
+    "notes": "Model id as self-reported by the session. Fourth recorded attempt on this rung; reuses hero1's simulator and optimiser, fixes a correctness bug in its block-local DFS, and changes two bytes of the prologue.",
+    "provider": "Anthropic",
+    "type": "llm-agent"
+  },
+  "summary": "247/256 natively, which does NOT beat hero1's 249/256. Two results matter more. (1) b = 0 is REACHABLE and that is proven natively, not modelled: research/xor-1-len4096-hero2/proof_b0.mal returns output 0x51 on input 0x00 under `execute`. Three records have framed this rung around the four low inputs; the first two called b = 0,1,2,3 'provably unreachable', hero1 retracted that for b = 1,2,3 and priced the remaining b = 0 fix at 'hours of compute' over a four-dimensional prologue-phase space (NOP padding x d-chain route x CRAZY pair x rotation pointer). It is a 32-entry table. sled.py enumerates, for each of the four sled entries (addresses 1, 10, 19, 28) and each of the eight source codes, what the ENCIPHERED image decodes to: exactly two of the 32 combinations are unsafe -- MOVD at address 1 (enciphers to IN) and ROT at address 10 (enciphers to HLT). Addresses 19 and 28 are safe for every code. The fix is a SWAP, not hero1's insert: MOVD at address 0 (which with d == c reads its own cell, m[0] = 40, unique) and IN at address 1, whose enciphered image is a runtime NOP. That keeps the prologue at 33 bytes with every later instruction at the same address, so no block moves; only the d-chain phase shifts by 2, and swap.py shows m[42] = 91 is the UNIQUE byte legal at address 42 that routes back onto the forced (71,72) CRAZY pair in one hop (with m[92] = 70). hero1's insert needed an extra MOVD hop, shifted everything by two, and landed ROT on address 10 -- the one other unsafe square -- which is why it read as a trade. (2) hero1's block-local DFS was UNSOUND on exactly the stuck inputs: rec() enciphered a JMP's own cell, while the VM does `c = m[d]` and THEN `encipher_cell(memory, c)`, enciphering the TARGET. simulate() had it right, so the two models disagreed on every path crossing a JMP -- which is every path for b = 0,1,2,3, since the re-dispatch off the never-enciphered dispatch JMP IS their mechanism. No wrong program ever shipped, because try_input and the assembly pass re-score with simulate() and accept only on a non-negative delta, so bogus witnesses were silently rejected; but the searcher burned its budget on the four hardest inputs while unable to solve any, reporting 232 'witnesses' for b = 0 of which zero reproduced (applied verbatim, native returns 223, not 81). Fixing it (encipher nC, and branch the jump target BEFORE encipherment because the chosen byte is raw while what executes is X2[byte]) gives 20 real witnesses for b = 0 at step cap 45, and witness 0 reproduces natively. Corollaries: b = 1 and b = 3 were never prologue problems at all -- the DFS finds 3 and 1057 witnesses against prior art's UNMODIFIED prologue -- and what hid them is the step cap, because b = 0's sled is 31 steps of NOP just to reach the dispatch JMP and hero1 searched at caps of 14 to 26; b = 151, reported by hero1 as tape-limited on an exhaustive DFS, is solved by a plain assembly pass on the swapped tape and is solved in this run's shipped candidate. Also measured as exhausted: step cap and span on hero1's tape (assembly at (26,16), (40,18), (40,27), (60,27) all return exactly 249 with the identical miss set), and single-cell coordinate descent (a full sweep of [34,210] x 8 codes with exhaustive assembly repair plus reroll, 68 s/pass, moves nothing from 249). The moves that matter are coordinated and multi-cell: b = 8 and b = 9 both require m[74] = 118 and m[75] = 117 together. Nothing on this rung is now known to be structurally unreachable."
+}
