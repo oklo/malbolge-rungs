@@ -1,0 +1,249 @@
+seeded 2305 bytes from ../xor-1-len4096-push/cand.mal (N=2305)
+start 229/256  N=2305 span=9 steps=14 T=0.70
+[  0s] best 230/256 (round 1)
+[287s] best 231/256 (round 30598)
+[441s] best 232/256 (round 46478)
+seeded 2305 bytes from ../xor-1-len4096-push/cand.mal (N=2305)
+start 229/256  N=2305 span=9 steps=14 T=0.70
+[  0s] best 230/256 (round 17)
+[  1s] best 231/256 (round 113)
+[ 45s] best 232/256 (round 5082)
+[124s] best 233/256 (round 13818)
+[285s] best 234/256 (round 30889)
+[589s] best 235/256 (round 61800)
+[589s] best 236/256 (round 61817)
+final 236/256 after 155804 rounds
+seeded 2305 bytes from ../xor-1-len4096-push/cand.mal (N=2305)
+start 229/256  N=2305 span=9 steps=14 T=0.70
+[  0s] best 230/256 (round 2)
+[  1s] best 231/256 (round 89)
+[278s] best 232/256 (round 30139)
+seeded 2305 bytes from ../xor-1-len4096-push/cand.mal (N=2305)
+start 229/256  N=2305 span=9 steps=14 T=0.70
+[  0s] best 230/256 (round 16)
+[ 63s] best 231/256 (round 6814)
+[ 64s] best 232/256 (round 6863)
+[ 67s] best 233/256 (round 7212)
+[ 79s] best 234/256 (round 8511)
+[148s] best 235/256 (round 15979)
+[151s] best 236/256 (round 16357)
+[160s] best 237/256 (round 17376)
+[768s] best 238/256 (round 78507)
+final 238/256 after 154099 rounds
+seeded 2305 bytes from ../xor-1-len4096-push/cand.mal (N=2305)
+start 229/256  N=2305 span=9 steps=14 T=1.10
+[  0s] best 230/256 (round 13)
+[  3s] best 231/256 (round 265)
+[  6s] best 232/256 (round 563)
+[  6s] best 233/256 (round 586)
+final 233/256 after 91029 rounds
+seeded 2305 bytes from ../xor-1-len4096-push/cand.mal (N=2305)
+start 229/256  N=2305 span=9 steps=14 T=1.10
+[  0s] best 230/256 (round 13)
+seeded 2305 bytes from ../xor-1-len4096-push/cand.mal (N=2305)
+start 229/256  N=2305 span=9 steps=14 T=1.10
+[  1s] best 230/256 (round 108)
+[  2s] best 231/256 (round 189)
+[  6s] best 232/256 (round 559)
+[ 13s] best 233/256 (round 1247)
+[ 22s] best 234/256 (round 2210)
+[324s] best 235/256 (round 32375)
+final 235/256 after 91214 rounds
+seeded 2305 bytes from ../xor-1-len4096-push/cand.mal (N=2305)
+start 229/256  N=2305 span=9 steps=14 T=1.10
+[ 43s] best 230/256 (round 4430)
+[204s] best 231/256 (round 20606)
+[205s] best 232/256 (round 20664)
+[223s] best 233/256 (round 22488)
+[229s] best 234/256 (round 23100)
+[230s] best 235/256 (round 23138)
+[356s] best 236/256 (round 36105)
+[661s] best 237/256 (round 66740)
+final 237/256 after 91277 rounds
+seeded 2305 bytes from ../xor-1-len4096-push/cand.mal (N=4096)
+start 228/256  N=4096 span=9 steps=14 T=1.00
+[  0s] best 229/256 (round 10)
+[  0s] best 230/256 (round 27)
+[238s] best 231/256 (round 23869)
+[238s] best 232/256 (round 23891)
+[248s] best 233/256 (round 24842)
+[256s] best 234/256 (round 25633)
+final 232/256 after 79795 rounds
+seeded 2305 bytes from ../xor-1-len4096-push/cand.mal (N=4096)
+start 228/256  N=4096 span=9 steps=14 T=1.00
+[  0s] best 229/256 (round 11)
+[  0s] best 230/256 (round 26)
+[  1s] best 231/256 (round 140)
+[  1s] best 232/256 (round 156)
+[277s] best 233/256 (round 27035)
+[318s] best 234/256 (round 31144)
+[329s] best 235/256 (round 32240)
+[482s] best 236/256 (round 47489)
+final 236/256 after 78725 rounds
+seeded 2305 bytes from ../xor-1-len4096-push/cand.mal (N=4096)
+start 228/256  N=4096 span=9 steps=14 T=1.00
+[  0s] best 229/256 (round 72)
+[  0s] best 230/256 (round 91)
+[  4s] best 231/256 (round 446)
+[  5s] best 232/256 (round 628)
+[ 26s] best 233/256 (round 2884)
+final 233/256 after 82086 rounds
+seeded 2305 bytes from round1_best.mal (N=2305)
+start 238/256  N=2305 span=9 steps=14 T=0.90
+[  0s] best 239/256 (round 14)
+[  0s] best 240/256 (round 19)
+[438s] best 241/256 (round 30398)
+final 241/256 after 64184 rounds
+seeded 2305 bytes from round1_best.mal (N=2305)
+start 238/256  N=2305 span=9 steps=14 T=0.90
+[  0s] best 239/256 (round 8)
+[  0s] best 240/256 (round 9)
+final 240/256 after 64112 rounds
+seeded 2305 bytes from round1_best.mal (N=2305)
+start 238/256  N=2305 span=9 steps=14 T=0.90
+[  0s] best 239/256 (round 9)
+[  0s] best 240/256 (round 15)
+[ 10s] best 241/256 (round 777)
+final 241/256 after 63730 rounds
+seeded 2305 bytes from round1_best.mal (N=2305)
+start 238/256  N=2305 span=9 steps=14 T=0.90
+[  0s] best 239/256 (round 19)
+[  1s] best 240/256 (round 66)
+[298s] best 241/256 (round 20326)
+[381s] best 242/256 (round 26466)
+final 240/256 after 65072 rounds
+seeded 2305 bytes from round1_best.mal (N=2305)
+start 238/256  N=2305 span=9 steps=14 T=0.90
+[  1s] best 239/256 (round 108)
+[  2s] best 240/256 (round 203)
+[  5s] best 241/256 (round 376)
+seeded 2305 bytes from round1_best.mal (N=2305)
+start 238/256  N=2305 span=9 steps=14 T=0.90
+[  1s] best 239/256 (round 78)
+seeded 2305 bytes from round1_best.mal (N=2305)
+start 238/256  N=2305 span=9 steps=14 T=0.90
+[  0s] best 239/256 (round 19)
+[ 16s] best 240/256 (round 1224)
+[ 44s] best 241/256 (round 3183)
+seeded 2305 bytes from round1_best.mal (N=2305)
+start 238/256  N=2305 span=9 steps=14 T=0.90
+[  0s] best 240/256 (round 26)
+seeded 2305 bytes from seed241.mal (N=2305)
+start 241/256  N=2305 span=9 steps=16 T=0.50
+final 241/256 after 58244 rounds
+seeded 2305 bytes from seed241.mal (N=2305)
+start 241/256  N=2305 span=9 steps=16 T=0.65
+[213s] best 242/256 (round 7513)
+[297s] best 243/256 (round 10573)
+[298s] best 244/256 (round 10598)
+final 244/256 after 60398 rounds
+seeded 2305 bytes from seed241.mal (N=2305)
+start 241/256  N=2305 span=9 steps=16 T=0.80
+[891s] best 242/256 (round 31609)
+[895s] best 243/256 (round 31735)
+final 243/256 after 59505 rounds
+seeded 2305 bytes from seed241.mal (N=2305)
+start 241/256  N=2305 span=9 steps=16 T=0.95
+[ 92s] best 242/256 (round 3451)
+final 242/256 after 61748 rounds
+seeded 2305 bytes from seed241.mal (N=2305)
+start 241/256  N=2305 span=9 steps=16 T=1.10
+final 241/256 after 60195 rounds
+seeded 2305 bytes from seed241.mal (N=2305)
+start 241/256  N=2305 span=9 steps=16 T=1.25
+final 241/256 after 56395 rounds
+seeded 2305 bytes from asm248.mal (N=2305)
+start 248/256  N=2305 span=12 steps=20 T=0.40
+final 248/256 after 9739 rounds
+seeded 2305 bytes from asm248.mal (N=2305)
+start 248/256  N=2305 span=12 steps=20 T=0.60
+final 248/256 after 9827 rounds
+seeded 2305 bytes from asm248.mal (N=2305)
+start 248/256  N=2305 span=12 steps=20 T=0.80
+final 248/256 after 9442 rounds
+seeded 2305 bytes from asm248.mal (N=2305)
+start 248/256  N=2305 span=12 steps=20 T=1.00
+final 248/256 after 9676 rounds
+seeded 2305 bytes from asm248.mal (N=2305)
+start 248/256  N=2305 span=12 steps=20 T=1.20
+final 248/256 after 9836 rounds
+seeded 2305 bytes from asm248.mal (N=2305)
+start 248/256  N=2305 span=12 steps=20 T=1.40
+final 248/256 after 9291 rounds
+seeded 2305 bytes from asm248.mal (N=2305)
+start 248/256  N=2305 span=9 steps=20 T=0.70
+  sweep pass 1 cell 85 -> 249/256
+seeded 2305 bytes from asm248.mal (N=2305)
+start 248/256  N=2305 span=9 steps=20 T=0.70
+  sweep pass 1 cell 85 -> 249/256
+seeded 2305 bytes from asm248.mal (N=2305)
+start 248/256  N=2305 span=9 steps=20 T=0.70
+  sweep pass 1 cell 85 -> 249/256
+seeded 2305 bytes from /tmp/p_A.mal (N=2305)
+start 240/256  N=2305 span=9 steps=16 T=0.70
+  sweep pass 1 cell 38 -> 241/256
+  sweep pass 1 cell 75 -> 241/256
+  sweep pass 1 cell 88 -> 242/256
+  sweep pass 1 cell 92 -> 243/256
+  sweep pass 1 cell 94 -> 244/256
+seeded 2305 bytes from /tmp/p_A.mal (N=2305)
+start 240/256  N=2305 span=9 steps=16 T=0.70
+  assemble b=10 (+0) -> 240/256
+assemble pass 0: 240/256
+wrong: 0 1 2 3 8 10 145 146 147 149 151 152 154 204 253 255
+seeded 2305 bytes from /tmp/p_B.mal (N=2305)
+start 240/256  N=2305 span=9 steps=16 T=0.70
+  sweep pass 1 cell 38 -> 241/256
+  sweep pass 1 cell 75 -> 241/256
+  sweep pass 1 cell 88 -> 242/256
+  sweep pass 1 cell 92 -> 243/256
+  sweep pass 1 cell 94 -> 244/256
+seeded 2305 bytes from /tmp/p_B.mal (N=2305)
+start 240/256  N=2305 span=9 steps=16 T=0.70
+  assemble b=10 (+0) -> 240/256
+assemble pass 0: 240/256
+wrong: 0 1 2 3 8 10 145 146 147 149 151 152 154 204 253 255
+seeded 2305 bytes from /tmp/p_P.mal (N=2305)
+start 241/256  N=2305 span=9 steps=16 T=0.70
+  sweep pass 1 cell 38 -> 242/256
+sweep final 242/256
+seeded 2305 bytes from /tmp/p_P.mal (N=2305)
+start 242/256  N=2305 span=9 steps=16 T=0.70
+  assemble b=10 (+0) -> 242/256
+assemble pass 0: 242/256
+wrong: 0 1 3 8 10 145 146 149 151 152 154 204 253 255
+seeded 2305 bytes from /tmp/p_P.mal (N=2305)
+start 242/256  N=2305 span=9 steps=16 T=0.70
+seeded 2305 bytes from /tmp/p_Q.mal (N=2305)
+start 241/256  N=2305 span=9 steps=16 T=0.70
+  sweep pass 1 cell 38 -> 242/256
+sweep final 242/256
+seeded 2305 bytes from /tmp/p_Q.mal (N=2305)
+start 242/256  N=2305 span=9 steps=16 T=0.70
+  assemble b=10 (+0) -> 242/256
+assemble pass 0: 242/256
+wrong: 0 1 3 8 10 145 146 149 151 152 154 204 253 255
+seeded 2305 bytes from /tmp/p_Q.mal (N=2305)
+start 242/256  N=2305 span=9 steps=16 T=0.70
+seeded 2305 bytes from /tmp/p_R.mal (N=2305)
+start 241/256  N=2305 span=9 steps=16 T=0.70
+  sweep pass 1 cell 38 -> 242/256
+sweep final 242/256
+seeded 2305 bytes from /tmp/p_R.mal (N=2305)
+start 242/256  N=2305 span=9 steps=16 T=0.70
+  assemble b=10 (+0) -> 242/256
+assemble pass 0: 242/256
+wrong: 0 1 3 8 10 145 146 149 151 152 154 204 253 255
+seeded 2305 bytes from /tmp/p_R.mal (N=2305)
+start 242/256  N=2305 span=9 steps=16 T=0.70
+seeded 2305 bytes from /tmp/p_S.mal (N=2305)
+start 241/256  N=2305 span=9 steps=16 T=0.70
+  sweep pass 1 cell 38 -> 242/256
+sweep final 242/256
+seeded 2305 bytes from /tmp/p_S.mal (N=2305)
+start 242/256  N=2305 span=9 steps=16 T=0.70
+  assemble b=10 (+0) -> 242/256
+assemble pass 0: 242/256
+wrong: 0 1 3 8 10 145 146 149 151 152 154 204 253 255
+seeded 2305 bytes from /tmp/p_S.mal (N=2305)
+start 242/256  N=2305 span=9 steps=16 T=0.70
