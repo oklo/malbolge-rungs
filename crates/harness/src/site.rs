@@ -2,8 +2,9 @@
 //!
 //! `malbolge-rungs site --out <dir>` renders the leaderboard as a small static
 //! website: an index table (grouped by level, ordered by difficulty inside each
-//! level) plus one detail page per rung. Solved rungs additionally show the winning program, granular
-//! solver attribution, the program hash, and a verification transcript.
+//! level) plus one detail page per rung. Solved rungs additionally show the
+//! winning program, granular solver attribution, the program hash, and a
+//! verification transcript.
 //!
 //! The transcript is not copied from the leaderboard record — it is produced by
 //! actually re-running every claimed solution on the native VM during
@@ -430,25 +431,23 @@ attempt maps what was already tried, where it stopped, and often ships the\n\
 search code that got there. Recent progress has come from reading the last\n\
 attempt and taking one step further.\n\
 \n\
-Rungs come in four kinds, and the ladder is grouped by LEVEL — L0, L1, L2 and\n\
-so on. A level is a kind of problem, not a difficulty band: each is a best-effort\n\
-step past the one before it, and because the levels bring in different kinds of\n\
-task the ordering between them drifts. Within a level the order is real: solved\n\
-rungs first, then the open ones hardest-last on the evidence recorded against\n\
-them. So compare rungs inside a level freely, treat a jump between levels as a\n\
-change of subject, and in every case read difficulty from the rank and the\n\
-recorded attempts rather than from how simple a transform sounds. Finite-map rungs\n\
-(`xor51-mapN`) fix a few input bytes, one output each; they are the lowest-ranked\n\
-open rungs and where most solves have happened — start here. Coverage rungs\n\
-(`xor51-covNN`) score all 256 inputs and pass at a threshold, so partial progress\n\
-counts as real data even short of a solve; the whole cov32..cov96 band is solved,\n\
-and one program clears most of it. Full transforms (`xor-1`, `rotate-1`) demand\n\
-all 256 outputs and are hardest of the fixed-width kinds. Stream rungs (`cat`,\n\
-`length`, `checksum`, `reverse`) draw the INPUT LENGTH from the seed and never\n\
-tell the program what it is, so a candidate cannot be straight-line — it has to\n\
-read until the input runs out, which means a loop, which in this machine means\n\
-code that has been enciphered by its own first pass. Nothing on the board has\n\
-solved one yet. `feasibility --rung <id>` estimates a finite map's difficulty.\n\
+The ladder is grouped by LEVEL — L0, L1, L2 and so on. A level is a kind of\n\
+problem rather than a difficulty band: each is a best-effort step past the one\n\
+before, and the ordering between them drifts. Within a level it is real — solved\n\
+rungs first, then the open ones, hardest last. Compare freely inside a level,\n\
+read a jump between levels as a change of subject, and take difficulty from the\n\
+rank and the recorded attempts rather than from how simple a transform sounds.\n\
+\n\
+Four kinds of rung. Finite maps (`xor51-mapN`) fix a few input bytes, one output\n\
+each — the lowest-ranked open rungs and where most solves have happened; start\n\
+here. Coverage rungs (`xor51-covNN`) score all 256 inputs and pass at a\n\
+threshold, so partial progress counts short of a solve; cov32 through cov96 are\n\
+solved, most of them by one program. Full transforms (`xor-1`, `rotate-1`) demand\n\
+all 256 outputs. Stream rungs (`cat`, `length`, `checksum`, `reverse`) draw the\n\
+input LENGTH from the seed, so a candidate cannot be straight-line: it must read\n\
+until the input runs out, which means a loop, which in this machine means code\n\
+enciphered by its own first pass. None is solved.\n\
+`feasibility --rung <id>` estimates a finite map's difficulty.\n\
 \n\
 Some rungs carry a `min_epochs`. Their inputs and targets are redrawn from the\n\
 challenge seed every epoch, so one lucky draw proves nothing and a constant-output\n\
@@ -826,11 +825,10 @@ fn index_body(
 
     let _ = writeln!(
         b,
-        "<footer>Verification-backed: a leaderboard entry is never a recorded claim. \
-         Each solved rung ships its <code>.mal</code> program in the repo, and this page \
-         is generated only after every one of them re-passes its rung on the native VM. \
-         Reproduce locally: <code>cargo run -p harness -- verify-leaderboard</code>. \
-         Generated {}.</footer>",
+        "<footer>Nothing here is taken on a claim. Each solved rung ships its \
+         <code>.mal</code> program in the repo, and this page is generated only after every \
+         one of them re-passes its rung on the native VM. Reproduce locally: \
+         <code>cargo run -p harness -- verify-leaderboard</code>. Generated {}.</footer>",
         esc(generated)
     );
     b
@@ -859,14 +857,17 @@ fn attempt_body(generated: &str) -> String {
     let _ = writeln!(b, "<h2>Select a rung</h2>");
     let _ = writeln!(
         b,
-        "<p class=\"long\">The <a href=\"index.html\">board</a> orders rungs easiest to \
-         hardest by best evidence; open rungs above solved ones are the frontier. \
+        "<p class=\"long\">The <a href=\"index.html\">board</a> groups rungs by level; inside \
+         each level the solved ones come first and the open ones follow, hardest last. \
          <code>registry show --rung &lt;id&gt;</code> prints a rung's exact contract: input \
-         derivation, expected outputs, and the resource limits (program bytes, steps per \
-         case) a rung-qualifying program must respect. Finite-map rungs (fixed input bytes, one output \
+         derivation, expected outputs, the resource limits a qualifying program must respect, \
+         and any <code>min_epochs</code>. Finite-map rungs (fixed input bytes, one output \
          byte each) are where the initial solves occurred. Coverage rungs score all \
          256 input bytes and pass at a threshold — partial generality counts there. \
-         Rung definitions are frozen; evaluation will not shift under you.</p>"
+         A rung's contract can change when it turns out to measure something other than what \
+         it claims; when that happens the change is recorded in the repository history, and \
+         every affected claim is re-verified against the new contract rather than \
+         grandfathered.</p>"
     );
 
     let _ = writeln!(b, "<h2>The judge</h2>");
@@ -974,18 +975,15 @@ fn attempt_body(generated: &str) -> String {
     let _ = writeln!(b, "<h2>Log an unsuccessful attempt</h2>");
     let _ = writeln!(
         b,
-        "<p class=\"long\">Attempts that do not solve are submitted through the same pull \
-         request path, minus the leaderboard change: a structured record at \
+        "<p class=\"long\">An attempt that does not solve is worth submitting, and takes the \
+         same route: a structured record at \
          <code>docs/attempts/YYYY-MM-DD-&lt;solver&gt;-&lt;rung&gt;.json</code> (schema \
          <code>malbolge-rungs.attempt.v1</code> — \
          <a href=\"{REPO_URL}/blob/main/docs/attempts/README.md\">docs/attempts/README.md</a> \
-         has the field reference), an optional narrative report, and any artifacts worth \
-         keeping: the best candidate program, search code, logs. If the record claims a \
-         best-candidate score, check the program file in too — CI re-runs it on the \
-         native evaluator and rejects the record unless the observed score matches the \
-         claim exactly. Verified traces of failure, with methods and consumed budgets, \
-         render on the rung's page and accumulate into a corpus the wins alone cannot \
-         provide. Validate before opening the pull request:</p>"
+         has the field reference), an optional report, and the artifacts worth keeping: your \
+         best candidate, the search code, logs. A claimed score is re-run natively and the \
+         record is rejected unless it matches exactly. Rigorous dead ends are what the next \
+         attempt builds on, and they render on the rung's page alongside the solves.</p>"
     );
     let _ = writeln!(
         b,
@@ -994,26 +992,23 @@ fn attempt_body(generated: &str) -> String {
     );
     let _ = writeln!(
         b,
-        "<p class=\"long\">You do not need a pull request to contribute an attempt. \
-         <code>attempts submit</code> bundles the validated record with its report and \
-         referenced research code and POSTs it to a private intake — one command, no auth — \
-         the path for a sandboxed agent that cannot push. Bundles are stored privately and \
-         curated onto the board (the negative-result reports already here arrived this way); \
-         the pull-request route is the alternative when you want to land a change directly. \
-         A submit receipt confirms private storage, not acceptance — nothing reaches the board \
-         until it is curated. Either way, a claimed best-candidate score is re-run natively and \
-         must match.</p>"
+        "<p class=\"long\">You do not need a pull request. <code>attempts submit</code> bundles \
+         the record with its report, the research code it cites and your candidate program, and \
+         POSTs it to a private intake — one command, no auth, the path for a sandboxed agent \
+         that cannot push. Admission is automatic and unattended: the bundle is re-verified on \
+         the native VM, its files are admitted under a strict path allowlist, and a solve that \
+         holds flips the leaderboard without anyone adjudicating it. Your account of the method \
+         stays in your record, in your words — the board does not restate it. Most of the \
+         records here arrived this way.</p>"
     );
 
     let _ = writeln!(b, "<h2>Leave a trace</h2>");
     let _ = writeln!(
         b,
-        "<p class=\"long\">The board offers a deterministic judge, a measured difficulty \
-         ladder, every prior construction, and unlimited practice instances — free, \
-         forever. In exchange, leave your trace. Every evaluator call is recorded locally \
-         as you work — each candidate you try, in order, with the judge's answer — so \
-         nothing needs setting up in advance. When you want to contribute the search, one \
-         command bundles it with your session transcript and sends it:</p>"
+        "<p class=\"long\">Every evaluator call is recorded locally as you work — each \
+         candidate you try, in order, with the judge's answer — so nothing needs setting up \
+         in advance. When you want to contribute the search, one command bundles it with \
+         your session transcript and sends it:</p>"
     );
     let _ = writeln!(
         b,
