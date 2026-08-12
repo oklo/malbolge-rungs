@@ -1,0 +1,177 @@
+{
+  "artifacts": [
+    "research/xor-1-len4096-hero3/hero10.c",
+    "research/xor-1-len4096-hero3/stride.py",
+    "research/xor-1-len4096-hero3/fleet5.sh",
+    "research/xor-1-len4096-hero3/fleet4.sh",
+    "research/xor-1-len4096-hero3/nc.sh",
+    "research/xor-1-len4096-hero3/one.sh",
+    "research/xor-1-len4096-hero3/README.md",
+    "research/xor-1-len4096-hero3/cand.mal",
+    "docs/attempts/2026-08-11-claude-hero3-xor-1-len4096.md"
+  ],
+  "best_candidate": {
+    "claimed_correct_cases": 1,
+    "claimed_total_cases": 1,
+    "program": "research/xor-1-len4096-hero3/cand.mal"
+  },
+  "budget": {
+    "binding_constraint": "wall clock, not tokens -- under half the token cap was used, and about 40 of the 130 minutes went to the over-deep fleet described in manifest.step_cap_negative_result",
+    "cap": "900k tokens or 150 minutes, whichever came first",
+    "ruled_out": [
+      "A wider dispatch stride, at any program length up to the 4096 cap. Rotation only multiplies by powers of 3 and x27 needs 6885 bytes; no CRZ-based dispatch is injective because a byte operand forces CT[0] on trits 5..9, destroying b div 27 on the first CRZ; zero of 8836 two-CRZ families are injective. Stride 9, and therefore nine-cell blocks with double duty as the shared operand tape, is forced.",
+      "Escape to private tape at 2305..4095 as the fix for the stuck inputs (hero2's top-ranked untried idea). Only 36 of 256 inputs can move control into the writable window, and none of the stuck set except b = 255, which gets there by fall-through. 252 of 256 can leave the block region but into the crazy tail near 19700, which is not program text.",
+      "ROT as a route down from a CRZ result. crazy's output trit is never 0 where A's trit is 0, so the value's low trit is always nonzero and rotr rotates it to the top rather than dividing by 3.",
+      "b = 255 as solvable at N = 2305. Zero witnesses with its own block and the whole shared window [34,100] free. It is boxed in by the tail it seeds, not tape-limited.",
+      "Step cap >= 45 as a global search setting. Zero completed probes in 40 minutes on 11 cores; steps = 36 / span = 9 found +1 in 43 seconds. The deep cap belongs only to the sled inputs 0, 1, 3.",
+      "Single-cell coordinate descent on the shared window, now exhausted on the swapped tape as hero2 exhausted it on the old one. Four second-generation -window runs seeded from the 249 tape produced nothing further.",
+      "The program-length and step caps as explanations of difficulty: 2305 of 4096 bytes and at most 80 of 2048 steps. The length cap matters only through the stride, and the stride is forced."
+    ],
+    "searches_run": [
+      "research/xor-1-len4096-hero3/stride.py: exhaustive check that no byte-operand CRZ dispatch is injective (all 8836 pairs), that eight ROTs are exactly x9 for all 256 inputs, and the >= 3^8+3^9 bound on crazy(9b, byte)",
+      "research/xor-1-len4096-hero3/hero10.c -reach: block-local DFS with the success condition replaced by 'control reached [A,B]', run over all 256 inputs at N = 4096 and step cap 45, against both the writable window [2305,4095] and the whole region past 2305",
+      "research/xor-1-len4096-hero3/hero10.c -desc: the descending decomposition with the 'no damage above b' acceptance gate",
+      "research/xor-1-len4096-hero3/hero10.c -window: coordinate search over the shared window with -desc as the repair operator; 10-way fleet (fleet5.sh) plus a 4-way second generation seeded from the 249 tape",
+      "research/xor-1-len4096-hero3/hero10.c -tails: exhaustive sweep of all 64 crazy-tail families with full re-optimisation inside each -- IMPLEMENTED BUT NOT COMPLETED, killed for cores before it finished a family",
+      "N scan at N = 2306, 2308, 2311, 2314, 2320, 2332, 2350 with the descending sweep, establishing that b = 255 is free above 2305",
+      "fleet4.sh: an 11-way anneal -> assemble -> hunt -> assemble fleet at steps 45-70 / span 12-16 that produced nothing in 40 minutes; kept as the negative result",
+      "research/xor-1-len4096-hero3/nc.sh: 14-way parallel all-256 native check, under a second per program, used for every number in this record"
+    ],
+    "spent_tokens_approx": 380000,
+    "spent_under_cap": true,
+    "spent_wall_seconds_approx": 7800,
+    "wall_or_budget": "Budget -- but with the search space now far smaller than any prior record thought, and that is the useful part. The descending decomposition removes ~245 of the 256 inputs from the problem permanently: above block 10 nothing is a free choice, and the miss set is entirely the shared window plus the tail input. What is left is ~150 window cells and 64 tail families, which is small enough that a dedicated run should close it. The countervailing finding is the stride result: the 3840 extra bytes this rung grants over L2.R0.xor-1 cannot be spent on wider blocks, so the difficulty is not a length-cap artefact and this rung is closer to L2.R0.xor-1 than the caps suggest. I would rank it about where it sits -- not because coverage is stuck, but because the resource the rung exists to test turns out to be nearly decorative.",
+    "would_try_next": [
+      "Re-optimise at N = 2320 (or any N above 2305). b = 255 becomes free and the tail seed decouples from its block, giving two independent design variables. The cost is the ~8-10 tail-reading inputs, and recovering them is exactly what -window plus -desc is for. Cheapest remaining structural win; this run measured it and ran out of clock before re-optimising.",
+      "Two-cell window moves. Single-cell coordinate descent on the window is now exhausted twice over (hero2 on the old tape, this run on the swapped one), and hero2's -need already showed why: b = 8 and b = 9 both require m[74] = 118 AND m[75] = 117 together. The window is ~150 cells, so pairs are ~11k sites x 64 assignments -- large but tractable with -desc as a fast repair, and it is the smallest move class never tried.",
+      "Finish the tail-family sweep. -tails is implemented in hero10.c and enumerates all 64 families with full re-optimisation inside each; it was killed for cores and never completed a family. hero1 flagged it, hero2 flagged it, and it is still the oldest untried item on this rung. Combine with the N > 2305 change, where the family is a genuinely free variable rather than a hostage to b = 255's code.",
+      "A deep-cap search for b = 0, 1, 3 ONLY, against a window frozen by the three items above. This is where step cap >= 45 actually belongs -- four inputs against a fixed tape, not a joint problem.",
+      "Measure any inherited would_try_next before building on it. hero2's list is the best material on this rung and I executed it, but its top-ranked item was refuted by a 30-second measurement and its step-cap advice cost 40 minutes when applied globally. Both were reasonable inferences from real structure. Four consecutive records on this rung have now overturned a structural claim from the one before."
+    ]
+  },
+  "builds_on": [
+    "docs/attempts/2026-08-11-claude-hero2-xor-1-len4096.json",
+    "docs/attempts/2026-08-11-claude-hero1-xor-1-len4096.json",
+    "docs/attempts/2026-08-11-claude-push-xor-1-len4096.json",
+    "docs/attempts/2026-08-11-claude-xor-1-len4096.json"
+  ],
+  "date": "2026-08-11",
+  "file": "docs/attempts/2026-08-11-claude-hero3-xor-1-len4096.json",
+  "manifest": {
+    "architecture": "hero2's swapped prologue (MOVD at address 0, IN at address 1, d-chain re-seated at m[42] = 91 and m[92] = 70), 33 prologue bytes, dispatch JMP at address 32, block for input b at 9b+1..9b+9 entered with A = 9b and d = 73. Unchanged from hero2; this run changed the SEARCH, not the architecture.",
+    "b255_result": {
+      "at_N_2305": "zero witnesses with its own block PLUS the whole shared window [34,100] free -- boxed in, not merely tape-limited",
+      "at_N_above_2305": "solved for free at N = 2306, 2308, 2311, 2314, 2320, 2332 and 2350 -- it falls through into unowned tape and the tail seed moves off its block, giving two independent design variables where there was one",
+      "cost": "moving N rewrites the whole tail and costs the ~8-10 inputs that read it (134, 144, 146, 152, 231, 239, 253, 254 recur across the scan); one descending pass does not put them back and a full re-optimisation at the new N did not fit in the clock",
+      "why": "its block is 2296..2304 and cells 2303, 2304 are N-2 and N-1, the two bytes that seed the entire crazy tail every tail-reading input depends on; its code and the global tail are the same two bytes"
+    },
+    "beats_prior_art_coverage": false,
+    "beats_prior_art_on_the_line_that_can_reach_256": true,
+    "ceiling_note": "hero1's 249 is on the OLD prologue, where address 1 must hold the first MOVD, whose enciphered image at address 1 is IN, so b = 0 is unreachable and the ceiling is 255. This 249 is on the swapped prologue, where hero2 proved b = 0 reachable natively. Equal numbers, different ceilings.",
+    "cores": 14,
+    "correct_inputs_of_256": 249,
+    "descending_decomposition": {
+      "consequence": "sweeping descending makes witness choice conflict-free above the shared window, and prior art's global-delta >= 0 acceptance gate becomes actively harmful -- it rejects exactly the trades that give a higher block its only witness at the cost of a lower block that would be re-solved two iterations later",
+      "correct_gate": "no damage to inputs ABOVE b",
+      "observation": "execution runs forward and d can never exceed about 126 + stepcap, because MOVD sets d = m[d] with m[d] a program byte <= 126 and d only increments thereafter; so block b's own cells are read only by inputs lower than b",
+      "reduction": "above the shared window nothing is a free choice, so the only variables are the ~150 window cells (blocks 4..20, which are also everyone's operand tape) plus the tail family",
+      "result": "247 -> 248 from a single cell (address 35) in 43 seconds, then 249"
+    },
+    "epoch_pass_probability": 0.868,
+    "length_limit": 4096,
+    "native_measurement": "all 256 input bytes through `execute` (research/xor-1-len4096-hero3/nc.sh, 14-way parallel); model and native agree byte for byte at 243, 247, 248 and 249",
+    "prior_art_correct_inputs_of_256_old_prologue": 249,
+    "prior_art_correct_inputs_of_256_swapped_prologue": 247,
+    "program_bytes": 2305,
+    "reach_result": {
+      "claim_tested": "hero2 would_try_next #2, 'escape to private tape', described there as the single highest-value untried idea on this rung",
+      "inputs_reaching_past_2305_anywhere": 252,
+      "inputs_reaching_window_with_d_only": 211,
+      "inputs_reaching_writable_window_2305_4095": 36,
+      "intersection_with_stuck_set": [
+        255
+      ],
+      "mode": "hero10.c -reach -rlo A -rhi B (block-local DFS with the success condition replaced by 'control reached [A,B]')",
+      "reaching_inputs": [
+        18,
+        23,
+        24,
+        26,
+        41,
+        59,
+        62,
+        78,
+        96,
+        105,
+        109,
+        110,
+        115,
+        126,
+        127,
+        132,
+        137,
+        138,
+        150,
+        151,
+        152,
+        155,
+        176,
+        216,
+        223,
+        224,
+        229,
+        231,
+        239,
+        240,
+        250,
+        251,
+        252,
+        253,
+        254,
+        255
+      ],
+      "verdict": "refuted for the inputs that need it. The 252 figure is the trap: those reach the crazy-filled tail near 19700, which is not program text. Only 36 reach writable program space, none of them in the stuck set except 255, and 255 gets there by fall-through rather than by a computed jump."
+    },
+    "step_cap_negative_result": "hero2's would_try_next #1 recommended re-running at step cap >= 45. Applied as a GLOBAL setting (steps 45-70, span 12-16, 11-way fleet) it logged ZERO completed probes in 40 minutes on 11 cores. The same search at steps = 36, span = 9 found +1 in 43 seconds. hero2's own data already implied this -- assembly at (26,16), (40,18), (40,27) and (60,27) all returned exactly 249 with an identical miss set -- so the cap does not buy tape quality. The cap >= 45 finding is about the SLED inputs specifically (b = 0's sled is 31 steps of NOP before it reaches the dispatch JMP, so nothing below ~35 can see its route): four inputs, not a global setting. fleet4.sh (the failed configuration) is shipped next to fleet5.sh (the one that worked) because the contrast is the finding.",
+    "step_limit": 2048,
+    "steps_per_case_max": 80,
+    "stride_result": {
+      "bound_crazy_9b_byte": 26244,
+      "bound_reason": "A = 9b has trits 8,9 zero and a byte operand has trits 8,9 zero, and CT[0][0] = 1, so both high trits of the result are 1",
+      "claim": "the dispatch stride of 9 is forced; the 4096-byte cap cannot buy a wider one",
+      "eight_rots_equal_times_nine": "verified for all 256 inputs",
+      "injective_two_crz_dispatch_families_of_8836": 0,
+      "min_crazy_9b_byte": 27229,
+      "proof": "research/xor-1-len4096-hero3/stride.py (runnable)",
+      "stride_27_address_of_input_255": 6885
+    },
+    "uncovered_inputs": [
+      0,
+      1,
+      3,
+      4,
+      8,
+      9,
+      255
+    ],
+    "uncovered_localisation": "six of the seven are inside the shared window (blocks 0-10, cells 1..99); the seventh is the tail input of finding (3). b = 4, 8, 9 are individually feasible with the window free -- the DFS finds 1440, 4096 and 924 witnesses respectively -- so it is a joint constraint problem over ~150 cells, not a per-input wall.",
+    "verified_natively": true,
+    "verify_command": "./target/release/malbolge-rungs verify --rung L2.R0d.xor-1-len4096 --program research/xor-1-len4096-hero3/cand.mal --verbose",
+    "verify_default_result": "PASS (native evaluator), exit code 0, all five epochs -- AND IT IS NOT A SOLVE. One case is drawn per epoch from the seed and min_epochs is 5, so 249/256 passes with probability (249/256)^5 = 0.87. This is the sampling trap both prior records warned about, reproduced here deliberately so the record shows a green verify next to an honest 249/256."
+  },
+  "outcome": "unsolved",
+  "report": "docs/attempts/2026-08-11-claude-hero3-xor-1-len4096.md",
+  "rung_id": "L2.R0d.xor-1-len4096",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "Claude Opus 5 (Claude Code)",
+    "harness": "Claude Code CLI, autonomous single-session run under a hard cap of 900k tokens / 150 minutes; existing clone of this repository, 14 CPU cores, no network beyond llms.txt",
+    "harness_short": "claude-code",
+    "harness_url": "https://claude.com/claude-code",
+    "model": "claude-opus-5",
+    "notes": "Model id as self-reported by the session. Fifth recorded attempt on this rung; reuses hero2's swapped prologue and JMP-corrected DFS unchanged, adds the descending decomposition and three measurement modes.",
+    "provider": "Anthropic",
+    "type": "llm-agent"
+  },
+  "summary": "249/256 natively, on the SWAPPED prologue -- the architecture where b = 0 is reachable and the ceiling is therefore 256. That equals hero1's coverage number but hero1's 249 is on the OLD prologue where b = 0 is unreachable and the ceiling is 255; the previous best on the swapped line was hero2's 247. Three findings matter more than the number. (1) THE DISPATCH STRIDE OF 9 IS FORCED AND THE 4096-BYTE CAP CANNOT BUY A WIDER ONE. This rung is L2.R0.xor-1 with the length cap raised from 256 to 4096 and nothing else; every prior record noted the cap 'does not bind' at 2305 bytes and moved on. It binds through the stride. The prologue's eight ROTs are a 10-trit rotate left by two, i.e. x9, so input b owns exactly nine cells at 9b+1..9b+9 -- and those same cells are the operand tape every other input reads from d = 73, which is the coupling all four prior records hit. Rotation is the only information-preserving primitive and only multiplies by powers of 3; x27 puts input 255 at 6885, past the cap. CRZ cannot substitute: crazy is trit-wise with CT = [[1,0,0],[1,0,2],[2,2,1]], only CT[1] is injective, and a byte operand (<= 126 < 3^5) has trits 5..9 zero so CT[0] applies there -- destroying trits 5,6,7 of A = 9b, which are trits 3,4,5 of b (b div 27), on the FIRST CRZ. All 8836 byte-operand pairs were checked: zero make crazy(crazy(9b,K1),K2) injective. Also recorded: crazy(9b, byte) is always >= 3^8+3^9 = 26244 (measured min 27229), and ROT cannot bring it back because crazy's output trit is never 0 where A's trit is 0, so the low trit is always nonzero and rotr rotates it to the top instead of dividing by 3. Consequence for the board: the 3840 extra bytes over L2.R0.xor-1 cannot be spent on the one thing that would help, so the two rungs are much closer than their caps suggest. (2) hero2's 'single highest-value untried thing on this rung' -- escape to private tape at 2305..4095 -- IS REFUTED BY MEASUREMENT. The mechanism is real but the reach is not: with the success condition replaced by 'control reached the window', 252/256 inputs can move C past 2305 but almost all of them only into the crazy-filled tail near address 19700, and only 36/256 can reach the WRITABLE window [2305,4095] (211 more can get only d there, which buys scratch, not code). The 36 are 18 23 24 26 41 59 62 78 96 105 109 110 115 126 127 132 137 138 150 151 152 155 176 216 223 224 229 231 239 240 250 251 252 253 254 255; the stuck set is 0 1 3 4 8 9 255, so the intersection is {255} -- and for 255 the mechanism is plain fall-through off the end of its own block, not a computed jump. This is the direct consequence of (1): aiming control at a chosen address needs a computed value, computed values come from CRZ, and CRZ against a byte lands at >= 26244. (3) THE ASSEMBLY SWEEP HAS BEEN RUNNING BACKWARDS FOR THREE RECORDS. Execution runs forward and d can never exceed about 126 + stepcap (MOVD reads m[d], a program byte <= 126, then d only increments), so block b's own cells are read only by inputs LOWER than b. Sweeping descending makes the choice of b's witness unable to disturb anything already settled -- all its damage lands on inputs < b, which have not had their turn -- which makes prior art's global-delta >= 0 acceptance gate actively harmful, because it rejects exactly the trades that give a higher block its only witness at a lower block's expense. The correct gate is 'no damage to inputs above b'. With that, the joint problem collapses: above the shared window nothing is a free choice, so the only variables left are the ~150 window cells (the code of inputs 4..20, which is also everyone's operand tape) plus the tail family. That is hero1's and hero2's 'decomposed objective', which both listed in would_try_next and neither built, made exact. It also sharpens the diagnosis: the miss set is ENTIRELY the shared window (blocks 0-10) plus the tail input, and nothing above block 10 was ever the problem. It found 247 -> 248 from a single cell (address 35) in 43 seconds, then 249. Two further results: b = 255 returns ZERO witnesses at N = 2305 even with the whole shared window free -- it is boxed in, because its block is 2296..2304 and cells 2303/2304 are N-2/N-1, the two bytes that seed the entire crazy tail, so its code and the global tail are the same two bytes -- and it is solved FOR FREE at every N above 2305 tried (2306, 2308, 2311, 2314, 2320, 2332, 2350), where it falls through into unowned tape and the tail seed moves off its block, at a cost of the ~8-10 tail-reading inputs."
+}
