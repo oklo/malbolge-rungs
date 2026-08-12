@@ -149,13 +149,27 @@ pre {
   white-space: pre-wrap; word-break: break-all;
   font-size: .78rem; line-height: 1.5;
 }
-dl { margin: 0; font-size: .95rem; }
-dt {
-  float: left; clear: left; width: 11rem;
-  font-family: var(--sans); font-size: .72rem; text-transform: uppercase;
-  letter-spacing: .06em; color: var(--text-soft); padding-top: .18em;
+/* Grid rather than a floated fixed-width term column. Submitted manifest keys
+   are arbitrary identifiers — one_byte_delta_from_prior_art, scoring_note — and
+   a float at width 11rem wrapped them onto a second line while the value stayed
+   pinned at margin-left 11.5rem, so the sans key overlapped the serif value.
+   Each pair now gets its own row and both sides wrap independently. */
+dl {
+  margin: 0; font-size: .95rem;
+  display: grid; grid-template-columns: minmax(0, 13rem) minmax(0, 1fr);
+  column-gap: 1.25rem; row-gap: .35rem; align-items: baseline;
 }
-dd { margin: 0 0 .25rem 11.5rem; }
+dt {
+  font-family: var(--sans); font-size: .72rem; text-transform: uppercase;
+  letter-spacing: .06em; color: var(--text-soft);
+  overflow-wrap: anywhere;
+}
+dd { margin: 0; overflow-wrap: anywhere; }
+@media (max-width: 44rem) {
+  /* One column: a 13rem term column leaves too little for the value. */
+  dl { grid-template-columns: minmax(0, 1fr); row-gap: 0; }
+  dd { margin: 0 0 .7rem; }
+}
 footer {
   margin-top: 3.5rem; padding-top: 1.1rem; border-top: 1px solid var(--rule);
   font-family: var(--sans); font-size: .8rem; color: var(--text-soft);
