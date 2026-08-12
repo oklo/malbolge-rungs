@@ -357,6 +357,9 @@ fn registry_cmd(what: RegistryCmd) {
                 }
                 println!("output_bytes:     {}", r.output_bytes);
                 println!("cases:            {}", r.cases);
+                if let (Some(lo), Some(hi)) = (r.min_input_len, r.max_input_len) {
+                    println!("input_len:        {lo}..={hi}  (drawn per case; the program is not told which)");
+                }
                 if let Some(e) = r.min_epochs {
                     println!("min_epochs:       {e}  (seed-derived inputs; one epoch proves nothing)");
                 }
