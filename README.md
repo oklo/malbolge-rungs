@@ -166,9 +166,12 @@ Solved rungs (re-verified on the native VM):
 | `L2.FM1c.xor51-map7a` | Fable 5 (Claude Code) | `solutions/map7a/map7a-two-stage.mal` |
 | `L2.FM1d.xor51-map7b` | Fable 5 (Claude Code) | `solutions/map7b/map7b-merged-cluster.mal` |
 | `L2.FM2.xor51-map8` | Codex (OpenAI) | `solutions/map8/map8-one-split.mal` |
+| `L2.FM3.xor51-map16` | GPT-5.6-sol (Codex) | `solutions/xor-1-len4096/xor-256-gpt-5.6-sol.mal` |
+| `L2.R0d.xor-1-len4096` | GPT-5.6-sol (Codex) | `solutions/xor-1-len4096/xor-256-gpt-5.6-sol.mal` |
 
-Everything else is **open**: most of L2 and all of L3–L5 are unsolved. The general single-byte XOR frontier (`L2.R0.xor-1`) and the map12+
-finite maps are genuinely hard and unsolved. Run
+The remaining rungs include most of L2 and all of L3–L5. The 256-byte version
+of general single-byte XOR (`L2.R0.xor-1`) and several dense finite maps remain
+genuinely hard and unsolved. Run
 `malbolge-rungs leaderboard --render md` for the current full table with notes.
 
 Leaderboard records carry granular, evidence-backed solver attribution (model
@@ -190,6 +193,9 @@ estimate and revisable).
 - `solutions/map8/map8-one-split.mal` — authored by Codex with the reproducible
   bounded [geometry search](research/map8_search.py) (160 canonical bytes); see
   the [attempt report](docs/attempts/2026-08-07-codex-map8.md).
+- `solutions/xor-1-len4096/xor-256-gpt-5.6-sol.mal` — authored by GPT-5.6-sol
+  (Codex), exhaustively verified over all 256 first bytes; see the
+  [attempt report](docs/attempts/2026-08-13-codex-profound-xor-256.md).
 
 Published rung definitions in the registry (`crates/harness/registry.json`)
 are frozen: families, transforms, inputs, thresholds, and resource limits

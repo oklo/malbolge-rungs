@@ -5,7 +5,7 @@ Date: 2026-08-13
 Outcome: **solved, 256/256**.
 
 ```text
-program: research/xor-1-len4096-profound/runs/xor-256-solved.mal
+program: solutions/xor-1-len4096/xor-256-gpt-5.6-sol.mal
 length: 4096 bytes
 sha256: fe2bea8bb173005f7d5a5f30589b20877dbef3cb9b1a5535e0f43f64df35e58f
 steps: 604..616
@@ -17,7 +17,7 @@ The canonical Rust evaluator exhaustively passes all 256 epochs:
 ```sh
 ./target/release/malbolge-rungs verify \
   --rung L2.R0d.xor-1-len4096 \
-  --program research/xor-1-len4096-profound/runs/xor-256-solved.mal \
+  --program solutions/xor-1-len4096/xor-256-gpt-5.6-sol.mal \
   --epochs 256 --json
 ```
 
@@ -127,6 +127,8 @@ accelerator; changing the state factorization was.
 
 ## Reproducible artifacts
 
+- `solutions/xor-1-len4096/xor-256-gpt-5.6-sol.mal`
+- `research/xor-1-len4096-profound/PROCESS.md`
 - `research/xor-1-len4096-profound/build_shifted_dispatch.py`
 - `research/xor-1-len4096-profound/retarget_old_dispatch.py`
 - `research/xor-1-len4096-profound/shifted_block_solve.c`
@@ -135,3 +137,6 @@ accelerator; changing the state factorization was.
 - `research/xor-1-len4096-profound/README.md`
 
 The final tape is the native-verified program named at the top of this report.
+The builders and solvers preserve the decisive construction stages; the process
+memory records their order, the discarded architectures, and the phase changes.
+They are research tools rather than a packaged deterministic one-command rebuild.

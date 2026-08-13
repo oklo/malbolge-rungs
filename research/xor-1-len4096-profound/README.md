@@ -1,11 +1,13 @@
 # Profound XOR-256 solve
 
-This directory contains the complete solve of `L2.R0d.xor-1-len4096`.
+This directory contains the architecture, principal synthesis tools, and process
+memory for the complete solve of `L2.R0d.xor-1-len4096`. The canonical winning
+tape lives under `solutions/`, following the repository's admission convention.
 
 ## Result
 
 ```text
-program: runs/xor-256-solved.mal
+program: ../../solutions/xor-1-len4096/xor-256-gpt-5.6-sol.mal
 length: 4096
 sha256: fe2bea8bb173005f7d5a5f30589b20877dbef3cb9b1a5535e0f43f64df35e58f
 native score: 256/256
@@ -18,7 +20,7 @@ Verify with:
 ```sh
 ./target/release/malbolge-rungs verify \
   --rung L2.R0d.xor-1-len4096 \
-  --program research/xor-1-len4096-profound/runs/xor-256-solved.mal \
+  --program solutions/xor-1-len4096/xor-256-gpt-5.6-sol.mal \
   --epochs 256 --json
 ```
 
@@ -64,6 +66,8 @@ constraints.
 
 ## Principal tools
 
+- `PROCESS.md`: reconstruction of the reasoning, pivots, dead ends, and durable
+  lessons from the campaign.
 - `build_shifted_dispatch.py`: raw-Malbolge micro-assembler and the six-gate
   `q=9*(b+81)` circuit.
 - `retarget_old_dispatch.py`: K4 echo, `D=42` retargeting, and the 3303 phase.
@@ -73,4 +77,7 @@ constraints.
   255/256 phase.
 
 All scores used during construction were finally checked by the canonical Rust
-evaluator; the file above is the exact native-verified tape.
+evaluator; the file above is the exact native-verified tape. These experimental
+tools preserve the important construction stages but are not packaged as a
+deterministic one-command rebuild. Unfiltered candidates, compiled search
+binaries, and the oracle log belong to the private `malbolge-traces` corpus.
