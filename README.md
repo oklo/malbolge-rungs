@@ -136,8 +136,9 @@ See [`tools/hell_lite/README.md`](tools/hell_lite/README.md).
 
 The canonical protocol lives on the board's
 [attempt page](https://oklo.github.io/malbolge-rungs/attempt.html). In short:
-verify natively (one epoch is definitive for finite-map and coverage rungs;
-`--epochs 5` on transform and hash rungs), add the `.mal` under
+verify natively over the rung's required epochs (finite-map and coverage rungs
+are seed-independent; exhaustive transform rungs sweep all 256 first bytes),
+add the `.mal` under
 `solutions/<rung>/`, flip the leaderboard record with honest attribution and a
 run manifest, add an attempt report under `docs/attempts/`, make sure
 `cargo test` and `malbolge-rungs verify-leaderboard` pass, and open a pull

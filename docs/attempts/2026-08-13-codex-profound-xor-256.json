@@ -1,0 +1,76 @@
+{
+  "schema": "malbolge-rungs.attempt.v1",
+  "rung_id": "L2.R0d.xor-1-len4096",
+  "date": "2026-08-13",
+  "outcome": "solved",
+  "solver": {
+    "display": "GPT-5.6-sol (Codex)",
+    "type": "llm-agent",
+    "model": "gpt-5.6-sol",
+    "provider": "OpenAI",
+    "harness_short": "codex",
+    "harness_url": "https://github.com/openai/codex",
+    "notes": "Autonomous structure-first continuation under an eight-hour wall-clock cap; solved after approximately two hours."
+  },
+  "summary": "Solved XOR-256 at 256/256. The key is an exact six-CRAZY ternary circuit computing the collision-free dispatcher q=9*(b+81), followed by a K4 involution echo that enters private nine-cell blocks with D=42. The initially best accumulator phase had a sealed input 216; manufacturing CRAZY(26248,55)=3303 in cell 120 and retaining A=3303 changes the phase to 251 independently solvable blocks, with the five remaining inputs completed by disjoint private tails.",
+  "budget": {
+    "cap": "eight-hour attempt, no token budget",
+    "binding_constraint": "wall clock",
+    "spent_wall_seconds_approx": 7400,
+    "solved_before_cap": true,
+    "compute": "Parallel optimized C searches on an Apple M4 CPU. Metal was assessed but not used: the exact mutable 59,049-word VM image is 118,098 bytes and the recursive control flow is highly divergent.",
+    "search_order": [
+      "derive and prove the q=9*(b+81) ternary dispatcher",
+      "scan exact low-memory D phases",
+      "synthesize disjoint nine-cell blocks",
+      "classify residual high exits",
+      "change the accumulator phase with the 3303 constant",
+      "synthesize five disjoint continuation tails"
+    ]
+  },
+  "manifest": {
+    "architecture": "six-CRAZY q=9*(b+81) safe dispatcher; K4 echo; D=42; A=m[120]=3303; 251 local blocks plus five disjoint tails",
+    "program_bytes": 4096,
+    "program_sha256": "fe2bea8bb173005f7d5a5f30589b20877dbef3cb9b1a5535e0f43f64df35e58f",
+    "correct_inputs_of_256": 256,
+    "uncovered_inputs": [],
+    "verified_natively": true,
+    "epochs_verified": 256,
+    "min_steps_per_case": 604,
+    "max_steps_per_case": 616,
+    "outputs_per_case": 1,
+    "dispatch_formula": "q=9*(b+81)",
+    "private_block_range": "730..3033",
+    "entry_D": 42,
+    "entry_A": 3303,
+    "tail_map": {
+      "117": 3160,
+      "153": 3196,
+      "180": 3232,
+      "205": 3279,
+      "250": 3331
+    },
+    "verify_command": "./target/release/malbolge-rungs verify --rung L2.R0d.xor-1-len4096 --program research/xor-1-len4096-profound/runs/xor-256-solved.mal --epochs 256 --json"
+  },
+  "best_candidate": {
+    "program": "research/xor-1-len4096-profound/runs/xor-256-solved.mal",
+    "claimed_correct_cases": 256,
+    "claimed_total_cases": 256
+  },
+  "report": "docs/attempts/2026-08-13-codex-profound-xor-256.md",
+  "artifacts": [
+    "research/xor-1-len4096-profound/README.md",
+    "research/xor-1-len4096-profound/build_shifted_dispatch.py",
+    "research/xor-1-len4096-profound/retarget_old_dispatch.py",
+    "research/xor-1-len4096-profound/shifted_block_solve.c",
+    "research/xor-1-len4096-profound/shifted_tail_solve.c",
+    "research/xor-1-len4096-profound/b217_suffix_scan.c"
+  ],
+  "builds_on": [
+    "docs/attempts/2026-08-13-codex-phase-crossover-xor-1-len4096.json",
+    "docs/attempts/2026-08-13-codex-hero-runs-xor-1-len4096.json",
+    "docs/attempts/2026-08-12-codex-xor-1-len4096.json"
+  ],
+  "file": "docs/attempts/2026-08-13-codex-profound-xor-256.json",
+  "rung_digest": "7f8bbf334a65d3d6"
+}

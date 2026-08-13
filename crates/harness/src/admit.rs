@@ -41,11 +41,11 @@ const BUNDLE_SCHEMA: &str = "malbolge-rungs.attempt-bundle.v1";
 /// Epochs needed before a pass means anything on this rung.
 ///
 /// Coverage and finite-map rungs enumerate fixed inputs, so one epoch is
-/// definitive. Transform and hash-prefix rungs derive their inputs and targets
-/// from the challenge seed on every epoch, so a single epoch can be passed by a
-/// program that got lucky on one draw — which is the constant-output overfit the
-/// board exists to reject. Admission ran everything at one epoch and duly
-/// published a hash-prefix "solve" that failed on the next seed.
+/// definitive. Exhaustive transform rungs enumerate the complete first-byte
+/// domain across their required epochs. Other transform and hash-prefix rungs
+/// re-draw inputs and targets, so a single epoch can be passed by a program that
+/// got lucky on one draw — the constant-output overfit the board exists to
+/// reject.
 pub fn epochs_for(rung: &crate::types::Rung) -> u32 {
     rung.required_epochs()
 }
@@ -377,11 +377,18 @@ fn create_new_no_symlinks(
 /// sweep, and the recredit repair pass, so the format cannot drift between
 /// paths.
 fn format_metric(
+    rung: &crate::types::Rung,
     outcome: &crate::verify::VerifyOutcome,
     epoch: &crate::verify::EpochResult,
     program_len: usize,
 ) -> String {
-    if outcome.coverage {
+    if rung.sweeps_first_byte() {
+        let correct: u32 = outcome.epochs.iter().map(|e| e.correct_cases).sum();
+        let total: u32 = outcome.epochs.iter().map(|e| e.total_cases).sum();
+        format!(
+            "{correct}/{total} exhaustive cases, native re-verification; {program_len} bytes"
+        )
+    } else if outcome.coverage {
         format!(
             "{}/{} correct (>= {} required), native re-verification; {program_len} bytes",
             epoch.correct_cases, epoch.total_cases, outcome.required_correct
@@ -448,7 +455,10 @@ fn verify_claim(repo: &Path, rec: &AttemptRecord) -> Result<(bool, String)> {
         .find(|e| !e.passed)
         .or_else(|| outcome.epochs.first())
         .context("verifier returned no epochs")?;
-    Ok((outcome.passed, format_metric(&outcome, first, bytes.len())))
+    Ok((
+        outcome.passed,
+        format_metric(&rung, &outcome, first, bytes.len()),
+    ))
 }
 
 /// Credit a submitted program on every rung it passes, not only the one its
@@ -529,7 +539,7 @@ fn update_leaderboard(
             continue;
         }
         let Some(first) = outcome.epochs.first() else { continue };
-        let metric = format_metric(&outcome, first, bytes.len());
+        let metric = format_metric(&rung, &outcome, first, bytes.len());
 
         let obj = entry.as_object_mut().context("leaderboard entry is not an object")?;
         obj.insert("status".into(), serde_json::json!("solved"));
@@ -728,6 +738,38 @@ mod tests {
         let board =
             std::fs::read_to_string(tr.root.join("leaderboard/leaderboard.json")).unwrap();
         assert!(board.contains("\"solved\""));
+    }
+
+    #[test]
+    fn admits_a_fresh_exhaustive_sweep_score() {
+        // A sweep rung has one case in each of 256 epochs. Admission used to
+        // compare this 251/256 claim with epoch 0's 0/1 or 1/1, so the only way
+        // to submit the candidate was to omit best_candidate—and the board
+        // consequently rendered an em dash.
+        const SWEEP_RUNG: &str = "L2.R0d.xor-1-len4096";
+        let text = std::fs::read_to_string(repo().join(
+            "research/xor-1-len4096-codex/runs/hero1-joint150151-short-o0-0.mal",
+        ))
+        .unwrap();
+        let tr = TempRepo::new("sweep-score");
+        let rec = serde_json::json!({
+            "schema": "malbolge-rungs.attempt.v1",
+            "rung_id": SWEEP_RUNG,
+            "date": "2099-01-01",
+            "outcome": "unsolved",
+            "best_candidate": {
+                "program": CAND_REL,
+                "claimed_correct_cases": 251,
+                "claimed_total_cases": 256,
+            },
+            "rung_digest": crate::attempts::rung_digest(SWEEP_RUNG),
+            "file": RECORD_REL,
+        });
+        let b = bundle_for(rec, serde_json::json!({CAND_REL: text}));
+        let adm = admit_bundle(&tr.root, &tr.bundle_path(&b), false).unwrap();
+        assert!(tr.root.join(RECORD_REL).is_file());
+        assert!(tr.root.join(CAND_REL).is_file());
+        assert_eq!(adm.rung_id, SWEEP_RUNG);
     }
 
     #[test]
@@ -962,6 +1004,21 @@ mod tests {
         );
         assert!(entry.get("manifest").is_none(), "stale manifest must be cleared");
     }
+
+    #[test]
+    fn exhaustive_sweep_metric_reports_the_complete_contract() {
+        const SWEEP_RUNG: &str = "L2.R0d.xor-1-len4096";
+        let rung = crate::registry::find_rung(SWEEP_RUNG).unwrap();
+        let bytes = std::fs::read(repo().join(
+            "research/xor-1-len4096-codex/runs/hero1-joint150151-short-o0-0.mal",
+        ))
+        .unwrap();
+        let outcome = crate::verify::verify_rung(&rung, &bytes, epochs_for(&rung));
+        assert_eq!(
+            format_metric(&rung, &outcome, &outcome.epochs[0], bytes.len()),
+            "251/256 exhaustive cases, native re-verification; 2605 bytes"
+        );
+    }
 }
 
 /// Re-credit every rung to the smallest program on hand that passes it.
@@ -1046,7 +1103,11 @@ pub fn recredit_all(repo: &Path) -> Result<Vec<(String, String, String, String)>
                 continue;
             }
             let first = outcome.epochs.first().context("no epochs")?;
-            best = Some((bytes.len(), p.clone(), format_metric(&outcome, first, bytes.len())));
+            best = Some((
+                bytes.len(),
+                p.clone(),
+                format_metric(&rung, &outcome, first, bytes.len()),
+            ));
         }
 
         let Some((_, prog, metric)) = best else { continue };

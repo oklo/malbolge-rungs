@@ -7,7 +7,11 @@
     "research/xor-1-len4096-codex/runs/hero1-joint150151-short-o0-0.mal",
     "docs/attempts/2026-08-12-codex-xor-1-len4096.md"
   ],
-  "best_candidate": null,
+  "best_candidate": {
+    "program": "research/xor-1-len4096-codex/runs/hero1-joint150151-short-o0-0.mal",
+    "claimed_correct_cases": 251,
+    "claimed_total_cases": 256
+  },
   "budget": {
     "binding_constraint": "none; a decisive new record was found before the wall-clock cap",
     "cap": "four hours, no token budget",
@@ -42,7 +46,7 @@
     "program": "research/xor-1-len4096-codex/runs/hero1-joint150151-short-o0-0.mal",
     "program_bytes": 2605,
     "program_sha256": "a77c8a32f6e15080a0b8a5496f26d5d814e32cdea6e39130337d485fbf46224e",
-    "schema_note": "best_candidate is null because this schema scores cases inside one epoch, while this rung has one case per epoch and enumerates its 256-byte domain across 256 epochs. The exact 251/256 coverage is recorded here and in the native verification output, not misencoded as a per-epoch case count.",
+    "schema_note": "The best-candidate score is the native aggregate over the rung's exhaustive 256-epoch first-byte sweep.",
     "uncovered_inputs": [
       0,
       1,

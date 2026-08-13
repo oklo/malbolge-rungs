@@ -45,10 +45,14 @@ It renders as a lineage on the rung's page, makes the corpus's compounding
 visible, and credits the chain. Each path must resolve inside the repo.
 
 **Best-candidate claims are verified.** If `best_candidate` is present, CI runs
-the named program on the rung's native evaluator and rejects the record unless
-the observed per-case score equals the claim exactly. Check the candidate
-program file in alongside the record. A verified 5/12 is a real datum; an
-unverified one is an anecdote.
+the named program over the rung's full required epoch set and rejects the record
+unless the observed contract score equals the claim exactly. For an exhaustive
+first-byte rung, claim the aggregate over the complete enumeration—such as
+`253/256`—not one epoch's `0/1` or `1/1`. For other multi-epoch rungs, the score
+is the worst required epoch, which prevents a lucky draw from becoming a
+credible-looking near-solve. Check the candidate program in alongside the
+record. The board displays the evaluator's fresh observation, never the claim
+by itself.
 
 Validate locally:
 

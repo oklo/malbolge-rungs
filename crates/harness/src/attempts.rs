@@ -5,8 +5,10 @@
 //! The board's leaderboard records wins; attempt records keep the rest —
 //! method, consumed budget, and the best candidate reached. A record that
 //! claims a best-candidate score names the program file, and validation
-//! re-runs it on the native VM and rejects the record if the claimed per-case
-//! score is not exactly what the evaluator observes.
+//! re-runs it on the native VM and rejects the record if the claimed contract
+//! score is not exactly what the evaluator observes. For an exhaustive
+//! first-byte rung, that score is the aggregate over the complete sweep; for
+//! re-drawn multi-epoch rungs, it is the worst required epoch.
 //!
 //! What the VM verifies is the candidate score — nothing more. A record's
 //! budget, search narrative, and structural conclusions are contributor
@@ -58,8 +60,9 @@ pub struct AttemptRecord {
     /// Free-form search budget (configurations, nodes, wall seconds, ...).
     #[serde(default)]
     pub budget: Option<serde_json::Map<String, serde_json::Value>>,
-    /// The best program the attempt reached, with its claimed native score.
-    /// Validation re-runs it and requires an exact match.
+    /// The best program the attempt reached, with its claimed native contract
+    /// score. Validation re-runs the full required epoch set and requires an
+    /// exact match.
     #[serde(default)]
     pub best_candidate: Option<BestCandidate>,
     /// Repo-relative path of the narrative report, if one exists.
@@ -108,27 +111,57 @@ pub struct BestCandidate {
 }
 
 /// A score the board's own verifier produced, as opposed to one a record
-/// claims. Claimed counts are validated against epoch 0 of the contract they
-/// were made under; this is the worst epoch of a full required-epochs run
-/// under the CURRENT contract, so it can sit at or below a valid claim — and
-/// far below a stale or lucky-draw one.
-#[derive(Clone, Copy, Debug, Serialize)]
+/// claims. Exhaustive first-byte rungs aggregate their enumerated epochs;
+/// re-drawn multi-epoch rungs report the worst required epoch.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
 pub struct ObservedScore {
     pub correct_cases: u32,
     pub total_cases: u32,
 }
 
+/// Reduce a complete verifier outcome to the score an attempt record claims.
+/// This definition is shared by admission, historical validation, aggregation,
+/// and rendering so a score accepted at intake cannot turn into a different
+/// number on the board.
+fn summarize_outcome(
+    exhaustive_first_byte: bool,
+    outcome: &crate::verify::VerifyOutcome,
+) -> Option<ObservedScore> {
+    if exhaustive_first_byte {
+        // An exhaustive sweep is an enumeration, not a re-draw: epoch i pins
+        // case j's first byte to (i+j) mod 256. Together the required epochs
+        // cover the input space exactly once, so "253/256" is their sum.
+        Some(ObservedScore {
+            correct_cases: outcome.epochs.iter().map(|e| e.correct_cases).sum(),
+            total_cases: outcome.epochs.iter().map(|e| e.total_cases).sum(),
+        })
+        .filter(|_| !outcome.epochs.is_empty())
+    } else {
+        // Re-drawn epochs use the worst result. Publishing epoch 0 would turn a
+        // lucky constant-output draw into a credible-looking near-solve.
+        outcome
+            .epochs
+            .iter()
+            .min_by_key(|e| e.correct_cases)
+            .map(|worst| ObservedScore {
+                correct_cases: worst.correct_cases,
+                total_cases: worst.total_cases,
+            })
+    }
+}
+
+/// Run the full contract and return its attempt-record score.
+fn observe_candidate(rung: &crate::types::Rung, program: &[u8]) -> Option<ObservedScore> {
+    let outcome = verify_rung(rung, program, rung.required_epochs());
+    summarize_outcome(rung.sweeps_first_byte(), &outcome)
+}
+
 /// Re-run every record's claimed best candidate on the native VM and attach
 /// what the verifier observed. This is the only score aggregation is allowed
 /// to use: a claimed count that cannot be reproduced here contributes nothing.
-///
-/// The run covers every epoch the rung requires and reports the WORST epoch.
-/// One epoch is exactly the lucky draw a seed-dependent rung's `min_epochs`
-/// exists to reject — a constant-output candidate that matches epoch 0 of a
-/// 256-epoch rung must not be published as an observed near-solve. A record
-/// whose candidate cannot be verified at all (renamed rung, pruned file) gets
-/// an explicit `observed_error` instead of silently rendering like a record
-/// that never claimed a candidate.
+/// A record whose candidate cannot be verified at all (renamed rung, pruned
+/// file) gets an explicit `observed_error` instead of silently rendering like
+/// a record that never claimed a candidate.
 pub fn attach_observed(records: &mut [AttemptRecord]) {
     let root = PathBuf::from(REPO_ROOT);
     for rec in records.iter_mut() {
@@ -151,29 +184,7 @@ pub fn attach_observed(records: &mut [AttemptRecord]) {
                 continue;
             }
         };
-        let outcome = verify_rung(&rung, &program, rung.required_epochs());
-        rec.observed = if rung.sweeps_first_byte() {
-            // An exhaustive sweep is an enumeration, not a re-draw: epoch i
-            // pins case j's first byte to (i+j) mod 256, so the epochs
-            // together cover the input space exactly once. Sum them — this is
-            // how "249/256" is even expressible, and the worst single epoch
-            // of an enumeration is 0 or 1 and says nothing.
-            Some(ObservedScore {
-                correct_cases: outcome.epochs.iter().map(|e| e.correct_cases).sum(),
-                total_cases: outcome.epochs.iter().map(|e| e.total_cases).sum(),
-            })
-        } else {
-            // Re-drawn epochs: report the WORST epoch — one lucky draw is
-            // exactly what min_epochs exists to reject.
-            outcome
-                .epochs
-                .iter()
-                .min_by_key(|e| e.correct_cases)
-                .map(|worst| ObservedScore {
-                    correct_cases: worst.correct_cases,
-                    total_cases: worst.total_cases,
-                })
-        };
+        rec.observed = observe_candidate(&rung, &program);
     }
 }
 
@@ -239,7 +250,7 @@ pub struct AttemptValidation {
 
 /// Validate every record: schema tag, known rung, sane outcome, existing
 /// referenced files, and — when a best candidate is claimed — an exact match
-/// between the claimed score and a fresh native run.
+/// between the claimed contract score and a fresh native run.
 pub fn validate_attempts() -> (Vec<AttemptValidation>, bool) {
     let mut results = Vec::new();
     let mut all_ok = true;
@@ -312,8 +323,8 @@ enum Strictness {
 
 /// Validate one record; returns its problems (empty = valid). Schema tag, known
 /// rung, sane outcome, referenced files contained in the repo, and — when a best
-/// candidate is claimed — an exact match between the claimed score and a fresh
-/// native run.
+/// candidate is claimed — an exact match between the claimed contract score and
+/// a fresh native run.
 fn validate_record(root: &Path, rec: &AttemptRecord, strictness: Strictness) -> Vec<String> {
     let mut problems = Vec::new();
     if rec.schema != ATTEMPT_SCHEMA {
@@ -377,18 +388,21 @@ fn validate_record(root: &Path, rec: &AttemptRecord, strictness: Strictness) -> 
                     // number by omitting or staling its digest.
                     let same_contract = rec.rung_digest.is_some()
                         && rec.rung_digest == rung_digest(&rec.rung_id);
-                    let outcome = verify_rung(rung, &program, 1);
-                    let ep = &outcome.epochs[0];
-                    let mismatch = ep.correct_cases != cand.claimed_correct_cases
-                        || ep.total_cases != cand.claimed_total_cases;
-                    if mismatch && (same_contract || strictness == Strictness::Fresh) {
-                        problems.push(format!(
-                            "claimed {}/{} but the native VM observes {}/{}",
-                            cand.claimed_correct_cases,
-                            cand.claimed_total_cases,
-                            ep.correct_cases,
-                            ep.total_cases
-                        ));
+                    match observe_candidate(rung, &program) {
+                        None => problems.push("native VM returned no epochs".to_string()),
+                        Some(observed) => {
+                            let mismatch = observed.correct_cases != cand.claimed_correct_cases
+                                || observed.total_cases != cand.claimed_total_cases;
+                            if mismatch && (same_contract || strictness == Strictness::Fresh) {
+                                problems.push(format!(
+                                    "claimed contract score {}/{} but the native VM observes {}/{}",
+                                    cand.claimed_correct_cases,
+                                    cand.claimed_total_cases,
+                                    observed.correct_cases,
+                                    observed.total_cases
+                                ));
+                            }
+                        }
                     }
                 }
             },
@@ -523,4 +537,37 @@ fn read_capped(file: std::fs::File, max_bytes: u64) -> Result<String> {
         anyhow::bail!("file exceeds the {}-byte limit", max_bytes);
     }
     Ok(s)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn fresh_validation_accepts_an_exhaustive_sweep_score() {
+        // This candidate has one case per epoch. The regression compared its
+        // claim to epoch 0 (0/1 or 1/1), making an honest 251/256 impossible to
+        // encode even though site generation later aggregated it correctly.
+        let root = PathBuf::from(REPO_ROOT);
+        let record_path = root.join(
+            "docs/attempts/2026-08-12-codex-xor-1-len4096.json",
+        );
+        let text = std::fs::read_to_string(record_path).unwrap();
+        let rec: AttemptRecord = serde_json::from_str(&text).unwrap();
+        let problems = validate_record(&root, &rec, Strictness::Fresh);
+        assert!(problems.is_empty(), "{}", problems.join("; "));
+        assert_eq!(
+            observe_candidate(
+                &find_rung(&rec.rung_id).unwrap(),
+                &std::fs::read(
+                    root.join(&rec.best_candidate.as_ref().unwrap().program)
+                )
+                .unwrap(),
+            ),
+            Some(ObservedScore {
+                correct_cases: 251,
+                total_cases: 256,
+            })
+        );
+    }
 }

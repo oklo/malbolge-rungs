@@ -1,0 +1,103 @@
+{
+  "schema": "malbolge-rungs.attempt.v1",
+  "rung_id": "L2.R0d.xor-1-len4096",
+  "date": "2026-08-13",
+  "outcome": "unsolved",
+  "solver": {
+    "display": "OpenAI Codex (GPT-5)",
+    "type": "llm-agent",
+    "model": "gpt-5",
+    "provider": "OpenAI",
+    "harness_short": "codex",
+    "notes": "Autonomous continuation from the existing hero1 and hero3 research artifacts."
+  },
+  "summary": "Native-verified 253/256 at length 2605. A final exact-neighborhood continuation proves the champion is a legal Hamming-2 local maximum, constructs a five-edit tape solving inputs 1 and 3 jointly, and further localizes the unresolved input-0 obstacle to an architectural crossover.",
+  "manifest": {
+    "program": "research/xor-1-len4096-codex/runs/round2-route9-desc-r0-o0.mal",
+    "program_bytes": 2605,
+    "program_sha256": "38f593429e9ea02a07209e5ee9e732bcfccdac63845fd94a93d5c7c6df9c7a64",
+    "correct_inputs_of_256": 253,
+    "uncovered_inputs": [0, 1, 3],
+    "verified_natively": true,
+    "verify_command": "./target/release/malbolge-rungs verify --rung L2.R0d.xor-1-len4096 --program research/xor-1-len4096-codex/runs/round2-route9-desc-r0-o0.mal --epochs 256 --json",
+    "phase_alignment": "An exhaustive scan of lengths 2305..4096 and all 64 legal final-opcode pairs found multiple extensions that preserve all 249 hero1 successes. The champion delta was also transplanted onto compatible 2887- and 3451-byte tapes without changing its 253/256 behavior; the prior claim that any extension must lose tail readers is false.",
+    "derivation": [
+      "hero1 249/256 at length 2305, failures 0 1 3 8 9 151 255",
+      "phase-aligned extension to length 2605, same score and failures",
+      "14-cell byte-255 route, trading failure 255 for 254",
+      "three-cell byte-254 repair with byte 255 protected, reaching 250/256",
+      "exact joint byte-150/151 witness crossing in a 12-cell window, reaching 251/256",
+      "route byte 8 and reconstruct with byte 8 protected, exchanging failures 9 and 11 while retaining 251/256",
+      "route byte 11 and reconstruct with bytes 8 and 11 protected, reaching 252/256",
+      "route byte 9 and reconstruct with bytes 8, 9, and 11 protected, reaching 253/256"
+    ],
+    "schema_note": "The best-candidate score is the native aggregate over the rung's exhaustive 256-epoch first-byte sweep."
+  },
+  "budget": {
+    "cap": "four-hour continuation, no token budget (following the earlier four-hour and two-hour attempts)",
+    "binding_constraint": "wall clock; this continuation concentrated on exact neighborhoods and architectural compatibility around failures 0, 1, and 3",
+    "negative_evidence": [
+      "Freezing all 250 solved traces leaves no local witness for byte 151; byte 150 and 151 must be reconstructed jointly.",
+      "On the old 251 tape, exact byte-8 and byte-9 enumeration found 3298 compatible witness pairs, but the best pair solved only 12 of 18 low inputs.",
+      "On the 253 tape, direct safe routes for bytes 1 and 3 do not exist in their tiny mutable windows; wide routes exist but protected reconstruction remains below 253.",
+      "Hashed crossings of exact byte-8/9 families with wide byte-1 and byte-3 witness prefixes found no compatible triple in the tested DFS rotations; this is bounded evidence, not an impossibility proof.",
+      "A direct byte-1/byte-3 crossing over all 64 pairs of DFS order rotations found zero hash-compatible signatures in the capped witness families.",
+      "A protected byte-0-reachable alternate-prologue rebuild reached 227/256, far below the old-prologue champion.",
+      "Transplanting the champion delta to phase-compatible lengths 2887 and 3451 retained 253/256, while reassembling a swapped byte-0-reachable prologue around that structure reached only 231/256.",
+      "At length 3451, all eight exact DFS rotations found input-1 routes into private extension space near address 3268. The least destructive raw route changed 78 source cells and was native-verified at 59/256 with input 1 solved. A bounded descending pass reported 131/256 under a surrogate trace lock, but native verification scored 130/256 and showed input 1 lost.",
+      "Diversified annealing, sweep search, and protected reconstruction from byte-1/3 route basins did not exceed 253/256.",
+      "An exhaustive all-score two-cell scan proves the 253/256 champion is a legal Hamming-2 local maximum. Exact triple repairs score at most 242/256 for input 1 and 234/256 for input 3 before reconstruction.",
+      "Reconstructing the best input-1 triple reaches 251/256 with failures 0, 3, 8, 10, and 145. Exact four-edit branches and monotone reconstruction repeatedly return to the same basin.",
+      "A joint input-1/input-3 four-edit branch improves by exhaustive pair coordinate ascent from 231 through 234/256, where another exhaustive two-cell pass finds no improvement; reconstruction returns to a 249/256 attractor.",
+      "The complementary exact five-edit partition solves inputs 1 and 3 simultaneously at 192/256. Semantic-lock reconstruction reaches native 246/256 with failures 0, 2, 7, 8, 9, 11, 13, 14, 144, and 154; all eight DFS orders agree and an exhaustive admissible two-cell rescan is empty.",
+      "Exact prologue enumeration found only the original width-four prefix at 253/256. Across 26,103 legal sparse one- and two-cell prologue edits, six solve input 0 but none scores above 1/256; wider prefix variants tested at most 4/256.",
+      "Corrected exact routing on the byte-0-reachable hero2 architecture solves input 0 at 121/256. Initial monotone reconstruction reaches 206/256; exhaustive protected pair ascent reaches a two-cell fixed point at 210/256, and corrected descending reconstruction then reaches native 239/256 while preserving input 0.",
+      "From the 239 hero2 tape, a 14-cell input-1 route followed by semantic-lock reconstruction reaches native 235/256 while preserving inputs 0 and 1. An exhaustive 16-shard protected scan of 23,479,869 legal two-cell edits finds no improvement.",
+      "A less destructive exact three-cell input-1 repair scores 209/256 and reconstructs to native 237/256 with inputs 0 and 1 preserved. A subsequent exhaustive scan of 22,037,496 protected legal two-cell edits finds no improvement."
+    ],
+    "would_try_next": [
+      "Synthesize a byte-0-reachable prologue jointly with the champion's downstream route structure rather than rebuilding one input at a time.",
+      "Encode the shared byte-1/3/8/9 window as a single compatibility or constraint problem instead of crossing bounded witness prefixes.",
+      "Use the twelve independent 253/256 reconstructions as structural diversity for a prologue crossover search."
+    ]
+  },
+  "best_candidate": {
+    "program": "research/xor-1-len4096-codex/runs/round2-route9-desc-r0-o0.mal",
+    "claimed_correct_cases": 253,
+    "claimed_total_cases": 256
+  },
+  "report": "docs/attempts/2026-08-13-codex-hero-runs-xor-1-len4096.md",
+  "artifacts": [
+    "research/xor-1-len4096-codex/CONTINUATION-253.md",
+    "research/xor-1-len4096-codex/desc_hero1.c",
+    "research/xor-1-len4096-codex/joint89_hero1.c",
+    "research/xor-1-len4096-codex/joint_low_hero1.c",
+    "research/xor-1-len4096-codex/joint13_hero1.c",
+    "research/xor-1-len4096-codex/protected_anneal.c",
+    "research/xor-1-len4096-codex/protected_route_anneal.c",
+    "research/xor-1-len4096-codex/single_mutation_scan.c",
+    "research/xor-1-len4096-codex/pair_mutation_scan.c",
+    "research/xor-1-len4096-codex/triple_mutation_scan.c",
+    "research/xor-1-len4096-codex/pair_improve_scan.c",
+    "research/xor-1-len4096-codex/crossover_scan.c",
+    "research/xor-1-len4096-codex/prologue_prefix_scan.c",
+    "research/xor-1-len4096-codex/prologue_sparse_scan.c",
+    "research/xor-1-len4096-codex/splice_delta.c",
+    "research/xor-1-len4096-codex/runs/round3-triple-b1.mal",
+    "research/xor-1-len4096-codex/runs/round3-monotone-250-fix79.mal",
+    "research/xor-1-len4096-codex/runs/round3-joint233-pair-improve-shard11.mal",
+    "research/xor-1-len4096-codex/runs/round3-pair-b1-plus-triple-b3.mal",
+    "research/xor-1-len4096-codex/runs/round3-exact-joint13-desc-o0.mal",
+    "research/xor-1-len4096-codex/runs/round3-hero2-b0-210-desc-o4.mal",
+    "research/xor-1-len4096-codex/runs/round3-hero2-b0-b1-desc-o5.mal",
+    "research/xor-1-len4096-codex/runs/round3-hero2-b0-triple1-209-desc-o0.mal",
+    "research/xor-1-len4096-codex/runs/round2-route9-desc-r0-o0.mal"
+  ],
+  "builds_on": [
+    "docs/attempts/2026-08-12-codex-xor-1-len4096.json",
+    "docs/attempts/2026-08-11-claude-hero1-xor-1-len4096.json",
+    "docs/attempts/2026-08-11-claude-hero2-xor-1-len4096.json",
+    "docs/attempts/2026-08-11-claude-hero3-xor-1-len4096.json"
+  ],
+  "rung_digest": "7f8bbf334a65d3d6"
+}

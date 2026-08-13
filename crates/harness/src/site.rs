@@ -562,7 +562,9 @@ fn write_api(out_dir: &Path, generated: &str, attempts: &[AttemptRecord]) -> Res
             "schema": "malbolge-rungs.attempts-index.v1",
             "generated": generated,
             "note": "best_candidate counts are the submitter's claim; `observed` is what this \
-                     repository's verifier measured under the current rung contract.",
+                     repository's verifier measured over the current rung's full required \
+                     epochs. Exhaustive first-byte rungs are aggregated; other multi-epoch \
+                     rungs report their worst epoch.",
             "attempts": attempts,
         }))?,
     )?;
@@ -901,12 +903,13 @@ fn attempt_body(generated: &str) -> String {
     let _ = writeln!(
         b,
         "<p class=\"long\">Finite-map and coverage rungs derive their cases from the rung \
-         definition alone, so one epoch is definitive. Transform and hash-prefix rungs hash \
-         their input bytes per case and per epoch, so a program that prints a constant can \
-         clear a single draw without computing anything — those rungs carry a \
-         <code>min_epochs</code> in their definition, and <code>verify</code> runs at least \
-         that many whatever you pass. What you see locally is what the board enforces. \
-         Every case runs on a fresh VM.</p>"
+         definition alone, so one epoch is definitive. Some transform rungs declare an \
+         exhaustive first-byte sweep: 256 epochs enumerate the complete byte domain and an \
+         attempt score is their aggregate. Other transform and hash-prefix rungs re-draw \
+         inputs per epoch, so a program that prints a constant can clear one lucky draw \
+         without computing anything; their attempt score is the worst required epoch. \
+         <code>verify</code> always runs at least the contract's required epochs. What you \
+         see locally is what admission and the board enforce. Every case runs on a fresh VM.</p>"
     );
 
     let _ = writeln!(b, "<h2>The machine</h2>");
@@ -971,10 +974,10 @@ fn attempt_body(generated: &str) -> String {
     let _ = writeln!(
         b,
         "<ol class=\"long\">\
-         <li>Verify natively. One epoch is definitive for finite-map and \
-         coverage rungs; transform and hash-prefix rungs declare a <code>min_epochs</code> \
-         that <code>verify</code> enforces for you — the same floor every board gate \
-         applies.</li>\
+         <li>Verify natively over the rung's required epochs. One epoch is definitive for \
+         seed-independent finite-map and coverage rungs; exhaustive transform rungs sweep \
+         every first byte, while re-drawn transform and hash-prefix rungs use their declared \
+         epoch floor. <code>verify</code> enforces the same contract every board gate applies.</li>\
          <li>Add your <code>.mal</code> file under <code>solutions/&lt;rung&gt;/</code>.</li>\
          <li>Flip the rung's record in <code>leaderboard/leaderboard.json</code> to \
          <code>solved</code> with the program path and honest attribution — report your own \
@@ -1085,9 +1088,10 @@ fn render_attempts(b: &mut String, attempts: &[&AttemptRecord]) {
     );
     for a in attempts {
         // The observed score — what this repository's verifier just measured
-        // under the current contract (worst required epoch) — never the
-        // record's claimed numbers. A candidate that exists but cannot be
-        // verified says so explicitly; "—" means no candidate was claimed.
+        // under the current contract (the exhaustive aggregate or worst
+        // required epoch) — never the record's claimed numbers. A candidate
+        // that exists but cannot be verified says so explicitly; "—" means no
+        // candidate was claimed.
         let best = match (&a.observed, &a.observed_error) {
             (Some(o), _) => format!("{}/{}", o.correct_cases, o.total_cases),
             (None, Some(_)) => "unverifiable".to_string(),
