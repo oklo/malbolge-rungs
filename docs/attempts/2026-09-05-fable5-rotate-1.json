@@ -1,0 +1,58 @@
+{
+  "artifacts": [
+    "research/rotate-1-fable5/reach_rot.c",
+    "research/rotate-1-fable5/closure.log",
+    "research/rotate-1-fable5/dpk_rot.c",
+    "research/rotate-1-fable5/build_rot.py",
+    "research/rotate-1-fable5/build_rot3.py",
+    "research/rotate-1-fable5/rotloop_lemma.txt",
+    "research/rotate-1-fable5/sline.c",
+    "research/rotate-1-fable5/sline8.c",
+    "research/rotate-1-fable5/enum_cheap.c",
+    "research/rotate-1-fable5/emit.py",
+    "research/rotate-1-fable5/cand_k7_o1_L256.mal",
+    "research/rotate-1-fable5/cand_sline34.mal",
+    "research/rotate-1-fable5/verify_native.json",
+    "research/rotate-1-fable5/verify_sline34.json",
+    "research/rotate-1-fable5/PROCESS-fable5.md"
+  ],
+  "best_candidate": {
+    "claimed_correct_cases": 62,
+    "claimed_total_cases": 256,
+    "program": "docs/attempts/2026-09-05-fable5-rotate-1.best.mal"
+  },
+  "budget": {
+    "next": "pre-IN CRZ constant prep (A=0, ~1 instr/constant) to close the 89-free vs 36-buildable gap; JMP code reuse for rot cycles; loop-family state-machine model with the CRZ-in-body constraint",
+    "spent": "closure BFS (3 variants + ROT-less swapped variant), 71-config walk DP sweep + build, premix probe + true premix sweep (60 configs), L-sweep, pure-ROT-loop lemma, 30+ anneal seeds across 6 gate/cost variants of the straight-line family, exhaustive cheap-constant enumeration, emitter with two native builds"
+  },
+  "builds_on": [
+    "docs/attempts/2026-08-10-claude-rotate-1.json",
+    "docs/attempts/2026-09-05-fable5-xor-1.json",
+    "docs/attempts/2026-08-11-claude-xor-1.json"
+  ],
+  "date": "2026-09-05",
+  "file": "docs/attempts/2026-09-05-fable5-rotate-1.json",
+  "manifest": {
+    "harness": "claude-code (autonomous builder fork, ratchet campaign run 2)",
+    "model_version": "claude-fable-5",
+    "tokens": 350000,
+    "tokens_note": "estimate; session interrupted once by machine sleep, counter basis ambiguous",
+    "wall_seconds": 5400
+  },
+  "outcome": "unsolved",
+  "report": "docs/attempts/2026-09-05-fable5-rotate-1.md",
+  "rung_digest": "c7fef43755234b4b",
+  "rung_id": "L2.R2.rotate-1",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "Fable 5 (Claude Code)",
+    "harness": "claude-code",
+    "harness_short": null,
+    "harness_url": null,
+    "model": "claude-fable-5",
+    "notes": null,
+    "provider": "Anthropic",
+    "type": "llm-agent"
+  },
+  "summary": "First candidate on this rung: 62/256 native (walk-family exact DP optimum at k=7,K0=1). New straight-line two-register circuit family measured: 89/256 free-space (search-converged) vs 34/256 assembled-and-verified under the P<=71 layout wall; closure BFS caps every ROT-less architecture at 227/256; pure-ROT-loop lemma 7/256 exact."
+}
