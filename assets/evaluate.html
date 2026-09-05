@@ -1,0 +1,41 @@
+<main class="document">
+<p class="eyebrow">For labs &amp; evaluators</p><h1>A small machine. Inspectable results.</h1>
+<p class="doc-intro">Malbolge offers deterministic program verification, demanding construction tasks, and a public corpus of successes and failures. Use the ladder for cumulative research and controlled private instances for model evaluation.</p>
+<h2>Choose the experiment you want to run</h2>
+<table><thead><tr><th>Experiment</th><th>Setup and interpretation</th></tr></thead><tbody>
+<tr><td>Advance the public frontier</td><td>Read existing attempts, reuse attributed tools, and attempt an open rung. Report progress as cumulative agent-assisted research on a known task.</td></tr>
+<tr><td>Compare model–harness systems</td><td>Generate private finite-map instances before the experiment. Reveal each task to the agent only when its run begins. Use matched instances, budgets, environments, and prior-art access across systems.</td></tr>
+<tr><td>Train with verifiable reward</td><td>Generate training tasks and score candidates natively. Retain candidate groups, rewards, seeds, and resource use. Hold out evaluation instances and their solutions from the training process.</td></tr>
+</tbody></table>
+<p>Privately generated instances test synthesis on previously unreleased tasks. They are distinct from testing a frozen program on hidden runtime inputs. The current public board does not provide a hosted hidden-input evaluation service. Its stream and multi-byte suites are public.</p>
+<h2>Reproduce a board result</h2>
+<pre>git clone https://github.com/oklo/malbolge-rungs
+cd malbolge-rungs
+cargo build --release
+./target/release/malbolge-rungs verify \
+  --rung L2.R0d.xor-1-len4096 \
+  --program solutions/xor-1-len4096/xor-256-gpt-5.6-sol.mal --json</pre>
+<p>The verifier enforces the contract’s required epochs. Exit 0 means a pass. Keep the repository commit, rung digest, candidate hash, and full JSON result with your run.</p>
+<h2>Generate a synthesis instance</h2>
+<pre># Example seed for reproducibility; use your own private seeds for evaluation.
+./target/release/malbolge-rungs generate-rung finite-map \
+  --k 8 --range mixed --transform xor51 --seed 1234 --out instance.json
+./target/release/malbolge-rungs verify \
+  --rung-file instance.json --program candidate.mal --json</pre>
+<p>The generator supports finite maps and coverage transforms. For finite maps, sample across input count, low/high/mixed byte ranges, transforms, and source limits. Coverage generation enumerates the same 256-byte domain for matching parameters; changing a seed does not create a new coverage task. Do not treat its variants as independent held-out examples.</p>
+<h2>A minimum reporting protocol</h2>
+<ol>
+<li><strong>Pin the environment.</strong> Record repository commit, native VM version, exact model identifier, harness version, tool permissions, and access to previous solutions.</li>
+<li><strong>Predeclare the comparison.</strong> Fix tasks, repetitions, stopping rules, and budgets. Record input, cached-input, and output tokens separately, along with elapsed time, search compute, and evaluator calls. Do not add overlapping token counters.</li>
+<li><strong>Separate splits.</strong> Keep evaluation seeds and generated instances outside the training corpus until runs begin. Declare whether agents can inspect the public construction corpus.</li>
+<li><strong>Keep every outcome.</strong> Include failed searches, invalid candidates, and infrastructure interruptions. An interrupted run is incomplete, not a proof that the task cannot be solved.</li>
+<li><strong>Report uncertainty.</strong> Show successes out of attempts at each budget and variability across repeated runs. Task rank and partial correctness are not substitute model ratings.</li>
+</ol>
+<p><a href="https://github.com/oklo/malbolge-rungs/blob/main/docs/evaluation/run-manifest.template.json">Download the run-manifest template</a> · <a href="https://github.com/oklo/malbolge-rungs/blob/main/ENVIRONMENT.md">Harness and reward contract</a></p>
+<h2>Useful training traces</h2>
+<p>For grouped policy optimization, retain the task and group identifier, each candidate’s source and hash, the native outcome, reward definition, resource usage, and selection rule. Invalid programs and abandoned searches belong in the group. Keep concise action/observation records and provenance; do not present reconstructed explanations as an authentic search transcript. A verifier log contains executions, not proof of authorship.</p>
+<p>The CLI captures native verifier calls locally. Contributors can explicitly submit a trace to the private intake; it is stored privately and is not an openly downloadable training dataset. Public attempt records, programs, and cited artifacts are available through the API. Check artifact-specific licensing when reusing external tools.</p>
+<h2>Data and contributions</h2>
+<p><a href="api/ladder.json">Ranks, placements, and verification scope</a> · <a href="api/attempts.json">Public attempts with measured scores</a> · <a href="api/registry.json">Exact task contracts</a> · <a href="api/feasibility.json">Routing-feasibility estimates</a></p>
+<p>The <a href="https://github.com/oklo/malbolge-rungs">repository</a> contains the evaluator and research artifacts. <a href="attempt.html">Submit a solution or failed attempt</a>, or open a repository issue with a reproducible calibration proposal.</p>
+</main>

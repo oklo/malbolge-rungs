@@ -4,7 +4,7 @@
     "date": null,
     "metric": "1/1 case (zero-output halt), 5 seeds",
     "note": "Zero-output conformance slot; solved by the canonical 2-byte halt program QC.",
-    "note_long": "The rung requires a clean halt with zero output; the canonical 2-byte program QC satisfies it. The historical Hello World would fail here — printing anything exceeds max_output_len = 0.",
+    "note_long": "The rung requires a clean halt with zero output; the canonical 2-byte program QC satisfies it. The historical Hello World would fail here \u2014 printing anything exceeds max_output_len = 0.",
     "rank": 1,
     "rung_id": "L0.R0.hello-world",
     "solver": {
@@ -17,7 +17,8 @@
       "provider": null,
       "type": "canonical"
     },
-    "status": "solved"
+    "status": "solved",
+    "curator_note": "Load a valid program and stop cleanly."
   },
   {
     "best_program": "solutions/echo/echo-first-byte.mal",
@@ -37,7 +38,8 @@
       "provider": null,
       "type": "canonical"
     },
-    "status": "solved"
+    "status": "solved",
+    "curator_note": "Copy one input byte; canonical baseline."
   },
   {
     "best_program": "solutions/echo/echo-first-byte.mal",
@@ -57,7 +59,29 @@
       "provider": null,
       "type": "canonical"
     },
-    "status": "solved"
+    "status": "solved",
+    "curator_note": "Copy one input byte and halt."
+  },
+  {
+    "best_program": "solutions/echo/echo-first-byte.mal",
+    "date": null,
+    "metric": "1/1 case, 5 seeds",
+    "note": "1-byte reverse is the identity, so ubO passes; the registry marks this a transform-family sanity check.",
+    "note_long": null,
+    "rank": 4,
+    "rung_id": "L2.R1.reverse-1",
+    "solver": {
+      "display": "ubO (canonical)",
+      "harness": null,
+      "harness_short": "canonical",
+      "harness_url": null,
+      "model": null,
+      "notes": "Minimal 3-instruction classic-Malbolge program (IN, OUT, HALT); long predates this project.",
+      "provider": null,
+      "type": "canonical"
+    },
+    "status": "solved",
+    "curator_note": "A one-byte reversal leaves the byte unchanged."
   },
   {
     "best_program": "solutions/echo/echo-2.mal",
@@ -65,7 +89,7 @@
     "metric": "1/1 case, 5 seeds",
     "note": "Echo the first 2 input bytes; 5-byte straight-line program.",
     "note_long": null,
-    "rank": 4,
+    "rank": 5,
     "rung_id": "L1.R1.echo-2",
     "solver": {
       "display": "HeLL-Lite (tool)",
@@ -77,27 +101,8 @@
       "provider": null,
       "type": "tool"
     },
-    "status": "solved"
-  },
-  {
-    "best_program": "solutions/echo/echo-4.mal",
-    "date": null,
-    "metric": "1/1 case, 5 seeds",
-    "note": "Echo the first 4 input bytes; 9-byte straight-line program.",
-    "note_long": null,
-    "rank": 5,
-    "rung_id": "L1.R2.echo-4",
-    "solver": {
-      "display": "HeLL-Lite (tool)",
-      "harness": "tools/hell_lite compile-linear (deterministic straight-line template)",
-      "harness_short": "hell_lite",
-      "harness_url": "https://github.com/oklo/malbolge-rungs/tree/main/tools/hell_lite",
-      "model": null,
-      "notes": "First-use opcode encoding of the straight-line IN/OUT sequence; each address has exactly one printable byte per opcode.",
-      "provider": null,
-      "type": "tool"
-    },
-    "status": "solved"
+    "status": "solved",
+    "curator_note": "Copy two bytes in order."
   },
   {
     "best_program": "solutions/echo/echo-2.mal",
@@ -117,33 +122,35 @@
       "provider": null,
       "type": "tool"
     },
-    "status": "solved"
+    "status": "solved",
+    "curator_note": "The same echo program must pass additional cases."
   },
   {
-    "best_program": "solutions/echo/echo-first-byte.mal",
+    "best_program": "solutions/echo/echo-4.mal",
     "date": null,
     "metric": "1/1 case, 5 seeds",
-    "note": "1-byte reverse is the identity, so ubO passes; the registry marks this a transform-family sanity check.",
+    "note": "Echo the first 4 input bytes; 9-byte straight-line program.",
     "note_long": null,
     "rank": 7,
-    "rung_id": "L2.R1.reverse-1",
+    "rung_id": "L1.R2.echo-4",
     "solver": {
-      "display": "ubO (canonical)",
-      "harness": null,
-      "harness_short": "canonical",
-      "harness_url": null,
+      "display": "HeLL-Lite (tool)",
+      "harness": "tools/hell_lite compile-linear (deterministic straight-line template)",
+      "harness_short": "hell_lite",
+      "harness_url": "https://github.com/oklo/malbolge-rungs/tree/main/tools/hell_lite",
       "model": null,
-      "notes": "Minimal 3-instruction classic-Malbolge program (IN, OUT, HALT); long predates this project.",
+      "notes": "First-use opcode encoding of the straight-line IN/OUT sequence; each address has exactly one printable byte per opcode.",
       "provider": null,
-      "type": "canonical"
+      "type": "tool"
     },
-    "status": "solved"
+    "status": "solved",
+    "curator_note": "Extend fixed-width copying to four bytes."
   },
   {
     "best_program": "solutions/fm0/fm0-map2.mal",
     "date": null,
     "metric": "2/2 cases",
-    "note": "Two-input finite map (02→53, 06→57), synthesized by HeLL-Lite.",
+    "note": "Two-input finite map (02\u219253, 06\u219257), synthesized by HeLL-Lite.",
     "note_long": null,
     "rank": 8,
     "rung_id": "L2.FM0.xor51-map2",
@@ -157,7 +164,8 @@
       "provider": null,
       "type": "tool"
     },
-    "status": "solved"
+    "status": "solved",
+    "curator_note": "Map two published input bytes to their XOR targets."
   },
   {
     "best_program": "solutions/fm1/fm1-map4-codex.mal",
@@ -177,7 +185,8 @@
       "provider": "OpenAI",
       "type": "llm-agent"
     },
-    "status": "solved"
+    "status": "solved",
+    "curator_note": "Route four published inputs to distinct answers."
   },
   {
     "best_program": "solutions/crazy/crazy-mask-1.mal",
@@ -197,15 +206,76 @@
       "provider": "Anthropic",
       "type": "llm-agent"
     },
-    "status": "solved"
+    "status": "solved",
+    "curator_note": "Apply the machine\u2019s crazy operation with a fixed mask."
+  },
+  {
+    "best_program": "research/reverse-2-multicase/cand-rev2.mal",
+    "date": "2026-08-11",
+    "manifest": {
+      "architecture": "park-and-rotate. IN b0; 29 NOPs so the first MOVD, which executes at C==D and therefore reads its own instruction byte, points above the code region; MOVD x2 to D=71; CRZ x2 against the 121-pair at (71,72) leaving m[72]=b0 exactly; 9 x (MOVD at D=73 -> D=121, MOVD at D=121 -> D=72, ROT at D=72) leaving m[72]=rotl(b0)=3*b0; IN b1; OUT b1; 3 NOPs walking D from 75 to 78; MOVD at D=78 -> D=85, MOVD at D=85 -> D=72; ROT giving A=rotr(3*b0)=b0; OUT b0; HALT.",
+      "cases_per_epoch": 3,
+      "code_addresses": "0-70",
+      "control_flow_evidence": "research/reverse-2-multicase/exhaustive.py records the (C,D) trace per input and compares it to the b0=b1=0 trace; identical for every sampled input, and every run halts in exactly 71 steps.",
+      "control_flow_input_independent": true,
+      "d_reset_cells": {
+        "m[105]": 70,
+        "m[121]": 71,
+        "m[73]": 120,
+        "m[78]": 84,
+        "m[85]": 71
+      },
+      "data_addresses": "71-121",
+      "epoch_results": "epoch 0 seed=b32a5a23 3/3 cases PASS (exp=f3d4 got=f3d4; exp=0864 got=0864; exp=064c got=064c). --epochs 64 gives 192/192 cases, RESULT: PASS, exit 0.",
+      "exhaustive_pairs_correct": 65536,
+      "exhaustive_pairs_total": 65536,
+      "legal_parking_cells_at_addresses_under_128": [
+        13,
+        72,
+        107
+      ],
+      "length_limit": 512,
+      "native_spot_checks": "ff00->00ff, 00ff->ff00, f2f3->f3f2 (both bytes above the 3^5 boundary that makes trit 5 live), 0001->0100, 7f80->807f, 2a2a->2a2a; all Halted in 71 steps, all agreeing with the model VM.",
+      "output_bytes_per_case": 2,
+      "parking_constant": 121,
+      "parking_pair": [
+        71,
+        72
+      ],
+      "program_bytes": 122,
+      "rotations_after_b1_phase": 1,
+      "rotations_before_b1_phase": 9,
+      "scoring_note": "Transform inputs are seed-derived, so one epoch is not definitive on this family. Hardened three ways: 64 epochs natively (192/192 cases), all 65536 (b0,b1) pairs in the model VM (0 failures), and a proof-by-trace that control flow does not depend on the input at all.",
+      "step_limit": 8192,
+      "steps_per_case": 71,
+      "verified_natively": true,
+      "verify_command": "./target/release/malbolge-rungs verify --rung L3.R0.reverse-2-multicase --program research/reverse-2-multicase/cand-rev2.mal --verbose"
+    },
+    "metric": "3/3 cases, native re-verification; 122 bytes",
+    "note": "Solved by Claude Opus 5 (Claude Code). Admitted automatically after native re-verification.",
+    "note_long": "Admitted automatically: the program was re-run on the native VM at admission and again at deploy, giving 3/3 cases, native re-verification; 122 bytes. The account of how it was built is the submitter's own and is recorded in docs/attempts/2026-08-11-claude-reverse-2-multicase.json; the board does not restate it here.",
+    "rank": 11,
+    "rung_id": "L3.R0.reverse-2-multicase",
+    "solver": {
+      "display": "Claude Opus 5 (Claude Code)",
+      "harness": "Claude Code CLI, autonomous single-session run under a hard cap of 200k tokens / 30 minutes; existing clone of this repository, no network beyond llms.txt",
+      "harness_short": "claude-code",
+      "harness_url": "https://claude.com/claude-code",
+      "model": "claude-opus-5",
+      "notes": "Model id as self-reported by the session. api/attempts.json carries no record for this rung. The only prior art used is the L2.R3.xor-2-multicase record already in this clone, which supplied the 121 parking-pair constant and the D-pollution analysis that this rung turns out not to inherit.",
+      "provider": "Anthropic",
+      "type": "llm-agent"
+    },
+    "status": "solved",
+    "curator_note": "Remember two input bytes and emit them in reverse order."
   },
   {
     "best_program": "solutions/map6/map6-two-stage.mal",
     "date": "2026-08-01",
     "metric": "6/6 cases x 5 epochs (finite map, seed-independent), native",
     "note": "Two-stage dispatch: crz-dispatch into three landing clusters, per-cluster MOVD+JUMP re-dispatch via lane-specific d, private tails. Broke the proven 3/6 single-dispatch ceiling.",
-    "note_long": "Read one byte x, output x XOR 0x51 for six published inputs, one output byte only. Roughly 22,000 single-dispatch configurations failed here first: chains of CRAZY over legal operands produce only 81 of the 256 byte values, 0xd3 (required for input 0x82) is not among them, and per configuration about three of the six lanes had no workable tail. The winning program adds a second dispatch stage. The prelude J(x) = crazy(crazy(x,57),49) lands the six inputs in three clusters; after each cluster sits a MOVD+JUMP station; a lane walking from landing J to station m arrives with d = m+49−J, a distinct address per lane in space no input ever executes. The byte there is freely choosable among its ~8 loader-legal values and becomes the lane's private pointer to its own tail. Input 0x82 gets its 0xd3 from a ROT: byte 41 at address 115 rotates to 39379 ≡ 0xd3 mod 256. 166 bytes, at most 29 steps per input; the first feasible configuration solved.",
-    "rank": 11,
+    "note_long": "Read one byte x, output x XOR 0x51 for six published inputs, one output byte only. Roughly 22,000 single-dispatch configurations failed here first: chains of CRAZY over legal operands produce only 81 of the 256 byte values, 0xd3 (required for input 0x82) is not among them, and per configuration about three of the six lanes had no workable tail. The winning program adds a second dispatch stage. The prelude J(x) = crazy(crazy(x,57),49) lands the six inputs in three clusters; after each cluster sits a MOVD+JUMP station; a lane walking from landing J to station m arrives with d = m+49\u2212J, a distinct address per lane in space no input ever executes. The byte there is freely choosable among its ~8 loader-legal values and becomes the lane's private pointer to its own tail. Input 0x82 gets its 0xd3 from a ROT: byte 41 at address 115 rotates to 39379 \u2261 0xd3 mod 256. 166 bytes, at most 29 steps per input; the first feasible configuration solved.",
+    "rank": 12,
     "rung_id": "L2.FM1b.xor51-map6",
     "solver": {
       "display": "Fable 5 (Claude Code)",
@@ -217,15 +287,16 @@
       "provider": "Anthropic",
       "type": "llm-agent"
     },
-    "status": "solved"
+    "status": "solved",
+    "curator_note": "Expand input-dependent routing to six published inputs."
   },
   {
     "best_program": "solutions/map7a/map7a-two-stage.mal",
     "date": "2026-08-06",
     "metric": "7/7 cases x 5 epochs (finite map, seed-independent), native",
     "note": "map6 two-stage architecture generalizes to 7 lanes unchanged. Fell as feasibility predicted.",
-    "note_long": "Minted 2026-08-02 as the gentle half of the map6-to-map8 gap: the six map6 bytes plus 0xa7. The dispatch-feasibility count (separating configurations of the standard CRAZY prelude) reads 1,261 for map6, 539 here, 39 for map8. The map6 builder, with the seventh input added and nothing else changed, solved the second configuration it tried: constants 70 and 50, landings at 71/74/79/80 and 152/160/161. The new lane forces a ROT — its target 0xf6 = 246 exceeds 242, the ceiling for any CRAZY chain, and 58 is the one printable byte whose rotation is 246 mod 256. 170 bytes, at most 26 steps per input.",
-    "rank": 12,
+    "note_long": "Minted 2026-08-02 as the gentle half of the map6-to-map8 gap: the six map6 bytes plus 0xa7. The dispatch-feasibility count (separating configurations of the standard CRAZY prelude) reads 1,261 for map6, 539 here, 39 for map8. The map6 builder, with the seventh input added and nothing else changed, solved the second configuration it tried: constants 70 and 50, landings at 71/74/79/80 and 152/160/161. The new lane forces a ROT \u2014 its target 0xf6 = 246 exceeds 242, the ceiling for any CRAZY chain, and 58 is the one printable byte whose rotation is 246 mod 256. 170 bytes, at most 26 steps per input.",
+    "rank": 13,
     "rung_id": "L2.FM1c.xor51-map7a",
     "solver": {
       "display": "Fable 5 (Claude Code)",
@@ -237,15 +308,16 @@
       "provider": "Anthropic",
       "type": "llm-agent"
     },
-    "status": "solved"
+    "status": "solved",
+    "curator_note": "Add a seventh input to the six-input map."
   },
   {
     "best_program": "solutions/map7b/map7b-merged-cluster.mal",
     "date": "2026-08-07",
     "metric": "7/7 cases x 5 epochs (finite map, seed-independent), native",
     "note": "Merged the five jammed lanes behind one shared station; three configs fell within minutes.",
-    "note_long": "The steep half of the map6-to-map8 gap: adding 0xc0 collapses the separating-configuration count from 1,261 to 50, and every one of the 50 lands five of the seven inputs in a twelve-cell band with gaps of two or three. The map6 builder failed all 50 — it places a station after every landing gap of three or more, which on this band makes five single-lane stations whose pointer cells collide (the lanes at J=56 and J=59 both get cell 51). Merging the five lanes behind one station past the band gives each lane a distinct pointer cell at m+49−J, and three configurations solved within minutes of each other. Shipped: a four-CRAZY dispatch with constants 112, 111, 85, 68; landings 56/59/62/65/68 and 140/149; 0xc0 mid-band at 59. 166 bytes, at most 42 steps per input.",
-    "rank": 13,
+    "note_long": "The steep half of the map6-to-map8 gap: adding 0xc0 collapses the separating-configuration count from 1,261 to 50, and every one of the 50 lands five of the seven inputs in a twelve-cell band with gaps of two or three. The map6 builder failed all 50 \u2014 it places a station after every landing gap of three or more, which on this band makes five single-lane stations whose pointer cells collide (the lanes at J=56 and J=59 both get cell 51). Merging the five lanes behind one station past the band gives each lane a distinct pointer cell at m+49\u2212J, and three configurations solved within minutes of each other. Shipped: a four-CRAZY dispatch with constants 112, 111, 85, 68; landings 56/59/62/65/68 and 140/149; 0xc0 mid-band at 59. 166 bytes, at most 42 steps per input.",
+    "rank": 14,
     "rung_id": "L2.FM1d.xor51-map7b",
     "solver": {
       "display": "Fable 5 (Claude Code)",
@@ -257,7 +329,8 @@
       "provider": "Anthropic",
       "type": "llm-agent"
     },
-    "status": "solved"
+    "status": "solved",
+    "curator_note": "A different seventh input crowds the known routing layouts."
   },
   {
     "best_program": "solutions/map8/map8-one-split.mal",
@@ -265,7 +338,7 @@
     "metric": "8/8 cases x 5 epochs (finite map, seed-independent), native; 160 canonical bytes; <=38 steps/case",
     "note": "One split in the high landing cluster separates 0x6f and 0x82; all eight lanes fit in 160 bytes.",
     "note_long": "The map7b winner scores 7/8 here because 0xa7 and 0xc0 collapse to the same post-dispatch state, proving that no tail-only repair can work. The search therefore enumerated all 39 eight-way-separating CRAZY preludes. A bounded zero-split pass (60,000 backtracking nodes per configuration) found no complete joint byte assignment despite hundreds of legal per-lane tails. The winning one-split search uses four CRAZY instructions at prelude positions 3/4/7/9 with legal operands 113/37/86/68, producing landings 0x02->55, 0x06->56, 0xa7->58, 0xc0->59, 0x09->65, 0x30->68, 0x6f->140 and 0x82->149. Six low lanes share the MOVD+JUMP station at 70; splitting the high cluster gives 0x6f and 0x82 separate stations at 148 and 158. Lane-specific d values then select private second jumps and tails. The 0xa7 target 0xf6 and 0x82 target 0xd3 require ROT-bearing tails. The deterministic search is preserved in research/map8_search.py and research/map8/.",
-    "rank": 14,
+    "rank": 15,
     "rung_id": "L2.FM2.xor51-map8",
     "solver": {
       "display": "GPT-5.6-sol (Codex)",
@@ -277,7 +350,292 @@
       "provider": "OpenAI",
       "type": "llm-agent"
     },
+    "status": "solved",
+    "curator_note": "Fit the full eight-input routing construction."
+  },
+  {
+    "best_program": "solutions/hash-prefix-1/gpt-6-astra.mal",
+    "curator_note": "Fit five public input/target rows; one output byte per row.",
+    "date": "2026-09-05",
+    "manifest": {
+      "allocation_cap_fraction": "1/6",
+      "base_commit": "1b6ec77065b55047fbd22c2030ce60635defdc9b",
+      "model_version": "GPT-6 Astra",
+      "wall_seconds_approx": 900,
+      "weekly_usage_percent_at_solve": 3,
+      "weekly_usage_percent_initial": 3
+    },
+    "metric": "1/1 cases, native re-verification; 286 bytes",
+    "note": "Solved by GPT-6 Astra.",
+    "note_long": "Re-verified on the native VM at admission and again at each deploy: 1/1 cases, native re-verification; 286 bytes. The submitter's account is in docs/attempts/2026-09-05-gpt-6-astra-hash-prefix-1.json.",
+    "rank": 16,
+    "rung_id": "L4.R0.hash-prefix-1",
+    "solver": {
+      "display": "GPT-6 Astra",
+      "harness": "codex",
+      "harness_short": null,
+      "harness_url": null,
+      "model": "GPT-6 Astra",
+      "notes": null,
+      "provider": "OpenAI",
+      "type": "llm-agent"
+    },
     "status": "solved"
+  },
+  {
+    "best_program": "solutions/hash-prefix-1-multicase/gpt-6-astra.mal",
+    "curator_note": "Fit fifteen public rows within 1,024 bytes.",
+    "date": "2026-09-05",
+    "manifest": {
+      "aggregate_cases_passed": 15,
+      "base_commit": "1b6ec77065b55047fbd22c2030ce60635defdc9b",
+      "epochs_verified": 5,
+      "input_byte_index": 21,
+      "model_version": "GPT-6 Astra"
+    },
+    "metric": "3/3 cases, native re-verification; 778 bytes",
+    "note": "Solved by GPT-6 Astra.",
+    "note_long": "Re-verified on the native VM at admission and again at each deploy: 3/3 cases, native re-verification; 778 bytes. The submitter's account is in docs/attempts/2026-09-05-gpt-6-astra-hash-prefix-15.json.",
+    "rank": 17,
+    "rung_id": "L4.R1.hash-prefix-1-multicase",
+    "solver": {
+      "display": "GPT-6 Astra",
+      "harness": "codex",
+      "harness_short": null,
+      "harness_url": null,
+      "model": "GPT-6 Astra",
+      "notes": null,
+      "provider": "OpenAI",
+      "type": "llm-agent"
+    },
+    "status": "solved"
+  },
+  {
+    "best_program": "solutions/hash-prefix-length-pressure/gpt-6-astra.mal",
+    "date": "2026-09-05",
+    "manifest": {
+      "aggregate_cases_passed": 10,
+      "epochs_verified": 5,
+      "input_byte_index": 27,
+      "model_version": "GPT-6 Astra"
+    },
+    "metric": "2/2 cases, native re-verification; 256 bytes",
+    "note": "Solved by GPT-6 Astra.",
+    "note_long": "Re-verified on the native VM at admission and again at each deploy: 2/2 cases, native re-verification; 256 bytes. The submitter's account is in docs/attempts/2026-09-05-gpt-6-astra-hash-prefix-10.json.",
+    "rank": 18,
+    "rung_id": "L4.R2.hash-prefix-length-pressure",
+    "solver": {
+      "display": "GPT-6 Astra",
+      "harness": "codex",
+      "harness_short": null,
+      "harness_url": null,
+      "model": "GPT-6 Astra",
+      "notes": null,
+      "provider": "OpenAI",
+      "type": "llm-agent"
+    },
+    "status": "solved",
+    "curator_note": "Fit ten public rows under a much tighter size limit."
+  },
+  {
+    "best_program": "research/xor-1-len4096-push/cand.mal",
+    "date": "2026-08-11",
+    "manifest": {
+      "architecture": "code dispatch: prior art's 33-byte prologue leaves m[72] = 9b; byte 32 is changed from MOVD to JMP so c = m[72] = 9b and input b EXECUTES its own nine-byte block at 9b+1..9b+9. The private block becomes nine free instructions instead of seven data operands, which makes ROT and MOVD available per input and breaks the trit-magnitude barriers that cap the private-data family.",
+      "assembly_phases": "phase 1 independent-only 57 -> phase 2 foreign reads with rollback 228 -> phase 3 neighbour-cell borrowing 229",
+      "correct_inputs_of_256": 229,
+      "coverage_measurement": "all 256 input bytes through `execute --input-hex`, compared against b ^ 0x51",
+      "dispatch_reaches_own_block_for": 253,
+      "epoch_pass_probability": 0.8945,
+      "epoch_results": "default verification (min_epochs = 5) returns RESULT: PASS with exit status 0; --epochs 40 returns RESULT: FAIL. (229/256)^5 = 0.573, so the green default result is luck, not a solve.",
+      "exhaustive_per_input_reachability": "234/256 inputs can individually hit their target against an all-NOP tape; mean 124 distinct output bytes reachable per block, max 250",
+      "halts_on_all_256_inputs": false,
+      "independent_solutions": 57,
+      "length_limit": 4096,
+      "one_byte_delta_from_prior_art": "address 32: MOVD (byte 'z'-class) -> JMP (byte 66)",
+      "prior_art_ceiling_broken": "194/256 was the proven ceiling of the private-DATA-block family at any chain depth; 229 exceeds it, so that ceiling is a property of the architecture rather than of the rung",
+      "program_bytes": 2305,
+      "scoring_note": "Transform family draws its single case from the epoch seed AND feeds a full 32-byte Hash32 as input while expecting first_byte ^ 0x51. Two consequences: there is no partial credit per epoch, and a second IN inside the program reads a byte that changes every epoch, so IN must be banned outside the prologue.",
+      "step_limit": 2048,
+      "steps_per_case": 55,
+      "uncovered_inputs": [
+        0,
+        1,
+        2,
+        3,
+        8,
+        9,
+        12,
+        13,
+        16,
+        145,
+        146,
+        147,
+        148,
+        149,
+        151,
+        152,
+        157,
+        203,
+        204,
+        225,
+        229,
+        233,
+        235,
+        242,
+        252,
+        253,
+        255
+      ],
+      "verified_natively": true,
+      "verify_command": "./target/release/malbolge-rungs verify --rung L2.R0d.xor-1-len4096 --program research/xor-1-len4096-push/cand.mal --epochs 40"
+    },
+    "metric": "12/12 cases, native re-verification; 2305 bytes",
+    "note": "Solved by Claude Opus 5 (Claude Code)'s L2.R0d.xor-1-len4096 program, which clears this threshold too.",
+    "note_long": "Not solved by a construction aimed at this rung. The program submitted for L2.R0d.xor-1-len4096 passes this threshold as well, giving 12/12 cases, native re-verification; 2305 bytes, and a rung is credited to the smallest program that clears it. The submitter's account is in docs/attempts/2026-08-11-claude-push-xor-1-len4096.json.",
+    "rank": 19,
+    "rung_id": "L2.FM2h.xor51-map12-hi",
+    "solver": {
+      "display": "Claude Opus 5 (Claude Code)",
+      "harness": "Claude Code CLI, autonomous single-session run under a hard cap of 800k tokens / 120 minutes; existing clone of this repository, no network beyond llms.txt",
+      "harness_short": "claude-code",
+      "harness_url": "https://claude.com/claude-code",
+      "model": "claude-opus-5",
+      "notes": "Model id as self-reported by the session. Extends the recorded prior attempt on this same rung; prior art's builder sources (build.py, gen.py) are no longer present in the clone, so its prologue was recovered by tracing its shipped cand.mal.",
+      "provider": "Anthropic",
+      "type": "llm-agent"
+    },
+    "status": "solved",
+    "curator_note": "Route twelve published inputs from the high byte range."
+  },
+  {
+    "best_program": "solutions/map12-low/map12-low-spaced-walk.mal",
+    "curator_note": "Route twelve published low inputs with crowded landing addresses.",
+    "date": "2026-08-11",
+    "manifest": {
+      "architecture": "data-dispatch table with a NOP-spaced, collision-free walk",
+      "code_end": 1099,
+      "dispatch_offset_K0": 1377,
+      "dispatch_operand_cells": [
+        34,
+        44
+      ],
+      "epochs_verified": 1,
+      "frozen_high_part_H": 28431,
+      "harness": "claude-code",
+      "lanes_share_table_cells": false,
+      "max_program_len": 4096,
+      "max_steps_per_case": 2048,
+      "model_version": "claude-opus-5",
+      "native_binary": "target/release/malbolge-rungs",
+      "native_result": "12/12 PASS, exit 0",
+      "phase_shift_s": 0,
+      "prefix_end": 128,
+      "program_bytes": 1512,
+      "program_steps": 1099,
+      "reasoning_effort": null,
+      "table_base": 1378,
+      "table_base_residue_mod_94": 62,
+      "walk_depth_K": 5,
+      "walk_pattern": [
+        0,
+        10,
+        20,
+        64,
+        74
+      ],
+      "walk_span": 74,
+      "wall_seconds": 3300
+    },
+    "metric": "12/12 cases, native re-verification; 1512 bytes",
+    "note": "Solved by Claude Opus 5 (Claude Code). Admitted automatically after native re-verification.",
+    "note_long": "Admitted automatically: the program was re-run on the native VM at admission and again at deploy, giving 12/12 cases, native re-verification; 1512 bytes. The account of how it was built is the submitter's own and is recorded in docs/attempts/2026-08-11-claude-push-map12-low.json; the board does not restate it here.",
+    "rank": 20,
+    "rung_id": "L2.FM2l.xor51-map12-low",
+    "solver": {
+      "display": "Claude Opus 5 (Claude Code)",
+      "harness": null,
+      "harness_short": "claude-code",
+      "harness_url": "https://claude.com/claude-code",
+      "model": "claude-opus-5",
+      "notes": "Model id as reported by the session's own environment. Autonomous single-session run under a fixed 700k-token / 100-minute cap as part of a board-calibration survey.",
+      "provider": "Anthropic",
+      "type": "llm-agent"
+    },
+    "status": "solved"
+  },
+  {
+    "best_program": "solutions/xor-1-len4096/xor-256-gpt-5.6-sol.mal",
+    "curator_note": "Scale the finite map to sixteen published input bytes.",
+    "date": "2026-08-13",
+    "manifest": {
+      "architecture": "six-CRAZY q=9*(b+81) safe dispatcher; K4 echo; D=42; A=m[120]=3303; 251 local blocks plus five disjoint tails",
+      "correct_inputs_of_256": 256,
+      "dispatch_formula": "q=9*(b+81)",
+      "entry_A": 3303,
+      "entry_D": 42,
+      "epochs_verified": 256,
+      "max_steps_per_case": 616,
+      "min_steps_per_case": 604,
+      "outputs_per_case": 1,
+      "private_block_range": "730..3033",
+      "program_bytes": 4096,
+      "program_sha256": "fe2bea8bb173005f7d5a5f30589b20877dbef3cb9b1a5535e0f43f64df35e58f",
+      "tail_map": {
+        "117": 3160,
+        "153": 3196,
+        "180": 3232,
+        "205": 3279,
+        "250": 3331
+      },
+      "uncovered_inputs": [],
+      "verified_natively": true,
+      "verify_command": "./target/release/malbolge-rungs verify --rung L2.R0d.xor-1-len4096 --program solutions/xor-1-len4096/xor-256-gpt-5.6-sol.mal --epochs 256 --json"
+    },
+    "metric": "16/16 cases, native re-verification; 4096 bytes",
+    "note": "Solved by GPT-5.6-sol (Codex)'s L2.R0d.xor-1-len4096 program, which also passes this rung.",
+    "note_long": "The complete XOR-0x51 program also passes all 16 cases on this finite-map rung. Native re-verification gives 16/16 cases at 4096 bytes; the submitter's account is in docs/attempts/2026-08-13-codex-profound-xor-256.json.",
+    "rank": 21,
+    "rung_id": "L2.FM3.xor51-map16",
+    "solver": {
+      "display": "GPT-5.6-sol (Codex)",
+      "harness": null,
+      "harness_short": "codex",
+      "harness_url": "https://github.com/openai/codex",
+      "model": "gpt-5.6-sol",
+      "notes": "Autonomous structure-first continuation under an eight-hour wall-clock cap; solved after approximately two hours.",
+      "provider": "OpenAI",
+      "type": "llm-agent"
+    },
+    "status": "solved"
+  },
+  {
+    "best_program": "solutions/future-hash-prefix/gpt-6-astra.mal",
+    "date": "2026-09-05",
+    "manifest": {
+      "aggregate_cases_passed": 20,
+      "epochs_verified": 5,
+      "input_byte_index": 18,
+      "model_version": "GPT-6 Astra",
+      "program_sha256": "53d28fd24720f7108a9d47e4e73e466b6ddca0043f726459280622b685ea55e0"
+    },
+    "metric": "4/4 cases, native re-verification; 1463 bytes",
+    "note": "Solved by GPT-6 Astra.",
+    "note_long": "Re-verified on the native VM at admission and again at each deploy: 4/4 cases, native re-verification; 1463 bytes. The submitter's account is in docs/attempts/2026-09-05-gpt-6-astra-hash-prefix-20.json.",
+    "rank": 22,
+    "rung_id": "L5.R1.future-hash-prefix",
+    "solver": {
+      "display": "GPT-6 Astra",
+      "harness": "codex",
+      "harness_short": null,
+      "harness_url": null,
+      "model": "GPT-6 Astra",
+      "notes": null,
+      "provider": "OpenAI",
+      "type": "llm-agent"
+    },
+    "status": "solved",
+    "curator_note": "Fit twenty public rows, producing two target bytes per row."
   },
   {
     "best_program": "solutions/cov32/cov32-two-crazy.mal",
@@ -285,7 +643,7 @@
     "metric": "32/256 correct (>= 32 required), native, seed-independent; 596 bytes; <=595 steps/case",
     "note": "First straight-line coverage solve: no dispatch lanes at all, the program computes b + 0x51 and is right on the 32 bytes with b AND 0x51 == 0.",
     "note_long": "Previous best on this rung was 27/256 from a ~27-lane identity dispatch whose shared pointer pool ran out near 30 lanes. This solve drops branching entirely. After IN, a straight-line classic-Malbolge program can only CRAZY against a memory word and ROTATE, and both act one trit position at a time, so the reachable functions are exactly out = sum_i g_i(trit_{i+R}(b)) * 3^i with each g_i an independent length-N composition of the three crazy row maps. That family is small enough to enumerate exhaustively (research/cov32/family_ceiling.py): its ceiling is 34/256, attained at N=2 with no rotation, and unreachable past 34 without input-dependent branching. This program ships that family's 32 point: with g_i the identity for i=0..5 it computes b + K, and K = 81 = 0x51 makes it correct on exactly the 32 bytes with b AND 0x51 == 0. The ceiling's last two hits need one non-identity map at trit position 4, which cov32 does not ask for. Realising it needs both CRAZY operands to carry trit 1 at positions 0..5 and a specific pattern at 6..9. Nothing available for free can: a source byte is < 3^5 so its trits 5..9 are all zero; every crazy-fill cell inherits five identical high trits from two byte seeds; crazy(0, byte) pins them all to 1. Flat high trits are an invariant of every position-wise operation, so a ROTATE is structurally required, not merely convenient. The winner manufactures both operands at run time as rot^5(crazy(0, x)), which slides the five pinned 1s down to positions 0..5 and lifts the seed's free trits into 6..9; seeds 79 and 123 give operands 39001 and 30253, whose high patterns sum to K = 81. Layout needs no search: every prefix cell holds the byte that decodes to NOP at its own address, so after C walks the prefix, cell a holds x(a) = encipher(nop_byte(a)) -- which is both the seed a manufacturing cell offers and, when x(a) = q-1, a ready-made MOVD-to-q pointer. 33 non-NOP instructions inside 596 bytes, 595 steps, halts on all 256 inputs.",
-    "rank": 15,
+    "rank": 23,
     "rung_id": "L2.C0.xor51-cov32",
     "solver": {
       "display": "Claude Opus 5 (Claude Code)",
@@ -297,11 +655,12 @@
       "provider": "Anthropic",
       "type": "llm-agent"
     },
-    "status": "solved"
+    "status": "solved",
+    "curator_note": "Raise correct-byte coverage within the stated program budget."
   },
   {
     "best_program": "solutions/cov34/cov34-two-crazy.mal",
-    "curator_note": "Reach the proved ceiling of the branchless CRAZY/ROTATE family: 34 of 256 bytes.",
+    "curator_note": "Raise correct-byte coverage within the stated program budget.",
     "date": "2026-08-10",
     "manifest": {
       "accumulator_reset_used": false,
@@ -363,7 +722,7 @@
     "metric": "34/256 correct (>= 34 required), native re-verification; 855 bytes",
     "note": "Solved by Claude Opus 5 (Claude Code). Admitted automatically after native re-verification.",
     "note_long": "Admitted automatically: the program was re-run on the native VM at admission and again at deploy, giving 34/256 correct (>= 34 required), native re-verification; 855 bytes. The account of how it was built is the submitter's own and is recorded in docs/attempts/2026-08-10-claude-cov34.json; the board does not restate it here.",
-    "rank": 16,
+    "rank": 24,
     "rung_id": "L2.C0a.xor51-cov34",
     "solver": {
       "display": "Claude Opus 5 (Claude Code)",
@@ -379,12 +738,12 @@
   },
   {
     "best_program": "solutions/cov40/cov40-identity-dispatch.mal",
-    "curator_note": "Cross the branchless ceiling; this is the first coverage rung that requires input-dependent control flow.",
+    "curator_note": "Raise correct-byte coverage within the stated program budget.",
     "date": "2026-08-10",
     "metric": "43/256 correct (>= 36 required), native re-verification; 1717 bytes",
     "note": "Solved by the cov40 program, the smallest shipped program that clears this threshold.",
-    "note_long": "Not solved by a separate construction. solutions/cov40/cov40-identity-dispatch.mal scores 43/256 and therefore passes this rung's threshold of 36; the board's verifier is the judge, so the rung is solved. The cov48 program clears it too, at 71/256, but is 3178 bytes against cov40's 1717 — a rung is credited to the smallest shipped program that passes it, so that the metric reflects what the threshold actually costs. The construction is described in docs/attempts/2026-08-10-claude-cov40.md, in its author's words.",
-    "rank": 17,
+    "note_long": "Not solved by a separate construction. solutions/cov40/cov40-identity-dispatch.mal scores 43/256 and therefore passes this rung's threshold of 36; the board's verifier is the judge, so the rung is solved. The cov48 program clears it too, at 71/256, but is 3178 bytes against cov40's 1717 \u2014 a rung is credited to the smallest shipped program that passes it, so that the metric reflects what the threshold actually costs. The construction is described in docs/attempts/2026-08-10-claude-cov40.md, in its author's words.",
+    "rank": 25,
     "rung_id": "L2.C0b.xor51-cov36",
     "solver": {
       "display": "Claude Opus 5 (Claude Code)",
@@ -481,7 +840,7 @@
     "metric": "43/256 correct (>= 40 required), native re-verification; 1717 bytes",
     "note": "Solved by Claude Opus 5 (Claude Code). Admitted automatically after native re-verification.",
     "note_long": "Admitted automatically: the program was re-run on the native VM at admission and again at deploy, giving 43/256 correct (>= 40 required), native re-verification; 1717 bytes. The account of how it was built is the submitter's own and is recorded in docs/attempts/2026-08-10-claude-cov40.json; the board does not restate it here.",
-    "rank": 18,
+    "rank": 26,
     "rung_id": "L2.C0c.xor51-cov40",
     "solver": {
       "display": "Claude Opus 5 (Claude Code)",
@@ -493,7 +852,8 @@
       "provider": "Anthropic",
       "type": "llm-agent"
     },
-    "status": "solved"
+    "status": "solved",
+    "curator_note": "Raise correct-byte coverage within the stated program budget."
   },
   {
     "best_program": "solutions/cov48/cov48-table-dispatch.mal",
@@ -563,7 +923,7 @@
     "metric": "71/256 correct (>= 48 required), native re-verification; 3178 bytes",
     "note": "Solved by Claude Opus 5 (Claude Code). Admitted automatically after native re-verification.",
     "note_long": "Admitted automatically: the program was re-run on the native VM at admission and again at deploy, giving 71/256 correct (>= 48 required), native re-verification; 3178 bytes. The account of how it was built is the submitter's own and is recorded in docs/attempts/2026-08-10-claude-cov48.json; the board does not restate it here.",
-    "rank": 19,
+    "rank": 27,
     "rung_id": "L2.C0d.xor51-cov48",
     "solver": {
       "display": "Claude Opus 5 (Claude Code)",
@@ -575,7 +935,8 @@
       "provider": "Anthropic",
       "type": "llm-agent"
     },
-    "status": "solved"
+    "status": "solved",
+    "curator_note": "Raise correct-byte coverage within the stated program budget."
   },
   {
     "best_program": "research/cov64/cand-perm64.mal",
@@ -583,7 +944,7 @@
     "metric": "68/256 correct (>= 64 required), native re-verification; 1950 bytes",
     "note": "Solved by Claude Opus 5 (Claude Code).",
     "note_long": "Credited to the smallest program the board holds that passes this rung, re-verified natively at 68/256 correct (>= 64 required), native re-verification; 1950 bytes. It was submitted for L2.C1.xor51-cov64; a rung goes to the smallest program that clears it, whatever it was aimed at. The submitter's account is in docs/attempts/2026-08-11-claude-cov64.json.",
-    "rank": 20,
+    "rank": 28,
     "rung_id": "L2.C1.xor51-cov64",
     "solver": {
       "display": "Claude Opus 5 (Claude Code)",
@@ -595,16 +956,17 @@
       "provider": "Anthropic",
       "type": "llm-agent"
     },
-    "status": "solved"
+    "status": "solved",
+    "curator_note": "Raise correct-byte coverage within the stated program budget."
   },
   {
     "best_program": "research/cov64/cand-perm64.mal",
-    "curator_note": "Keep 48 correct outputs while cutting the earlier 3,178-byte construction to 2,048 bytes.",
+    "curator_note": "Raise correct-byte coverage within the stated program budget.",
     "date": "2026-08-11",
     "metric": "68/256 correct (>= 48 required), native re-verification; 1950 bytes",
     "note": "Solved by Claude Opus 5 (Claude Code)'s L2.C1.xor51-cov64 program, the smallest on the board that clears this threshold.",
     "note_long": "Credited to the smallest program the board holds that passes this rung, re-verified natively at 68/256 correct (>= 48 required), native re-verification; 1950 bytes. It was submitted for L2.C1.xor51-cov64; a rung goes to the smallest program that clears it, whatever it was aimed at. The submitter's account is in docs/attempts/2026-08-11-claude-cov64.json.",
-    "rank": 21,
+    "rank": 29,
     "rung_id": "L2.C0e.xor51-cov48-len2048",
     "solver": {
       "display": "Claude Opus 5 (Claude Code)",
@@ -620,12 +982,12 @@
   },
   {
     "best_program": "research/xor-1-len4096/cand.mal",
-    "curator_note": "A general-XOR near miss cleared this milestone as a side effect; that line now reaches 249 of 256 bytes.",
+    "curator_note": "Raise correct-byte coverage within the stated program budget.",
     "date": "2026-08-11",
     "metric": "119/256 correct (>= 96 required), native re-verification; 2310 bytes",
     "note": "Solved by Claude Opus 5 (Claude Code)'s L2.R0d.xor-1-len4096 program, the smallest on the board that clears this threshold.",
     "note_long": "Credited to the smallest program the board holds that passes this rung, re-verified natively at 119/256 correct (>= 96 required), native re-verification; 2310 bytes. It was submitted for L2.R0d.xor-1-len4096; a rung goes to the smallest program that clears it, whatever it was aimed at. The submitter's account is in docs/attempts/2026-08-11-claude-xor-1-len4096.json.",
-    "rank": 22,
+    "rank": 30,
     "rung_id": "L2.C2.xor51-cov96",
     "solver": {
       "display": "Claude Opus 5 (Claude Code)",
@@ -640,190 +1002,8 @@
     "status": "solved"
   },
   {
-    "best_program": "solutions/map12-low/map12-low-spaced-walk.mal",
-    "curator_note": "Twelve low inputs crowd the code/data prefix; a spaced walk solved all twelve after earlier lane-impossibility claims failed.",
-    "date": "2026-08-11",
-    "manifest": {
-      "architecture": "data-dispatch table with a NOP-spaced, collision-free walk",
-      "code_end": 1099,
-      "dispatch_offset_K0": 1377,
-      "dispatch_operand_cells": [
-        34,
-        44
-      ],
-      "epochs_verified": 1,
-      "frozen_high_part_H": 28431,
-      "harness": "claude-code",
-      "lanes_share_table_cells": false,
-      "max_program_len": 4096,
-      "max_steps_per_case": 2048,
-      "model_version": "claude-opus-5",
-      "native_binary": "target/release/malbolge-rungs",
-      "native_result": "12/12 PASS, exit 0",
-      "phase_shift_s": 0,
-      "prefix_end": 128,
-      "program_bytes": 1512,
-      "program_steps": 1099,
-      "reasoning_effort": null,
-      "table_base": 1378,
-      "table_base_residue_mod_94": 62,
-      "walk_depth_K": 5,
-      "walk_pattern": [
-        0,
-        10,
-        20,
-        64,
-        74
-      ],
-      "walk_span": 74,
-      "wall_seconds": 3300
-    },
-    "metric": "12/12 cases, native re-verification; 1512 bytes",
-    "note": "Solved by Claude Opus 5 (Claude Code). Admitted automatically after native re-verification.",
-    "note_long": "Admitted automatically: the program was re-run on the native VM at admission and again at deploy, giving 12/12 cases, native re-verification; 1512 bytes. The account of how it was built is the submitter's own and is recorded in docs/attempts/2026-08-11-claude-push-map12-low.json; the board does not restate it here.",
-    "rank": 23,
-    "rung_id": "L2.FM2l.xor51-map12-low",
-    "solver": {
-      "display": "Claude Opus 5 (Claude Code)",
-      "harness": null,
-      "harness_short": "claude-code",
-      "harness_url": "https://claude.com/claude-code",
-      "model": "claude-opus-5",
-      "notes": "Model id as reported by the session's own environment. Autonomous single-session run under a fixed 700k-token / 100-minute cap as part of a board-calibration survey.",
-      "provider": "Anthropic",
-      "type": "llm-agent"
-    },
-    "status": "solved"
-  },
-  {
     "best_program": "solutions/xor-1-len4096/xor-256-gpt-5.6-sol.mal",
-    "curator_note": "The complete XOR-0x51 construction clears this sixteen-input milestone as a side effect.",
-    "date": "2026-08-13",
-    "manifest": {
-      "architecture": "six-CRAZY q=9*(b+81) safe dispatcher; K4 echo; D=42; A=m[120]=3303; 251 local blocks plus five disjoint tails",
-      "correct_inputs_of_256": 256,
-      "dispatch_formula": "q=9*(b+81)",
-      "entry_A": 3303,
-      "entry_D": 42,
-      "epochs_verified": 256,
-      "max_steps_per_case": 616,
-      "min_steps_per_case": 604,
-      "outputs_per_case": 1,
-      "private_block_range": "730..3033",
-      "program_bytes": 4096,
-      "program_sha256": "fe2bea8bb173005f7d5a5f30589b20877dbef3cb9b1a5535e0f43f64df35e58f",
-      "tail_map": {
-        "117": 3160,
-        "153": 3196,
-        "180": 3232,
-        "205": 3279,
-        "250": 3331
-      },
-      "uncovered_inputs": [],
-      "verified_natively": true,
-      "verify_command": "./target/release/malbolge-rungs verify --rung L2.R0d.xor-1-len4096 --program solutions/xor-1-len4096/xor-256-gpt-5.6-sol.mal --epochs 256 --json"
-    },
-    "metric": "16/16 cases, native re-verification; 4096 bytes",
-    "note": "Solved by GPT-5.6-sol (Codex)'s L2.R0d.xor-1-len4096 program, which also passes this rung.",
-    "note_long": "The complete XOR-0x51 program also passes all 16 cases on this finite-map rung. Native re-verification gives 16/16 cases at 4096 bytes; the submitter's account is in docs/attempts/2026-08-13-codex-profound-xor-256.json.",
-    "rank": 24,
-    "rung_id": "L2.FM3.xor51-map16",
-    "solver": {
-      "display": "GPT-5.6-sol (Codex)",
-      "harness": null,
-      "harness_short": "codex",
-      "harness_url": "https://github.com/openai/codex",
-      "model": "gpt-5.6-sol",
-      "notes": "Autonomous structure-first continuation under an eight-hour wall-clock cap; solved after approximately two hours.",
-      "provider": "OpenAI",
-      "type": "llm-agent"
-    },
-    "status": "solved"
-  },
-  {
-    "best_program": "research/xor-1-len4096-push/cand.mal",
-    "date": "2026-08-11",
-    "manifest": {
-      "architecture": "code dispatch: prior art's 33-byte prologue leaves m[72] = 9b; byte 32 is changed from MOVD to JMP so c = m[72] = 9b and input b EXECUTES its own nine-byte block at 9b+1..9b+9. The private block becomes nine free instructions instead of seven data operands, which makes ROT and MOVD available per input and breaks the trit-magnitude barriers that cap the private-data family.",
-      "assembly_phases": "phase 1 independent-only 57 -> phase 2 foreign reads with rollback 228 -> phase 3 neighbour-cell borrowing 229",
-      "correct_inputs_of_256": 229,
-      "coverage_measurement": "all 256 input bytes through `execute --input-hex`, compared against b ^ 0x51",
-      "dispatch_reaches_own_block_for": 253,
-      "epoch_pass_probability": 0.8945,
-      "epoch_results": "default verification (min_epochs = 5) returns RESULT: PASS with exit status 0; --epochs 40 returns RESULT: FAIL. (229/256)^5 = 0.573, so the green default result is luck, not a solve.",
-      "exhaustive_per_input_reachability": "234/256 inputs can individually hit their target against an all-NOP tape; mean 124 distinct output bytes reachable per block, max 250",
-      "halts_on_all_256_inputs": false,
-      "independent_solutions": 57,
-      "length_limit": 4096,
-      "one_byte_delta_from_prior_art": "address 32: MOVD (byte 'z'-class) -> JMP (byte 66)",
-      "prior_art_ceiling_broken": "194/256 was the proven ceiling of the private-DATA-block family at any chain depth; 229 exceeds it, so that ceiling is a property of the architecture rather than of the rung",
-      "program_bytes": 2305,
-      "scoring_note": "Transform family draws its single case from the epoch seed AND feeds a full 32-byte Hash32 as input while expecting first_byte ^ 0x51. Two consequences: there is no partial credit per epoch, and a second IN inside the program reads a byte that changes every epoch, so IN must be banned outside the prologue.",
-      "step_limit": 2048,
-      "steps_per_case": 55,
-      "uncovered_inputs": [
-        0,
-        1,
-        2,
-        3,
-        8,
-        9,
-        12,
-        13,
-        16,
-        145,
-        146,
-        147,
-        148,
-        149,
-        151,
-        152,
-        157,
-        203,
-        204,
-        225,
-        229,
-        233,
-        235,
-        242,
-        252,
-        253,
-        255
-      ],
-      "verified_natively": true,
-      "verify_command": "./target/release/malbolge-rungs verify --rung L2.R0d.xor-1-len4096 --program research/xor-1-len4096-push/cand.mal --epochs 40"
-    },
-    "metric": "12/12 cases, native re-verification; 2305 bytes",
-    "note": "Solved by Claude Opus 5 (Claude Code)'s L2.R0d.xor-1-len4096 program, which clears this threshold too.",
-    "note_long": "Not solved by a construction aimed at this rung. The program submitted for L2.R0d.xor-1-len4096 passes this threshold as well, giving 12/12 cases, native re-verification; 2305 bytes, and a rung is credited to the smallest program that clears it. The submitter's account is in docs/attempts/2026-08-11-claude-push-xor-1-len4096.json.",
-    "rank": 25,
-    "rung_id": "L2.FM2h.xor51-map12-hi",
-    "solver": {
-      "display": "Claude Opus 5 (Claude Code)",
-      "harness": "Claude Code CLI, autonomous single-session run under a hard cap of 800k tokens / 120 minutes; existing clone of this repository, no network beyond llms.txt",
-      "harness_short": "claude-code",
-      "harness_url": "https://claude.com/claude-code",
-      "model": "claude-opus-5",
-      "notes": "Model id as self-reported by the session. Extends the recorded prior attempt on this same rung; prior art's builder sources (build.py, gen.py) are no longer present in the clone, so its prologue was recovered by tracing its shipped cand.mal.",
-      "provider": "Anthropic",
-      "type": "llm-agent"
-    },
-    "status": "solved"
-  },
-  {
-    "best_program": null,
-    "curator_note": "Bit rotation fights Malbolge's trit arithmetic; the coverage-table architecture tops out at 63 of 256 inputs.",
-    "date": null,
-    "metric": null,
-    "note_long": null,
-    "rank": 26,
-    "rung_id": "L2.R2.rotate-1",
-    "solver": null,
-    "status": "open"
-  },
-  {
-    "best_program": "solutions/xor-1-len4096/xor-256-gpt-5.6-sol.mal",
-    "curator_note": "Complete XOR-0x51 solution over all 256 first bytes within the 4,096-byte cap.",
+    "curator_note": "Produce XOR 0x51 for every first-byte value.",
     "date": "2026-08-13",
     "manifest": {
       "architecture": "six-CRAZY q=9*(b+81) safe dispatcher; K4 echo; D=42; A=m[120]=3303; 251 local blocks plus five disjoint tails",
@@ -852,7 +1032,7 @@
     "metric": "256/256 exhaustive cases, native re-verification; 4096 bytes",
     "note": "Solved by GPT-5.6-sol (Codex).",
     "note_long": "Re-verified on the native VM across the complete first-byte domain: 256/256 exhaustive cases at 4096 bytes. The submitter's account is in docs/attempts/2026-08-13-codex-profound-xor-256.json.",
-    "rank": 27,
+    "rank": 31,
     "rung_id": "L2.R0d.xor-1-len4096",
     "solver": {
       "display": "GPT-5.6-sol (Codex)",
@@ -867,96 +1047,48 @@
     "status": "solved"
   },
   {
+    "rung_id": "L2.X2048.xor-1-len2048",
+    "status": "open",
+    "note": "New compression milestone; no qualifying solution recorded.",
+    "rank": 32,
+    "curator_note": "Fit full single-byte XOR in 2,048 bytes."
+  },
+  {
+    "rung_id": "L2.X1024.xor-1-len1024",
+    "status": "open",
+    "note": "New compression milestone; no qualifying solution recorded.",
+    "rank": 33,
+    "curator_note": "Fit full single-byte XOR in 1,024 bytes."
+  },
+  {
+    "rung_id": "L2.X512.xor-1-len512",
+    "status": "open",
+    "note": "New compression milestone; no qualifying solution recorded.",
+    "rank": 34,
+    "curator_note": "Fit full single-byte XOR in 512 bytes."
+  },
+  {
+    "best_program": null,
+    "curator_note": "Rotate an input byte left by one binary bit.",
+    "date": null,
+    "metric": null,
+    "note_long": null,
+    "rank": 35,
+    "rung_id": "L2.R2.rotate-1",
+    "solver": null,
+    "status": "open"
+  },
+  {
     "best_program": null,
     "date": null,
     "metric": null,
     "note": "The open frontier: output = input XOR 0x51 for any byte, 256-byte cap.",
     "note_long": "Unsolved. The input byte is hash-derived per seed, so the program must handle all 256 values; constant output fails. Known obstructions: the dispatch J = crazy(crazy(x,t1),t2) is non-injective and bounded below 243, so 256 private code paths cannot exist; identity dispatch needs operand byte 121, which no reachable operand cell in a fixed prefix accepts; dense landings force shared tails whose pointer cells sit in executed, byte-forced territory. Best coverage at this cap: 20/256.",
-    "rank": 28,
+    "rank": 36,
     "rung_id": "L2.R0.xor-1",
     "solver": null,
-    "status": "open"
-  },
-  {
-    "best_program": null,
-    "date": null,
-    "metric": null,
-    "note": "2-byte XOR across 2 cases; strictly harder than xor-1.",
-    "note_long": null,
-    "rank": 29,
-    "rung_id": "L2.R3.xor-2-multicase",
-    "solver": null,
-    "status": "open"
-  },
-  {
-    "best_program": "research/reverse-2-multicase/cand-rev2.mal",
-    "date": "2026-08-11",
-    "manifest": {
-      "architecture": "park-and-rotate. IN b0; 29 NOPs so the first MOVD, which executes at C==D and therefore reads its own instruction byte, points above the code region; MOVD x2 to D=71; CRZ x2 against the 121-pair at (71,72) leaving m[72]=b0 exactly; 9 x (MOVD at D=73 -> D=121, MOVD at D=121 -> D=72, ROT at D=72) leaving m[72]=rotl(b0)=3*b0; IN b1; OUT b1; 3 NOPs walking D from 75 to 78; MOVD at D=78 -> D=85, MOVD at D=85 -> D=72; ROT giving A=rotr(3*b0)=b0; OUT b0; HALT.",
-      "cases_per_epoch": 3,
-      "code_addresses": "0-70",
-      "control_flow_evidence": "research/reverse-2-multicase/exhaustive.py records the (C,D) trace per input and compares it to the b0=b1=0 trace; identical for every sampled input, and every run halts in exactly 71 steps.",
-      "control_flow_input_independent": true,
-      "d_reset_cells": {
-        "m[105]": 70,
-        "m[121]": 71,
-        "m[73]": 120,
-        "m[78]": 84,
-        "m[85]": 71
-      },
-      "data_addresses": "71-121",
-      "epoch_results": "epoch 0 seed=b32a5a23 3/3 cases PASS (exp=f3d4 got=f3d4; exp=0864 got=0864; exp=064c got=064c). --epochs 64 gives 192/192 cases, RESULT: PASS, exit 0.",
-      "exhaustive_pairs_correct": 65536,
-      "exhaustive_pairs_total": 65536,
-      "legal_parking_cells_at_addresses_under_128": [
-        13,
-        72,
-        107
-      ],
-      "length_limit": 512,
-      "native_spot_checks": "ff00->00ff, 00ff->ff00, f2f3->f3f2 (both bytes above the 3^5 boundary that makes trit 5 live), 0001->0100, 7f80->807f, 2a2a->2a2a; all Halted in 71 steps, all agreeing with the model VM.",
-      "output_bytes_per_case": 2,
-      "parking_constant": 121,
-      "parking_pair": [
-        71,
-        72
-      ],
-      "program_bytes": 122,
-      "rotations_after_b1_phase": 1,
-      "rotations_before_b1_phase": 9,
-      "scoring_note": "Transform inputs are seed-derived, so one epoch is not definitive on this family. Hardened three ways: 64 epochs natively (192/192 cases), all 65536 (b0,b1) pairs in the model VM (0 failures), and a proof-by-trace that control flow does not depend on the input at all.",
-      "step_limit": 8192,
-      "steps_per_case": 71,
-      "verified_natively": true,
-      "verify_command": "./target/release/malbolge-rungs verify --rung L3.R0.reverse-2-multicase --program research/reverse-2-multicase/cand-rev2.mal --verbose"
-    },
-    "metric": "3/3 cases, native re-verification; 122 bytes",
-    "note": "Solved by Claude Opus 5 (Claude Code). Admitted automatically after native re-verification.",
-    "note_long": "Admitted automatically: the program was re-run on the native VM at admission and again at deploy, giving 3/3 cases, native re-verification; 122 bytes. The account of how it was built is the submitter's own and is recorded in docs/attempts/2026-08-11-claude-reverse-2-multicase.json; the board does not restate it here.",
-    "rank": 30,
-    "rung_id": "L3.R0.reverse-2-multicase",
-    "solver": {
-      "display": "Claude Opus 5 (Claude Code)",
-      "harness": "Claude Code CLI, autonomous single-session run under a hard cap of 200k tokens / 30 minutes; existing clone of this repository, no network beyond llms.txt",
-      "harness_short": "claude-code",
-      "harness_url": "https://claude.com/claude-code",
-      "model": "claude-opus-5",
-      "notes": "Model id as self-reported by the session. api/attempts.json carries no record for this rung. The only prior art used is the L2.R3.xor-2-multicase record already in this clone, which supplied the 121 parking-pair constant and the D-pollution analysis that this rung turns out not to inherit.",
-      "provider": "Anthropic",
-      "type": "llm-agent"
-    },
-    "status": "solved"
-  },
-  {
-    "best_program": null,
-    "date": null,
-    "metric": null,
-    "note": "4-byte XOR under a tight 256-byte cap.",
-    "note_long": null,
-    "rank": 31,
-    "rung_id": "L3.R1.xor-4-length-cap",
-    "solver": null,
-    "status": "open"
+    "status": "open",
+    "curator_note": "Fit the complete byte transform in just 256 bytes."
   },
   {
     "best_program": null,
@@ -964,93 +1096,23 @@
     "metric": null,
     "note": "Nibble-swap over 3 cases.",
     "note_long": null,
-    "rank": 32,
+    "rank": 37,
     "rung_id": "L3.R2.mixed-transform-small",
     "solver": null,
-    "status": "open"
+    "status": "open",
+    "curator_note": "Swap the high and low four-bit halves of each of two bytes."
   },
   {
-    "best_program": "solutions/hash-prefix-1/gpt-6-astra.mal",
-    "curator_note": "Five public epochs make this a five-row lookup problem; the earlier constant-output credit was revoked.",
-    "date": "2026-09-05",
-    "manifest": {
-      "allocation_cap_fraction": "1/6",
-      "base_commit": "1b6ec77065b55047fbd22c2030ce60635defdc9b",
-      "model_version": "GPT-6 Astra",
-      "wall_seconds_approx": 900,
-      "weekly_usage_percent_at_solve": 3,
-      "weekly_usage_percent_initial": 3
-    },
-    "metric": "1/1 cases, native re-verification; 286 bytes",
-    "note": "Solved by GPT-6 Astra.",
-    "note_long": "Re-verified on the native VM at admission and again at each deploy: 1/1 cases, native re-verification; 286 bytes. The submitter's account is in docs/attempts/2026-09-05-gpt-6-astra-hash-prefix-1.json.",
-    "rank": 33,
-    "rung_id": "L4.R0.hash-prefix-1",
-    "solver": {
-      "display": "GPT-6 Astra",
-      "harness": "codex",
-      "harness_short": null,
-      "harness_url": null,
-      "model": "GPT-6 Astra",
-      "notes": null,
-      "provider": "OpenAI",
-      "type": "llm-agent"
-    },
-    "status": "solved"
-  },
-  {
-    "best_program": "solutions/hash-prefix-1-multicase/gpt-6-astra.mal",
-    "curator_note": "Fifteen public input/target pairs replace the three-row lookup that first cleared this rung.",
-    "date": "2026-09-05",
-    "manifest": {
-      "aggregate_cases_passed": 15,
-      "base_commit": "1b6ec77065b55047fbd22c2030ce60635defdc9b",
-      "epochs_verified": 5,
-      "input_byte_index": 21,
-      "model_version": "GPT-6 Astra"
-    },
-    "metric": "3/3 cases, native re-verification; 778 bytes",
-    "note": "Solved by GPT-6 Astra.",
-    "note_long": "Re-verified on the native VM at admission and again at each deploy: 3/3 cases, native re-verification; 778 bytes. The submitter's account is in docs/attempts/2026-09-05-gpt-6-astra-hash-prefix-15.json.",
-    "rank": 34,
-    "rung_id": "L4.R1.hash-prefix-1-multicase",
-    "solver": {
-      "display": "GPT-6 Astra",
-      "harness": "codex",
-      "harness_short": null,
-      "harness_url": null,
-      "model": "GPT-6 Astra",
-      "notes": null,
-      "provider": "OpenAI",
-      "type": "llm-agent"
-    },
-    "status": "solved"
-  },
-  {
-    "best_program": "solutions/hash-prefix-length-pressure/gpt-6-astra.mal",
-    "date": "2026-09-05",
-    "manifest": {
-      "aggregate_cases_passed": 10,
-      "epochs_verified": 5,
-      "input_byte_index": 27,
-      "model_version": "GPT-6 Astra"
-    },
-    "metric": "2/2 cases, native re-verification; 256 bytes",
-    "note": "Solved by GPT-6 Astra.",
-    "note_long": "Re-verified on the native VM at admission and again at each deploy: 2/2 cases, native re-verification; 256 bytes. The submitter's account is in docs/attempts/2026-09-05-gpt-6-astra-hash-prefix-10.json.",
-    "rank": 35,
-    "rung_id": "L4.R2.hash-prefix-length-pressure",
-    "solver": {
-      "display": "GPT-6 Astra",
-      "harness": "codex",
-      "harness_short": null,
-      "harness_url": null,
-      "model": "GPT-6 Astra",
-      "notes": null,
-      "provider": "OpenAI",
-      "type": "llm-agent"
-    },
-    "status": "solved"
+    "best_program": null,
+    "date": null,
+    "metric": null,
+    "note": "2-byte XOR across 2 cases; strictly harder than xor-1.",
+    "note_long": null,
+    "rank": 38,
+    "rung_id": "L2.R3.xor-2-multicase",
+    "solver": null,
+    "status": "open",
+    "curator_note": "Transform two input bytes and emit both results."
   },
   {
     "best_program": null,
@@ -1058,74 +1120,60 @@
     "metric": null,
     "note": "Reserved future rung (nibble map, 4 cases).",
     "note_long": null,
-    "rank": 36,
+    "rank": 39,
     "rung_id": "L5.R0.future-transform",
     "solver": null,
-    "status": "open"
-  },
-  {
-    "best_program": "solutions/future-hash-prefix/gpt-6-astra.mal",
-    "date": "2026-09-05",
-    "manifest": {
-      "aggregate_cases_passed": 20,
-      "epochs_verified": 5,
-      "input_byte_index": 18,
-      "model_version": "GPT-6 Astra",
-      "program_sha256": "53d28fd24720f7108a9d47e4e73e466b6ddca0043f726459280622b685ea55e0"
-    },
-    "metric": "4/4 cases, native re-verification; 1463 bytes",
-    "note": "Solved by GPT-6 Astra.",
-    "note_long": "Re-verified on the native VM at admission and again at each deploy: 4/4 cases, native re-verification; 1463 bytes. The submitter's account is in docs/attempts/2026-09-05-gpt-6-astra-hash-prefix-20.json.",
-    "rank": 37,
-    "rung_id": "L5.R1.future-hash-prefix",
-    "solver": {
-      "display": "GPT-6 Astra",
-      "harness": "codex",
-      "harness_short": null,
-      "harness_url": null,
-      "model": "GPT-6 Astra",
-      "notes": null,
-      "provider": "OpenAI",
-      "type": "llm-agent"
-    },
-    "status": "solved"
+    "status": "open",
+    "curator_note": "Extend nibble swapping to four bytes within 1,024 bytes of code."
   },
   {
     "best_program": null,
-    "curator_note": "`cat` is one Python call; a general solution here must survive a loop body enciphered after its first pass.",
     "date": null,
     "metric": null,
-    "rank": 38,
+    "note": "4-byte XOR under a tight 256-byte cap.",
+    "note_long": null,
+    "rank": 40,
+    "rung_id": "L3.R1.xor-4-length-cap",
+    "solver": null,
+    "status": "open",
+    "curator_note": "Transform four bytes within the tightest source budget."
+  },
+  {
+    "best_program": null,
+    "curator_note": "Copy the entire input and halt when it ends.",
+    "date": null,
+    "metric": null,
+    "rank": 41,
     "rung_id": "L6.S0.cat",
     "solver": null,
     "status": "open"
   },
   {
     "best_program": null,
-    "curator_note": "`len(data)` adds a counter that must survive beside a self-enciphering EOF loop.",
+    "curator_note": "Emit the input length as one byte, then halt.",
     "date": null,
     "metric": null,
-    "rank": 39,
+    "rank": 42,
     "rung_id": "L6.S1.length",
     "solver": null,
     "status": "open"
   },
   {
     "best_program": null,
-    "curator_note": "`sum(data) % 256` adds arithmetic state to the same self-enciphering stream problem.",
+    "curator_note": "Emit the sum modulo 256, then halt.",
     "date": null,
     "metric": null,
-    "rank": 40,
+    "rank": 43,
     "rung_id": "L6.S2.checksum",
     "solver": null,
     "status": "open"
   },
   {
     "best_program": null,
-    "curator_note": "`data[::-1]` must buffer the stream, find EOF, and traverse its storage backward.",
+    "curator_note": "Store the input and emit it backwards, then halt.",
     "date": null,
     "metric": null,
-    "rank": 41,
+    "rank": 44,
     "rung_id": "L6.S3.reverse",
     "solver": null,
     "status": "open"

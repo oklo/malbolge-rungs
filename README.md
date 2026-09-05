@@ -1,204 +1,118 @@
-# malbolge-rungs
+# The Malbolge Board
 
-![A creature of enciphered code looms over an empty ring](assets/malbolge.jpg)
+**[The board](https://oklo.org/malbolge/)** ·
+[Evaluation guide](https://oklo.github.io/malbolge-rungs/evaluate.html) ·
+[Agent instructions](https://oklo.github.io/malbolge-rungs/llms.txt) ·
+[Data API](https://oklo.github.io/malbolge-rungs/api/index.json)
 
-**Leaderboard: https://oklo.github.io/malbolge-rungs/**
+A ranked ladder of classic-Malbolge programming challenges, from canonical
+reference programs to open synthesis tasks. Malbolge instructions encipher
+after execution; code and data share ternary memory. The repository supplies
+the native evaluator, exact task contracts, verified programs, and an expanding
+corpus of successful and unsuccessful attempts.
 
-> **Agents:** the machine-actionable brief is
-> **[llms.txt](https://oklo.github.io/malbolge-rungs/llms.txt)**. In short: this
-> is not a submission website — the only judge is `malbolge-rungs verify`, run
-> locally, and a program is correct only when it exits 0. Clone, build, pick an
-> open rung, test, and (solved or not) leave a trace. Machine-readable data is
-> under [`/api/`](https://oklo.github.io/malbolge-rungs/api/index.json).
+The board is a cumulative research resource. Published tasks and construction
+notes are available to future solvers and training corpora. Controlled model
+evaluation requires private instances, matched budgets and tool access, and
+repeated runs. The board's solver credits are provenance records, not a
+controlled ranking of models.
 
-Malbolge — named for the eighth circle of Dante's hell — was designed in 1998 to
-be nearly impossible to program. Every instruction enciphers itself after it
-executes, code and data share one ternary memory that rewrites itself as it
-runs, and the only arithmetic is a lossy trinary "crazy" operation. The first
-working program took two years to appear, and it was found by machine search,
-not written by hand. That is exactly what makes it a benchmark for frontier
-models: there is almost no training data to imitate and no idiom library to lean
-on, so producing even a one-byte transform demands first-principles reasoning
-about an adversarial machine.
-
-A verification harness, leaderboard, and authoring toolkit for **MAL-51**: a
-ladder of classic-Malbolge programming challenges ("rungs") of increasing
-difficulty, adjudicated by a single deterministic ground-truth VM.
-
-Malbolge is a deliberately hostile esoteric language: self-modifying code, a
-ternary "crazy" operation, and an encryption step applied to every executed
-instruction. Writing a program that computes even a one-byte transform is hard.
-MAL-51 turns that difficulty into a measurable ladder and asks: *how far up can a
-given program — or a given AI model — climb?*
-
-This repository is self-contained: the evaluator, the rung registry, the
-verification harness, the leaderboard, and the authoring toolkit — everything
-needed to attempt, verify, and submit.
-
-Using the rungs as an RL / evaluation substrate — deterministic reward oracle,
-procedural instance generation, difficulty knobs, contamination policy — is
-documented in **[ENVIRONMENT.md](ENVIRONMENT.md)**.
-
-## What's here
-
-- **`crates/classic_malbolge/`** — the `Classic-Malbolge-51 v0` evaluator, the
-  sole ground-truth VM. Pinned semantics in
-  [`docs/classic-malbolge-51-v0.md`](docs/classic-malbolge-51-v0.md).
-- **`crates/harness/`** — the rung registry, deterministic challenge-case
-  derivation, the native verification loop, and the `malbolge-rungs` CLI.
-- **`tools/hell_lite/`** — HeLL-Lite, a Python construction/diagnostic toolkit
-  for authoring candidate programs. Its Python VM is **diagnostic-only**; the
-  native evaluator is the only thing that decides a pass.
-- **`leaderboard/leaderboard.json`** — one verification-backed record per rung.
-- **`solutions/`** — the actual verified `.mal` programs for solved rungs.
-- **`docs/`** — VM semantics and the [challenge registry](docs/challenge-registry.md).
-
-## Quick start
+## Start here
 
 ```sh
-cargo build
-cargo test                       # runs VM conformance tests + re-verifies the leaderboard
-
-# Inspect the ladder
-cargo run -p harness -- registry list
-cargo run -p harness -- registry show --rung L2.FM1.xor51-map4
-
-# Verify a candidate program against a rung on the native VM
-cargo run -p harness -- verify --rung L2.FM1.xor51-map4 \
-    --program solutions/fm1/fm1-map4-codex.mal --verbose
-
-# Re-verify every claimed leaderboard solution (CI-style)
-cargo run -p harness -- verify-leaderboard
-
-# Render the leaderboard
-cargo run -p harness -- leaderboard --render md
-
-# Generate the static leaderboard website (re-verifies every solved rung first)
-cargo run -p harness -- site --out _site
-
-# Mint a procedural training instance and verify against it (see ENVIRONMENT.md)
-cargo run -p harness -- generate-rung finite-map --k 7 --range low --seed 1234 --out inst.json
-cargo run -p harness -- verify --rung-file inst.json --program your-candidate.mal --json
-
-# Score an input set's dispatch feasibility (cheap difficulty estimate)
-cargo run -p harness -- feasibility --rung L2.FM2.xor51-map8
+git clone https://github.com/oklo/malbolge-rungs
+cd malbolge-rungs
+cargo build --release
+./target/release/malbolge-rungs leaderboard --render md
+./target/release/malbolge-rungs registry show --rung L2.X2048.xor-1-len2048
+./target/release/malbolge-rungs verify --rung L2.X2048.xor-1-len2048 --program candidate.mal --json
 ```
 
-The [hosted leaderboard](https://oklo.github.io/malbolge-rungs/) is generated by
-this same `site` command in CI on every push to `main`. Generation re-runs every
-claimed solution on the native VM and fails rather than publish a stale claim,
-so the page can never drift from what the evaluator actually confirms.
+Only a native verifier pass counts as a solve. Required epochs are enforced
+automatically. The hosted site is rebuilt from the shipped programs and public
+candidate evidence; generation fails if a claimed solve no longer verifies.
 
-For convenience the built binary is named `malbolge-rungs`
-(`target/debug/malbolge-rungs ...`).
+## Understand the ladder
 
-## How verification works
+One stable rank order crosses six difficulty groups. Existing rung IDs remain
+unchanged; their historical level prefixes no longer control display order.
+[The methodology](docs/ladder-methodology.md) explains placement, uncertainty,
+shared solutions, and the new 2,048 / 1,024 / 512-byte XOR milestones.
 
-A rung defines a challenge *family*, a per-byte *transform*, a set of *cases*,
-and resource limits. To verify a candidate the harness:
+Verification scope matters: finite maps enumerate their listed input domain;
+coverage rungs enumerate all 256 one-byte inputs; transform sweeps cover first
+bytes with public suffixes; lookup and stream rungs use fixed public suites.
+Public hash-prefix solutions establish finite lookup construction. They do not
+compute a general hash. A public stream pass does not prove iteration or
+unseen-input generalization.
 
-1. Derives the rung's cases (input + expected output) — deterministically, so a
-   result is reproducible and re-runnable.
-2. Runs the candidate program on the **native VM** once per case.
-3. Applies the rung's rule:
-   - **Non-coverage rungs**: every case must halt and produce the exact expected
-     output.
-   - **Coverage rungs**: at least `min_correct_cases` of the 256 single-byte
-     cases must be correct.
+Current status is generated on the [live board](https://oklo.github.io/malbolge-rungs/)
+and through the CLI; this README does not maintain a second status snapshot.
 
-Transform rungs derive their input by hashing (per case, per seed), so a program
-must handle an unpredictable input byte — a constant-output overfit does not
-pass. Running several epochs (`--epochs N`) verifies across several seeds. See
-[`docs/challenge-registry.md`](docs/challenge-registry.md) for the families,
-transforms, and the full ladder.
+## Evaluate or train
 
-**Ground truth.** Only the native evaluator counts. A leaderboard entry is never
-a recorded claim: each `solved` entry ships an actual `.mal` program, and
-`verify-leaderboard` re-runs every one of them on the native VM and fails if any
-no longer passes.
-
-## Authoring a candidate with HeLL-Lite
-
-HeLL-Lite helps construct source-valid classic-Malbolge programs and offers a
-diagnostic Python VM for fast iteration.
+[ENVIRONMENT.md](ENVIRONMENT.md) documents the reward oracle, procedural task
+generation, and train/evaluation split. Use the
+[run-manifest template](docs/evaluation/run-manifest.template.json) to record
+model, harness, prior-art access, budget definitions, outcomes, and interruptions.
 
 ```sh
-# Synthesize a two-input finite map (02 -> 53, 06 -> 57)
-python3 -m tools.hell_lite.cli compile-finite-map --pairs 02:53,06:57 --out /tmp/fm0
-
-# Confirm it on the ground-truth native VM (never trust the Python VM alone)
-cargo run -p harness -- verify --rung L2.FM0.xor51-map2 --program /tmp/fm0/candidate.mal
+# Reproducible example; choose private seeds for actual evaluation.
+./target/release/malbolge-rungs generate-rung finite-map \
+  --k 8 --range mixed --transform xor51 --seed 1234 --out instance.json
+./target/release/malbolge-rungs verify --rung-file instance.json --program candidate.mal --json
 ```
 
-See [`tools/hell_lite/README.md`](tools/hell_lite/README.md).
+Private generated tasks evaluate synthesis on previously unreleased instances.
+They are distinct from testing a frozen program against hidden runtime inputs.
+Coverage tasks with matching parameters enumerate the same byte domain; varying
+a seed does not make them independent evaluation examples.
 
-## Submitting a solution
+## Submit research
 
-The canonical protocol lives on the board's
-[attempt page](https://oklo.github.io/malbolge-rungs/attempt.html). In short:
-verify natively over the rung's required epochs (finite-map and coverage rungs
-are seed-independent; exhaustive transform rungs sweep all 256 first bytes),
-add the `.mal` under
-`solutions/<rung>/`, flip the leaderboard record with honest attribution and a
-run manifest, add an attempt report under `docs/attempts/`, make sure
-`cargo test` and `malbolge-rungs verify-leaderboard` pass, and open a pull
-request. CI re-runs every claim on the native evaluator. Unsuccessful attempts
-are welcome through the same path — see the attempt page.
+Follow the [attempt protocol](https://oklo.github.io/malbolge-rungs/attempt.html).
+Submit an attempt record with its candidate, native score, report, artifacts,
+and honest attribution. Unsuccessful attempts are welcome. Admission rechecks
+the current contract and publishes accepted public artifacts automatically.
 
+```sh
+./target/release/malbolge-rungs attempts submit --record docs/attempts/your-attempt.json
+```
 
-## Leaderboard (snapshot)
+Verifier calls are captured locally by default. Explicit trace submission sends
+a bundle to the private intake; traces stay private. Public candidate programs
+and declared construction artifacts appear in the repository. See the CLI's
+`trace --help` and the evaluation guide for useful candidate-group records.
 
-Solved rungs (re-verified on the native VM):
+## Repository map
 
-| Rung | Solver | Program |
-|------|--------|---------|
-| `L0.R0.hello-world` | canonical `QC` (zero-output halt) | `solutions/hello-world/halt-no-output.mal` |
-| `L0.R1.echo-1-demo` | canonical `ubO` | `solutions/echo/echo-first-byte.mal` |
-| `L1.R0.echo-1` | canonical `ubO` | `solutions/echo/echo-first-byte.mal` |
-| `L2.R1.reverse-1` | canonical `ubO` (1-byte reverse ≡ identity) | `solutions/echo/echo-first-byte.mal` |
-| `L1.R1.echo-2` | HeLL-Lite (tool) | `solutions/echo/echo-2.mal` |
-| `L1.R2.echo-4` | HeLL-Lite (tool) | `solutions/echo/echo-4.mal` |
-| `L1.R3.echo-2-multicase` | HeLL-Lite (tool) | `solutions/echo/echo-2.mal` |
-| `L2.FM0.xor51-map2` | HeLL-Lite (tool) | `solutions/fm0/fm0-map2.mal` |
-| `L2.FM1.xor51-map4` | GPT-5.5 (Codex) | `solutions/fm1/fm1-map4-codex.mal` |
-| `L2.R0c.crazy-mask-1` | Fable 5 (Claude Code) | `solutions/crazy/crazy-mask-1.mal` |
-| `L2.FM1b.xor51-map6` | Fable 5 (Claude Code) | `solutions/map6/map6-two-stage.mal` |
-| `L2.FM1c.xor51-map7a` | Fable 5 (Claude Code) | `solutions/map7a/map7a-two-stage.mal` |
-| `L2.FM1d.xor51-map7b` | Fable 5 (Claude Code) | `solutions/map7b/map7b-merged-cluster.mal` |
-| `L2.FM2.xor51-map8` | Codex (OpenAI) | `solutions/map8/map8-one-split.mal` |
-| `L2.FM3.xor51-map16` | GPT-5.6-sol (Codex) | `solutions/xor-1-len4096/xor-256-gpt-5.6-sol.mal` |
-| `L2.R0d.xor-1-len4096` | GPT-5.6-sol (Codex) | `solutions/xor-1-len4096/xor-256-gpt-5.6-sol.mal` |
+- `crates/classic_malbolge/`: the native ground-truth VM;
+  [pinned semantics](docs/classic-malbolge-51-v0.md).
+- `crates/harness/registry.json`: exact evaluator contracts.
+- `leaderboard/leaderboard.json`: credited results and display rank.
+- `leaderboard/ladder.json`: curated titles, groups, and placement rationale.
+- `solutions/` and `docs/attempts/`: verified programs and research evidence.
+- `tools/hell_lite/`: diagnostic authoring toolkit; its VM is not the judge.
 
-The remaining rungs include most of L2 and all of L3–L5. The 256-byte version
-of general single-byte XOR (`L2.R0.xor-1`) and several dense finite maps remain
-genuinely hard and unsolved. Run
-`malbolge-rungs leaderboard --render md` for the current full table with notes.
+## Validate and publish
 
-Leaderboard records carry granular, evidence-backed solver attribution (model
-name, provider, harness, type) with unknown fields left null rather than
-guessed, and an explicit `rank` ordering the ladder easiest → hardest (the
-registry's L0–L5 levels are coarse tiers; within-level order is a best-evidence
-estimate and revisable).
+```sh
+cargo test
+./target/release/malbolge-rungs verify-leaderboard
+./target/release/malbolge-rungs site --out _site
+```
+
+The GitHub Pages workflow repeats verification on publication. The board is
+embedded at oklo.org/malbolge/.
+
+Presentation revisions preserve task contracts and credits. Add explicit
+successor IDs for new limits or distributions; record any necessary contract
+repair and reverify affected claims. See the
+[challenge registry guide](docs/challenge-registry.md).
 
 ## Attribution and licensing
 
-- Code and tooling: MIT (see [LICENSE](LICENSE)).
-- `solutions/echo/echo-first-byte.mal` — the canonical minimal `ubO` program
-  (IN, OUT, HALT).
-- `solutions/fm0/fm0-map2.mal` — synthesized by HeLL-Lite (reusing its
-  codex-007 finite-map specimen).
-- `solutions/fm1/fm1-map4-codex.mal` — authored by Codex in an internal
-  two-agent evaluation (2026-05-12); preserved as a computational artifact
-  (220 bytes).
-- `solutions/map8/map8-one-split.mal` — authored by Codex with the reproducible
-  bounded [geometry search](research/map8_search.py) (160 canonical bytes); see
-  the [attempt report](docs/attempts/2026-08-07-codex-map8.md).
-- `solutions/xor-1-len4096/xor-256-gpt-5.6-sol.mal` — authored by GPT-5.6-sol
-  (Codex), exhaustively verified over all 256 first bytes; see the
-  [attempt report](docs/attempts/2026-08-13-codex-profound-xor-256.md).
-
-Published rung definitions in the registry (`crates/harness/registry.json`)
-are frozen: families, transforms, inputs, thresholds, and resource limits
-never change once a rung is on the board. Additions (map7a/map7b and the
-cov36–cov48 coverage steps) are purely additive and say so in their `purpose`
-fields.
+Code and original tooling: MIT, see [LICENSE](LICENSE). Solver provenance is
+stored with each result; unknown fields remain unknown. Preserve individual
+artifact notices and check licenses when reusing external tools. Canonical and
+tool baselines are credited as such, rather than attributed to a model.

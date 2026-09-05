@@ -1,0 +1,13 @@
+{
+  "schema": "malbolge-rungs.evaluation-manifest.v1",
+  "run_id": null,
+  "status": "planned",
+  "model": {"provider": null, "exact_id": null, "settings": {}},
+  "harness": {"name": null, "version": null, "tools": [], "parallel_workers": null},
+  "environment": {"repository_commit": null, "platform": null, "hardware": null, "clean_workspace": null},
+  "task": {"rung_id": null, "rung_digest": null, "instance_sha256": null, "split": null, "seed_disclosure": "keep evaluation seeds private until the experiment ends"},
+  "protocol": {"repetitions": null, "prior_art_access": null, "selection_rule": null, "stopping_rule": null, "declared_limits": {}},
+  "usage": {"input_tokens": null, "cached_input_tokens": null, "output_tokens": null, "token_counter_definitions": null, "elapsed_seconds": null, "search_cpu_seconds": null, "evaluator_calls": null, "usage_source": null},
+  "result": {"passed": null, "candidate_sha256": null, "native_result_path": null, "interruption_reason": null},
+  "trace": {"action_observation_log": null, "candidate_groups": null, "reward_definition": null, "license": null, "availability": null}
+}

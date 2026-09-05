@@ -8,6 +8,7 @@ pub mod dispatch;
 pub mod fspath;
 pub mod generate;
 pub mod hashing;
+pub mod ladder;
 pub mod leaderboard;
 pub mod registry;
 pub mod site;

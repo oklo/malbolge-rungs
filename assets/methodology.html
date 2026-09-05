@@ -1,0 +1,26 @@
+<main class="document">
+<p class="eyebrow">Reading the evidence</p><h1>How the ladder is ordered</h1>
+<p class="doc-intro">One curriculum, from reference programs to open research targets. The ranking is a revisable judgment about tasks; it is not a league table of models.</p>
+<h2>What rank means</h2>
+<p>Read the numbered board downward. Six difficulty groups mark the progression from basic copying through input-dependent construction, coverage, compact arithmetic, multiple-byte transforms, and variable-length programs. Existing L0–L6 identifiers remain stable reference names; their prefixes no longer determine display order.</p>
+<p>Most placements are <strong>provisional</strong>: they use verified constructions, failed attempts, and resource pressure. Adjacent ranks are not equal steps, and task difficulty can change sharply when a new construction method appears. Solving a rung does not automatically move it. Within the XOR compression sequence, tighter size limits give a defensible relative order because the other requirements match.</p>
+<h2>What a solved rung means</h2>
+<p>The shipped program produces the required output and halts within that rung’s limits on every required test, or clears its explicit coverage threshold. The site reruns the native verifier before publication. Check the verification scope beside each result:</p>
+<table><thead><tr><th>Scope</th><th>Evidence supplied</th></tr></thead><tbody>
+<tr><td>Fixed inputs</td><td>Every input in the published finite-map domain is checked.</td></tr>
+<tr><td>All 256 input bytes</td><td>Every one-byte input is checked. Coverage milestones accept a stated number of correct cases.</td></tr>
+<tr><td>First-byte sweep</td><td>All 256 first-byte values are checked; the remaining input bytes are fixed public samples. This does not enumerate every multi-byte tuple or establish independence from the suffix.</td></tr>
+<tr><td>Public lookup rows</td><td>A fixed table of public inputs and target bytes is realized. The historical “hash-prefix” tasks use a seed withheld from the program, so a pass measures table construction.</td></tr>
+<tr><td>Public stream cases</td><td>Whole-output behavior and halt on 81 public strings. This pressures iteration but does not prove a loop, arbitrary-length correctness, or performance on unseen strings.</td></tr>
+</tbody></table>
+<h2>What partial scores mean</h2>
+<p>Partial scores are measured by the native verifier. First-byte sweeps report correct cases across the full sweep; coverage tasks report correct input bytes. Public lookup and stream attempts report their <strong>worst epoch</strong>, not total correctness across all epochs. A score of 0/3 can therefore coexist with some correct cases elsewhere in the suite. Click a rung for the detailed evidence.</p>
+<p>Partial scores compare candidates on the same contract. A 68/256 XOR result and a 62/256 rotation result do not prove that one task is easier. Research reports may establish ceilings for a specified construction family; those are not global bounds on all Malbolge programs. The reported September 5 interruption supplies no completed new result for the remaining multiple-byte tasks.</p>
+<h2>What model credits mean</h2>
+<p>Credits identify the contributor’s reported model, harness, and provenance. Canonical and tool-generated baselines remain visible at the beginning. Some later programs clear several earlier milestones: “Shared solution” makes that correlation visible. These are not independent model trials.</p>
+<p>Budgets and research narratives are contributor-reported. Different sessions had different tool access, prior art, and search compute. The published records do not support a controlled ranking of models or a claim that the highest open task marks any particular model’s capability limit.</p>
+<h2>Calibration that can improve with evidence</h2>
+<p>The three new XOR caps—2,048, 1,024, and 512 bytes—bridge the solved 4,096-byte construction and the open 256-byte target. Their relative constraint ordering is established; their solve rates and budget requirements have not been measured.</p>
+<p>Next calibration work should repeat bounded attempts on matched tasks, retain failures and interrupted runs, and report success versus total search budget. Streaming needs pilot tasks for EOF classification and reusable control flow before new intermediate rungs receive difficulty claims. New or changed contracts should use explicit successor IDs; historical results retain their original contract evidence.</p>
+<p><a href="evaluate.html">Run a controlled evaluation &rarr;</a> · <a href="https://github.com/oklo/malbolge-rungs/blob/main/docs/ladder-methodology.md">Ordering rationale and revision policy</a> · <a href="api/ladder.json">Machine-readable placements</a></p>
+</main>

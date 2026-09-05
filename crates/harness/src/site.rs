@@ -1,8 +1,7 @@
 //! Static leaderboard-site generator.
 //!
 //! `malbolge-rungs site --out <dir>` renders the leaderboard as a small static
-//! website: an index table (grouped by level, ordered by difficulty inside each
-//! level) plus one detail page per rung. Solved rungs additionally show the
+//! website: one ranked curriculum with explicit evidence scope plus one detail page per rung. Solved rungs additionally show the
 //! winning program, granular solver attribution, the program hash, and a
 //! verification transcript.
 //!
@@ -102,37 +101,6 @@ td.note .txt {
   text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom;
 }
 td.num { text-align: right; font-variant-numeric: tabular-nums; }
-/* Collapsed level. A level whose every rung is solved shows as one row that
-   expands to the rows themselves. The board runs no JavaScript, so the toggle is
-   a hidden checkbox and a sibling selector — and it stays one table throughout,
-   which keeps the columns aligned between a summary row and the rows it hides. */
-input.lvl-toggle { position: absolute; opacity: 0; width: 0; height: 0; }
-tbody.lvl-rows { display: none; }
-#show-L0:checked ~ table tbody.lvl-0 { display: table-row-group; }
-#show-L1:checked ~ table tbody.lvl-1 { display: table-row-group; }
-#show-L2:checked ~ table tbody.lvl-2 { display: table-row-group; }
-#show-L3:checked ~ table tbody.lvl-3 { display: table-row-group; }
-#show-L4:checked ~ table tbody.lvl-4 { display: table-row-group; }
-#show-L5:checked ~ table tbody.lvl-5 { display: table-row-group; }
-#show-L6:checked ~ table tbody.lvl-6 { display: table-row-group; }
-#show-L7:checked ~ table tbody.lvl-7 { display: table-row-group; }
-#show-L8:checked ~ table tbody.lvl-8 { display: table-row-group; }
-#show-L9:checked ~ table tbody.lvl-9 { display: table-row-group; }
-tr.lvl-summary td { color: var(--text-soft); }
-tr.lvl-summary label { cursor: pointer; font-family: var(--sans);
-  font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; }
-tr.lvl-summary label:hover { color: var(--accent); }
-tr.lvl-summary .marker::before { content: "\25b8  "; }
-#show-L0:checked ~ table tr.sum-0 .marker::before { content: "\25be  "; }
-#show-L1:checked ~ table tr.sum-1 .marker::before { content: "\25be  "; }
-#show-L2:checked ~ table tr.sum-2 .marker::before { content: "\25be  "; }
-#show-L3:checked ~ table tr.sum-3 .marker::before { content: "\25be  "; }
-#show-L4:checked ~ table tr.sum-4 .marker::before { content: "\25be  "; }
-#show-L5:checked ~ table tr.sum-5 .marker::before { content: "\25be  "; }
-#show-L6:checked ~ table tr.sum-6 .marker::before { content: "\25be  "; }
-#show-L7:checked ~ table tr.sum-7 .marker::before { content: "\25be  "; }
-#show-L8:checked ~ table tr.sum-8 .marker::before { content: "\25be  "; }
-#show-L9:checked ~ table tr.sum-9 .marker::before { content: "\25be  "; }
 th.num { text-align: right; }
 .solved { color: var(--solved); }
 .open { color: var(--faint); }
@@ -216,7 +184,11 @@ fn esc(s: &str) -> String {
 /// URLs pass (every legitimate harness home is https); anything else yields
 /// `None` and the link is dropped.
 fn safe_url(url: &str) -> Option<String> {
-    if url.trim_start().to_ascii_lowercase().starts_with("https://") {
+    if url
+        .trim_start()
+        .to_ascii_lowercase()
+        .starts_with("https://")
+    {
         Some(esc(url))
     } else {
         None
@@ -228,15 +200,34 @@ mod tests {
     use super::safe_url;
 
     #[test]
+    fn index_keeps_every_rank_visible_and_escapes_contributor_text() {
+        let mut records = crate::leaderboard::load_leaderboard();
+        records
+            .iter_mut()
+            .find_map(|r| r.solver.as_mut())
+            .unwrap()
+            .display = "<script>alert(1)</script>".into();
+        let html = super::index_body(&records, &[], &Default::default(), "test");
+        assert_eq!(html.matches("class=\"rung-row\"").count(), records.len());
+        assert_eq!(html.matches("class=\"difficulty-group\"").count(), 6);
+        assert!(!html.contains("lvl-toggle"));
+        assert!(html.contains("&lt;script&gt;alert(1)&lt;/script&gt;"));
+        assert!(!html.contains("<script>alert(1)</script>"));
+        assert!(html.contains("Public lookup · 20 rows / two-byte outputs"));
+        assert!(html.contains("256-value first-byte sweep"));
+        assert!(html.contains("evaluate.html"));
+    }
+
+    #[test]
     fn safe_url_allows_only_https() {
         assert!(safe_url("https://github.com/oklo").is_some());
         assert!(safe_url("  https://x.io").is_some()); // leading space tolerated
         for bad in [
             "javascript:alert(1)",
-            "http://example.com",          // non-TLS dropped
+            "http://example.com", // non-TLS dropped
             "data:text/html,<script>x",
             "vbscript:x",
-            "HTTPS\u{0009}://x",           // tab-obfuscated scheme
+            "HTTPS\u{0009}://x", // tab-obfuscated scheme
             "",
         ] {
             assert!(safe_url(bad).is_none(), "{bad:?} must be dropped");
@@ -264,9 +255,10 @@ fn page(title: &str, depth: usize, body: &str) -> String {
     format!(
         "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n\
          <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n\
-         <title>{}</title>\n<style>{}</style>\n</head>\n<body>\n{}{}\n</body>\n</html>\n",
+         <title>{}</title>\n<meta name=\"description\" content=\"A ranked ladder of verifiable Malbolge programming challenges, with native-checked solutions, failed attempts, and reproducible evaluation protocols.\">\n<style>{}\n{}</style>\n</head>\n<body>\n{}{}\n</body>\n</html>\n",
         esc(title),
         CSS,
+        include_str!("../../../assets/board.css"),
         back,
         body
     )
@@ -296,9 +288,8 @@ pub fn generate_site(out_dir: &Path, epochs: u32) -> Result<()> {
             .with_context(|| format!("{}: rung not in registry", record.rung_id))?;
         // Symlink-safe: the program bytes are rendered into the published page,
         // so a committed symlink must not be able to point outside the repo.
-        let safe_path =
-            crate::fspath::resolve_within_repo(Path::new(REPO_ROOT), &program_rel)
-                .map_err(|e| anyhow::anyhow!("{}: {e}", record.rung_id))?;
+        let safe_path = crate::fspath::resolve_within_repo(Path::new(REPO_ROOT), &program_rel)
+            .map_err(|e| anyhow::anyhow!("{}: {e}", record.rung_id))?;
         let program = std::fs::read(&safe_path)
             .with_context(|| format!("{}: reading {program_rel}", record.rung_id))?;
         // Never publish on fewer epochs than the rung's family needs. The
@@ -358,6 +349,20 @@ pub fn generate_site(out_dir: &Path, epochs: u32) -> Result<()> {
         out_dir.join("attempt.html"),
         page("attempt a rung", 0, &attempt_body(&generated)),
     )?;
+    for (file, title, body) in [
+        (
+            "methodology.html",
+            "how the ladder is ordered",
+            include_str!("../../../assets/methodology.html"),
+        ),
+        (
+            "evaluate.html",
+            "for labs and evaluators",
+            include_str!("../../../assets/evaluate.html"),
+        ),
+    ] {
+        std::fs::write(out_dir.join(file), page(title, 0, body))?;
+    }
     for record in &records {
         let rung = find_rung(&record.rung_id)
             .with_context(|| format!("{}: rung not in registry", record.rung_id))?;
@@ -385,7 +390,15 @@ pub fn generate_site(out_dir: &Path, epochs: u32) -> Result<()> {
             page(
                 &record.rung_id,
                 1,
-                &detail_body(record, &rung, entry, &rung_attempts, origin, agg, &generated),
+                &detail_body(
+                    record,
+                    &rung,
+                    entry,
+                    &rung_attempts,
+                    origin,
+                    agg,
+                    &generated,
+                ),
             ),
         )?;
     }
@@ -443,33 +456,28 @@ attempt maps what was already tried, where it stopped, and often ships the\n\
 search code that got there. Recent progress has come from reading the last\n\
 attempt and taking one step further.\n\
 \n\
-The ladder is grouped by LEVEL — L0, L1, L2 and so on. A level is a kind of\n\
-problem rather than a difficulty band: each is a best-effort step past the one\n\
-before, and the ordering between them drifts. Within a level it is real — solved\n\
-rungs first, then the open ones, hardest last. Compare freely inside a level,\n\
-read a jump between levels as a change of subject, and take difficulty from the\n\
-rank and the recorded attempts rather than from how simple a transform sounds.\n\
+The board is one stable ranked curriculum with six difficulty groups. Legacy\n\
+identifiers L0-L6 remain reference names, not display difficulty levels. Solving\n\
+a rung does not reorder it. Exact cross-task placements are provisional; the\n\
+XOR compression caps have a nested relative order. Read methodology.html and\n\
+api/ladder.json for placement rationale and verification scope.\n\
 \n\
-Four kinds of rung. Finite maps (`xor51-mapN`) fix a few input bytes, one output\n\
-each — the lowest-ranked open rungs and where most solves have happened; start\n\
-here. Coverage rungs (`xor51-covNN`) score all 256 inputs and pass at a\n\
-threshold, so partial progress counts short of a solve; cov32 through cov96 are\n\
-solved, most of them by one program. Full transforms (`xor-1`, `rotate-1`) demand\n\
-all 256 outputs. Stream rungs (`cat`, `length`, `checksum`, `reverse`) draw the\n\
-input LENGTH from the seed and are designed to pressure iteration: the intended\n\
-solution reads until the input runs out, a loop, which in this machine means\n\
-code enciphered by its own first pass. None is solved.\n\
-`feasibility --rung <id>` estimates a finite map's difficulty.\n\
+Finite maps enumerate published input lists. Coverage rungs enumerate all 256\n\
+one-byte inputs and pass at a threshold. Transform rungs sweep all first-byte\n\
+values with public sampled suffixes; they do not enumerate every multi-byte\n\
+tuple. Hash-prefix rungs are finite public lookups, not hash computation.\n\
+Stream rungs test a fixed public suite of variable-length inputs and pressure\n\
+iteration without proving a loop or unseen-input generalization.\n\
 \n\
-Some rungs carry a `min_epochs`. Their inputs and targets are redrawn from the\n\
-challenge seed every epoch, so one lucky draw proves nothing and a constant-output\n\
-program is not a solve. `verify` runs at least that many for you whatever you\n\
-pass, and `registry show --rung <id>` prints it. Passing locally is passing here.\n\
+Public candidate scores come from native verification. First-byte sweeps use\n\
+the sum across epochs; other multi-epoch attempts report their worst epoch.\n\
+Read candidate reports as attributed claims: family-specific bounds are not\n\
+global impossibility proofs. An interrupted run is incomplete.\n\
 \n\
-Rank is an editorial ordering, not a scale. Adjacent rungs need not be equally\n\
-difficult, and one new architecture may clear several at once — the cov32..cov96\n\
-band fell mostly to one program. Ranks move and rungs get inserted as evidence\n\
-accumulates.\n\
+For controlled model comparisons use evaluate.html: privately generated\n\
+synthesis instances, matched budgets, declared prior-art access, and repeated\n\
+runs including failures. The public board is cumulative research and cannot\n\
+itself supply uncontaminated model rankings.\n\
 \n\
 ## Do this\n\
 \n\
@@ -549,8 +557,38 @@ fn write_api(out_dir: &Path, generated: &str, attempts: &[AttemptRecord]) -> Res
     std::fs::create_dir_all(&api)?;
     let root = PathBuf::from(REPO_ROOT);
 
-    std::fs::copy(root.join("crates/harness/registry.json"), api.join("registry.json"))?;
-    std::fs::copy(root.join("leaderboard/leaderboard.json"), api.join("leaderboard.json"))?;
+    std::fs::copy(
+        root.join("crates/harness/registry.json"),
+        api.join("registry.json"),
+    )?;
+    std::fs::copy(
+        root.join("leaderboard/leaderboard.json"),
+        api.join("leaderboard.json"),
+    )?;
+
+    let ladder = crate::ladder::load_ladder();
+    let records = load_leaderboard();
+    let placements: Vec<_> = records
+        .iter()
+        .map(|record| {
+            let rung = find_rung(&record.rung_id).expect("registry rung");
+            let placement = ladder
+                .rungs
+                .iter()
+                .find(|p| p.rung_id == record.rung_id)
+                .expect("placement");
+            serde_json::json!({"rank": record.rank, "placement": placement,
+            "verification": crate::ladder::evidence(&rung),
+            "rung_digest": crate::attempts::rung_digest(&record.rung_id)})
+        })
+        .collect();
+    std::fs::write(
+        api.join("ladder.json"),
+        serde_json::to_string_pretty(&serde_json::json!({
+            "schema": ladder.schema, "revision": ladder.revision, "generated": generated,
+            "ordering": ladder.ordering, "bands": ladder.bands, "rungs": placements
+        }))?,
+    )?;
 
     // Serialize the parsed AttemptRecord structs (the public DTO), not the raw
     // files: only known fields are emitted, so an unknown field in a submitted
@@ -626,6 +664,7 @@ fn write_api(out_dir: &Path, generated: &str, attempts: &[AttemptRecord]) -> Res
             ],
             "endpoints": {
                 "registry": "registry.json",
+                "ladder": "ladder.json",
                 "leaderboard": "leaderboard.json",
                 "attempts": "attempts.json",
                 "attempt_stats": "attempt-stats.json",
@@ -668,195 +707,154 @@ fn index_body(
     aggregates: &std::collections::BTreeMap<String, crate::stats::RungAggregate>,
     generated: &str,
 ) -> String {
+    let ladder = crate::ladder::load_ladder();
     let mut b = String::new();
-    // For agents reading raw source: the reliable channels are the visible
-    // "Attempt a rung." link and /llms.txt; this comment is a free extra for
-    // source-readers and costs the human page nothing.
-    let _ = writeln!(
+    let open = records.iter().filter(|r| r.status == Status::Open).count();
+    let next_open = records.iter().find(|r| r.status == Status::Open).map(|r| {
+        let p = ladder.rungs.iter().find(|p| p.rung_id == r.rung_id).expect("placement");
+        format!("<p class=\"next-open\"><span>Next open rung</span> <a href=\"s/{}.html\">#{:02} · {} &rarr;</a></p>", esc(&r.rung_id), r.rank.unwrap_or(0), esc(&p.title))
+    }).unwrap_or_default();
+    let _ = write!(
         b,
-        "<!-- Agents: this is a read-only leaderboard, not a submission form. The \
-         judge is `malbolge-rungs verify`, run locally (exit 0 = solved). Machine \
-         brief: /llms.txt · Data: /api/index.json -->"
+        r##"<main>
+<header class="board-header">
+<div><p class="eyebrow">Verifiable program synthesis</p><h1 class="board-title">The Malbolge Board</h1>
+<p class="board-intro">From the first working programs to the open frontier.</p>
+<p class="board-deck">A ladder of programming challenges in a language whose instructions rewrite themselves. Every solved rung ships a program that passes the native verifier.</p></div>
+<img class="board-art" src="malbolge.jpg" alt="A creature of enciphered code overlooking an arena" width="160" height="160">
+</header>
+<nav class="primary-nav" aria-label="Resources"><a class="action" href="attempt.html">Attempt a rung &rarr;</a><a href="evaluate.html">For labs &amp; evaluators</a><a href="methodology.html">How the ladder is ordered</a><a href="api/index.json">Data &amp; API</a></nav>
+<div class="board-stats" aria-label="Board status"><div><strong>{}</strong><span>ranked rungs</span></div><div><strong>{}</strong><span>verified solves</span></div><div><strong>{open}</strong><span>open challenges</span></div></div>
+{next_open}<p class="reading-guide">Read downward from foundations to frontier. <strong>Rank is an editorial difficulty estimate</strong>; neighboring tasks need not be equally spaced. A solve fills a rung without moving it. Model credits describe these submissions, not a controlled model ranking.</p>
+<nav class="band-nav" aria-label="Difficulty groups">"##,
+        records.len(),
+        solved.len()
     );
-    let _ = writeln!(b, "<h1 class=\"board-title\">the malbolge board</h1>");
-    let _ = writeln!(
-        b,
-        "<img class=\"hero\" src=\"malbolge.jpg\" alt=\"A creature of enciphered \
-         code looms over an empty ring\">"
-    );
-    let _ = writeln!(
-        b,
-        "<p class=\"intro\">Malbolge is a \
-         public-domain programming language designed to be nearly impossible to program \
-         in. Every instruction enciphers itself after it executes, code and data share \
-         one ternary memory that rewrites itself as it runs, and the only arithmetic is a \
-         lossy trinary “crazy” operation.</p>\n\
-         <p class=\"intro\">Although it has exhibited limited utility in software \
-         development environments, Malbolge provides a \
-         compelling benchmarking framework for frontier models and their agentic harnesses. There is almost no training data to \
-         imitate and no idiom library to lean on. Even a one-byte transform \
-         demands first-principles reasoning in the face of an adversarial finite-state machine.</p>\n\
-         <p class=\"intro\">The empty rungs await the minds that will solve them.</p>"
-    );
-    let _ = writeln!(
-        b,
-        "<p class=\"sub lead\"><a href=\"attempt.html\">Attempt a rung.</a></p>"
-    );
-
-    // A level whose every rung is solved collapses to one row. Levels are
-    // contiguous in rank order, so each is a single run that a <tbody> can wrap.
-    // Levels with any open rung stay expanded — that is where the reader is
-    // going.
-    let mut level_total: std::collections::BTreeMap<u32, usize> = Default::default();
-    let mut level_solved: std::collections::BTreeMap<u32, usize> = Default::default();
-    for r in records {
-        let lvl = find_rung(&r.rung_id).map(|x| x.level).unwrap_or(0);
-        *level_total.entry(lvl).or_default() += 1;
-        if r.status == Status::Solved {
-            *level_solved.entry(lvl).or_default() += 1;
-        }
-    }
-    let collapsed: std::collections::BTreeSet<u32> = level_total
-        .iter()
-        .filter(|(lvl, total)| level_solved.get(lvl).copied().unwrap_or(0) == **total)
-        .map(|(lvl, _)| *lvl)
-        .collect();
-    for lvl in &collapsed {
-        let _ = writeln!(
+    for band in &ladder.bands {
+        let _ = write!(
             b,
-            "<input type=\"checkbox\" id=\"show-L{lvl}\" class=\"lvl-toggle\">"
+            "<a href=\"#band-{}\"><span>{}</span> {}</a>",
+            esc(&band.id),
+            esc(&band.number),
+            esc(&band.title)
         );
     }
-
-    let _ = writeln!(
-        b,
-        "<table>\n<tr><th class=\"num\">#</th><th>rung</th><th>status</th><th>model</th>\
-         <th>harness</th><th>date</th><th class=\"num\">bytes</th>\
-         <th class=\"num\">attempts</th><th>notes</th></tr>"
-    );
-
-    let mut open_group: Option<u32> = None;
-    for record in records {
-        let lvl = find_rung(&record.rung_id).map(|x| x.level).unwrap_or(0);
-        // Leaving a collapsed level closes its group.
-        if open_group.is_some_and(|g| g != lvl) {
-            let _ = writeln!(b, "</tbody>");
-            open_group = None;
+    let _ = write!(b, "</nav><div class=\"board-controls\" hidden><label for=\"rung-search\">Find a task</label> <input id=\"rung-search\" type=\"search\" placeholder=\"Name, model, or rung ID\"><button id=\"open-filter\" type=\"button\" aria-pressed=\"false\">Open only</button><span id=\"filter-count\" aria-live=\"polite\"></span></div>");
+    let _ = write!(b, "<table class=\"ladder\"><caption class=\"sr-only\">Malbolge challenges in estimated difficulty order</caption><thead><tr><th scope=\"col\">Rank</th><th scope=\"col\">Challenge</th><th scope=\"col\">Result</th><th scope=\"col\">Verification scope</th><th scope=\"col\">Credited solver</th><th scope=\"col\">Code / cap</th></tr></thead>");
+    for band in &ladder.bands {
+        let _ = write!(b, "<tbody id=\"band-{}\" class=\"difficulty-group\"><tr class=\"band-heading\"><th colspan=\"6\" scope=\"rowgroup\"><span class=\"band-number\">{}</span> {}<small>{}</small></th></tr>", esc(&band.id), esc(&band.number), esc(&band.title), esc(&band.description));
+        for record in records {
+            let p = ladder
+                .rungs
+                .iter()
+                .find(|p| p.rung_id == record.rung_id)
+                .expect("rung presentation");
+            if p.band != band.id {
+                continue;
+            }
+            let rung = find_rung(&record.rung_id).expect("registry rung");
+            let ev = crate::ladder::evidence(&rung);
+            let entry = solved
+                .iter()
+                .find(|(id, _)| *id == record.rung_id)
+                .map(|(_, e)| e);
+            let bytes = entry
+                .map(|e| {
+                    classic_malbolge::canonicalize_fixture_source(&e.program)
+                        .map(|c| c.len())
+                        .unwrap_or(e.program.len())
+                        .to_string()
+                })
+                .unwrap_or_else(|| "—".into());
+            let link = format!("s/{}.html", esc(&record.rung_id));
+            let result = if record.status == Status::Solved {
+                let extra = if rung.is_coverage() {
+                    entry
+                        .and_then(|e| e.outcome.epochs.first())
+                        .map(|e| {
+                            format!(
+                                "<small>{}/256 correct · ≥{} required</small>",
+                                e.correct_cases,
+                                rung.required_correct()
+                            )
+                        })
+                        .unwrap_or_default()
+                } else {
+                    "<small>Full contract passed</small>".into()
+                };
+                format!("<span class=\"status solved\">Solved</span>{extra}")
+            } else {
+                let extra = aggregates
+                    .get(&record.rung_id)
+                    .and_then(|a| a.best_fragment())
+                    .map(|score| {
+                        format!(
+                            "<small>Best {}</small><small class=\"score-unit\">{}</small>",
+                            esc(&score),
+                            ev.score_unit
+                        )
+                    })
+                    .unwrap_or_else(|| "<small>No verified candidate score</small>".into());
+                format!("{}{}", status_cell(record), extra)
+            };
+            let solver = record
+                .solver
+                .as_ref()
+                .map(|s| {
+                    format!(
+                        "<a href=\"{link}#solver\">{}</a>{}",
+                        esc(&s.display),
+                        record
+                            .date
+                            .as_ref()
+                            .map(|d| format!("<small>{}</small>", esc(d)))
+                            .unwrap_or_default()
+                    )
+                })
+                .unwrap_or_else(|| "<span class=\"awaiting\">Awaiting a solve</span>".into());
+            let shared = record.best_program.as_ref().is_some_and(|prog| {
+                records.iter().any(|other| {
+                    other.rung_id != record.rung_id && other.best_program.as_ref() == Some(prog)
+                })
+            });
+            let att = aggregates
+                .get(&record.rung_id)
+                .map(|a| a.attempts)
+                .unwrap_or(0);
+            let _ = write!(b, "<tr class=\"rung-row\" data-open=\"{}\" data-id=\"{}\"><td class=\"rank\">{:02}</td><th scope=\"row\" class=\"challenge\"><a href=\"{link}\">{}</a><small>{}</small><span class=\"row-meta\">{}{}{}</span></th><td class=\"result\">{result}</td><td class=\"scope\"><a href=\"{link}#evidence\">{}</a></td><td class=\"credit\">{solver}</td><td class=\"code-size\">{bytes}<small>/ {} bytes</small></td></tr>", record.status == Status::Open, esc(&record.rung_id), record.rank.unwrap_or(0), esc(&p.title), esc(&p.summary), if p.calibration == "nested-limit" { "Nested size limit" } else if p.calibration == "baseline" { "Reference baseline" } else { "Provisional placement" }, if shared { " · Shared solution" } else { "" }, if att > 0 { format!(" · <a href=\"{link}#attempts\">{att} recorded</a>") } else { String::new() }, esc(&ev.label), rung.max_program_len);
         }
-        // Entering one opens a summary row plus the group it hides.
-        if collapsed.contains(&lvl) && open_group.is_none() {
-            let n = level_total.get(&lvl).copied().unwrap_or(0);
-            let first = record.rank.unwrap_or(0);
-            let last = first + n as u32 - 1;
-            let _ = writeln!(
-                b,
-                "<tr class=\"lvl-summary sum-{lvl}\"><td class=\"num dim\">{first}–{last}</td>\
-                 <td colspan=\"8\"><label for=\"show-L{lvl}\"><span class=\"marker\"></span>\
-                 L{lvl} — {n} rungs, all solved</label></td></tr>"
-            );
-            let _ = writeln!(b, "<tbody class=\"lvl-rows lvl-{lvl}\">");
-            open_group = Some(lvl);
-        }
-        let entry = solved
-            .iter()
-            .find(|(id, _)| *id == record.rung_id)
-            .map(|(_, e)| e);
-        // Canonical length: the identity the evaluator judges (outer
-        // whitespace trimmed), not the on-disk file length.
-        let bytes_cell = entry
-            .map(|e| {
-                classic_malbolge::canonicalize_fixture_source(&e.program)
-                    .map(|c| c.len())
-                    .unwrap_or(e.program.len())
-                    .to_string()
-            })
-            .unwrap_or_else(|| "—".to_string());
-        // Model links to the rung's solver block (the in-repo provenance record);
-        // harness links to its public home when one exists.
-        let model_cell = match record.solver.as_ref().and_then(|s| s.model.as_ref()) {
-            Some(model) => format!(
-                "<a href=\"s/{}.html#solver\">{}</a>",
-                esc(&record.rung_id),
-                esc(model)
-            ),
-            None => "—".to_string(),
-        };
-        let harness_cell = match record.solver.as_ref().and_then(|s| s.harness_short.as_ref()) {
-            Some(short) => match record.solver.as_ref().and_then(|s| s.harness_url.as_ref()).and_then(|u| safe_url(u)) {
-                Some(url) => format!("<a href=\"{}\">{}</a>", url, esc(short)),
-                None => esc(short),
-            },
-            None => "—".to_string(),
-        };
-        let date_cell = esc(record.date.as_deref().unwrap_or("—"));
-        // A rung with recorded attempts links its count to the attempts
-        // section of the detail page (the public info an attempt left behind);
-        // a rung with none stays an unlinked em dash.
-        let att_cell = match aggregates.get(&record.rung_id) {
-            Some(a) if a.attempts > 0 => format!(
-                "<a href=\"s/{}.html#attempts\">{}</a>",
-                esc(&record.rung_id),
-                a.attempts
-            ),
-            _ => "—".to_string(),
-        };
-        // The curator's description of the rung outranks the machine's credit
-        // note in the compressed cell; the detail page carries both.
-        let note = record
-            .curator_note
-            .as_deref()
-            .or(record.note.as_deref())
-            .unwrap_or("");
-        // Link out whenever there is more to read than the compressed cell shows.
-        let more = if record.note_long.is_some()
-            || (record.curator_note.is_some() && record.note.is_some())
-            || note.len() > 40
-        {
-            format!(" <a href=\"s/{}.html\">more</a>", esc(&record.rung_id))
-        } else {
-            String::new()
-        };
-        let _ = writeln!(
-            b,
-            "<tr><td class=\"num dim\">{0}</td>\
-             <td><a href=\"s/{1}.html\">{1}</a></td><td>{2}</td><td>{3}</td><td>{4}</td>\
-             <td class=\"dim\">{5}</td><td class=\"num\">{6}</td>\
-             <td class=\"num dim\">{7}</td>\
-             <td class=\"note\"><span class=\"txt\">{8}</span>{9}</td></tr>",
-            record.rank.map(|r| r.to_string()).unwrap_or_default(),
-            esc(&record.rung_id),
-            status_cell(record),
-            model_cell,
-            harness_cell,
-            date_cell,
-            bytes_cell,
-            att_cell,
-            esc(note),
-            more,
-        );
+        let _ = write!(b, "</tbody>");
     }
-    // A collapsed level at the very end of the ladder leaves its group open.
-    // Not reachable while L0/L1 are the only complete levels and sort first,
-    // but it becomes reachable the moment a trailing level is finished.
-    if open_group.is_some() {
-        let _ = writeln!(b, "</tbody>");
-    }
-    let _ = writeln!(b, "</table>");
-
-    let _ = writeln!(
+    let _ = write!(
         b,
-        "<footer>Solved status is regenerated from the shipped programs and the native VM. \
-         Attribution, manifests, and attempt narratives are contributor-supplied. \
-         Reproduce locally: <code>cargo run -p harness -- verify-leaderboard</code>. \
-         Generated {}.</footer>",
+        r##"</table><p id="no-results" hidden>No matching tasks. Clear the search or turn off “Open only”.</p>
+<section class="lab-callout"><div><p class="eyebrow">A reproducible research resource</p><h2>Bring a model. Leave a verifiable result.</h2><p>Use the public ladder for cumulative research, or privately generated tasks for a controlled evaluation. Programs, failed attempts, and construction artifacts make each result inspectable.</p></div><a href="evaluate.html">Evaluation protocol &rarr;</a></section>
+<footer>Every solve and public candidate score is rechecked on the native VM during publication. Attribution and budgets are contributor-reported. Submitted research bounds retain their authors’ scope and provenance.<br><a href="methodology.html">Calibration &amp; limitations</a> · <a href="{REPO_URL}">Source</a> · <a href="llms.txt">Agent instructions</a> · Built {}</footer></main>
+<script>
+(() => {{
+  const controls = document.querySelector('.board-controls'); controls.hidden = false;
+  const search = document.querySelector('#rung-search'), button = document.querySelector('#open-filter');
+  function filter() {{
+    const query = search.value.trim().toLowerCase(), onlyOpen = button.getAttribute('aria-pressed') === 'true';
+    let count = 0;
+    document.querySelectorAll('.rung-row').forEach(row => {{
+      row.hidden = (onlyOpen && row.dataset.open !== 'true') || !(row.textContent + ' ' + row.dataset.id).toLowerCase().includes(query);
+      if (!row.hidden) count++;
+    }});
+    document.querySelectorAll('.difficulty-group').forEach(group => {{ group.hidden = !Array.from(group.querySelectorAll('.rung-row')).some(row => !row.hidden); }});
+    document.querySelector('#filter-count').textContent = count + ' shown';
+    document.querySelector('#no-results').hidden = count !== 0;
+  }}
+  search.addEventListener('input', filter);
+  button.addEventListener('click', () => {{ button.setAttribute('aria-pressed', button.getAttribute('aria-pressed') !== 'true'); filter(); }});
+  filter();
+}})();
+</script>"##,
         esc(generated)
     );
     b
 }
 
-/// The instructions page, written for an agent (or person) attempting a
-/// solution: contract first, exact commands, the load-bearing machine facts,
-/// pointers to prior art, and the submission protocol.
 fn attempt_body(generated: &str) -> String {
     let mut b = String::new();
     let _ = writeln!(b, "<h1>Attempt a rung</h1>");
@@ -877,8 +875,10 @@ fn attempt_body(generated: &str) -> String {
     let _ = writeln!(b, "<h2>Select a rung</h2>");
     let _ = writeln!(
         b,
-        "<p class=\"long\">The <a href=\"index.html\">board</a> groups rungs by level; inside \
-         each level the solved ones come first and the open ones follow, hardest last. \
+        "<p class=\"long\">The <a href=\"index.html\">board</a> uses one ranked curriculum with \
+         six difficulty groups. Solving a rung does not move it. Read \
+         <a href=\"methodology.html\">the ordering rationale</a> and \
+         <a href=\"evaluate.html\">evaluation protocol</a>. \
          <code>registry show --rung &lt;id&gt;</code> prints a rung's exact contract: input \
          derivation, expected outputs, the resource limits a qualifying program must respect, \
          and any <code>min_epochs</code>. Finite-map rungs (fixed input bytes, one output \
@@ -1054,7 +1054,7 @@ fn attempt_body(generated: &str) -> String {
          <code>MALBOLGE_RUNGS_TRACE_OFF=1</code>. Traces go to a private intake and are \
          not published. They become part of a research corpus of verified \
          problem-solving trajectories — the search, not just the answer. The transcript, \
-         your reasoning, is optional but the most valuable part.</p>"
+         your action/observation record and concise decision summaries, is optional. Native call capture alone does not record external search or prove authorship.</p>"
     );
 
     let _ = writeln!(b, "<footer>Generated {}.</footer>", esc(generated));
@@ -1063,16 +1063,18 @@ fn attempt_body(generated: &str) -> String {
 
 fn render_notes(b: &mut String, record: &LeaderboardRecord) {
     if record.curator_note.is_some() || record.note.is_some() || record.note_long.is_some() {
-        let _ = writeln!(b, "<h2>Notes</h2>");
+        let _ = writeln!(b, "<h2>Task notes</h2>");
         if let Some(cur) = &record.curator_note {
             let _ = writeln!(b, "<p class=\"long\">{}</p>", esc(cur));
         }
+        let _ = writeln!(b, "<details><summary>Earlier record notes</summary><p class=\"long\">Retained for provenance; these notes may predate current calibration. See the verification scope and placement rationale above.</p>");
         if let Some(note) = &record.note {
             let _ = writeln!(b, "<p class=\"long\">{}</p>", esc(note));
         }
         if let Some(long) = &record.note_long {
             let _ = writeln!(b, "<p class=\"long\">{}</p>", esc(long));
         }
+        let _ = writeln!(b, "</details>");
     }
 }
 
@@ -1097,12 +1099,13 @@ fn render_attempts(b: &mut String, attempts: &[&AttemptRecord]) {
             (None, Some(_)) => "unverifiable".to_string(),
             (None, None) => "—".to_string(),
         };
-        let mut links = format!(
-            "<a href=\"{REPO_URL}/blob/main/{}\">json</a>",
-            esc(&a.path)
-        );
+        let mut links = format!("<a href=\"{REPO_URL}/blob/main/{}\">json</a>", esc(&a.path));
         if let Some(report) = &a.report {
-            let _ = write!(links, " · <a href=\"{REPO_URL}/blob/main/{}\">report</a>", esc(report));
+            let _ = write!(
+                links,
+                " · <a href=\"{REPO_URL}/blob/main/{}\">report</a>",
+                esc(report)
+            );
         }
         // Lineage: the prior attempts this one built on, so the corpus's
         // compounding is visible on the page, not just implied.
@@ -1119,7 +1122,11 @@ fn render_attempts(b: &mut String, attempts: &[&AttemptRecord]) {
                         .file_stem()
                         .map(|s| s.to_string_lossy().to_string())
                         .unwrap_or_else(|| prior.clone());
-                    format!("<a href=\"{REPO_URL}/blob/main/{}\">{}</a>", esc(prior), esc(&label))
+                    format!(
+                        "<a href=\"{REPO_URL}/blob/main/{}\">{}</a>",
+                        esc(prior),
+                        esc(&label)
+                    )
                 })
                 .collect();
             if !cited.is_empty() {
@@ -1141,11 +1148,7 @@ fn render_attempts(b: &mut String, attempts: &[&AttemptRecord]) {
 
 /// Aggregate attempt headline: shown on every open rung (a `0 recorded`
 /// invitation included), and on solved rungs once attempts exist.
-fn render_attempt_summary(
-    b: &mut String,
-    open: bool,
-    agg: Option<&crate::stats::RungAggregate>,
-) {
+fn render_attempt_summary(b: &mut String, open: bool, agg: Option<&crate::stats::RungAggregate>) {
     let attempts = agg.map(|a| a.attempts).unwrap_or(0);
     if attempts == 0 && !open {
         return;
@@ -1188,18 +1191,38 @@ fn detail_body(
     generated: &str,
 ) -> String {
     let mut b = String::new();
-    let _ = writeln!(b, "<h1>{}</h1>", esc(&record.rung_id));
+    let ladder = crate::ladder::load_ladder();
+    let title = ladder
+        .rungs
+        .iter()
+        .find(|p| p.rung_id == record.rung_id)
+        .map(|p| p.title.as_str())
+        .unwrap_or(&rung.title);
+    let _ = writeln!(
+        b,
+        "<h1>{}</h1><p><code>{}</code></p>",
+        esc(title),
+        esc(&record.rung_id)
+    );
     let _ = writeln!(
         b,
         "<p class=\"sub\">{} · {}</p>",
-        esc(&rung.title),
-        status_cell(record)
-            .replace("<span", "<span style=\"font-weight:600\"")
+        "Native verification status",
+        status_cell(record).replace("<span", "<span style=\"font-weight:600\"")
     );
 
+    let ladder = crate::ladder::load_ladder();
+    if let Some(p) = ladder.rungs.iter().find(|p| p.rung_id == rung.id) {
+        let ev = crate::ladder::evidence(rung);
+        let _ = writeln!(b, "<h2 id=\"evidence\">What this result establishes</h2><p class=\"long\"><strong>{}</strong>. {}</p><p class=\"long\">Placement: {} <a href=\"../methodology.html\">How rank is interpreted</a>.</p>", esc(&ev.label), esc(&ev.detail), esc(&p.rationale));
+    }
     let _ = writeln!(b, "<h2>Challenge</h2>\n<dl>");
     if let Some(rank) = record.rank {
-        let _ = writeln!(b, "<dt>ladder rank</dt><dd>#{rank} (level L{})</dd>", rung.level);
+        let _ = writeln!(
+            b,
+            "<dt>ladder rank</dt><dd>#{rank} (historical identifier L{})</dd>",
+            rung.level
+        );
     }
     let _ = writeln!(
         b,
@@ -1224,18 +1247,28 @@ fn detail_body(
         );
     }
     if let Some(m) = rung.min_correct_cases {
-        let _ = writeln!(b, "<dt>pass threshold</dt><dd>≥ {m} of {} correct</dd>", rung.cases);
+        let _ = writeln!(
+            b,
+            "<dt>pass threshold</dt><dd>≥ {m} of {} correct</dd>",
+            rung.cases
+        );
     }
     let _ = writeln!(
         b,
         "<dt>limits</dt><dd>program ≤ {} bytes, ≤ {} steps/case</dd>",
         rung.max_program_len, rung.max_steps_per_case
     );
-    if !rung.purpose.is_empty() {
-        let _ = writeln!(b, "<dt>purpose</dt><dd>{}</dd>", esc(&rung.purpose));
+    if let Some(p) = ladder.rungs.iter().find(|p| p.rung_id == rung.id) {
+        let _ = writeln!(b, "<dt>task summary</dt><dd>{}</dd>", esc(&p.summary));
     }
+    let _ = writeln!(b, "<dt>exact contract</dt><dd><a href=\"../api/registry.json\">Registry JSON</a> · <code>{}</code></dd>", esc(&rung.id));
     let _ = writeln!(b, "</dl>");
 
+    if let Some(solver) = &record.solver {
+        if let Some(url) = solver.harness_url.as_deref().and_then(safe_url) {
+            let _ = writeln!(b, "<p><a href=\"{url}\">Harness documentation</a></p>");
+        }
+    }
     if let Some(entry) = entry {
         let source = String::from_utf8_lossy(&entry.program);
         // The evaluator canonicalizes source (newline normalization, outer
@@ -1333,9 +1366,18 @@ fn detail_body(
             .windows(2)
             .all(|w| w[0].cases == w[1].cases);
         if rung.sweeps_first_byte() {
-            let total: u64 = entry.outcome.epochs.iter().map(|e| u64::from(e.total_cases)).sum();
-            let correct: u64 =
-                entry.outcome.epochs.iter().map(|e| u64::from(e.correct_cases)).sum();
+            let total: u64 = entry
+                .outcome
+                .epochs
+                .iter()
+                .map(|e| u64::from(e.total_cases))
+                .sum();
+            let correct: u64 = entry
+                .outcome
+                .epochs
+                .iter()
+                .map(|e| u64::from(e.correct_cases))
+                .sum();
             let _ = writeln!(
                 b,
                 "<p class=\"long\">Exhaustive sweep: epoch <i>i</i> pins case <i>j</i>'s \

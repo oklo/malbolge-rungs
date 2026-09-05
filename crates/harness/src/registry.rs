@@ -1,9 +1,8 @@
 //! The MAL-51 rung ladder, embedded at compile time from `registry.json`.
 //!
-//! Published rung definitions are frozen: families, transforms, inputs,
-//! thresholds, and resource limits never change once a rung is on the board.
-//! Additions (map7a/map7b, the cov36–cov48 steps) are strictly additive and
-//! say so in their `purpose` fields.
+//! Presentation is maintained separately in `leaderboard/ladder.json`.
+//! Prefer additive successor IDs for changed task limits or distributions;
+//! explicit contract repairs require digest tracking and re-verification.
 
 use crate::types::Rung;
 

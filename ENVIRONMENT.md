@@ -1,22 +1,15 @@
 # Using the rungs as a training / evaluation environment
 
-This repo is usable directly as a verifiable environment for reinforcement
-learning and model evaluation: deterministic binary reward from a native VM,
-procedural instance generation with a difficulty estimator, graded
-partial-credit variants for reward shaping, sub-millisecond episodes, and a
-domain with essentially no pretraining corpus. This page is the contract; it is
-written for the engineer wiring the harness into a training loop, not for
-Malbolge enthusiasts.
+This repository provides deterministic native program verification, public
+research tasks, procedural finite-map instances, and graded coverage rewards.
+It can support synthesis evaluation and reinforcement-learning experiments.
+The [lab guide](https://oklo.github.io/malbolge-rungs/evaluate.html) provides a
+reporting protocol and [manifest template](docs/evaluation/run-manifest.template.json).
 
-## Why this domain
-
-Malbolge programs cannot be imitated from training data — the total public
-corpus of working programs is a few dozen specimens, most of them machine-found.
-Producing one requires reasoning about an adversarial machine (self-enciphering
-instructions, code/data co-advancement, a lossy ternary operation) from first
-principles. The same scarcity that makes it a good benchmark makes it a good RL
-domain: reward can only be earned by constructing a working program, and the
-checker cannot be gamed — it runs the program.
+Malbolge is a compact, demanding construction environment. The public corpus
+includes working programs, toolkits, and detailed prior attempts; assume it can
+enter training data. The verifier establishes execution results. Authorship,
+search trajectories, and comparative model ability require separate evidence.
 
 ## The reward oracle
 
@@ -74,10 +67,13 @@ changes will bump the schema tag.
 - **FiniteMap** and **CoverageTransform** rungs derive their cases from the
   rung definition alone — no seed enters. One epoch is sufficient; extra epochs
   re-confirm the same cases.
-- **Transform / EchoPrefix / HashPrefix** rungs hash their inputs from
-  `SHA-256(domain, rung_id, epoch)`, so a program must handle unpredictable
-  bytes; `--epochs N` sweeps N distinct deterministic seeds. Constant-output
-  overfits do not pass.
+- **Transform** rungs with `exhaustive_first_byte` sweep all 256 first-byte
+  values for each case; suffix bytes remain deterministic public samples. This
+  does not enumerate all input strings or all multi-byte tuples.
+- **EchoPrefix / HashPrefix / Stream** use deterministic public suites derived
+  from the rung ID and epoch. Multiple epochs expand those suites; they do not
+  make the inputs hidden. HashPrefix targets include a seed the program does
+  not receive and therefore measure finite public lookup construction.
 - The native Rust evaluator is the **only** ground truth. The Python VM in
   `tools/hell_lite/` is a diagnostic aid for authoring and must never be used
   for scoring.
@@ -88,7 +84,7 @@ Measured on a laptop (Apple silicon, release build): a one-case rung verifies
 in well under a millisecond of compute; a full 256-case coverage episode,
 process startup included, completes in under 200 ms. Step caps (typically 2048
 steps/case) bound the worst case, so a pathological candidate cannot stall the
-loop. Millions of episodes a day on one machine is unremarkable.
+loop. Measure your actual task mix: stream and large-search workloads have different costs.
 
 ## Procedural instance generation
 
@@ -175,21 +171,31 @@ method summary, free-form budget and manifest, and optionally a best-candidate
 program with its claimed per-case score. Claimed scores are re-run on the
 native VM in CI and must match exactly, so unsolved records carry the same
 evidentiary weight as leaderboard solves: verified negative results with
-their consumed budgets, in a domain with no pretraining corpus. `malbolge-rungs attempts list` and
+their consumed budgets, in a domain with a public, growing construction corpus. `malbolge-rungs attempts list` and
 `attempts validate` are the machine interface.
 
-## A curriculum that matches the measured difficulty ladder
+## Curriculum and calibration
 
-Empirically grounded ordering, easiest to hardest, for XOR-family training:
+The board uses one explicit rank order across six difficulty groups. See
+[the placement methodology](docs/ladder-methodology.md) and
+[`api/ladder.json`](https://oklo.github.io/malbolge-rungs/api/ladder.json).
+Exact cross-task placements are provisional. Solves do not automatically
+reorder tasks. The new XOR caps (2,048, 1,024, 512 bytes) form nested constraints
+between the solved 4,096-byte construction and open 256-byte task, but have no
+measured solve-rate calibration yet.
 
-1. `id` finite maps (echo suffices — floor check for the harness wiring),
-2. `crazy` transform (per-trit realizable, no carry obstruction),
-3. `xor51` finite maps at k=2,4 (solved by models),
-4. k=6..8 mixed/high range (solved on the public ladder),
-5. low-range finite maps and k≥12 (dispatch separation collapses),
-6. coverage thresholds 32→36→40→48→64 (graded generality),
-7. full single-byte XOR (`L2.R0.xor-1`) — open, with proven structural
-   ceilings documented in the rung notes.
+Generated finite-map curricula can vary count, input range, transform, and
+resource limits. Dispatch feasibility predicts a particular routing family's
+options, not universal task difficulty. Use repeated matched trials, include
+failures and infrastructure interruptions, and report success versus budget.
+Do not compare model capability using raw rung count or unrelated partial
+scores. Multiple rungs cleared by the same program are correlated evidence.
+
+Private finite-map generation holds out synthesis instances until an agent's
+run begins. It is distinct from hidden runtime evaluation of a frozen program.
+Coverage tasks with matching parameters enumerate the same 256 inputs and
+are not independent examples merely because a seed changes. The board does
+not currently supply a hosted hidden-input stream evaluator.
 
 ## What this establishes, and what it does not
 
@@ -215,7 +221,7 @@ with that scope in mind — three things it does not establish on its own:
   aggregate's provenance-tier note).
 
 So the board is a sound program-correctness ladder and a clean source of
-verifiable, ungameable reward. Using it as a frontier-model benchmark means
+verifiable reward on the declared cases. Using it as a frontier-model benchmark means
 supplying the missing evidence yourself: private held-out instances for
 generalization, and your own provenance record for who did what. The verifiable
 core is real; the trust boundary around it is yours to set.
@@ -228,6 +234,7 @@ static files, no auth, no rate limits beyond GitHub Pages:
 | Endpoint | Contents |
 |----------|----------|
 | `/api/index.json` | directory of endpoints, generation stamp, intake URL |
+| `/api/ladder.json` | display ranks, placement rationales, and verification scope |
 | `/api/registry.json` | the full rung ladder (definitions, limits) |
 | `/api/leaderboard.json` | every record: status, solver attribution, notes, manifests |
 | `/api/attempts.json` | the public attempt corpus, one object per record |
@@ -241,10 +248,11 @@ removals or meaning changes bump the tag.
 ## Leave a trace
 
 The board provides the judge, the ladder, the prior art, and the
-practice-instance generator; participants can leave traces. With
-`MALBOLGE_RUNGS_TRACE_DIR` set, every `verify`/`execute` call appends one JSON
-line — timestamp, session, full candidate bytes, canonical hash, outcome — so
-the file is the complete search trajectory of the attempt. `trace bundle`
+practice-instance generator; participants can leave traces. By default, every `verify`/`execute` call appends one JSON
+line to a local capture directory (override with `MALBOLGE_RUNGS_TRACE_DIR`) — timestamp, session, full candidate bytes, canonical hash, outcome — so
+the file records native evaluator calls. External searches, prompts, candidate
+groups, and selection decisions require additional action/observation logs;
+the capture alone is not the complete search trajectory. `trace bundle`
 packs it with a session transcript and a provenance manifest;
 `trace submit` posts it to a private intake (`https://oklo.org/malbolge-api/submit.php`).
 

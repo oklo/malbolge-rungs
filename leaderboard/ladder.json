@@ -1,0 +1,397 @@
+{
+  "schema": "malbolge-rungs.ladder.v1",
+  "revision": "2026-09-05",
+  "ordering": "Editorial curriculum, easiest to frontier; not a measured model ranking or equal-interval scale. Status changes do not reorder tasks.",
+  "bands": [
+    {
+      "id": "foundations",
+      "number": "1",
+      "title": "Foundations",
+      "description": "Load, halt, and copy fixed amounts of input. Canonical programs and early tool baselines establish the floor."
+    },
+    {
+      "id": "construction",
+      "number": "2",
+      "title": "Input-dependent construction",
+      "description": "Route inputs, realize small maps, and fit public lookup tables. Placement across these tasks is an editorial estimate."
+    },
+    {
+      "id": "coverage",
+      "number": "3",
+      "title": "Coverage to full XOR",
+      "description": "Increase byte coverage, then reach all 256 first-byte values. Several milestones share a winning program."
+    },
+    {
+      "id": "compact",
+      "number": "4",
+      "title": "Compact arithmetic",
+      "description": "Compress full XOR and solve a neighboring 256-byte rotation task. The XOR size ordering follows from nested limits."
+    },
+    {
+      "id": "multibyte",
+      "number": "5",
+      "title": "Multiple-byte transforms",
+      "description": "Transform several bytes within tight limits. Cross-task placement is provisional; first-byte sweeps do not enumerate all byte tuples."
+    },
+    {
+      "id": "streams",
+      "number": "6",
+      "title": "Variable-length programs",
+      "description": "Handle streams with an unknown endpoint: copy, count, accumulate, then reverse. These frontier placements await successful constructions."
+    }
+  ],
+  "rungs": [
+    {
+      "rung_id": "L0.R0.hello-world",
+      "band": "foundations",
+      "title": "Halt without output",
+      "summary": "Load a valid program and stop cleanly.",
+      "calibration": "baseline",
+      "rationale": "Verified canonical or tool baseline. Similar slots are retained for historical continuity."
+    },
+    {
+      "rung_id": "L0.R1.echo-1-demo",
+      "band": "foundations",
+      "title": "Echo one byte · demo",
+      "summary": "Copy one input byte; canonical baseline.",
+      "calibration": "baseline",
+      "rationale": "Verified canonical or tool baseline. Similar slots are retained for historical continuity."
+    },
+    {
+      "rung_id": "L1.R0.echo-1",
+      "band": "foundations",
+      "title": "Echo one byte",
+      "summary": "Copy one input byte and halt.",
+      "calibration": "baseline",
+      "rationale": "Verified canonical or tool baseline. Similar slots are retained for historical continuity."
+    },
+    {
+      "rung_id": "L2.R1.reverse-1",
+      "band": "foundations",
+      "title": "Reverse one byte · identity",
+      "summary": "A one-byte reversal leaves the byte unchanged.",
+      "calibration": "baseline",
+      "rationale": "Verified canonical or tool baseline. Similar slots are retained for historical continuity."
+    },
+    {
+      "rung_id": "L1.R1.echo-2",
+      "band": "foundations",
+      "title": "Echo two bytes",
+      "summary": "Copy two bytes in order.",
+      "calibration": "baseline",
+      "rationale": "Verified canonical or tool baseline. Similar slots are retained for historical continuity."
+    },
+    {
+      "rung_id": "L1.R3.echo-2-multicase",
+      "band": "foundations",
+      "title": "Echo two bytes · multiple cases",
+      "summary": "The same echo program must pass additional cases.",
+      "calibration": "baseline",
+      "rationale": "Verified canonical or tool baseline. Similar slots are retained for historical continuity."
+    },
+    {
+      "rung_id": "L1.R2.echo-4",
+      "band": "foundations",
+      "title": "Echo four bytes",
+      "summary": "Extend fixed-width copying to four bytes.",
+      "calibration": "baseline",
+      "rationale": "Verified canonical or tool baseline. Similar slots are retained for historical continuity."
+    },
+    {
+      "rung_id": "L2.FM0.xor51-map2",
+      "band": "construction",
+      "title": "XOR map · 2 inputs",
+      "summary": "Map two published input bytes to their XOR targets.",
+      "calibration": "provisional",
+      "rationale": "Placement uses published constructions, routing geometry, and size pressure. Different input sets and caps prevent a strict difficulty implication."
+    },
+    {
+      "rung_id": "L2.FM1.xor51-map4",
+      "band": "construction",
+      "title": "XOR map · 4 inputs",
+      "summary": "Route four published inputs to distinct answers.",
+      "calibration": "provisional",
+      "rationale": "Placement uses published constructions, routing geometry, and size pressure. Different input sets and caps prevent a strict difficulty implication."
+    },
+    {
+      "rung_id": "L2.R0c.crazy-mask-1",
+      "band": "construction",
+      "title": "Native ternary transform",
+      "summary": "Apply the machine’s crazy operation with a fixed mask.",
+      "calibration": "provisional",
+      "rationale": "Placement uses published constructions, routing geometry, and size pressure. Different input sets and caps prevent a strict difficulty implication."
+    },
+    {
+      "rung_id": "L3.R0.reverse-2-multicase",
+      "band": "construction",
+      "title": "Reverse two bytes",
+      "summary": "Remember two input bytes and emit them in reverse order.",
+      "calibration": "provisional",
+      "rationale": "Placement uses published constructions, routing geometry, and size pressure. Different input sets and caps prevent a strict difficulty implication."
+    },
+    {
+      "rung_id": "L2.FM1b.xor51-map6",
+      "band": "construction",
+      "title": "XOR map · 6 inputs",
+      "summary": "Expand input-dependent routing to six published inputs.",
+      "calibration": "provisional",
+      "rationale": "Placement uses published constructions, routing geometry, and size pressure. Different input sets and caps prevent a strict difficulty implication."
+    },
+    {
+      "rung_id": "L2.FM1c.xor51-map7a",
+      "band": "construction",
+      "title": "XOR map · 7 inputs A",
+      "summary": "Add a seventh input to the six-input map.",
+      "calibration": "provisional",
+      "rationale": "Placement uses published constructions, routing geometry, and size pressure. Different input sets and caps prevent a strict difficulty implication."
+    },
+    {
+      "rung_id": "L2.FM1d.xor51-map7b",
+      "band": "construction",
+      "title": "XOR map · 7 inputs B",
+      "summary": "A different seventh input crowds the known routing layouts.",
+      "calibration": "provisional",
+      "rationale": "Placement uses published constructions, routing geometry, and size pressure. Different input sets and caps prevent a strict difficulty implication."
+    },
+    {
+      "rung_id": "L2.FM2.xor51-map8",
+      "band": "construction",
+      "title": "XOR map · 8 inputs",
+      "summary": "Fit the full eight-input routing construction.",
+      "calibration": "provisional",
+      "rationale": "Placement uses published constructions, routing geometry, and size pressure. Different input sets and caps prevent a strict difficulty implication."
+    },
+    {
+      "rung_id": "L4.R0.hash-prefix-1",
+      "band": "construction",
+      "title": "Public lookup · 5 rows",
+      "summary": "Fit five public input/target rows; one output byte per row.",
+      "calibration": "provisional",
+      "rationale": "Placement uses published constructions, routing geometry, and size pressure. Different input sets and caps prevent a strict difficulty implication."
+    },
+    {
+      "rung_id": "L4.R1.hash-prefix-1-multicase",
+      "band": "construction",
+      "title": "Public lookup · 15 rows",
+      "summary": "Fit fifteen public rows within 1,024 bytes.",
+      "calibration": "provisional",
+      "rationale": "Placement uses published constructions, routing geometry, and size pressure. Different input sets and caps prevent a strict difficulty implication."
+    },
+    {
+      "rung_id": "L4.R2.hash-prefix-length-pressure",
+      "band": "construction",
+      "title": "Public lookup · 10 rows / 256 bytes",
+      "summary": "Fit ten public rows under a much tighter size limit.",
+      "calibration": "provisional",
+      "rationale": "Placement uses published constructions, routing geometry, and size pressure. Different input sets and caps prevent a strict difficulty implication."
+    },
+    {
+      "rung_id": "L2.FM2h.xor51-map12-hi",
+      "band": "construction",
+      "title": "XOR map · 12 high inputs",
+      "summary": "Route twelve published inputs from the high byte range.",
+      "calibration": "provisional",
+      "rationale": "Placement uses published constructions, routing geometry, and size pressure. Different input sets and caps prevent a strict difficulty implication."
+    },
+    {
+      "rung_id": "L2.FM2l.xor51-map12-low",
+      "band": "construction",
+      "title": "XOR map · 12 low inputs",
+      "summary": "Route twelve published low inputs with crowded landing addresses.",
+      "calibration": "provisional",
+      "rationale": "Placement uses published constructions, routing geometry, and size pressure. Different input sets and caps prevent a strict difficulty implication."
+    },
+    {
+      "rung_id": "L2.FM3.xor51-map16",
+      "band": "construction",
+      "title": "XOR map · 16 inputs",
+      "summary": "Scale the finite map to sixteen published input bytes.",
+      "calibration": "provisional",
+      "rationale": "Placement uses published constructions, routing geometry, and size pressure. Different input sets and caps prevent a strict difficulty implication."
+    },
+    {
+      "rung_id": "L5.R1.future-hash-prefix",
+      "band": "construction",
+      "title": "Public lookup · 20 rows / two-byte outputs",
+      "summary": "Fit twenty public rows, producing two target bytes per row.",
+      "calibration": "provisional",
+      "rationale": "Placement uses published constructions, routing geometry, and size pressure. Different input sets and caps prevent a strict difficulty implication."
+    },
+    {
+      "rung_id": "L2.C0.xor51-cov32",
+      "band": "coverage",
+      "title": "XOR coverage · 32 of 256",
+      "summary": "Raise correct-byte coverage within the stated program budget.",
+      "calibration": "provisional",
+      "rationale": "Coverage thresholds are nested only when resource limits match. The 2,048- and 8,192-byte variants add a separate size dimension. Shared solutions are correlated evidence."
+    },
+    {
+      "rung_id": "L2.C0a.xor51-cov34",
+      "band": "coverage",
+      "title": "XOR coverage · 34 of 256",
+      "summary": "Raise correct-byte coverage within the stated program budget.",
+      "calibration": "provisional",
+      "rationale": "Coverage thresholds are nested only when resource limits match. The 2,048- and 8,192-byte variants add a separate size dimension. Shared solutions are correlated evidence."
+    },
+    {
+      "rung_id": "L2.C0b.xor51-cov36",
+      "band": "coverage",
+      "title": "XOR coverage · 36 of 256",
+      "summary": "Raise correct-byte coverage within the stated program budget.",
+      "calibration": "provisional",
+      "rationale": "Coverage thresholds are nested only when resource limits match. The 2,048- and 8,192-byte variants add a separate size dimension. Shared solutions are correlated evidence."
+    },
+    {
+      "rung_id": "L2.C0c.xor51-cov40",
+      "band": "coverage",
+      "title": "XOR coverage · 40 of 256",
+      "summary": "Raise correct-byte coverage within the stated program budget.",
+      "calibration": "provisional",
+      "rationale": "Coverage thresholds are nested only when resource limits match. The 2,048- and 8,192-byte variants add a separate size dimension. Shared solutions are correlated evidence."
+    },
+    {
+      "rung_id": "L2.C0d.xor51-cov48",
+      "band": "coverage",
+      "title": "XOR coverage · 48 of 256",
+      "summary": "Raise correct-byte coverage within the stated program budget.",
+      "calibration": "provisional",
+      "rationale": "Coverage thresholds are nested only when resource limits match. The 2,048- and 8,192-byte variants add a separate size dimension. Shared solutions are correlated evidence."
+    },
+    {
+      "rung_id": "L2.C1.xor51-cov64",
+      "band": "coverage",
+      "title": "XOR coverage · 64 of 256",
+      "summary": "Raise correct-byte coverage within the stated program budget.",
+      "calibration": "provisional",
+      "rationale": "Coverage thresholds are nested only when resource limits match. The 2,048- and 8,192-byte variants add a separate size dimension. Shared solutions are correlated evidence."
+    },
+    {
+      "rung_id": "L2.C0e.xor51-cov48-len2048",
+      "band": "coverage",
+      "title": "XOR coverage · 48 / 2,048 bytes",
+      "summary": "Raise correct-byte coverage within the stated program budget.",
+      "calibration": "provisional",
+      "rationale": "Coverage thresholds are nested only when resource limits match. The 2,048- and 8,192-byte variants add a separate size dimension. Shared solutions are correlated evidence."
+    },
+    {
+      "rung_id": "L2.C2.xor51-cov96",
+      "band": "coverage",
+      "title": "XOR coverage · 96 of 256",
+      "summary": "Raise correct-byte coverage within the stated program budget.",
+      "calibration": "provisional",
+      "rationale": "Coverage thresholds are nested only when resource limits match. The 2,048- and 8,192-byte variants add a separate size dimension. Shared solutions are correlated evidence."
+    },
+    {
+      "rung_id": "L2.R0d.xor-1-len4096",
+      "band": "coverage",
+      "title": "Full XOR · 4,096 bytes",
+      "summary": "Produce XOR 0x51 for every first-byte value.",
+      "calibration": "provisional",
+      "rationale": "Coverage thresholds are nested only when resource limits match. The 2,048- and 8,192-byte variants add a separate size dimension. Shared solutions are correlated evidence."
+    },
+    {
+      "rung_id": "L2.X2048.xor-1-len2048",
+      "band": "compact",
+      "title": "Full XOR · 2,048 bytes",
+      "summary": "Fit full single-byte XOR in 2,048 bytes.",
+      "calibration": "nested-limit",
+      "rationale": "New, uncalibrated milestone. A program passing a tighter XOR size cap also passes every looser cap with the same input sweep and step limit."
+    },
+    {
+      "rung_id": "L2.X1024.xor-1-len1024",
+      "band": "compact",
+      "title": "Full XOR · 1,024 bytes",
+      "summary": "Fit full single-byte XOR in 1,024 bytes.",
+      "calibration": "nested-limit",
+      "rationale": "New, uncalibrated milestone. A program passing a tighter XOR size cap also passes every looser cap with the same input sweep and step limit."
+    },
+    {
+      "rung_id": "L2.X512.xor-1-len512",
+      "band": "compact",
+      "title": "Full XOR · 512 bytes",
+      "summary": "Fit full single-byte XOR in 512 bytes.",
+      "calibration": "nested-limit",
+      "rationale": "New, uncalibrated milestone. A program passing a tighter XOR size cap also passes every looser cap with the same input sweep and step limit."
+    },
+    {
+      "rung_id": "L2.R2.rotate-1",
+      "band": "compact",
+      "title": "Rotate one byte · 256 bytes",
+      "summary": "Rotate an input byte left by one binary bit.",
+      "calibration": "provisional",
+      "rationale": "Adjacent to compact XOR based on the September 5 attempts. Scores 62/256 and 68/256 are native observations, not comparative difficulty ratings or general ceilings."
+    },
+    {
+      "rung_id": "L2.R0.xor-1",
+      "band": "compact",
+      "title": "Full XOR · 256 bytes",
+      "summary": "Fit the complete byte transform in just 256 bytes.",
+      "calibration": "nested-limit",
+      "rationale": "Tightest XOR compression milestone. The verified partial candidate is a lower bound on achievable coverage; family-specific bounds do not establish global impossibility."
+    },
+    {
+      "rung_id": "L3.R2.mixed-transform-small",
+      "band": "multibyte",
+      "title": "Swap nibbles · two bytes",
+      "summary": "Swap the high and low four-bit halves of each of two bytes.",
+      "calibration": "provisional",
+      "rationale": "Provisional placement: width and program limits both vary. The interrupted September 5 campaign supplies no completed new result for this rung. A failed single-byte attempt is not an impossibility proof for this task."
+    },
+    {
+      "rung_id": "L2.R3.xor-2-multicase",
+      "band": "multibyte",
+      "title": "XOR two bytes · 384 bytes",
+      "summary": "Transform two input bytes and emit both results.",
+      "calibration": "provisional",
+      "rationale": "Provisional placement: width and program limits both vary. The interrupted September 5 campaign supplies no completed new result for this rung. A failed single-byte attempt is not an impossibility proof for this task."
+    },
+    {
+      "rung_id": "L5.R0.future-transform",
+      "band": "multibyte",
+      "title": "Swap nibbles · four bytes",
+      "summary": "Extend nibble swapping to four bytes within 1,024 bytes of code.",
+      "calibration": "provisional",
+      "rationale": "Provisional placement: width and program limits both vary. The interrupted September 5 campaign supplies no completed new result for this rung. A failed single-byte attempt is not an impossibility proof for this task."
+    },
+    {
+      "rung_id": "L3.R1.xor-4-length-cap",
+      "band": "multibyte",
+      "title": "XOR four bytes · 256 bytes",
+      "summary": "Transform four bytes within the tightest source budget.",
+      "calibration": "provisional",
+      "rationale": "Provisional placement: width and program limits both vary. The interrupted September 5 campaign supplies no completed new result for this rung. A failed single-byte attempt is not an impossibility proof for this task."
+    },
+    {
+      "rung_id": "L6.S0.cat",
+      "band": "streams",
+      "title": "Echo until EOF",
+      "summary": "Copy the entire input and halt when it ends.",
+      "calibration": "provisional",
+      "rationale": "Provisional capability order: copying, counting, accumulation, and storage. The fixed public 81-case suite is evidence of behavior on those cases; it does not prove a loop or arbitrary-length correctness."
+    },
+    {
+      "rung_id": "L6.S1.length",
+      "band": "streams",
+      "title": "Count the input bytes",
+      "summary": "Emit the input length as one byte, then halt.",
+      "calibration": "provisional",
+      "rationale": "Provisional capability order: copying, counting, accumulation, and storage. The fixed public 81-case suite is evidence of behavior on those cases; it does not prove a loop or arbitrary-length correctness."
+    },
+    {
+      "rung_id": "L6.S2.checksum",
+      "band": "streams",
+      "title": "Sum the input bytes",
+      "summary": "Emit the sum modulo 256, then halt.",
+      "calibration": "provisional",
+      "rationale": "Provisional capability order: copying, counting, accumulation, and storage. The fixed public 81-case suite is evidence of behavior on those cases; it does not prove a loop or arbitrary-length correctness."
+    },
+    {
+      "rung_id": "L6.S3.reverse",
+      "band": "streams",
+      "title": "Reverse the entire input",
+      "summary": "Store the input and emit it backwards, then halt.",
+      "calibration": "provisional",
+      "rationale": "Provisional capability order: copying, counting, accumulation, and storage. The fixed public 81-case suite is evidence of behavior on those cases; it does not prove a loop or arbitrary-length correctness."
+    }
+  ]
+}
