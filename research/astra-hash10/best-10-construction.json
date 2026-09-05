@@ -1,0 +1,27 @@
+{
+  "config": 3,
+  "gap": 5,
+  "key": 27,
+  "pos": 30,
+  "end": 38,
+  "operands": [
+    122,
+    97
+  ],
+  "landings": [
+    168,
+    122,
+    53,
+    177,
+    197,
+    84,
+    89,
+    44,
+    212,
+    107
+  ],
+  "seed": 610088,
+  "diagnostic_correct": 10,
+  "solver_stdout": "lane=0 input=36 target=138 range=45:54 found=1 nodes=73205 depth=8\nlane=1 input=49 target=183 range=54:70 found=1 nodes=2219440 depth=14\nlane=2 input=89 target=156 range=85:90 found=1 nodes=1666901 depth=17\nlane=3 input=81 target=251 range=90:108 found=1 nodes=2736235 depth=16\nlane=4 input=99 target=24 range=108:123 found=1 nodes=706612 depth=8\nlane=5 input=124 target=14 range=123:147 found=1 nodes=1884 depth=5\nlane=6 input=218 target=100 range=169:178 found=1 nodes=26512 depth=7\nlane=7 input=230 target=135 range=178:198 found=1 nodes=13759 depth=7\nlane=8 input=190 target=254 range=198:213 found=1 nodes=255099 depth=9\nlane=9 input=214 target=150 range=213:237 found=1 nodes=24813 depth=7\n",
+  "elapsed_seconds": 1.15
+}

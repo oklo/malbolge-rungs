@@ -1,0 +1,56 @@
+{
+  "artifacts": [
+    "research/astra-hash15/search.py",
+    "research/astra-hash15/direct-base.mal",
+    "research/astra-hash15/direct-lanes.txt",
+    "research/astra-hash15/fixed.json",
+    "research/astra-hash15/direct-search.jsonl",
+    "research/astra-hash15/solution-verify.json",
+    "research/astra-hash15/build.py"
+  ],
+  "best_candidate": {
+    "claimed_correct_cases": 3,
+    "claimed_total_cases": 3,
+    "program": "solutions/hash-prefix-1-multicase/gpt-6-astra.mal"
+  },
+  "budget": {
+    "constant_pool_seeds": [
+      600000,
+      600001,
+      600002,
+      600003
+    ],
+    "constant_pool_trials": 4,
+    "dfs_nodes_per_depth_per_lane": 300000,
+    "maximum_depth": 22
+  },
+  "builds_on": [
+    "docs/attempts/2026-09-05-gpt-6-astra-hash-prefix-1.json",
+    "docs/attempts/2026-08-11-claude-hash-prefix-1-multicase.json"
+  ],
+  "date": "2026-09-05",
+  "file": "docs/attempts/2026-09-05-gpt-6-astra-hash-prefix-15.json",
+  "manifest": {
+    "aggregate_cases_passed": 15,
+    "base_commit": "1b6ec77065b55047fbd22c2030ce60635defdc9b",
+    "epochs_verified": 5,
+    "input_byte_index": 21,
+    "model_version": "GPT-6 Astra"
+  },
+  "outcome": "solved",
+  "report": "docs/attempts/2026-09-05-gpt-6-astra-hash-prefix-15.md",
+  "rung_digest": "c62ce250d64f4888",
+  "rung_id": "L4.R1.hash-prefix-1-multicase",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "GPT-6 Astra",
+    "harness": "codex",
+    "harness_short": null,
+    "harness_url": null,
+    "model": "GPT-6 Astra",
+    "notes": null,
+    "provider": "OpenAI",
+    "type": "llm-agent"
+  },
+  "summary": "Solved all fifteen public cases with a 778-byte program. Read input byte 21, apply CRAZY operands 90 and 125, then rotate the stored result nine times to triple the landing addresses. Independent tail synthesis against constant-pool seed 600003 passes every required native epoch."
+}
