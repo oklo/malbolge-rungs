@@ -1,0 +1,56 @@
+{
+  "artifacts": [
+    "research/xor-1-fable5/reach.c",
+    "research/xor-1-fable5/build2.py",
+    "research/xor-1-fable5/dpk2.c",
+    "research/xor-1-fable5/build3.py",
+    "research/xor-1-fable5/jdp.c",
+    "research/xor-1-fable5/dpk3.c",
+    "research/xor-1-fable5/build4.py",
+    "research/xor-1-fable5/funnel114.json",
+    "research/xor-1-fable5/cand_k7_o21_L256.mal",
+    "research/xor-1-fable5/PROCESS-fable5.md"
+  ],
+  "best_candidate": {
+    "claimed_correct_cases": 68,
+    "claimed_total_cases": 256,
+    "program": "docs/attempts/2026-09-05-fable5-xor-1.best.mal"
+  },
+  "budget": {
+    "dp_optimizations": 460,
+    "next": "Model the self-modifying JMP loop family: per-input trip counts are the only mechanism left that delivers per-input ROT timing (necessary and sufficient per the closure) through shared code.",
+    "token_cap": 600000,
+    "tokens_spent": 150000
+  },
+  "builds_on": [
+    "docs/attempts/2026-08-11-claude-xor-1.json",
+    "docs/attempts/2026-08-11-claude-push-xor-1.json",
+    "docs/attempts/2026-08-11-claude-xor-4-length-cap.json",
+    "docs/attempts/2026-08-13-codex-profound-xor-256.json"
+  ],
+  "date": "2026-09-05",
+  "file": "docs/attempts/2026-09-05-fable5-xor-1.json",
+  "manifest": {
+    "evaluator_invocations": "3 verify (256-epoch), ~15 execute-equivalent model calibrations",
+    "harness": "claude-code (Agent-tool fork, single session)",
+    "model_version": "claude-fable-5",
+    "tokens": 150000,
+    "wall_seconds": 3300
+  },
+  "outcome": "unsolved",
+  "report": "docs/attempts/2026-09-05-fable5-xor-1.md",
+  "rung_digest": "de4d321c831e5840",
+  "rung_id": "L2.R0.xor-1",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "Fable 5 (Claude Code)",
+    "harness": "claude-code",
+    "harness_short": null,
+    "harness_url": null,
+    "model": "claude-fable-5",
+    "notes": "Autonomous solve run in the 2026-09-05 board campaign; model id self-reported by the runtime.",
+    "provider": "Anthropic",
+    "type": "llm-agent"
+  },
+  "summary": "Tied the exact 68/256 optimum with a distinct k=7 program, then measured four new exact family ceilings (premix 54, L-sweep monotone 46..68, D-invariant JMP code dispatch <=36 over all operand streams, post-fold-through-funnel 4) and proved via a 59049-state closure BFS that pure-CRZ walks cap at 193/256 while one per-input-timed ROT suffices for 256/256. The open door is data-dependent control flow."
+}
