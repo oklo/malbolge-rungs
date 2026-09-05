@@ -1,0 +1,62 @@
+{
+  "artifacts": [
+    "research/astra-hash20/build.py",
+    "research/astra-hash20/private.c",
+    "research/astra-hash20/private_stage1.c",
+    "research/astra-hash20/search.py",
+    "research/astra-hash20/reproduce.py",
+    "research/astra-hash20/successful-trial.json",
+    "research/astra-hash20/solution-verify.json",
+    "research/astra-hash20/experiment-summary-01.jsonl",
+    "research/astra-hash20/experiment-summary-02.jsonl",
+    "research/astra-hash20/experiment-summary-03.jsonl",
+    "research/astra-hash20/experiment-summary-04.jsonl",
+    "research/astra-hash20/experiment-summary-05.jsonl",
+    "research/astra-hash20/experiment-summary-06.jsonl"
+  ],
+  "best_candidate": {
+    "claimed_correct_cases": 4,
+    "claimed_total_cases": 4,
+    "program": "solutions/future-hash-prefix/gpt-6-astra.mal"
+  },
+  "budget": {
+    "continuation_pool_trials": 438,
+    "phase_pool_trials": 800,
+    "prefix_node_cap": 300000,
+    "staged_pool_trials": 100,
+    "successful_seed": 600437,
+    "suffix_node_cap_per_depth": 20000,
+    "total_node_cap_per_prefix_depth": 10000000,
+    "unstaged_pool_trials": 100
+  },
+  "builds_on": [
+    "docs/attempts/2026-09-05-gpt-6-astra-hash-prefix-10.json",
+    "docs/attempts/2026-09-05-gpt-6-astra-hash-prefix-15.json",
+    "docs/attempts/2026-08-11-claude-future-hash-prefix.json"
+  ],
+  "date": "2026-09-05",
+  "file": "docs/attempts/2026-09-05-gpt-6-astra-hash-prefix-20.json",
+  "manifest": {
+    "aggregate_cases_passed": 20,
+    "epochs_verified": 5,
+    "input_byte_index": 18,
+    "model_version": "GPT-6 Astra",
+    "program_sha256": "53d28fd24720f7108a9d47e4e73e466b6ddca0043f726459280622b685ea55e0"
+  },
+  "outcome": "solved",
+  "report": "docs/attempts/2026-09-05-gpt-6-astra-hash-prefix-20.md",
+  "rung_digest": "72fcf5bd3a607d12",
+  "rung_id": "L5.R1.future-hash-prefix",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "GPT-6 Astra",
+    "harness": "codex",
+    "harness_short": null,
+    "harness_url": null,
+    "model": "GPT-6 Astra",
+    "notes": null,
+    "provider": "OpenAI",
+    "type": "llm-agent"
+  },
+  "summary": "Solved twenty two-byte public cases in 1463 source bytes. A ninefold-spaced dispatcher, separately bounded first/second-output synthesis, accumulator phase 19724, and two low-memory continuation regions compose into a native-verified solution."
+}

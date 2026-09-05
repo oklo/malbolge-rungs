@@ -1,0 +1,231 @@
+{
+  "all_passed": true,
+  "epochs": 5,
+  "results": [
+    {
+      "outcome": {
+        "coverage": false,
+        "epochs": [
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "c931",
+                "index": 0,
+                "input_hex": "ce6ace2720e3b33ba632943a51face1f32c0753e2fbcce939ebea5ca08db26e9",
+                "observed_hex": "c931",
+                "status": "Halted"
+              },
+              {
+                "correct": true,
+                "expected_hex": "8691",
+                "index": 1,
+                "input_hex": "46975d066a114f62676c7e7e45ff2cfb85f6a3c8a8ec3a42233aa58efbc71726",
+                "observed_hex": "8691",
+                "status": "Halted"
+              },
+              {
+                "correct": true,
+                "expected_hex": "5f84",
+                "index": 2,
+                "input_hex": "a2a12de09fdb495d95cd77200f82e761a40c9e44fcbc015c9b1a323d8440cbef",
+                "observed_hex": "5f84",
+                "status": "Halted"
+              },
+              {
+                "correct": true,
+                "expected_hex": "961d",
+                "index": 3,
+                "input_hex": "f52b15a64352596c6449ea2783f84b812ec9797e47372b541988abf8bcec137a",
+                "observed_hex": "961d",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 4,
+            "epoch": 0,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "09e99d21526aedbb0f4616eafb8d113b50dd7d40c454a5641515912f971ad023",
+            "total_cases": 4
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "c8db",
+                "index": 0,
+                "input_hex": "72da774410c0c268ce8ae38dbd1007cb47f92f127c8f86ee28e2c8978d8212d6",
+                "observed_hex": "c8db",
+                "status": "Halted"
+              },
+              {
+                "correct": true,
+                "expected_hex": "e2d1",
+                "index": 1,
+                "input_hex": "a4e2f9d8ee490f8f6c803eb1f1a82c369da4d60dcb11fb50062e79f00dc86c36",
+                "observed_hex": "e2d1",
+                "status": "Halted"
+              },
+              {
+                "correct": true,
+                "expected_hex": "cf85",
+                "index": 2,
+                "input_hex": "d35bdf23731bb51061604a88158b1eff12634e67a7b7694fe54910d942914057",
+                "observed_hex": "cf85",
+                "status": "Halted"
+              },
+              {
+                "correct": true,
+                "expected_hex": "b42c",
+                "index": 3,
+                "input_hex": "e2b342032a8f3671ca0d51e5d0899767f8c960a2727457f447d5a113288696c1",
+                "observed_hex": "b42c",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 4,
+            "epoch": 1,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "dd3289761ce2110a7e33b2e53345ac806a5e85001be092572799fe4bff0afeea",
+            "total_cases": 4
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "aef3",
+                "index": 0,
+                "input_hex": "513e04811cbbac91e44f9b453d1bb393af940ad20effbc981734486c1edc0003",
+                "observed_hex": "aef3",
+                "status": "Halted"
+              },
+              {
+                "correct": true,
+                "expected_hex": "5aba",
+                "index": 1,
+                "input_hex": "8bb14232e49d7b8ef1d3985a0b0ae10cb04b4904cecff2184151026cfae166e8",
+                "observed_hex": "5aba",
+                "status": "Halted"
+              },
+              {
+                "correct": true,
+                "expected_hex": "0d92",
+                "index": 2,
+                "input_hex": "53045aa794186191f32ca8da258aac30da85b0b482cf734338c11a5dc80da634",
+                "observed_hex": "0d92",
+                "status": "Halted"
+              },
+              {
+                "correct": true,
+                "expected_hex": "8b73",
+                "index": 3,
+                "input_hex": "3635cb5f7452d47b900a49181f3e3ec687cd08c1aefa77dc6be525228b8e356b",
+                "observed_hex": "8b73",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 4,
+            "epoch": 2,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "38be9d7bae40125cb35f9ec96661bf2b37e0aa9eafe75dcd48000de87ff99c3e",
+            "total_cases": 4
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "593c",
+                "index": 0,
+                "input_hex": "32e26c05232f770395fd68f6ff854b31a6fa63ee24e4d8fb314bca2b52150a50",
+                "observed_hex": "593c",
+                "status": "Halted"
+              },
+              {
+                "correct": true,
+                "expected_hex": "23b8",
+                "index": 1,
+                "input_hex": "5b6827a82cc9e5bbdf831355786622ec6f21ce4e6a3d9ed9ef72d998b28aa0a6",
+                "observed_hex": "23b8",
+                "status": "Halted"
+              },
+              {
+                "correct": true,
+                "expected_hex": "ec3c",
+                "index": 2,
+                "input_hex": "57341447b34fd77993948f2cf85280b074ab2b947e747330d8b5bd47bd6589e8",
+                "observed_hex": "ec3c",
+                "status": "Halted"
+              },
+              {
+                "correct": true,
+                "expected_hex": "4f95",
+                "index": 3,
+                "input_hex": "e19fa85efea3a42938ddd6d1f437067ac195a8f8e835869c0c8bd1d8e9c16a4f",
+                "observed_hex": "4f95",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 4,
+            "epoch": 3,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "ff13dbc56cd16fdc60d64ad67f41b930177c8b519bb736004d36c42bfff8e4cf",
+            "total_cases": 4
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "ecce",
+                "index": 0,
+                "input_hex": "1a2473b4cf647e4a047e86865fde69b5c8aa9362c59a54f982c162181a0854a5",
+                "observed_hex": "ecce",
+                "status": "Halted"
+              },
+              {
+                "correct": true,
+                "expected_hex": "288d",
+                "index": 1,
+                "input_hex": "48ba53838a5ee25a47cc12a38840ad31179297fc29da3144997595ba065fe9b2",
+                "observed_hex": "288d",
+                "status": "Halted"
+              },
+              {
+                "correct": true,
+                "expected_hex": "6cf6",
+                "index": 2,
+                "input_hex": "9d60833dd88776546e23e44412261957696199460552e8f4f3d73a5dc902e2b5",
+                "observed_hex": "6cf6",
+                "status": "Halted"
+              },
+              {
+                "correct": true,
+                "expected_hex": "d55c",
+                "index": 3,
+                "input_hex": "340b4454dfa1d31dc5e0e59049675bdbc2c454b02977f044e0bae98dad303839",
+                "observed_hex": "d55c",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 4,
+            "epoch": 4,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "59013be3551deb5ffc907983256655be44b864c0d15da9d1be84c6a48d8e62e3",
+            "total_cases": 4
+          }
+        ],
+        "passed": true,
+        "required_correct": 4,
+        "rung_id": "L5.R1.future-hash-prefix"
+      },
+      "program": "solutions/future-hash-prefix/gpt-6-astra.mal",
+      "program_len": 1463,
+      "program_sha256": "53d28fd24720f7108a9d47e4e73e466b6ddca0043f726459280622b685ea55e0"
+    }
+  ],
+  "rung_id": "L5.R1.future-hash-prefix",
+  "schema": "malbolge-rungs.verify.v1"
+}

@@ -1,0 +1,8 @@
+{
+  "trial": 437,
+  "seed": 600437,
+  "diagnostic_correct": 20,
+  "elapsed_seconds": 85.973,
+  "exit_code": 0,
+  "solver_stdout": "lane=0 input=8 target=29579 range=316:334 found=1 nodes=32142 depth=6\nlane=1 input=10 target=62382 range=334:374 found=1 nodes=415121 depth=9\nlane=2 input=43 target=15596 range=388:424 found=1 nodes=843585 depth=9\nlane=3 input=47 target=56264 range=424:464 found=1 nodes=180406 depth=7\nlane=4 input=73 target=47706 range=658:698 found=1 nodes=195686 depth=7\nlane=5 input=78 target=34255 range=703:743 found=1 nodes=143005 depth=8\nlane=6 input=163 target=37254 range=982:1000 found=1 nodes=19196724 depth=9\nlane=7 input=84 target=23765 range=1000:1027 found=1 nodes=6143 depth=6\nlane=8 input=168 target=38223 range=1027:1054 found=1 nodes=153665 depth=7\nlane=9 input=117 target=12745 range=1054:1090 found=1 nodes=162837 depth=5\nlane=10 input=121 target=7574 range=1090:1099 found=1 nodes=3001182 depth=8\nlane=11 input=176 target=37389 range=1099:1108 found=1 nodes=15781 depth=5\nlane=12 input=96 target=11444 range=1108:1126 found=1 nodes=137183 depth=8\nlane=13 input=206 target=47139 range=1126:1135 found=1 nodes=18244731 depth=16\nlane=14 input=99 target=15449 range=1135:1175 found=1 nodes=19520 depth=5\nlane=15 input=214 target=53730 range=1198:1238 found=1 nodes=6026028 depth=6\nlane=16 input=147 target=52972 range=1324:1360 found=1 nodes=6845094 depth=13\nlane=17 input=151 target=36136 range=1360:1378 found=1 nodes=66633 depth=7\nlane=18 input=153 target=63084 range=1378:1418 found=1 nodes=57829 depth=7\nlane=19 input=158 target=33887 range=1423:1463 found=1 nodes=37213 depth=6\n"
+}

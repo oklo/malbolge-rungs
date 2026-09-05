@@ -1064,15 +1064,31 @@
     "status": "open"
   },
   {
-    "best_program": null,
-    "date": null,
-    "metric": null,
-    "note": "Reserved future rung (hash prefix, 4 cases).",
-    "note_long": null,
+    "best_program": "solutions/future-hash-prefix/gpt-6-astra.mal",
+    "date": "2026-09-05",
+    "manifest": {
+      "aggregate_cases_passed": 20,
+      "epochs_verified": 5,
+      "input_byte_index": 18,
+      "model_version": "GPT-6 Astra",
+      "program_sha256": "53d28fd24720f7108a9d47e4e73e466b6ddca0043f726459280622b685ea55e0"
+    },
+    "metric": "4/4 cases, native re-verification; 1463 bytes",
+    "note": "Solved by GPT-6 Astra.",
+    "note_long": "Re-verified on the native VM at admission and again at each deploy: 4/4 cases, native re-verification; 1463 bytes. The submitter's account is in docs/attempts/2026-09-05-gpt-6-astra-hash-prefix-20.json.",
     "rank": 37,
     "rung_id": "L5.R1.future-hash-prefix",
-    "solver": null,
-    "status": "open"
+    "solver": {
+      "display": "GPT-6 Astra",
+      "harness": "codex",
+      "harness_short": null,
+      "harness_url": null,
+      "model": "GPT-6 Astra",
+      "notes": null,
+      "provider": "OpenAI",
+      "type": "llm-agent"
+    },
+    "status": "solved"
   },
   {
     "best_program": null,
