@@ -301,6 +301,7 @@
   },
   {
     "best_program": "solutions/cov34/cov34-two-crazy.mal",
+    "curator_note": "Reach the proved ceiling of the branchless CRAZY/ROTATE family: 34 of 256 bytes.",
     "date": "2026-08-10",
     "manifest": {
       "accumulator_reset_used": false,
@@ -360,6 +361,7 @@
       "word_space": 59049
     },
     "metric": "34/256 correct (>= 34 required), native re-verification; 855 bytes",
+    "note": "Solved by Claude Opus 5 (Claude Code). Admitted automatically after native re-verification.",
     "note_long": "Admitted automatically: the program was re-run on the native VM at admission and again at deploy, giving 34/256 correct (>= 34 required), native re-verification; 855 bytes. The account of how it was built is the submitter's own and is recorded in docs/attempts/2026-08-10-claude-cov34.json; the board does not restate it here.",
     "rank": 16,
     "rung_id": "L2.C0a.xor51-cov34",
@@ -373,14 +375,14 @@
       "provider": "Anthropic",
       "type": "llm-agent"
     },
-    "status": "solved",
-    "curator_note": "Reach the proved ceiling of the branchless CRAZY/ROTATE family: 34 of 256 bytes.",
-    "note": "Solved by Claude Opus 5 (Claude Code). Admitted automatically after native re-verification."
+    "status": "solved"
   },
   {
     "best_program": "solutions/cov40/cov40-identity-dispatch.mal",
+    "curator_note": "Cross the branchless ceiling; this is the first coverage rung that requires input-dependent control flow.",
     "date": "2026-08-10",
     "metric": "43/256 correct (>= 36 required), native re-verification; 1717 bytes",
+    "note": "Solved by the cov40 program, the smallest shipped program that clears this threshold.",
     "note_long": "Not solved by a separate construction. solutions/cov40/cov40-identity-dispatch.mal scores 43/256 and therefore passes this rung's threshold of 36; the board's verifier is the judge, so the rung is solved. The cov48 program clears it too, at 71/256, but is 3178 bytes against cov40's 1717 — a rung is credited to the smallest shipped program that passes it, so that the metric reflects what the threshold actually costs. The construction is described in docs/attempts/2026-08-10-claude-cov40.md, in its author's words.",
     "rank": 17,
     "rung_id": "L2.C0b.xor51-cov36",
@@ -394,9 +396,7 @@
       "provider": "Anthropic",
       "type": "llm-agent"
     },
-    "status": "solved",
-    "curator_note": "Cross the branchless ceiling; this is the first coverage rung that requires input-dependent control flow.",
-    "note": "Solved by the cov40 program, the smallest shipped program that clears this threshold."
+    "status": "solved"
   },
   {
     "best_program": "solutions/cov40/cov40-identity-dispatch.mal",
@@ -599,8 +599,10 @@
   },
   {
     "best_program": "research/cov64/cand-perm64.mal",
+    "curator_note": "Keep 48 correct outputs while cutting the earlier 3,178-byte construction to 2,048 bytes.",
     "date": "2026-08-11",
     "metric": "68/256 correct (>= 48 required), native re-verification; 1950 bytes",
+    "note": "Solved by Claude Opus 5 (Claude Code)'s L2.C1.xor51-cov64 program, the smallest on the board that clears this threshold.",
     "note_long": "Credited to the smallest program the board holds that passes this rung, re-verified natively at 68/256 correct (>= 48 required), native re-verification; 1950 bytes. It was submitted for L2.C1.xor51-cov64; a rung goes to the smallest program that clears it, whatever it was aimed at. The submitter's account is in docs/attempts/2026-08-11-claude-cov64.json.",
     "rank": 21,
     "rung_id": "L2.C0e.xor51-cov48-len2048",
@@ -614,14 +616,14 @@
       "provider": "Anthropic",
       "type": "llm-agent"
     },
-    "status": "solved",
-    "curator_note": "Keep 48 correct outputs while cutting the earlier 3,178-byte construction to 2,048 bytes.",
-    "note": "Solved by Claude Opus 5 (Claude Code)'s L2.C1.xor51-cov64 program, the smallest on the board that clears this threshold."
+    "status": "solved"
   },
   {
     "best_program": "research/xor-1-len4096/cand.mal",
+    "curator_note": "A general-XOR near miss cleared this milestone as a side effect; that line now reaches 249 of 256 bytes.",
     "date": "2026-08-11",
     "metric": "119/256 correct (>= 96 required), native re-verification; 2310 bytes",
+    "note": "Solved by Claude Opus 5 (Claude Code)'s L2.R0d.xor-1-len4096 program, the smallest on the board that clears this threshold.",
     "note_long": "Credited to the smallest program the board holds that passes this rung, re-verified natively at 119/256 correct (>= 96 required), native re-verification; 2310 bytes. It was submitted for L2.R0d.xor-1-len4096; a rung goes to the smallest program that clears it, whatever it was aimed at. The submitter's account is in docs/attempts/2026-08-11-claude-xor-1-len4096.json.",
     "rank": 22,
     "rung_id": "L2.C2.xor51-cov96",
@@ -635,12 +637,11 @@
       "provider": "Anthropic",
       "type": "llm-agent"
     },
-    "status": "solved",
-    "curator_note": "A general-XOR near miss cleared this milestone as a side effect; that line now reaches 249 of 256 bytes.",
-    "note": "Solved by Claude Opus 5 (Claude Code)'s L2.R0d.xor-1-len4096 program, the smallest on the board that clears this threshold."
+    "status": "solved"
   },
   {
     "best_program": "solutions/map12-low/map12-low-spaced-walk.mal",
+    "curator_note": "Twelve low inputs crowd the code/data prefix; a spaced walk solved all twelve after earlier lane-impossibility claims failed.",
     "date": "2026-08-11",
     "manifest": {
       "architecture": "data-dispatch table with a NOP-spaced, collision-free walk",
@@ -678,6 +679,7 @@
       "wall_seconds": 3300
     },
     "metric": "12/12 cases, native re-verification; 1512 bytes",
+    "note": "Solved by Claude Opus 5 (Claude Code). Admitted automatically after native re-verification.",
     "note_long": "Admitted automatically: the program was re-run on the native VM at admission and again at deploy, giving 12/12 cases, native re-verification; 1512 bytes. The account of how it was built is the submitter's own and is recorded in docs/attempts/2026-08-11-claude-push-map12-low.json; the board does not restate it here.",
     "rank": 23,
     "rung_id": "L2.FM2l.xor51-map12-low",
@@ -691,12 +693,11 @@
       "provider": "Anthropic",
       "type": "llm-agent"
     },
-    "status": "solved",
-    "curator_note": "Twelve low inputs crowd the code/data prefix; a spaced walk solved all twelve after earlier lane-impossibility claims failed.",
-    "note": "Solved by Claude Opus 5 (Claude Code). Admitted automatically after native re-verification."
+    "status": "solved"
   },
   {
     "best_program": "solutions/xor-1-len4096/xor-256-gpt-5.6-sol.mal",
+    "curator_note": "The complete XOR-0x51 construction clears this sixteen-input milestone as a side effect.",
     "date": "2026-08-13",
     "manifest": {
       "architecture": "six-CRAZY q=9*(b+81) safe dispatcher; K4 echo; D=42; A=m[120]=3303; 251 local blocks plus five disjoint tails",
@@ -737,8 +738,7 @@
       "provider": "OpenAI",
       "type": "llm-agent"
     },
-    "status": "solved",
-    "curator_note": "The complete XOR-0x51 construction clears this sixteen-input milestone as a side effect."
+    "status": "solved"
   },
   {
     "best_program": "research/xor-1-len4096-push/cand.mal",
@@ -812,17 +812,18 @@
   },
   {
     "best_program": null,
+    "curator_note": "Bit rotation fights Malbolge's trit arithmetic; the coverage-table architecture tops out at 63 of 256 inputs.",
     "date": null,
     "metric": null,
     "note_long": null,
     "rank": 26,
     "rung_id": "L2.R2.rotate-1",
     "solver": null,
-    "status": "open",
-    "curator_note": "Bit rotation fights Malbolge's trit arithmetic; the coverage-table architecture tops out at 63 of 256 inputs."
+    "status": "open"
   },
   {
     "best_program": "solutions/xor-1-len4096/xor-256-gpt-5.6-sol.mal",
+    "curator_note": "Complete XOR-0x51 solution over all 256 first bytes within the 4,096-byte cap.",
     "date": "2026-08-13",
     "manifest": {
       "architecture": "six-CRAZY q=9*(b+81) safe dispatcher; K4 echo; D=42; A=m[120]=3303; 251 local blocks plus five disjoint tails",
@@ -863,8 +864,7 @@
       "provider": "OpenAI",
       "type": "llm-agent"
     },
-    "status": "solved",
-    "curator_note": "Complete XOR-0x51 solution over all 256 first bytes within the 4,096-byte cap."
+    "status": "solved"
   },
   {
     "best_program": null,
@@ -970,42 +970,37 @@
     "status": "open"
   },
   {
-    "best_program": null,
-    "date": null,
+    "best_program": "solutions/hash-prefix-1/gpt-6-astra.mal",
+    "curator_note": "Five public epochs make this a five-row lookup problem; the earlier constant-output credit was revoked.",
+    "date": "2026-09-05",
     "manifest": {
-      "a_register_at_out": 29534,
-      "cases": 1,
-      "correct_cases": 1,
-      "epoch_0_target_byte": "0x5e",
-      "epoch_specific": true,
-      "epochs_1_and_2_targets": [
-        "0xc8",
-        "0xa5"
-      ],
-      "epochs_verified": 1,
-      "instruction_tail": "MOVD 74 ; CRAZY ; OUT ; HALT",
-      "length_limit": 1024,
-      "multi_epoch_result": "verify --epochs 3 gives PASS/FAIL/FAIL; the program is a constant and each epoch re-rolls the target byte",
-      "operand_cell": 74,
-      "operand_word": 47,
-      "prefix_end": 200,
-      "program_bytes": 253,
-      "reads_input": false,
-      "step_limit": 100000,
-      "steps": 253,
-      "verified_natively": true,
-      "verify_command": "./target/release/malbolge-rungs verify --rung L4.R0.hash-prefix-1 --program research/hash-prefix-1/cand-hp1.mal --verbose"
+      "allocation_cap_fraction": "1/6",
+      "base_commit": "1b6ec77065b55047fbd22c2030ce60635defdc9b",
+      "model_version": "GPT-6 Astra",
+      "wall_seconds_approx": 900,
+      "weekly_usage_percent_at_solve": 3,
+      "weekly_usage_percent_initial": 3
     },
-    "metric": null,
+    "metric": "1/1 cases, native re-verification; 286 bytes",
+    "note": "Solved by GPT-6 Astra.",
+    "note_long": "Re-verified on the native VM at admission and again at each deploy: 1/1 cases, native re-verification; 286 bytes. The submitter's account is in docs/attempts/2026-09-05-gpt-6-astra-hash-prefix-1.json.",
     "rank": 33,
     "rung_id": "L4.R0.hash-prefix-1",
-    "solver": null,
-    "status": "open",
-    "curator_note": "Five public epochs make this a five-row lookup problem; the earlier constant-output credit was revoked.",
-    "note": "Open. A previous credit here did not survive re-verification at full epochs."
+    "solver": {
+      "display": "GPT-6 Astra",
+      "harness": "codex",
+      "harness_short": null,
+      "harness_url": null,
+      "model": "GPT-6 Astra",
+      "notes": null,
+      "provider": "OpenAI",
+      "type": "llm-agent"
+    },
+    "status": "solved"
   },
   {
     "best_program": null,
+    "curator_note": "Fifteen public input/target pairs replace the three-row lookup that first cleared this rung.",
     "date": null,
     "manifest": {
       "architecture": "map8 two-stage dispatch: IN; CRAZY at addrs 8,9 against in-program constants (50, 68); MOVD/JUMP lands lane x at J(x)+1 with a=J(x), d=50; one [MOVD,JUMP] station whose pointer cell m+49-J(x) is lane-dependent; private tail NOP* [MOVD] [ROT] [MOVD] CRAZY* OUT HALT per lane",
@@ -1055,12 +1050,11 @@
       "verify_command": "./target/release/malbolge-rungs verify --rung L4.R1.hash-prefix-1-multicase --program research/hash-prefix-1-multicase/cand-hpm.mal"
     },
     "metric": null,
+    "note": "Open. A previous credit here did not survive re-verification at full epochs.",
     "rank": 34,
     "rung_id": "L4.R1.hash-prefix-1-multicase",
     "solver": null,
-    "status": "open",
-    "curator_note": "Fifteen public input/target pairs replace the three-row lookup that first cleared this rung.",
-    "note": "Open. A previous credit here did not survive re-verification at full epochs."
+    "status": "open"
   },
   {
     "best_program": null,
@@ -1097,42 +1091,42 @@
   },
   {
     "best_program": null,
+    "curator_note": "`cat` is one Python call; a general solution here must survive a loop body enciphered after its first pass.",
     "date": null,
     "metric": null,
     "rank": 38,
     "rung_id": "L6.S0.cat",
     "solver": null,
-    "status": "open",
-    "curator_note": "`cat` is one Python call; a general solution here must survive a loop body enciphered after its first pass."
+    "status": "open"
   },
   {
     "best_program": null,
+    "curator_note": "`len(data)` adds a counter that must survive beside a self-enciphering EOF loop.",
     "date": null,
     "metric": null,
     "rank": 39,
     "rung_id": "L6.S1.length",
     "solver": null,
-    "status": "open",
-    "curator_note": "`len(data)` adds a counter that must survive beside a self-enciphering EOF loop."
+    "status": "open"
   },
   {
     "best_program": null,
+    "curator_note": "`sum(data) % 256` adds arithmetic state to the same self-enciphering stream problem.",
     "date": null,
     "metric": null,
     "rank": 40,
     "rung_id": "L6.S2.checksum",
     "solver": null,
-    "status": "open",
-    "curator_note": "`sum(data) % 256` adds arithmetic state to the same self-enciphering stream problem."
+    "status": "open"
   },
   {
     "best_program": null,
+    "curator_note": "`data[::-1]` must buffer the stream, find EOF, and traverse its storage backward.",
     "date": null,
     "metric": null,
     "rank": 41,
     "rung_id": "L6.S3.reverse",
     "solver": null,
-    "status": "open",
-    "curator_note": "`data[::-1]` must buffer the stream, find EOF, and traverse its storage backward."
+    "status": "open"
   }
 ]

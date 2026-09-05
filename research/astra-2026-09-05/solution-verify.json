@@ -1,0 +1,111 @@
+{
+  "all_passed": true,
+  "epochs": 5,
+  "results": [
+    {
+      "outcome": {
+        "coverage": false,
+        "epochs": [
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "5e",
+                "index": 0,
+                "input_hex": "742103e5122cd3011fddc019414178aa6bfd447d36b155d80804887ab54ff9af",
+                "observed_hex": "5e",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 0,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "6fb12af7688dc00dc88ce05e0c8e1962c4f0223338fe3b0dfc65624d4c5bfae9",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "c8",
+                "index": 0,
+                "input_hex": "62e7c676ab4aaee8a2bc333c9188be9828feca1326680a6ce71d82dcb28c18dc",
+                "observed_hex": "c8",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 1,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "0d6c9479f79dd993521a887a3d3246875cbffb747e441976488b47c3a03636b0",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "a5",
+                "index": 0,
+                "input_hex": "b8b1217b1029d0e1c799c84bbb8d0e269850dad302530b2c6e4f3657c7636559",
+                "observed_hex": "a5",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 2,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "adfe123909a0a89ec108a6f5ba6501fc2da81dce5a8776a5c9832b82fcad86eb",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "6a",
+                "index": 0,
+                "input_hex": "7665044105b3467202c03f20559a7f36436e9a79b5b6eebc0cbf056282e3e184",
+                "observed_hex": "6a",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 3,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "97c426cb279411187a5d9f53c8ffb431aea3971b90d58a6c542148e234f6d8d4",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "93",
+                "index": 0,
+                "input_hex": "fa933330776d33bc39b13531b7fb50b72d5bfc1c9237ab66531b4511d4ae4829",
+                "observed_hex": "93",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 4,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "3e2605cb31b924578ba6b15367233c8834cebe393e198278ca458858f854dda8",
+            "total_cases": 1
+          }
+        ],
+        "passed": true,
+        "required_correct": 1,
+        "rung_id": "L4.R0.hash-prefix-1"
+      },
+      "program": "solutions/hash-prefix-1/gpt-6-astra.mal",
+      "program_len": 286,
+      "program_sha256": "264399918a74db9a3fd3600a8e8a1ca3c6b45a8f7170f6c0fe481a5d3d163cb6"
+    }
+  ],
+  "rung_id": "L4.R0.hash-prefix-1",
+  "schema": "malbolge-rungs.verify.v1"
+}

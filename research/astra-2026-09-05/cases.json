@@ -1,0 +1,352 @@
+[
+  {
+    "rung": "L4.R0.hash-prefix-1",
+    "epoch": 0,
+    "index": 0,
+    "input_hex": "742103e5122cd3011fddc019414178aa6bfd447d36b155d80804887ab54ff9af",
+    "expected_hex": "5e"
+  },
+  {
+    "rung": "L4.R0.hash-prefix-1",
+    "epoch": 1,
+    "index": 0,
+    "input_hex": "62e7c676ab4aaee8a2bc333c9188be9828feca1326680a6ce71d82dcb28c18dc",
+    "expected_hex": "c8"
+  },
+  {
+    "rung": "L4.R0.hash-prefix-1",
+    "epoch": 2,
+    "index": 0,
+    "input_hex": "b8b1217b1029d0e1c799c84bbb8d0e269850dad302530b2c6e4f3657c7636559",
+    "expected_hex": "a5"
+  },
+  {
+    "rung": "L4.R0.hash-prefix-1",
+    "epoch": 3,
+    "index": 0,
+    "input_hex": "7665044105b3467202c03f20559a7f36436e9a79b5b6eebc0cbf056282e3e184",
+    "expected_hex": "6a"
+  },
+  {
+    "rung": "L4.R0.hash-prefix-1",
+    "epoch": 4,
+    "index": 0,
+    "input_hex": "fa933330776d33bc39b13531b7fb50b72d5bfc1c9237ab66531b4511d4ae4829",
+    "expected_hex": "93"
+  },
+  {
+    "rung": "L4.R1.hash-prefix-1-multicase",
+    "epoch": 0,
+    "index": 0,
+    "input_hex": "2057b4e54801b6865372daddb82120081a9bc7874028aa9837e67e17c67f399b",
+    "expected_hex": "e5"
+  },
+  {
+    "rung": "L4.R1.hash-prefix-1-multicase",
+    "epoch": 0,
+    "index": 1,
+    "input_hex": "fc0222c2c2f9643e3d3106fd54ae0947400da1d6305f59bb594df25516c22d42",
+    "expected_hex": "85"
+  },
+  {
+    "rung": "L4.R1.hash-prefix-1-multicase",
+    "epoch": 0,
+    "index": 2,
+    "input_hex": "125214df39b9705a02303e13d5dab3a1e3bfc038c675743bf83439610b787c3f",
+    "expected_hex": "05"
+  },
+  {
+    "rung": "L4.R1.hash-prefix-1-multicase",
+    "epoch": 1,
+    "index": 0,
+    "input_hex": "ce480e0c1c13ab9666e1ef0ef09bb1623fc49038da674609524d93c9d2eaaff9",
+    "expected_hex": "2e"
+  },
+  {
+    "rung": "L4.R1.hash-prefix-1-multicase",
+    "epoch": 1,
+    "index": 1,
+    "input_hex": "e5298c7f2145060eafd3d4823b6a1ff71bcb442a7cb52ec2229e548572f8298b",
+    "expected_hex": "b6"
+  },
+  {
+    "rung": "L4.R1.hash-prefix-1-multicase",
+    "epoch": 1,
+    "index": 2,
+    "input_hex": "21b18f23afd1604a4b442dcf760d77b6f0750ba3ef8485f5535acb3dcef329af",
+    "expected_hex": "23"
+  },
+  {
+    "rung": "L4.R1.hash-prefix-1-multicase",
+    "epoch": 2,
+    "index": 0,
+    "input_hex": "9b6cf8250ea5057174036892c36fe66c254caf9c9c6ebcd679cd18559cb164b2",
+    "expected_hex": "9b"
+  },
+  {
+    "rung": "L4.R1.hash-prefix-1-multicase",
+    "epoch": 2,
+    "index": 1,
+    "input_hex": "b3bafd17187220f72f6b027d42b0479f322c7a71bab11857b21b76ccadb2d174",
+    "expected_hex": "00"
+  },
+  {
+    "rung": "L4.R1.hash-prefix-1-multicase",
+    "epoch": 2,
+    "index": 2,
+    "input_hex": "75fb631a49691dfdf91f638c89e73bfe0dfce7bf58c0ce3b71bef6afe2707968",
+    "expected_hex": "ec"
+  },
+  {
+    "rung": "L4.R1.hash-prefix-1-multicase",
+    "epoch": 3,
+    "index": 0,
+    "input_hex": "cd689c238444f9a3c3e2531d39eea99f20eb351a0c0c142b2e644614271f9508",
+    "expected_hex": "6c"
+  },
+  {
+    "rung": "L4.R1.hash-prefix-1-multicase",
+    "epoch": 3,
+    "index": 1,
+    "input_hex": "93611346600e4330e670c8025569af7e799bab76a9a570d06f05dfcfc1ad3cf5",
+    "expected_hex": "2a"
+  },
+  {
+    "rung": "L4.R1.hash-prefix-1-multicase",
+    "epoch": 3,
+    "index": 2,
+    "input_hex": "d9f4b59b7e53d8be8e73df150714797e13b7ae4a072de1a20272d78471a42dcb",
+    "expected_hex": "b6"
+  },
+  {
+    "rung": "L4.R1.hash-prefix-1-multicase",
+    "epoch": 4,
+    "index": 0,
+    "input_hex": "6b106773cddc6e2ceb91268c0bbb3eba93087dd86bd2b1f3b2fa8a4aaa0a3225",
+    "expected_hex": "3a"
+  },
+  {
+    "rung": "L4.R1.hash-prefix-1-multicase",
+    "epoch": 4,
+    "index": 1,
+    "input_hex": "7d92caaaafae7cc865c8fbbb5b22db6663ea522e01216f093c2ba0e4b52fcb1a",
+    "expected_hex": "10"
+  },
+  {
+    "rung": "L4.R1.hash-prefix-1-multicase",
+    "epoch": 4,
+    "index": 2,
+    "input_hex": "da29bf468c1e484f68ff011cdbb5c60e41a2b49112f7bda6d8fcf32769ecf509",
+    "expected_hex": "96"
+  },
+  {
+    "rung": "L4.R2.hash-prefix-length-pressure",
+    "epoch": 0,
+    "index": 0,
+    "input_hex": "49c0848ee27ed249eea978a1a87a1fc5c1d5383170790fd190464bda76d8fb19",
+    "expected_hex": "64"
+  },
+  {
+    "rung": "L4.R2.hash-prefix-length-pressure",
+    "epoch": 0,
+    "index": 1,
+    "input_hex": "95ecbb0b2c928735a947fed6d18904f668c6d796256a92f36258127ce43191c7",
+    "expected_hex": "0e"
+  },
+  {
+    "rung": "L4.R2.hash-prefix-length-pressure",
+    "epoch": 1,
+    "index": 0,
+    "input_hex": "d62f8fd35cd9d350eb88cf5844e569d201e0c5707455ecb74920a831c7d63f6a",
+    "expected_hex": "b7"
+  },
+  {
+    "rung": "L4.R2.hash-prefix-length-pressure",
+    "epoch": 1,
+    "index": 1,
+    "input_hex": "e34c5ebf2d316095e5af869aefb89a72425457704f1a27fdf71f3be63b8ae9c8",
+    "expected_hex": "87"
+  },
+  {
+    "rung": "L4.R2.hash-prefix-length-pressure",
+    "epoch": 2,
+    "index": 0,
+    "input_hex": "55fe33848e4a0341e7120f3aa52f27ba47dd2d31a430fa1acfe6a3beac1c236a",
+    "expected_hex": "fe"
+  },
+  {
+    "rung": "L4.R2.hash-prefix-length-pressure",
+    "epoch": 2,
+    "index": 1,
+    "input_hex": "7e268adb1b0d39808c8406bd7ce89ce46788630f87a1472581871a59b5fc290b",
+    "expected_hex": "9c"
+  },
+  {
+    "rung": "L4.R2.hash-prefix-length-pressure",
+    "epoch": 3,
+    "index": 0,
+    "input_hex": "08a3e8b853014e40039ff24ba25abe43dff6275c89eede8bc4906d5120eac98c",
+    "expected_hex": "fb"
+  },
+  {
+    "rung": "L4.R2.hash-prefix-length-pressure",
+    "epoch": 3,
+    "index": 1,
+    "input_hex": "42fc87bc61eba3f4deac261db4199e9a78e1c5bfad032e25c6594a24d66acb49",
+    "expected_hex": "8a"
+  },
+  {
+    "rung": "L4.R2.hash-prefix-length-pressure",
+    "epoch": 4,
+    "index": 0,
+    "input_hex": "87556ce2b60ad12b912c9ef104c36edc32eda1d7501a8065bcab6dd61cceb4a5",
+    "expected_hex": "96"
+  },
+  {
+    "rung": "L4.R2.hash-prefix-length-pressure",
+    "epoch": 4,
+    "index": 1,
+    "input_hex": "acd1c386ea93d6026a681496fdf27cd11b6bdd3703c193d2844d38636de70f05",
+    "expected_hex": "18"
+  },
+  {
+    "rung": "L5.R1.future-hash-prefix",
+    "epoch": 0,
+    "index": 0,
+    "input_hex": "ce6ace2720e3b33ba632943a51face1f32c0753e2fbcce939ebea5ca08db26e9",
+    "expected_hex": "c931"
+  },
+  {
+    "rung": "L5.R1.future-hash-prefix",
+    "epoch": 0,
+    "index": 1,
+    "input_hex": "46975d066a114f62676c7e7e45ff2cfb85f6a3c8a8ec3a42233aa58efbc71726",
+    "expected_hex": "8691"
+  },
+  {
+    "rung": "L5.R1.future-hash-prefix",
+    "epoch": 0,
+    "index": 2,
+    "input_hex": "a2a12de09fdb495d95cd77200f82e761a40c9e44fcbc015c9b1a323d8440cbef",
+    "expected_hex": "5f84"
+  },
+  {
+    "rung": "L5.R1.future-hash-prefix",
+    "epoch": 0,
+    "index": 3,
+    "input_hex": "f52b15a64352596c6449ea2783f84b812ec9797e47372b541988abf8bcec137a",
+    "expected_hex": "961d"
+  },
+  {
+    "rung": "L5.R1.future-hash-prefix",
+    "epoch": 1,
+    "index": 0,
+    "input_hex": "72da774410c0c268ce8ae38dbd1007cb47f92f127c8f86ee28e2c8978d8212d6",
+    "expected_hex": "c8db"
+  },
+  {
+    "rung": "L5.R1.future-hash-prefix",
+    "epoch": 1,
+    "index": 1,
+    "input_hex": "a4e2f9d8ee490f8f6c803eb1f1a82c369da4d60dcb11fb50062e79f00dc86c36",
+    "expected_hex": "e2d1"
+  },
+  {
+    "rung": "L5.R1.future-hash-prefix",
+    "epoch": 1,
+    "index": 2,
+    "input_hex": "d35bdf23731bb51061604a88158b1eff12634e67a7b7694fe54910d942914057",
+    "expected_hex": "cf85"
+  },
+  {
+    "rung": "L5.R1.future-hash-prefix",
+    "epoch": 1,
+    "index": 3,
+    "input_hex": "e2b342032a8f3671ca0d51e5d0899767f8c960a2727457f447d5a113288696c1",
+    "expected_hex": "b42c"
+  },
+  {
+    "rung": "L5.R1.future-hash-prefix",
+    "epoch": 2,
+    "index": 0,
+    "input_hex": "513e04811cbbac91e44f9b453d1bb393af940ad20effbc981734486c1edc0003",
+    "expected_hex": "aef3"
+  },
+  {
+    "rung": "L5.R1.future-hash-prefix",
+    "epoch": 2,
+    "index": 1,
+    "input_hex": "8bb14232e49d7b8ef1d3985a0b0ae10cb04b4904cecff2184151026cfae166e8",
+    "expected_hex": "5aba"
+  },
+  {
+    "rung": "L5.R1.future-hash-prefix",
+    "epoch": 2,
+    "index": 2,
+    "input_hex": "53045aa794186191f32ca8da258aac30da85b0b482cf734338c11a5dc80da634",
+    "expected_hex": "0d92"
+  },
+  {
+    "rung": "L5.R1.future-hash-prefix",
+    "epoch": 2,
+    "index": 3,
+    "input_hex": "3635cb5f7452d47b900a49181f3e3ec687cd08c1aefa77dc6be525228b8e356b",
+    "expected_hex": "8b73"
+  },
+  {
+    "rung": "L5.R1.future-hash-prefix",
+    "epoch": 3,
+    "index": 0,
+    "input_hex": "32e26c05232f770395fd68f6ff854b31a6fa63ee24e4d8fb314bca2b52150a50",
+    "expected_hex": "593c"
+  },
+  {
+    "rung": "L5.R1.future-hash-prefix",
+    "epoch": 3,
+    "index": 1,
+    "input_hex": "5b6827a82cc9e5bbdf831355786622ec6f21ce4e6a3d9ed9ef72d998b28aa0a6",
+    "expected_hex": "23b8"
+  },
+  {
+    "rung": "L5.R1.future-hash-prefix",
+    "epoch": 3,
+    "index": 2,
+    "input_hex": "57341447b34fd77993948f2cf85280b074ab2b947e747330d8b5bd47bd6589e8",
+    "expected_hex": "ec3c"
+  },
+  {
+    "rung": "L5.R1.future-hash-prefix",
+    "epoch": 3,
+    "index": 3,
+    "input_hex": "e19fa85efea3a42938ddd6d1f437067ac195a8f8e835869c0c8bd1d8e9c16a4f",
+    "expected_hex": "4f95"
+  },
+  {
+    "rung": "L5.R1.future-hash-prefix",
+    "epoch": 4,
+    "index": 0,
+    "input_hex": "1a2473b4cf647e4a047e86865fde69b5c8aa9362c59a54f982c162181a0854a5",
+    "expected_hex": "ecce"
+  },
+  {
+    "rung": "L5.R1.future-hash-prefix",
+    "epoch": 4,
+    "index": 1,
+    "input_hex": "48ba53838a5ee25a47cc12a38840ad31179297fc29da3144997595ba065fe9b2",
+    "expected_hex": "288d"
+  },
+  {
+    "rung": "L5.R1.future-hash-prefix",
+    "epoch": 4,
+    "index": 2,
+    "input_hex": "9d60833dd88776546e23e44412261957696199460552e8f4f3d73a5dc902e2b5",
+    "expected_hex": "6cf6"
+  },
+  {
+    "rung": "L5.R1.future-hash-prefix",
+    "epoch": 4,
+    "index": 3,
+    "input_hex": "340b4454dfa1d31dc5e0e59049675bdbc2c454b02977f044e0bae98dad303839",
+    "expected_hex": "d55c"
+  }
+]
