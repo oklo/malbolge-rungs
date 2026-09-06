@@ -1,0 +1,24 @@
+{
+  "masks": [
+    27,
+    3,
+    20,
+    517,
+    18,
+    50,
+    24,
+    18,
+    16,
+    26,
+    5,
+    8
+  ],
+  "rng_seed": 600664,
+  "iterations_per_restart": 15000,
+  "restarts": 20,
+  "program_sha256": "5b68e629ce5d44a07f9c13b661663348eeeadcf6eb058e9394fb4c3cef6a5241",
+  "baseline_sha256": "6fb339d2a687421ba9835a111012679882e1b28a19ad10e75adef34aec2320db",
+  "native_correct": 228,
+  "native_total": 256,
+  "source_bytes": 982
+}

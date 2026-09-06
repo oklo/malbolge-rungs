@@ -1,0 +1,1 @@
+{"phase": 10, "offset": 1, "masks": [27, 3, 20, 517, 18, 50, 24, 18, 16, 26, 5, 8], "reachable_under_pointer_constraints": 215, "upper_score": 215, "lower_single_read_score": 0, "single_read_score": 215, "source_bytes": 982}

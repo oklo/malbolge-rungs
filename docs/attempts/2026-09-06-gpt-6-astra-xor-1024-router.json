@@ -1,0 +1,59 @@
+{
+  "artifacts": [
+    "research/astra-xor1024-router-2026-09-06/allowed.txt",
+    "research/astra-xor1024-router-2026-09-06/base.mal",
+    "research/astra-xor1024-router-2026-09-06/config.json",
+    "research/astra-xor1024-router-2026-09-06/guard.txt",
+    "research/astra-xor1024-router-2026-09-06/layout.json",
+    "research/astra-xor1024-router-2026-09-06/model.json",
+    "research/astra-xor1024-router-2026-09-06/native-verify.json",
+    "research/astra-xor1024-router-2026-09-06/one-byte-native.jsonl",
+    "research/astra-xor1024-router-2026-09-06/reproduce.py",
+    "research/astra-xor1024-router-2026-09-06/router-options.txt",
+    "research/astra-xor1024-router-2026-09-06/router-search.jsonl",
+    "research/astra-xor1024-router-2026-09-06/router_search.c",
+    "research/astra-xor1024-router-2026-09-06/search-counts.json",
+    "research/astra-xor1024-router-2026-09-06/table_dp.c",
+    "research/astra-xor1024-router-2026-09-06/table_model.c"
+  ],
+  "best_candidate": {
+    "claimed_correct_cases": 228,
+    "claimed_total_cases": 256,
+    "program": "research/astra-xor1024-router-2026-09-06/candidate.mal"
+  },
+  "budget": {
+    "note": "Correlated diagnostic search trials, not independent model attempts.",
+    "search_counts_artifact": "research/astra-xor1024-router-2026-09-06/search-counts.json"
+  },
+  "builds_on": [
+    "docs/attempts/2026-09-06-gpt-6-astra-xor-2048.json"
+  ],
+  "date": "2026-09-06",
+  "file": "docs/attempts/2026-09-06-gpt-6-astra-xor-1024-router.json",
+  "manifest": {
+    "allocation_cap_fraction": "1/6",
+    "base_commit": "1e0b415e4da674c1f2539795e8b0dd31bc552623",
+    "interim_submission": true,
+    "model_version": "GPT-6 Astra",
+    "source_bytes": 982,
+    "weekly_meter_note": "Coarse account-wide telemetry, not an exact Astra-only token quota.",
+    "weekly_usage_percent_at_snapshot": 8,
+    "weekly_usage_percent_initial": 5
+  },
+  "outcome": "unsolved",
+  "report": "docs/attempts/2026-09-06-gpt-6-astra-xor-1024-router.md",
+  "rung_digest": "39d8f67d7b0fb1d5",
+  "rung_id": "L2.X1024.xor-1-len1024",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "GPT-6 Astra",
+    "harness": "codex",
+    "harness_short": null,
+    "harness_url": null,
+    "model": "GPT-6 Astra",
+    "notes": null,
+    "provider": "OpenAI",
+    "type": "llm-agent"
+  },
+  "summary": "Verified 228/256 exhaustive XOR cases in 982 bytes. Exact overlapping-table synthesis solves inputs 41–255; constrained optimization of low-memory return-router bytes adds 13 of the remaining 41 cases. The rung remains unsolved."
+}

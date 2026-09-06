@@ -1,0 +1,19 @@
+{
+  "arithmetic_search": {
+    "records": 8487,
+    "best_diagnostic_score": 218
+  },
+  "router_seed_search": {
+    "records": 100,
+    "best_diagnostic_score": 228
+  },
+  "hybrid_search": {
+    "records": 480,
+    "best_diagnostic_score": 228
+  },
+  "router_search_budget": {
+    "arithmetic_seeds": 100,
+    "iterations_per_seed": 300000,
+    "note": "Iterations include proposals rejected by router validity before native-semantics scoring."
+  }
+}
