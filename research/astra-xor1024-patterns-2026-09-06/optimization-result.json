@@ -1,0 +1,103 @@
+{
+  "status": "OPTIMAL",
+  "objective": 11.0,
+  "bound": 11.0,
+  "wall_seconds": 10.389172,
+  "files": [
+    "pattern-250/trial-00-input-1/patterns.bin",
+    "pattern-250/trial-01-input-3/patterns.bin",
+    "pattern-250/trial-02-input-6/patterns.bin",
+    "pattern-250/trial-03-input-8/patterns.bin",
+    "pattern-250/trial-04-input-13/patterns.bin",
+    "pattern-250/trial-05-input-15/patterns.bin",
+    "pattern-250/trial-06-input-1/patterns.bin",
+    "pattern-250/trial-07-input-3/patterns.bin",
+    "pattern-250/trial-08-input-6/patterns.bin",
+    "pattern-250/trial-09-input-8/patterns.bin",
+    "pattern-250/trial-10-input-13/patterns.bin",
+    "pattern-250/trial-11-input-15/patterns.bin"
+  ],
+  "patterns": [
+    {
+      "input": 0,
+      "unique": 12,
+      "after_subsumption": 12
+    },
+    {
+      "input": 1,
+      "unique": 8851,
+      "after_subsumption": 8851
+    },
+    {
+      "input": 2,
+      "unique": 4,
+      "after_subsumption": 4
+    },
+    {
+      "input": 3,
+      "unique": 643,
+      "after_subsumption": 643
+    },
+    {
+      "input": 4,
+      "unique": 7327,
+      "after_subsumption": 7327
+    },
+    {
+      "input": 5,
+      "unique": 10428,
+      "after_subsumption": 10428
+    },
+    {
+      "input": 6,
+      "unique": 2120,
+      "after_subsumption": 2120
+    },
+    {
+      "input": 7,
+      "unique": 5187,
+      "after_subsumption": 5187
+    },
+    {
+      "input": 8,
+      "unique": 138,
+      "after_subsumption": 138
+    },
+    {
+      "input": 9,
+      "unique": 3791,
+      "after_subsumption": 3791
+    },
+    {
+      "input": 10,
+      "unique": 1596,
+      "after_subsumption": 1596
+    },
+    {
+      "input": 11,
+      "unique": 2650,
+      "after_subsumption": 2650
+    },
+    {
+      "input": 12,
+      "unique": 10116,
+      "after_subsumption": 10116
+    },
+    {
+      "input": 13,
+      "unique": 7577,
+      "after_subsumption": 7577
+    },
+    {
+      "input": 14,
+      "unique": 44,
+      "after_subsumption": 44
+    },
+    {
+      "input": 15,
+      "unique": 1726,
+      "after_subsumption": 1726
+    }
+  ],
+  "scope": "Combine sufficient read-dependency patterns from successful diagnostic runs.\n\nThe archive is a finite search family, not a general program bound. Native\nverification checks every selected program, including all upper inputs.\n"
+}
