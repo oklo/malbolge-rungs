@@ -14,7 +14,8 @@
     "research/astra-xor1024-router-2026-09-06/router_search.c",
     "research/astra-xor1024-router-2026-09-06/search-counts.json",
     "research/astra-xor1024-router-2026-09-06/table_dp.c",
-    "research/astra-xor1024-router-2026-09-06/table_model.c"
+    "research/astra-xor1024-router-2026-09-06/table_model.c",
+    "research/astra-xor1024-router-2026-09-06/guard-audit.json"
   ],
   "best_candidate": {
     "claimed_correct_cases": 228,
@@ -38,7 +39,8 @@
     "source_bytes": 982,
     "weekly_meter_note": "Coarse account-wide telemetry, not an exact Astra-only token quota.",
     "weekly_usage_percent_at_snapshot": 8,
-    "weekly_usage_percent_initial": 5
+    "weekly_usage_percent_initial": 5,
+    "diagnostic_guard_audit": "research/astra-xor1024-router-2026-09-06/guard-audit.json"
   },
   "outcome": "unsolved",
   "report": "docs/attempts/2026-09-06-gpt-6-astra-xor-1024-router.md",

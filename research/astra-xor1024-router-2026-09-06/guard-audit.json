@@ -1,0 +1,20 @@
+{
+  "date": "2026-09-06",
+  "finding": "Historical low-memory route guard used stale setup words at addresses 124 through 127; the table can overwrite those words.",
+  "detected_by": {
+    "layout": "table offset 2",
+    "diagnostic_aggregate": 222,
+    "native_aggregate": 220
+  },
+  "retained_candidate": {
+    "sha256": "5b68e629ce5d44a07f9c13b661663348eeeadcf6eb058e9394fb4c3cef6a5241",
+    "source_bytes": 982,
+    "native_correct_cases": 228,
+    "native_total_cases": 256,
+    "native_upper_cases": 215,
+    "native_lower_cases": 13,
+    "one_byte_native_steps_each": 227
+  },
+  "scope": "Final candidate verified; historical diagnostic aggregate scores and route-preservation claims are not proofs. Search algorithm preserved for exact provenance.",
+  "new_search_policy": "Exclude boundary cells overwritten by table assembly from static routes, or model their actual values and per-case writes."
+}

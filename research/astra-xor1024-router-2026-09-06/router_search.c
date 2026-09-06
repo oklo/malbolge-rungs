@@ -1,3 +1,5 @@
+/* Historical search: boundary-cell guard limitation documented in guard-audit.json.
+ * The retained candidate is certified by native verification, not by this guard. */
 /* GPT-6 Astra: optimize loader-legal router bytes that preserve upper-case routes.
  * Diagnostic native-semantics VM, single input read; Rust verification authoritative.
  */

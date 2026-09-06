@@ -1,6 +1,7 @@
 """Rebuild GPT-6 Astra's 228/256, 982-byte XOR candidate; native verifier is judge."""
 from pathlib import Path
 import tempfile,subprocess,json,hashlib
+print('Replaying the historical search; see guard-audit.json. Native verification remains required.')
 r=Path(__file__).resolve().parent;c=json.loads((r/'config.json').read_text())
 with tempfile.TemporaryDirectory(prefix='astra-xor1024-') as tmp:
  t=Path(tmp)
