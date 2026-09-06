@@ -1,0 +1,59 @@
+{
+  "artifacts": [
+    "research/astra-xor1024-compact-2026-09-06/allowed.txt",
+    "research/astra-xor1024-compact-2026-09-06/base.mal",
+    "research/astra-xor1024-compact-2026-09-06/biased243_model.c",
+    "research/astra-xor1024-compact-2026-09-06/config.json",
+    "research/astra-xor1024-compact-2026-09-06/layout.json",
+    "research/astra-xor1024-compact-2026-09-06/model-config.txt",
+    "research/astra-xor1024-compact-2026-09-06/native.json",
+    "research/astra-xor1024-compact-2026-09-06/one-byte-native.jsonl",
+    "research/astra-xor1024-compact-2026-09-06/reproduce.py",
+    "research/astra-xor1024-compact-2026-09-06/router-input.txt",
+    "research/astra-xor1024-compact-2026-09-06/search-results.jsonl",
+    "research/astra-xor1024-compact-2026-09-06/table_dp.c"
+  ],
+  "best_candidate": {
+    "claimed_correct_cases": 252,
+    "claimed_total_cases": 256,
+    "program": "research/astra-xor1024-compact-2026-09-06/candidate.mal"
+  },
+  "budget": {
+    "note": "Two sequential batches of 1200 correlated computational schedule trials; retained improvements checked by the native verifier. Final reproduction repeats exact table optimization for the selected schedule, not the schedule search."
+  },
+  "builds_on": [
+    "docs/attempts/2026-09-06-gpt-6-astra-xor-2048.json",
+    "docs/attempts/2026-09-06-gpt-6-astra-xor-1024-router.json",
+    "docs/attempts/2026-09-06-gpt-6-astra-xor-1024-affine.json",
+    "docs/attempts/2026-09-06-gpt-6-astra-xor-1024-stateful.json",
+    "docs/attempts/2026-09-06-gpt-6-astra-xor-1024-patterns.json"
+  ],
+  "date": "2026-09-06",
+  "file": "docs/attempts/2026-09-06-gpt-6-astra-xor-1024-compact.json",
+  "manifest": {
+    "allocation_cap_fraction": "1/6",
+    "base_commit": "1e0b415e4da674c1f2539795e8b0dd31bc552623",
+    "interim_submission": true,
+    "model_version": "GPT-6 Astra",
+    "source_bytes": 1016,
+    "weekly_meter_note": "Coarse account-wide telemetry, not an exact Astra-only token quota.",
+    "weekly_usage_percent_at_snapshot": 15,
+    "weekly_usage_percent_initial": 5
+  },
+  "outcome": "unsolved",
+  "report": "docs/attempts/2026-09-06-gpt-6-astra-xor-1024-compact.md",
+  "rung_digest": "39d8f67d7b0fb1d5",
+  "rung_id": "L2.X1024.xor-1-len1024",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "GPT-6 Astra",
+    "harness": "codex",
+    "harness_short": null,
+    "harness_url": null,
+    "model": "GPT-6 Astra",
+    "notes": null,
+    "provider": "OpenAI",
+    "type": "llm-agent"
+  },
+  "summary": "Verified 252/256 exhaustive XOR cases in 1,016 bytes. A new nonoverlapping data layout computes 3*b+243 and synthesizes a shared table with eight arithmetic passes. All executions halt in 172 steps; failures are 76,117,135,214. The rung remains unsolved."
+}

@@ -1,0 +1,61 @@
+{
+  "trial": 16860,
+  "bootstrap_len": 5,
+  "code_len": 60,
+  "core_start": 134,
+  "root": 41,
+  "q_register": 42,
+  "initial": {
+    "71": 121,
+    "72": 121,
+    "73": 89,
+    "41": 40,
+    "42": 91,
+    "43": 56,
+    "57": 41,
+    "44": 73,
+    "54": 108,
+    "61": 56,
+    "62": 72,
+    "47": 70,
+    "58": 59,
+    "63": 71,
+    "45": 53,
+    "56": 61
+  },
+  "modified": [
+    42,
+    54,
+    61,
+    62,
+    71,
+    72,
+    73
+  ],
+  "return_exit_ops": [
+    68,
+    40
+  ],
+  "max_passes": 9,
+  "constant_registers": [
+    54,
+    61,
+    62
+  ],
+  "constant_words": [
+    108,
+    56,
+    72
+  ],
+  "table_start": 244,
+  "main_start": 74,
+  "source_length": 1016,
+  "code_limit": 244,
+  "first_free_input": 0,
+  "phase": 3,
+  "depth": 6,
+  "passes": 8,
+  "leaves": 62,
+  "minimum_choices": 2,
+  "missing": 0
+}

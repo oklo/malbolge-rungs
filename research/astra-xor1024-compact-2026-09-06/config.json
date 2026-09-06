@@ -1,0 +1,25 @@
+{
+  "model": "GPT-6 Astra",
+  "masks": [
+    386,
+    80,
+    108,
+    146,
+    278,
+    272,
+    20,
+    7
+  ],
+  "program_sha256": "fbbc3d4f3c9afaa54b5b797cd4b1c9a68098f171c9d88f838dacd247a956e376",
+  "base_sha256": "67fa7df6f76a9f1a3f0dffe951bcef51fc18c15d70ee38e8b4bd75994b601f6b",
+  "source_bytes": 1016,
+  "correct_cases": 252,
+  "total_cases": 256,
+  "failed_inputs": [
+    76,
+    117,
+    135,
+    214
+  ],
+  "reproduction_scope": "Exact table optimization for retained instruction schedule and checked prefix/return graph; does not rerun the campaign that selected the schedule."
+}
