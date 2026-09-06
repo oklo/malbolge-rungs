@@ -1,0 +1,93 @@
+{
+  "phase": 0,
+  "offset": 82,
+  "masks": [
+    89,
+    3,
+    20,
+    184,
+    208,
+    209,
+    16,
+    20,
+    7
+  ],
+  "reachable_under_pointer_constraints": 240,
+  "upper_score": 240,
+  "lower_single_read_score": 0,
+  "single_read_score": 240,
+  "source_bytes": 1022,
+  "trial": 975,
+  "layout": {
+    "trial": 8290,
+    "bootstrap_len": 39,
+    "code_len": 61,
+    "core_start": 917,
+    "root": 41,
+    "q_register": 42,
+    "initial": {
+      "71": 121,
+      "72": 121,
+      "41": 40,
+      "42": 39,
+      "43": 56,
+      "57": 41,
+      "67": 95,
+      "53": 109,
+      "70": 123,
+      "44": 55,
+      "66": 51,
+      "61": 101,
+      "47": 51,
+      "52": 65,
+      "68": 66,
+      "74": 43,
+      "69": 65,
+      "73": 60,
+      "62": 71,
+      "64": 69,
+      "46": 52,
+      "54": 63,
+      "76": 41
+    },
+    "modified": [
+      42,
+      44,
+      53,
+      61,
+      66,
+      67,
+      70,
+      71,
+      72
+    ],
+    "return_exit_ops": [
+      68,
+      40
+    ],
+    "max_passes": 9,
+    "constant_registers": [
+      53,
+      70,
+      44,
+      66,
+      61
+    ],
+    "constant_words": [
+      109,
+      123,
+      55,
+      51,
+      101
+    ],
+    "table_start": 82,
+    "first_free_input": 0,
+    "phase": 3,
+    "path": ".",
+    "depth": 4,
+    "passes": 9,
+    "leaves": 71,
+    "minimum_choices": 4,
+    "missing": 0
+  }
+}

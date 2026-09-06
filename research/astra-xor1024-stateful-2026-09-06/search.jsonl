@@ -1,0 +1,5 @@
+{"event":"baseline","lower_correct":9,"lower_halted":16,"lower_bit_matches":99,"mutable_router_cells":66}
+{"event":"improvement","restart":6,"iteration":27,"lower_correct":9,"lower_halted":16,"lower_bit_matches":100,"source_bytes":1024}
+{"event":"improvement","restart":7,"iteration":90,"lower_correct":10,"lower_halted":16,"lower_bit_matches":99,"source_bytes":1024}
+{"event":"improvement","restart":7,"iteration":108,"lower_correct":10,"lower_halted":16,"lower_bit_matches":103,"source_bytes":1024}
+{"event":"improvement","restart":13,"iteration":10,"lower_correct":10,"lower_halted":16,"lower_bit_matches":104,"source_bytes":1024}

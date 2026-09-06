@@ -1,0 +1,15 @@
+{
+  "padding_ops": [
+    39,
+    40
+  ],
+  "rng_seed": 600697,
+  "iterations_per_restart": 15000,
+  "restarts": 20,
+  "lower_limit": 16,
+  "root": 41,
+  "depth": 4,
+  "base_sha256": "9628bc384894901383f6934e01db76e9398c76b4b50c1c1a75e4b40d1f31a155",
+  "baseline_sha256": "196a0a5ba74d975275e8c755f7ec8afcabaacfbb4a3380ddb350ecf8e9b09f7a",
+  "program_sha256": "b453afa3887061009105b54dd8cdf62e4383fa3e4fa6180fdee6275c059ec0e6"
+}
