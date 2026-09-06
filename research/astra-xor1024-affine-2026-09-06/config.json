@@ -1,0 +1,20 @@
+{
+  "masks": [
+    3,
+    16,
+    60,
+    146,
+    23,
+    272,
+    20,
+    7
+  ],
+  "rng_seed": 601116,
+  "iterations_per_restart": 30000,
+  "restarts": 20,
+  "lower_limit": 16,
+  "root": 59,
+  "depth": 4,
+  "baseline_sha256": "28db0303a4f3dd4e0ae3a5e197bc835787d48618161b4e7d09dc3739be286496",
+  "program_sha256": "5934de2f4b5a19d00eb2af37ef82e8ce679c4a183e9aeec0978293f544f1e3bf"
+}

@@ -1,0 +1,194 @@
+{
+  "snapshot_utc": "2026-09-06T09:41:42.233124+00:00",
+  "interpretation": "Correlated computational search trials, not independent model attempts. In-progress controllers can add trials after this snapshot. Diagnostic statuses are bounded-model results; only explicit native scores certify programs.",
+  "campaigns": {
+    "adjacent-affine-campaign": {
+      "recorded_trials": 1080,
+      "statuses": {
+        "diagnostic": 1080
+      }
+    },
+    "adjacent-wide-feasibility": {
+      "recorded_trials": 150,
+      "statuses": {
+        "INFEASIBLE": 148,
+        "UNKNOWN": 2
+      }
+    },
+    "affine-campaign": {
+      "recorded_trials": 900,
+      "statuses": {
+        "diagnostic": 900
+      }
+    },
+    "affine-feasibility": {
+      "recorded_trials": 150,
+      "statuses": {
+        "INFEASIBLE": 150
+      }
+    },
+    "affine-stateful-feasibility": {
+      "recorded_trials": 150,
+      "statuses": {
+        "INFEASIBLE": 150
+      }
+    },
+    "boundary-affine-campaign": {
+      "recorded_trials": 474,
+      "statuses": {
+        "diagnostic": 474
+      }
+    },
+    "boundary-feasibility": {
+      "recorded_trials": 100,
+      "statuses": {
+        "INFEASIBLE": 100
+      }
+    },
+    "covered-cp-evolve": {
+      "recorded_trials": 86,
+      "statuses": {
+        "FEASIBLE": 58,
+        "UNKNOWN": 7,
+        "OPTIMAL": 21
+      }
+    },
+    "cp-evolve": {
+      "recorded_trials": 248,
+      "statuses": {
+        "OPTIMAL": 212,
+        "FEASIBLE": 31,
+        "UNKNOWN": 5
+      }
+    },
+    "depth-cp-campaign": {
+      "recorded_trials": 2,
+      "statuses": {
+        "UNKNOWN": 2
+      }
+    },
+    "early-affine-campaign": {
+      "recorded_trials": 540,
+      "statuses": {
+        "diagnostic": 540
+      }
+    },
+    "filtered-cp-evolve": {
+      "recorded_trials": 57,
+      "statuses": {
+        "FILTERED_ARITHMETIC": 28,
+        "OPTIMAL": 8,
+        "FEASIBLE": 21
+      }
+    },
+    "hybrid-campaign": {
+      "recorded_trials": 480,
+      "statuses": {
+        "diagnostic": 480
+      }
+    },
+    "padding-wide": {
+      "recorded_trials": 8,
+      "statuses": {
+        "INFEASIBLE": 8
+      }
+    },
+    "partial-early-affine-campaign": {
+      "recorded_trials": 1,
+      "statuses": {
+        "diagnostic": 1
+      }
+    },
+    "router-campaign": {
+      "recorded_trials": 100,
+      "statuses": {
+        "diagnostic": 100
+      }
+    },
+    "shift-campaign": {
+      "recorded_trials": 1,
+      "statuses": {
+        "diagnostic": 1
+      }
+    },
+    "shift-campaign-fixed": {
+      "recorded_trials": 120,
+      "statuses": {
+        "diagnostic": 120
+      }
+    },
+    "small-campaign": {
+      "recorded_trials": 320,
+      "statuses": {
+        "diagnostic": 320
+      }
+    },
+    "small-evolve": {
+      "recorded_trials": 1200,
+      "statuses": {
+        "diagnostic": 1200
+      }
+    },
+    "symbolic-masks": {
+      "recorded_trials": 5,
+      "statuses": {
+        "unknown": 5
+      }
+    },
+    "symbolic-one-edit-0": {
+      "recorded_trials": 40,
+      "statuses": {
+        "unsat": 40
+      }
+    },
+    "symbolic-one-edit-1": {
+      "recorded_trials": 40,
+      "statuses": {
+        "unsat": 40
+      }
+    },
+    "symbolic-one-edit-2": {
+      "recorded_trials": 40,
+      "statuses": {
+        "unsat": 39,
+        "unknown": 1
+      }
+    },
+    "symbolic-router": {
+      "recorded_trials": 1,
+      "statuses": {
+        "unsat": 1
+      }
+    },
+    "symbolic-router-fixed": {
+      "recorded_trials": 1,
+      "statuses": {
+        "unsat": 1
+      }
+    },
+    "symbolic-table-router": {
+      "recorded_trials": 1,
+      "statuses": {
+        "unsat": 1
+      }
+    },
+    "tail3-affine-campaign": {
+      "recorded_trials": 1,
+      "statuses": {
+        "diagnostic": 1
+      }
+    },
+    "tail3-fixed-campaign": {
+      "recorded_trials": 229,
+      "statuses": {
+        "diagnostic": 229
+      }
+    }
+  },
+  "incremental_248": {
+    "event": "complete",
+    "correct": 248,
+    "proposals": 524765,
+    "case_evaluations": 4027606
+  }
+}
