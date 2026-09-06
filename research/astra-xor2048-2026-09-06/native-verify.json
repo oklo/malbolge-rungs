@@ -1,0 +1,4629 @@
+{
+  "all_passed": true,
+  "epochs": 256,
+  "results": [
+    {
+      "outcome": {
+        "coverage": false,
+        "epochs": [
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "51",
+                "index": 0,
+                "input_hex": "00fd95810a896e86d3cf76c07ce27c0d95b42055daa0da8388cd8a32f4e8dd04",
+                "observed_hex": "51",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 0,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "e5e2576c850362d0f9a91f81c7ae960c4f1517f5331fcff443367b2bc5529fb1",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "50",
+                "index": 0,
+                "input_hex": "018fbeec199adab5158140ebdb676dcbf63a416234d4d2011d923b6a90248595",
+                "observed_hex": "50",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 1,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "6cad5df88db04b6ed22bf98e160992b497dbcd889b06948ac68f7b052bbf06b7",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "53",
+                "index": 0,
+                "input_hex": "02e0b5e7e51048fcb77240f1fe5f5af6aa43c480512daf178822f9a4e8826592",
+                "observed_hex": "53",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 2,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "54937a1c0b095dfbf9580bd595d99d6bdde93dd34040ca2f0c3d7134c895f6ea",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "52",
+                "index": 0,
+                "input_hex": "03888218f872e604334edd1861a8b18d69015cd07f6e891d638085aad0e1e858",
+                "observed_hex": "52",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 3,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "78e8c2a4ff496e3f6f379d17350b752378752659e868d8dc147562cef80e8cef",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "55",
+                "index": 0,
+                "input_hex": "0466b228241bd62621e8454109ba0d6e98fe7be44e6e4d86b5ce6c8340b13c9f",
+                "observed_hex": "55",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 4,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "83e5e92e6ff2c204fb4e0fa0442052fa350fbfb386d955048996307fc80ed554",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "54",
+                "index": 0,
+                "input_hex": "050927c014d477efccfeeb57ddbc84d537b8e80cf1f54dffc073f7fc2db08388",
+                "observed_hex": "54",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 5,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "00878f6e4e394b791787c57f929ad76877b3f9112d111991f3080c8b9139b41a",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "57",
+                "index": 0,
+                "input_hex": "06ec9a03664501cf2991a960253fb1d6d889f3a8d9785178263d7936ff8a3394",
+                "observed_hex": "57",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 6,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "252ab9bd6118a8680adf78f8439703509ac434b69d4dd1a13e58f7c396142404",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "56",
+                "index": 0,
+                "input_hex": "07a6031cde01f334f3c8bf02fc88d56faf4b9a3fc8399475ea5fb874efa54878",
+                "observed_hex": "56",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 7,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "4a103dba783ecc7f34a43fe94d8727b7616280d4b5d81ad89642d5a3a72dcb29",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "59",
+                "index": 0,
+                "input_hex": "08561870cc37be018f264b24937e8cc57ee8fbbac1f7ff2ff2d7309744105e65",
+                "observed_hex": "59",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 8,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "f3e91ce9b7b93df9fd260ae2b1ed37b1a1d5cb308f3e6a20915e39fc543a51a0",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "58",
+                "index": 0,
+                "input_hex": "090c27deb7fe1c3335426052de76095e67e0ce00a7938b3e17cae95e11ced953",
+                "observed_hex": "58",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 9,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "36a5fa59df273d4d296e6fb0695aece7ac49f0c2d18fe80bd6e852d8ece9f79e",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "5b",
+                "index": 0,
+                "input_hex": "0ab2aaab215460ec136f1cff4bb92658618bb4088f90fd4bd7e240d548a390cc",
+                "observed_hex": "5b",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 10,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "216f26a836d484ce1bdf0eecec16cbe944947c32f96548021d0f05a32c8c925b",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "5a",
+                "index": 0,
+                "input_hex": "0bfb471ff2e15537799dd9853f6c0cf6dd932ba787ed95feb7c6fc41b9d3c2db",
+                "observed_hex": "5a",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 11,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "71229643591a960c77b5c4cee3aa75614723c90f407d346cc5b546bf907a655b",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "5d",
+                "index": 0,
+                "input_hex": "0c78a575593fa3e59c992132727f6a3a5385bef81eb7f1f575c22dc7bd7113b4",
+                "observed_hex": "5d",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 12,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "a570c1be6771fa21bd68e5de96bbe49c64ee9b37d5f4bd096d5340ebfc4bcee1",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "5c",
+                "index": 0,
+                "input_hex": "0d0da73741aba3b7fbe27334762a5574b6429dc8c7159d9f2f6c3a3fa92bf4a2",
+                "observed_hex": "5c",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 13,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "87f7120fee255d1fb8928a9cc07882fb94b893d78a99360a91cb7907cc2fa61a",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "5f",
+                "index": 0,
+                "input_hex": "0e79b2ed08c85f5f91d0ea6cdb054a912bd27250ed3b277b6c36ebaccba2d95c",
+                "observed_hex": "5f",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 14,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "1787e22216bf9104175a4530a4524c90373af3fa70b1ff3db7bbb8afedf5caf0",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "5e",
+                "index": 0,
+                "input_hex": "0f218c318cdac26925743345953db4d561e77d15bc3e24caa94ed84fdb93990f",
+                "observed_hex": "5e",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 15,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "f13af22854e47a9639678c370401993381ed17657b780af1fd2847b7288b7343",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "41",
+                "index": 0,
+                "input_hex": "10ba5539d46cfe040c7ac05b75e80184089a5059aa57611c4a8fd33644e6f8f6",
+                "observed_hex": "41",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 16,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "91523be7760555bbe50e73c9a504ea4ae62f43a329ad25be2c1d85945f04a332",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "40",
+                "index": 0,
+                "input_hex": "110932e4563688f348a462465ec12e76a2955886094fe4fc23227a32160723a3",
+                "observed_hex": "40",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 17,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "04cdcb933dc2ed41e5d58b3bddc4a5f74e2774ec25900574a8f716a96c68a41c",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "43",
+                "index": 0,
+                "input_hex": "12e6dbd3403d39c98670d47d338db9b6d793e8c7fed5ac84ba317e1f9fbe290a",
+                "observed_hex": "43",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 18,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "095f52a4e5890bb4d388eb0dfb902ccbd019cd1ccb84f7bf09138e42ded75727",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "42",
+                "index": 0,
+                "input_hex": "1377231e88d8207a7ae7b9ea36bed4f72ff6fad917331815439cd55f3e0d5626",
+                "observed_hex": "42",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 19,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "07fb0ec87569bd73479512282b237db5414f5fa676c1b575bfaf8ff0bb76b019",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "45",
+                "index": 0,
+                "input_hex": "14f305f3c5e04ff48a3e52a9bd65bbe440138a84fefc5f9438e121cbd75241fe",
+                "observed_hex": "45",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 20,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "00ccfc07ad15eef2472b0a4dd441d2104023ce17cfdd9b876cf802cd9407eed3",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "44",
+                "index": 0,
+                "input_hex": "15c597adf39a31762078d57642f4130c3fd1dcc3ed2db1fc321ad9d59851830b",
+                "observed_hex": "44",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 21,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "3c109b167ae182ae5c486d3ae348b8c7c5c02f0241cfa65c88d5bd5076decb9f",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "47",
+                "index": 0,
+                "input_hex": "16e3febb439542d95782ed465f21eb8bd7917f892150cbd0f40afe188914cf8f",
+                "observed_hex": "47",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 22,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "2b8b13b6d79b7d5c201bc3b83db8d5a0d298d5f4040300f120a169229220c23e",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "46",
+                "index": 0,
+                "input_hex": "1742511253b5c88c07181753eadda03a37defa44b8cdf895d2b67b78a0940500",
+                "observed_hex": "46",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 23,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "21d51039a11be1bbfb1468e7b1c8c36e354993dcdcf90a4e5c99108aaf77103a",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "49",
+                "index": 0,
+                "input_hex": "18e7eb55d5668ef76d409297275ef2b9f2dd998171d3edd8fd0632f281e1189c",
+                "observed_hex": "49",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 24,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "059d1c4e2486894d61c1ac9660f1d28f32a66f055fbf92fda1698eac1ab67ccc",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "48",
+                "index": 0,
+                "input_hex": "19143f88d4a988f5151cedc14691b89bacf2598f2055a04b7fa01c7ed41c9432",
+                "observed_hex": "48",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 25,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "317ddecc370c8dea4b7b48ce4c742417c3ed5790e5884d970332f2973f1801c2",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "4b",
+                "index": 0,
+                "input_hex": "1ad6d3d5d62db81f9958dea14ee8d0876d3e2e4338d33a48e5c969372def090c",
+                "observed_hex": "4b",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 26,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "b7c976f13b525195ab0cbbc80cddb54c371894248f7022cd485fe3c44d457ba5",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "4a",
+                "index": 0,
+                "input_hex": "1be4191d20ef4487680f8e392bc81c8dfc55f521b366004cef3ac110e25e214f",
+                "observed_hex": "4a",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 27,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "24e42a80f81ccd87ad688d33bd3a76969e3b758c243325049b7cfd247bc3a288",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "4d",
+                "index": 0,
+                "input_hex": "1c7662497ab056c5a34520db96401181772a8af80ce25a604d2c422ab7a0ec23",
+                "observed_hex": "4d",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 28,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "cf7f28a671d8573f433476977132bed1d912cf4257a4a80949d12fae3cad6f80",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "4c",
+                "index": 0,
+                "input_hex": "1d9eb41ab3b7d4ea754303c58fcc2f05c958be5e4240bc8934380131a92547c2",
+                "observed_hex": "4c",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 29,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "5e7143183b1cbd3ed6ae77288637fd2eccd067bc569ef884e0c9bbd1c9e3e15b",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "4f",
+                "index": 0,
+                "input_hex": "1e054cafb613e65bdf5113f873cb69e6f3742a49c277e2eed4164c2c85ca5f77",
+                "observed_hex": "4f",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 30,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "0e0b5a4827241bdd7d85b0b6786a26efaccd24cdd7f77bc4d1e1b736d2a85f08",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "4e",
+                "index": 0,
+                "input_hex": "1fcc79c6421527438b1d6e68996a4786e0595379016f826430c186a704552b16",
+                "observed_hex": "4e",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 31,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "9785d024741caa2f314c3753ab4ce1bb3a02fedaecf94714c3e6386557cae4d7",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "71",
+                "index": 0,
+                "input_hex": "20791096db2a21a361f60cb38bcd6e2010ce7b165d40debe72127eb01fa0d905",
+                "observed_hex": "71",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 32,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "693ae450366e68616284b1c6fd4db4f00cb66389dafa5e4e5f1c7fa93281d9e8",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "70",
+                "index": 0,
+                "input_hex": "2101527be18206d8decd196db7d3d79595c8c8d0647aec187ce9f1632af438be",
+                "observed_hex": "70",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 33,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "172f01f20ae57a51ad49f3b033f79f8d3885e98d4b6dd36694ff7ea1d0a8a09f",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "73",
+                "index": 0,
+                "input_hex": "22e7aec15e80dfbd65844352dadb486e6c95b893428ba67e2788fa3a723ee2fb",
+                "observed_hex": "73",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 34,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "df902d362b42e27d107fa963d1de987f64a45c2246026be32775d652afd35f05",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "72",
+                "index": 0,
+                "input_hex": "2351c2cc8e59c45acaef31278bbfe674c8dfa8113ec56ef9bf2cbeb45eb6e7d4",
+                "observed_hex": "72",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 35,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "53cae7171d845e7f55b34d86e0065955678d3659732d1c0828279ea3a288e204",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "75",
+                "index": 0,
+                "input_hex": "24f51338d2ce6308828d5118a9dc220c2004b543ad623628e5116ca02757b38e",
+                "observed_hex": "75",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 36,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "30cdb3c62876f6dfcc5d1ba567e0e1aa140f673a330160bd1d69fac49b2ab2fb",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "74",
+                "index": 0,
+                "input_hex": "25e5b8a72c440f2ac029cfc4221907e2403891349c1355fae4545ab834f47a7c",
+                "observed_hex": "74",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 37,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "473f81fc1e4095ce3dad7a03fe73085124683044aed57caca55806c845c21086",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "77",
+                "index": 0,
+                "input_hex": "26f6f9d7ad3de3f3224cbe35626826c4eafe421d28f678c03534a0882c1a5a4b",
+                "observed_hex": "77",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 38,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "c0545ee298404c3b9030809d773f24047b5c4244d7e2db02fba26926f21a5624",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "76",
+                "index": 0,
+                "input_hex": "273a6bce02ff34c56b7bb0c39b6bd4190da4537d2aece662b52541611757a2d0",
+                "observed_hex": "76",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 39,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "2db1158b5762ecd225863aa402ed3cf4bc5bbe88188663aa8d771d744fcdd3c1",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "79",
+                "index": 0,
+                "input_hex": "28915cfee828e1c23183fa86847912f3f87be89540ae2d607158bef32940ffd8",
+                "observed_hex": "79",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 40,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "8c1ba18598a84073d174c1c2886b71a298879ed5b21c6838b63bf44279e8cde4",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "78",
+                "index": 0,
+                "input_hex": "292ce9441a8f4ce102775d90457a4d8f9ccc02ee07f48341cc71329c3a2f5abc",
+                "observed_hex": "78",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 41,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "e541ea39f4280b5ce5f2b8a7051d899fecbe0d975b526cbd956137d33cf2d6cd",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "7b",
+                "index": 0,
+                "input_hex": "2ae8330284457765c7a92efdff17899543d8af47ea4ca7f2c5c927a3e19c0185",
+                "observed_hex": "7b",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 42,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "2e69103af41a1f084c16fa67a930b1240cead2d30d4a68a7370ba46bcec4cf3a",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "7a",
+                "index": 0,
+                "input_hex": "2b8683441231798855867bc94103c6bbb0d85c1476cdb07da4b0740d74f437b7",
+                "observed_hex": "7a",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 43,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "37bee2ca1f463733eefdde34bbcd37beacb6d1828a3077923b3c2ee672271237",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "7d",
+                "index": 0,
+                "input_hex": "2c751aa10e4e40ec4f84fd7c8785818734cc83fcc77bd1f0b06f17860ddb7c48",
+                "observed_hex": "7d",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 44,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "4b30caa96a4275c9eea25f63168f8f15d452b67c1fc83c58b41190d3a7b063b3",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "7c",
+                "index": 0,
+                "input_hex": "2d35e49951e3c87901a75757b4576408c5967c3410de5be44977ae59bf007626",
+                "observed_hex": "7c",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 45,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "165499deaab1fe15d1652a912a11cc2056d5c1c982b3e1abfa9c8759a3a6f8b4",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "7f",
+                "index": 0,
+                "input_hex": "2ea0fc43622400580b33eaca0625c9c9bf97ddbe1f2994ff54079e1292c52198",
+                "observed_hex": "7f",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 46,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "0d6e951cf6b88f696eeb7f119907fef3a8726d575fe8342208b7caef1ca45cc5",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "7e",
+                "index": 0,
+                "input_hex": "2f04d44888e6cd08b2c5f80939f3b266dd78c032879388fe181357a175c96331",
+                "observed_hex": "7e",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 47,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "de540895a1b814ca87a96f3cd540a48368c6d00dc3510f878df43782835fefd1",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "61",
+                "index": 0,
+                "input_hex": "3059675adc54addb8bdacf3ef67b3619d4e0088fb4222ae2d345792db0442c13",
+                "observed_hex": "61",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 48,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "3ff49a9e0d3369c4c3f5611df731b49a28b09a2f54b1f39f80d0d0ae01b8051b",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "60",
+                "index": 0,
+                "input_hex": "316558dfe92daa60450aff08c6ed28100ccd82def55cbf4f006ff78d03e27957",
+                "observed_hex": "60",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 49,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "f3348a4d55d8201cd2b89dd37935f37bb0f11dae0866e2bb70342f90c69888fe",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "63",
+                "index": 0,
+                "input_hex": "321b3dfade912f599646fe05e1863242da16b832bef8af28a2e8c8446495f7be",
+                "observed_hex": "63",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 50,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "9a354e2401311f5822ac9c574e5d9b21f2737abb78ef02fb5197d1353d93d857",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "62",
+                "index": 0,
+                "input_hex": "3302c628e15163f747d463ca44480e8be988bd8ee4a95f46da72c94958e6b862",
+                "observed_hex": "62",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 51,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "9353e876fa04d0eadbd3a507e14a1688764ea813dc4642f44173dd3206c95541",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "65",
+                "index": 0,
+                "input_hex": "3491b1686991a8c5c164b240c8df60ada2aea26ba255be6b31d158fb1ac63b80",
+                "observed_hex": "65",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 52,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "17702df570957ffa05d4c0a855cd0a457eb8ae52402f62d5492cd57a27b0f8f3",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "64",
+                "index": 0,
+                "input_hex": "35820312f0ef70c3013f67807d5849080a68f535b2a497fbe25b9f99866ced3f",
+                "observed_hex": "64",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 53,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "f6149e14e283d969f4d9b958c7aaaec2ce838b6c4886f86582f89291eb2b8936",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "67",
+                "index": 0,
+                "input_hex": "36c860b1cfd9ef07fbce7b3c7ffdf737087ff25991c97b60623e6d1f97774060",
+                "observed_hex": "67",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 54,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "0946b1a2e6d31d3b53ecc6218205dd58a6bd0e4e2dd6cdae534ac87662a9c2ed",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "66",
+                "index": 0,
+                "input_hex": "37667d28b862e9ec331b4655a7c861cdb60b353c1fcf53aecdffdee98a063a4f",
+                "observed_hex": "66",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 55,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "698377bfee342069dd134329da29b0c376b5234236876dbb97f140c609b89406",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "69",
+                "index": 0,
+                "input_hex": "3894ba2c6332cbd86c844732c9d42b526e3ac6bbfabab41b8285d44ec3d40631",
+                "observed_hex": "69",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 56,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "dffa3c1a93b1e71c29db3d21a51011c5aad720d3a2267319522ba495a647a293",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "68",
+                "index": 0,
+                "input_hex": "39d73e6b23d4cb39780ff9815dfdb30afb27ecf1c49bbc210bae817f1586ea40",
+                "observed_hex": "68",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 57,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "722dc02ce3b6e60bd8c1ef897f6f681cf1bd323d3f89cae5f5b4d6498cd2f579",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "6b",
+                "index": 0,
+                "input_hex": "3a670e6033fa14b9f708335900492a7bf42c567af0937772a52c83f098d4fcaa",
+                "observed_hex": "6b",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 58,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "b1bcd023449c9aa1ebe1763ae1c8610de699b6c1258aa16a183249db927ad012",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "6a",
+                "index": 0,
+                "input_hex": "3bb45227a9e46d18e82a6a69828318e1cfb299cbbfb2f731ba3f80d5ac99fc72",
+                "observed_hex": "6a",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 59,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "1a4ee21eafc752b2a9dbad335c90043bea194eafabc8df92f5a815552cb27efa",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "6d",
+                "index": 0,
+                "input_hex": "3ce3d7ec39a91e430a10bd87886fca3428d2324a34d8fadf0a4e34a4657879e8",
+                "observed_hex": "6d",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 60,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "164a6c73b0f6950f7e3e298cb30a59c4959e617599696e6361f8e4a6164e2e53",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "6c",
+                "index": 0,
+                "input_hex": "3d694272a222dedf5e7da138a734436452932914cd43cdffeab849d0c6f987e7",
+                "observed_hex": "6c",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 61,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "32d9b5bcb028b4578026dffd8e15c59a0b920344379679e6de206baa1c345b81",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "6f",
+                "index": 0,
+                "input_hex": "3ec169c120a457a6797658c0411ebf4bd3045072db7f3320ef2c599b2a3d8ba4",
+                "observed_hex": "6f",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 62,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "a56d61bdb64f1eef16061ad75ad4bf518db4a0b45d821ba602d27e97d5c56ed3",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "6e",
+                "index": 0,
+                "input_hex": "3f8529ed52d2bda443181ab6311252ab10467923392e9775e5b45349948c0033",
+                "observed_hex": "6e",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 63,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "9bfe0dc2d5e9423c19a4f12824330040750d06121ded8bd976ffebb3158a9c1e",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "11",
+                "index": 0,
+                "input_hex": "40534b5e29ff772266b7bf405f1dbe36b164128e45a04990a44544df99779279",
+                "observed_hex": "11",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 64,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "a8a84c080d6d918738f79bb7ad5cae39f8c50d4020222cae968c6fb174a77de0",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "10",
+                "index": 0,
+                "input_hex": "41934eebb4b6cedf344998a4e1d645000ca19406643d73da7cdf445d47f870b7",
+                "observed_hex": "10",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 65,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "4674d45876cc97be20fa46f18a2ff6768aecf9ba9320310d27928de4ae6e2283",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "13",
+                "index": 0,
+                "input_hex": "42739d3f1a9dbea96cbe25503287b8d4d0310a86147756c09928beb4a6104a27",
+                "observed_hex": "13",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 66,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "ba7649c4a5ee1afb76c51df24b9feaac355c26f9b71c8efeca33e0ed5f15eb4e",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "12",
+                "index": 0,
+                "input_hex": "430d38d716009008222b03f5f391774ab2008ea992d6ed3e6998bd95b7f453dc",
+                "observed_hex": "12",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 67,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "9902b80c36242fbb049fde4374612dfd403f34fa2eeb9675e514964bd278b1ae",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "15",
+                "index": 0,
+                "input_hex": "44c018e3a74ba496e95610f2f6ff209bdcd821ffb43943486f2d14d8c444a04a",
+                "observed_hex": "15",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 68,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "9bea3b641f51377e70da505cd5e2435c1f1cbe5fc830113b0e37707df82f2b5c",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "14",
+                "index": 0,
+                "input_hex": "45e290c1a2e8ba739d1ef72498c684cab6b09f7123396746966f9bea5075a57c",
+                "observed_hex": "14",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 69,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "7eba7c009e4d49f8946b531077936286e7db09e560288ff4e4e64f3905cfd859",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "17",
+                "index": 0,
+                "input_hex": "46a8d79e55300d5e8476fc9d1e99945949f24596bacc60537af4ae1cec3b15e4",
+                "observed_hex": "17",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 70,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "e541dd3c1f8d283cf9ec0e92f2856ce2525be51d926437e314371161cb6a8a86",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "16",
+                "index": 0,
+                "input_hex": "47df735202303622ef07d77af01e33003a4cc40331d6610d7a3cfdfdd36682de",
+                "observed_hex": "16",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 71,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "7821b3b26cbcb1ee3d73424a40c3e3f389ac0257e90b32e44d96a968b42ce027",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "19",
+                "index": 0,
+                "input_hex": "4818851947ffd39aaee92f42337657e72b7e642321835cff4717300d0078dc5e",
+                "observed_hex": "19",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 72,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "4d4410c7e8321cb3c9287c376a12ffdb362d9568627ee30dec576929a9a2aa02",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "18",
+                "index": 0,
+                "input_hex": "49bc30fc8db144d8bbe5b84d4510b2979a0580e4ab774db6c0d237ee87c48a3e",
+                "observed_hex": "18",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 73,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "0ed21ac62572dfd5643c371a57bd124d882a347e59195846f408686bfe2fa882",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "1b",
+                "index": 0,
+                "input_hex": "4a8cff70a9783457a86ba13aa17268c3556d2b762123c023529a6a7fd0084de9",
+                "observed_hex": "1b",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 74,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "c00a737aff909fdd48b4030201017ef5d72a0cb29a7f0a784bfb12ba99d6d2d8",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "1a",
+                "index": 0,
+                "input_hex": "4b632e54ecc96e372c0d197b17acaadbc943ade176053b34a4c4be440ea8d016",
+                "observed_hex": "1a",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 75,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "a2aa42bc20e2c028c62468fb55a9e3ba38e2d99921e2172322649b81c49e4b64",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "1d",
+                "index": 0,
+                "input_hex": "4c92a7e6691917c9e9240f9cd894d8461ad91d03a404a3ddbe0076f1a28f8d4c",
+                "observed_hex": "1d",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 76,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "98cebb36c602b3b9bc21b1599dabf8856fad892e70d9c276872925ce481ffa31",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "1c",
+                "index": 0,
+                "input_hex": "4d3c83f6aaaf1225bd10319ca2e5ca02049a5e14e5687cf97c594805d16aac8c",
+                "observed_hex": "1c",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 77,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "8d77361d689f8f773a63421da168e269371a191e42c253f138ad4c968324a5d6",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "1f",
+                "index": 0,
+                "input_hex": "4e18839543d9d16a77e1c254c198bc633c0b3be34b6c7d77195f97f2512bba63",
+                "observed_hex": "1f",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 78,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "5b1d3437c70a18cd3639d79720a91391e15456c00b5ecbec6e4511c1b4e268c3",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "1e",
+                "index": 0,
+                "input_hex": "4f97db0b7901cbd793f42cea32d59f9f0c5ba5b6e01487e234952c9b290e1897",
+                "observed_hex": "1e",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 79,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "d862ff271c5c07ce674d1acddbc7b565cec3930fc118a5d1bccbbb4d5e6df4dd",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "01",
+                "index": 0,
+                "input_hex": "50039c16c5ee2e84e8e48428022d21864f9a8e0c50e0124d9521c51909018709",
+                "observed_hex": "01",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 80,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "d37ee419799504f238cdd2fb43bb9e6439b1140f0fea5d8645aba1c552644e80",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "00",
+                "index": 0,
+                "input_hex": "51f8d454645d3a7cd11132c7de218e07e34eb4d6ebd7872ce5ffa6e702b66599",
+                "observed_hex": "00",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 81,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "82f25a1f3e41f394370a3eca998b34a2649623d56e5f257bd306432c80fadb83",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "03",
+                "index": 0,
+                "input_hex": "5248ac41b0465b4db0d678799db4053b0eee8e6408bad96a3d6879bff1983c94",
+                "observed_hex": "03",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 82,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "f8424988d6161741d7b2486057f38199ef958948002ab1dc99e7416b03e86d6c",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "02",
+                "index": 0,
+                "input_hex": "53ac81f14e14d28cd586cd524f7b6b29e9a5c2fba42cce29bb457f61fe4a9100",
+                "observed_hex": "02",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 83,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "b20839f15a4ee19d4570f517899bf882225dd4e47283309b1ac0cd489c3bd5c9",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "05",
+                "index": 0,
+                "input_hex": "54f32c081ed14935bb259432c397445d56c8991c266ca60a3e40a6b352b48f89",
+                "observed_hex": "05",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 84,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "f3261d32731bcfbcc13f442d8a8c408efae9b3f7bb892132a073383e6357e7db",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "04",
+                "index": 0,
+                "input_hex": "55653e4e3024e19ae6f8cfad7002b9866a3bfd27801c6b03d428c79a3aa68d4a",
+                "observed_hex": "04",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 85,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "28b3c74f427559798857173fde1ff6e9e026375279b20263cb311f407ed18c1d",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "07",
+                "index": 0,
+                "input_hex": "5643b908ea153c71b3a1f9ec36c349702739f688b76c9cbb9d46b6b5fa533e9d",
+                "observed_hex": "07",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 86,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "08484ecb6c3736079449533d84bcf3e07ed43169a67ed75fe5f66863428fc957",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "06",
+                "index": 0,
+                "input_hex": "573803ec15c134ca1f83697ba8e830d335d9be14a05255ed8df8de0add90dbda",
+                "observed_hex": "06",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 87,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "5e2971b2fc7541ab718660049297a4e3e5eb2f16f341d3d597a22ff3227f0601",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "09",
+                "index": 0,
+                "input_hex": "5857d42ffc12c327dfdb51de1d7c731164463634411b01d62c0ad69f08ed439c",
+                "observed_hex": "09",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 88,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "d46a1ac0603089cd82ab67bb6f4127df1af837d09a26d474ae03d7d80fbe83c8",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "08",
+                "index": 0,
+                "input_hex": "59eaae8828ef391a1b3a8da72ae034f37c0981570cfc5fb9c6c9d93c5333db95",
+                "observed_hex": "08",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 89,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "7e8d89d54c9ad28840961a4a706770762984622759a26567b636036b9310ff35",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "0b",
+                "index": 0,
+                "input_hex": "5a4b9f29bce514b1278c03c6de2b26372d4fe5d78befc925aa6da69d0f707d6a",
+                "observed_hex": "0b",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 90,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "c31b554a7084d8870eeedd1553218f3b8add55850992933731274be94fb6ef56",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "0a",
+                "index": 0,
+                "input_hex": "5bb729916c755360878c4dc7a2e9b18c7dc072bb87a4b304ddc8f36adec0958f",
+                "observed_hex": "0a",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 91,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "34b720b3b8d21c1b28e8a22ae2c937934c39dab18758d3e4132c47ba1585d545",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "0d",
+                "index": 0,
+                "input_hex": "5cec683dcd79480e440db365ffff28989a76b8cb14eceb7357d11aa451ffe07b",
+                "observed_hex": "0d",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 92,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "1fea65c65c2f25d7a1b171f17f04fc6ba3c12c01e50298f167c4a1f08722ed11",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "0c",
+                "index": 0,
+                "input_hex": "5dd8fe87785b667430636155dc958a167504373f4549d5875431e7abaf570b81",
+                "observed_hex": "0c",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 93,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "5c0cd44f6a415b3f8999f7eb736f953fb94331b468d53062263260496c5be95e",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "0f",
+                "index": 0,
+                "input_hex": "5e87cb328153c734dbed9689c9018e25dccc5207b2ad7367b399e0651a8154ff",
+                "observed_hex": "0f",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 94,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "38a372b0919963214df4b9ec6582b83a8f8484ece9f2520ba55911675e3e08e2",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "0e",
+                "index": 0,
+                "input_hex": "5f1baf34d57c3dd9ba8d9224ae7ef9ad389815620e0da72d38a2cde7954f15c6",
+                "observed_hex": "0e",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 95,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "f52f10fb0a89fbaf042e4b3d43feb02bda248c7a663f13d7f536b6690b50268b",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "31",
+                "index": 0,
+                "input_hex": "60f42706b17979d48443b5ea1216aea73b458f3ecf3aba88f0e9e6871dced440",
+                "observed_hex": "31",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 96,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "41e982121d3680335652b68dfee0c3f7adf213136d26ec8a518784b9f67eb2c3",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "30",
+                "index": 0,
+                "input_hex": "6120ec8221cf09f9e5ab4c558718ce2b65eb22f9d4d65075148da77e79d13961",
+                "observed_hex": "30",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 97,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "39a04b76f27f9b0737e92385da3d138d044f29bd6951fd9b43324f6d08ea88c0",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "33",
+                "index": 0,
+                "input_hex": "629271266e3e5f4aec46dd06ed70bebc8e11eb9190eceecabcb272f306e23ae5",
+                "observed_hex": "33",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 98,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "cfc17013d14ccd9d3daf3b73072b289e00efe900b7840afbeeb61c8ea3072111",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "32",
+                "index": 0,
+                "input_hex": "63e182de3d69e8627c504157636dff3aa157b8bf24fe0c3f86b98cd252db9770",
+                "observed_hex": "32",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 99,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "09ab9da1fcde6c9c22046286ec6cd9e6a85f54bd0f5a159d3b964b4626c3f3ae",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "35",
+                "index": 0,
+                "input_hex": "6461090fc3508fe6338896b07fc14c2ad624275a5b431a86e703df8cd1203199",
+                "observed_hex": "35",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 100,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "3a2450024874d5b48e2c260167f64d2329aa3601398c38a775b62a0abec586d3",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "34",
+                "index": 0,
+                "input_hex": "65ad84ebeca06b6d5571d3a51f7e1ff43aa1adc6276d244204092c05e4b0df52",
+                "observed_hex": "34",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 101,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "da5218af3c0f4e3da9b8f86edc7c5726e9b11250d8f175668deed4110b1cdc21",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "37",
+                "index": 0,
+                "input_hex": "6602c96b2fb15a340593ea64fc1576f2c446b29b16fe499770208c2aa9535589",
+                "observed_hex": "37",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 102,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "effc35f3377c5bafaf16789257e14912a6f1207d454c638299d86809d387c98e",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "36",
+                "index": 0,
+                "input_hex": "6722c7bfe416084049a9ed8c8f04f47462441a18aaec2980cf3ce3f300d4d8ae",
+                "observed_hex": "36",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 103,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "ad8e11564cd7bc0348f25bace9de588c882f448fa6ba78856360bbe145138dc6",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "39",
+                "index": 0,
+                "input_hex": "6848eb26e96e6f7dfd5913799ebd21ff30ef8b60bc81008c4552f388e521a1f9",
+                "observed_hex": "39",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 104,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "df9896fe3097ad0575eb6b9e45b4f276d9fd6f08b02fb384ad6db8903ca45554",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "38",
+                "index": 0,
+                "input_hex": "69216ed0942f037a01cab09ab452c40867719f9c6dd00bf3b7d410e388bd7483",
+                "observed_hex": "38",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 105,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "cabb19eb6a57458a93ca53c87c596ac98e8797844f4f8659f7fdd3d06fdb6944",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "3b",
+                "index": 0,
+                "input_hex": "6ada0945a528986427bb2831c9610230c5abccee39622931f19c7ac5e8856e6f",
+                "observed_hex": "3b",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 106,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "c969a7ed409ff7dd6d6ae0281159166bb10e6cdaf0c9fd04a1056410f766919b",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "3a",
+                "index": 0,
+                "input_hex": "6b5899bde145110e8c5727dd8325d9cad5ee5be7b7c9ecc42c7c3d03d95b55f7",
+                "observed_hex": "3a",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 107,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "c3420eb7cee817e58bb04bcf2f61a17744c47b51444426df7aea7ff840528e43",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "3d",
+                "index": 0,
+                "input_hex": "6c300bb9e395ac2b2ce055e2d26c28b6a470a6efa8c532392e873ec71cfe1231",
+                "observed_hex": "3d",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 108,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "ee7950bd14a940a08db9d2c9e37ce6d33786e9b3fc82a63bbf3c6b40e1e8d403",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "3c",
+                "index": 0,
+                "input_hex": "6d45d93df00015cc45c27f6defebff8674fd4f83fdbdeee2ca1d793f2e26b779",
+                "observed_hex": "3c",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 109,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "7247707fbf494a990c425cb0a1f1042ef9a2312910f292f32e8eb0c7e36663b5",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "3f",
+                "index": 0,
+                "input_hex": "6e48f09c27cf8cce51066b4d4f5feb3c18ec8810a516aae5d31ce61add027321",
+                "observed_hex": "3f",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 110,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "4adf78e735a887b285e88fbad871bc9417b3a38bc2bd5ff6b142e0c05417a1fa",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "3e",
+                "index": 0,
+                "input_hex": "6f05433cfbc67234a3ce0bce847112449b585f90adbed32559dbe7546a09ea66",
+                "observed_hex": "3e",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 111,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "78652cc63e582645e8e7b01a797d121bb8db4fb74cb2cf2687a8476a3f459464",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "21",
+                "index": 0,
+                "input_hex": "70013a54b164b7a75d71cacac91f35fd8daa7a32a1719c85edb148cbe5787b0c",
+                "observed_hex": "21",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 112,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "e95ba820b102f6a855051b6063a0abc42200db7089e67b80bab9ac8e313c4f24",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "20",
+                "index": 0,
+                "input_hex": "7163f0a6367f162a859b326dd8f2c5ad7942c43c755638aac3b6ff6233fa43da",
+                "observed_hex": "20",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 113,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "df7d72343bededb4b3b5d8582c6c1e41e76dbfe4913ba1e00281afc653222f48",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "23",
+                "index": 0,
+                "input_hex": "72d6183e7b49a9f2fd95da753ec4e9b50468621160bfc81ed1fbc179f5db7816",
+                "observed_hex": "23",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 114,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "8828089d7fba53db7033b5de406eeae5b476862923bd663c4f1a66b84a8344a7",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "22",
+                "index": 0,
+                "input_hex": "733277ec429f10dbf458770da2d237a6a9beaaf567f1a383a832381258e06453",
+                "observed_hex": "22",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 115,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "86c981546c778a37babd67636e2369dd5b94b15292efad0086b931560d4453a7",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "25",
+                "index": 0,
+                "input_hex": "742634b220be0bc96aca436ad9ee03aa14bac9ee6417f690b805be4b9da25f65",
+                "observed_hex": "25",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 116,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "9c488f5a2cfea01ebaf26cac7172aa3f3211c655e5dca8b3b98650467f54f81c",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "24",
+                "index": 0,
+                "input_hex": "75ff76447c4ebf0836f5d90ef93bb626fb27233491c1d044ca19439b03c36970",
+                "observed_hex": "24",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 117,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "94ab39d89913a4f3b388c539c538515847fbe0420e27458457ae1c6dbc152241",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "27",
+                "index": 0,
+                "input_hex": "76e119eec1e0debe4e24421fbd28f23b9a4497fe7382a94d11a2609cc256fc6c",
+                "observed_hex": "27",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 118,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "b38c4360f74cec15e0d6860f2d2faa94eccc4d5b84ff16a951fc113769c9c28a",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "26",
+                "index": 0,
+                "input_hex": "77d249cae2c75dcf8f8eaa1e3a1a966a82d52aae676f08cf206a5af362a00118",
+                "observed_hex": "26",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 119,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "6d1f404a20323b68c01d4a37c6cad56cc159f0505b0f79d17a63cefee2fd74c9",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "29",
+                "index": 0,
+                "input_hex": "786e66a8777b2f07eb0904e7e784445786e2a47b5f5afe747ba27edd1076fbb5",
+                "observed_hex": "29",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 120,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "2a1174e33411dd4e76eeb83988b3c0be9ec9299c1c13f61886941cfdd19630a7",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "28",
+                "index": 0,
+                "input_hex": "792cd9691a547274b4f00572782e28695095f63dc7d75d3379abe38fd3bb70fe",
+                "observed_hex": "28",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 121,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "e01612dda90bf6bc18bd9804a4c53f57f14fa2573769bb47210385bbbda2513a",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "2b",
+                "index": 0,
+                "input_hex": "7ab223b83ec6024774643c76b2906857180a3feb30a3710d3747abaf584e93d6",
+                "observed_hex": "2b",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 122,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "26ac62a398902a7a0b3a0c0f623d2a10d6e335d1cbd4282c47b8b4f8c971edb1",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "2a",
+                "index": 0,
+                "input_hex": "7bfa5cadd2f33f698e6034947866760bcecf2c7ccc80fe1985d402d6f1e66e85",
+                "observed_hex": "2a",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 123,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "512e59bb98d9544c4aecd8024352799f7a5820195edf5fa1cde78564092749c3",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "2d",
+                "index": 0,
+                "input_hex": "7c56a154d446d301c833d7c1004905f90cdecfdb6257d682d6f9bcea30b20812",
+                "observed_hex": "2d",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 124,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "6d012d96a367fd4c72139e9501d9073f136390ab7416396826efc0d48f26c15e",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "2c",
+                "index": 0,
+                "input_hex": "7d8dfd7fd7ce6fd6673473fb8f06b0267843502bb123eba7f890df751eb80a30",
+                "observed_hex": "2c",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 125,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "4092f8769360607c27a6872717dae290823ef13a361294676b71b39ffbab9c02",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "2f",
+                "index": 0,
+                "input_hex": "7e67107cac1f9d2f8e92d086ec4eaa3fc4d614696085a4280a6100dc5559b54d",
+                "observed_hex": "2f",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 126,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "069ff2fe394349ab6c5b03b6a921a695ea98f30a58438e35240e2be40153467b",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "2e",
+                "index": 0,
+                "input_hex": "7fa3505a68ce1e0fde925ae603e55cda9e380ec581034d8e05712d371b02fbe6",
+                "observed_hex": "2e",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 127,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "097f640890434128b44104a3b32c47a2c092538c7d363b5490cc3d618be099ad",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "d1",
+                "index": 0,
+                "input_hex": "80d965c996f7f646d08805bf8bfba27749985524e84451f0f1299fe38db0291a",
+                "observed_hex": "d1",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 128,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "1b93ba9201a611071337a0b68ef662a8518ee90ac4a292255b2cbad6ca286e18",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "d0",
+                "index": 0,
+                "input_hex": "81cff1f90055b9656fb0d8c078bc3d17da052d956c63aa549d3b9cf061c8702d",
+                "observed_hex": "d0",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 129,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "fc7023ebf711477fc719a73b67d934dce78fb8b45c296d0290346834ffd1057b",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "d3",
+                "index": 0,
+                "input_hex": "824b28378b6a332c2935b6376069d393d52c4e7ecc97a2792da7d1b8ec07a9bd",
+                "observed_hex": "d3",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 130,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "c7ea6720b65d950012b23317cf9cb2665b5df5a49f142891ce036a6896fb2931",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "d2",
+                "index": 0,
+                "input_hex": "83f57d5ed3edca316e9376a4393f5a7652d55b7993def60ab30b714293c071cd",
+                "observed_hex": "d2",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 131,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "cbfefed53a3f3ec606f5e3617b97c193d6a9230b05856e7e569b3fd6f9c5c235",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "d5",
+                "index": 0,
+                "input_hex": "8492f949efc7fa43e48428bde5539f563b6c9759a2d7601c074fcbc6f00aa79b",
+                "observed_hex": "d5",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 132,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "7695c8fdefce5676fd64d81d478025da20fea73f4eab37ca2398e468d1efe1f3",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "d4",
+                "index": 0,
+                "input_hex": "8549d01b2c9f81c1b18ccac6e45bc383b56d0ab23269e47ecd4984a2da7b89ad",
+                "observed_hex": "d4",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 133,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "4f303e65af787cab09fa1ddd23a1df33c2c961b428e12e10195bae3d62050575",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "d7",
+                "index": 0,
+                "input_hex": "86195ed5c93bde317f01f5cb0556a4f6def0ba90b0db4315a3e7f4d4c0443fe3",
+                "observed_hex": "d7",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 134,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "315507b6829f0668a12ff9dda600219c607636b506dbfb5342c0c2f55bece290",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "d6",
+                "index": 0,
+                "input_hex": "87d2a64d56d2bf5911a30b23b38c17484d96a0646ed49dd5f2f730a7aa9a5c62",
+                "observed_hex": "d6",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 135,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "82cc4f73361ca733a725986cd5bef1f155d8f87058767a6499165701311e2d5f",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "d9",
+                "index": 0,
+                "input_hex": "88a43ddcbda6d1bc980f256f191002abeb4883330e0b4988a2a057909a5afd8c",
+                "observed_hex": "d9",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 136,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "1f7c42fe7c1df59db332ec430fffcac07e459a41fc20da688a0af27f39a28726",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "d8",
+                "index": 0,
+                "input_hex": "896dac522b82e1622e651d40b7f120aba3c38c4ce0fec0f7bcd70a7af204a9b8",
+                "observed_hex": "d8",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 137,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "d21d9be753b6d53833884bad48a2562135a1f8c501c8cdfe9ec9a554f94c65fa",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "db",
+                "index": 0,
+                "input_hex": "8adf8113464eeeb23bed862cc19d6dd1201b9c041e701d9724cd10ab01c9eb54",
+                "observed_hex": "db",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 138,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "906a4d3a938470ae9649c99fe5ef581b62086d4a04039a5028c628dfd757fac8",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "da",
+                "index": 0,
+                "input_hex": "8bc2e08ed562d98cc7868acbd7e58ae5d6d93c56818b08be163fed7302a18d82",
+                "observed_hex": "da",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 139,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "706e2a5ad5db8cbb97730755b9d23cbd611b806fdeffccbc3377ec9274d18d7d",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "dd",
+                "index": 0,
+                "input_hex": "8cca32d8a0a2c627a2d552d553b7421dfe593de7d0f338abfe8d84c76c968152",
+                "observed_hex": "dd",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 140,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "fe0094115e6dea98b4e942c9c3d4a3b9504d55c1ac79901c1bc6f6e908c50b15",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "dc",
+                "index": 0,
+                "input_hex": "8d5589ce3e66b4224e6e76fba7874c1a1cfcc9c8bc204c09d13201929c112c1a",
+                "observed_hex": "dc",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 141,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "38e514dba1b363e23b4cc68870d182f8993c647503c6eb651d47888619f534f7",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "df",
+                "index": 0,
+                "input_hex": "8e9148ba12a9489d3bf845191a7de0a5b7631980948100c76cae1a966b03031a",
+                "observed_hex": "df",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 142,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "c63a4cda2e0aef67ce87d5da226643ce7e739239e1b4a0e259e9afd0dc546a02",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "de",
+                "index": 0,
+                "input_hex": "8f06fba2777d7bed500677e551930cf83a4c47c84b85e28647a55042d8ff2274",
+                "observed_hex": "de",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 143,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "b05d04850c040373e6149d2830c8717ecd5ea3945965105d0ca38fa3400c979e",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "c1",
+                "index": 0,
+                "input_hex": "90fb35bd19d86bdc95cf7ca50dbb39633cc0eb28111bf31f86ac589d4674a246",
+                "observed_hex": "c1",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 144,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "8bacf1dcdaae72853679028da2c92ee0cf0f49917c4a70a5189149592f39f212",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "c0",
+                "index": 0,
+                "input_hex": "914036b10bc254fd5878c9f898505dd3ce2f68468eda7bd087a40e53c3d64b30",
+                "observed_hex": "c0",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 145,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "2d955c25ba842624144b9d76c85d5391e836588f3ed046cc0edb12d460267e28",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "c3",
+                "index": 0,
+                "input_hex": "92d156b4a4c986c83a9914dce92fc1712c33da78cb8b75787f160b7362521298",
+                "observed_hex": "c3",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 146,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "9c514ac3f3b62b989f3f23ab6136e864f870eb2f99e1e430da1593acc0f63df3",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "c2",
+                "index": 0,
+                "input_hex": "934715e3dc2bcbe9bca14ab9a632a7edd7104a9675251d099f0874cabfc8fbae",
+                "observed_hex": "c2",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 147,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "a0fd3d4d94dd081776d8aa551b7e0d2ec84754829697a17f8f065f35880428e9",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "c5",
+                "index": 0,
+                "input_hex": "94d02fef9aec41a1612df98fe918dea6cbf6e530a26d4c669e7690cc678d5469",
+                "observed_hex": "c5",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 148,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "e570a1ce74e8b44deea0a7599cdf47515d4751721972d20274e27e6deb62f113",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "c4",
+                "index": 0,
+                "input_hex": "9523147cb48b4d775ed7268edb5c8780766f92609d58166d429889c9d0ca8778",
+                "observed_hex": "c4",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 149,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "4e60a8dac3fad3a6767964ffb8638989b7afc712101fd6de3420d4235ce2c2fb",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "c7",
+                "index": 0,
+                "input_hex": "9647faf01a807467bc14b63fa87d9d7671febcd15d62b4a986256cbcc3408087",
+                "observed_hex": "c7",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 150,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "d89cba0d67869f1ad06fbebf1bb11b8bb5a1d48f791ecdfda68bdffe3e0e66a1",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "c6",
+                "index": 0,
+                "input_hex": "9754cfae63c2223d76a47f7c265717b8baaaa31752e5f0c9dd13f540938fa441",
+                "observed_hex": "c6",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 151,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "733a1b97689eeecd01a6419afa650a45b8b22bec455e7077dd95d062b2481661",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "c9",
+                "index": 0,
+                "input_hex": "9834f2949c5069b12bc92d3c3ea245cc8e5d0105e8e5688d09c23006e3109a40",
+                "observed_hex": "c9",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 152,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "f2d677ef9235712b837c087121c4d5e00fe43dcb27618040c279d651a532a429",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "c8",
+                "index": 0,
+                "input_hex": "99be886b72635efd86929f408baecd2b2c0a73a425db5ac3c73dac3a61edd3f4",
+                "observed_hex": "c8",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 153,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "b1a045a6e3333bc0729f8f2206a0b548114c4929c3300f90dc3b5101174652df",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "cb",
+                "index": 0,
+                "input_hex": "9a369db3ebcbb4c2c5a81cd097677f072cc014862e0ec8ef19f5e95aa7aa6626",
+                "observed_hex": "cb",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 154,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "31bbb59c2be5d1609336f50338783a5e59df277f83d30180de5eb370801563f6",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "ca",
+                "index": 0,
+                "input_hex": "9b3e8a8425879373318c17b45a2f0e8997da3e0a31586f9285954a15b1e090ac",
+                "observed_hex": "ca",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 155,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "630c6c9ccf2f49fcc52eb8e0188dadde324dbc4807a4f468cbcb42def5ac1ef4",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "cd",
+                "index": 0,
+                "input_hex": "9cb3c36eed4b1572eb689aaa780a83215d680ded5b67db811878ec4e572a273b",
+                "observed_hex": "cd",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 156,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "7e9f61f6404f5d748795bcaeae16fbc9414429c968ccf123f0b5555ed40740e4",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "cc",
+                "index": 0,
+                "input_hex": "9d3a559361c70cc7d43ab0edd4fe54346df2fad80baebdc340c481db9bd505bd",
+                "observed_hex": "cc",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 157,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "3a625eb70d22336e062aec24cbd139d8fa166d929604b961bdb8b3a51ec9e7df",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "cf",
+                "index": 0,
+                "input_hex": "9e1fd9812ba0b9f9925c880c1b12ab8d1f3dbc6ce28d50c8cd5df4e574b5afdd",
+                "observed_hex": "cf",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 158,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "8eb9f30d7e8faab89958df6bdf4e13ce11e82cd2bd8f820244e02fd7e74546fe",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "ce",
+                "index": 0,
+                "input_hex": "9f7b5f94ac5658ac4dbb32b363c011b840f37e58eb7410576381fad40053d62e",
+                "observed_hex": "ce",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 159,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "a390ead40820081c936410f981d1ee31acd3f29aaa5c6a3eedba52bacbc9653e",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "f1",
+                "index": 0,
+                "input_hex": "a01ac76dd49e0c41362a3e5a878c82866cf547e7fe59a496e2f43170bca4a5eb",
+                "observed_hex": "f1",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 160,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "a74cfebaca9befc5f75a9b70d563c9edbdb82fe91bc1bfed084bdd33861698c6",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "f0",
+                "index": 0,
+                "input_hex": "a16c0aa92e2e4950c0d02a17cb212ce167218371a8a024c95f75929cc115ce83",
+                "observed_hex": "f0",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 161,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "2ab8f0fd5d7bca15e4b7b1ea0c9a263032ebdebd9d5a55c45c01955487dc956c",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "f3",
+                "index": 0,
+                "input_hex": "a22b989156cae6ff39c15fba6ab30d884b6714228957c895f444c702bf9bd291",
+                "observed_hex": "f3",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 162,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "ba02cc788fd270cf7dab0d6b3bedb291fdeb527c1bbb8fa52ca7ffda8883e9aa",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "f2",
+                "index": 0,
+                "input_hex": "a3ca24a80ef225de40522c3f7d548bfda271e7260b8e51b02a6613d8e59cc1b4",
+                "observed_hex": "f2",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 163,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "be44cc4afbcdb199de2e08880973cb92d7ca25198c0484817a4e3a226a87996e",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "f5",
+                "index": 0,
+                "input_hex": "a4ea7c87045fb8227e10874db0d9c10c8c0169b8886acebb77e9b0fbd1f28827",
+                "observed_hex": "f5",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 164,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "2f188ca8d2bd71da2ee8f09936107a59055f89ac9d2a8f7ff5f1a2ed2770a834",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "f4",
+                "index": 0,
+                "input_hex": "a55a3f60a35447310f1a27fbbe7bc95ed242848608710e9ca7f23416c9fb9a08",
+                "observed_hex": "f4",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 165,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "980d01d43737356198105568dfdf4fa4eb2174804b0ab9e358756262ae2265bc",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "f7",
+                "index": 0,
+                "input_hex": "a68369995a569f703b1de06d4d71e8d44c3a6311068ba7b641b12e815abed44f",
+                "observed_hex": "f7",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 166,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "39c8dfbda492374c7cb6df24913a7062f392efc1aaf3d7c2227903ec4c239d29",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "f6",
+                "index": 0,
+                "input_hex": "a728370cb508a7c79373c438102c0c13074c780514bf65a3b1a8836fe8a5ab76",
+                "observed_hex": "f6",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 167,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "236058bf9fe53f63cb31228a58218f5f3edd240c30b3bf68d37529c9781a9cbe",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "f9",
+                "index": 0,
+                "input_hex": "a8752cf65d11503b732b3b179bee38585447ecc5c5cf6a9ed40b1e393a8ba1c0",
+                "observed_hex": "f9",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 168,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "dc42d8c6c69b6d0f350f56c0c893aa6b61a08e5ed188be711659bbaff721f46e",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "f8",
+                "index": 0,
+                "input_hex": "a92d3123d1c346d9342dad3cc14c6259e38a1c3751cac10e6679fd1994131021",
+                "observed_hex": "f8",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 169,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "d2b899c09b8bd35d640b9e93ea577fd22fec791166c2ee33d01aa99c3c7b8d9e",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "fb",
+                "index": 0,
+                "input_hex": "aa3d94e9b5dffb478a11e3c261d3c6625651c2233a436b652114bbcaa90f0b5d",
+                "observed_hex": "fb",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 170,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "e09cde8ffb0d8672f9b74af98e6fb8bd5b28b1db41a96094c7d4b35443b2df50",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "fa",
+                "index": 0,
+                "input_hex": "abef5320fa4cce98e9538e939ce5266d0ddfa273f523252ddc5d15ae333323f9",
+                "observed_hex": "fa",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 171,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "ed59bb79a39b413276590b3389cf7413e4abc4e495a43f25b9ea8135241470fe",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "fd",
+                "index": 0,
+                "input_hex": "acb47086ef5d831e7c7f674111bdc98936c94c163b0c0579683d45b52787dabe",
+                "observed_hex": "fd",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 172,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "2d0f1384cf9e236a77e1e8c9e1ba515a623d57638e2c58cf12482be16043ea5e",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "fc",
+                "index": 0,
+                "input_hex": "ad641b599fb51a5c78cd1926ff60a340b4bbaa9d3e95762584fc3558c7c43aef",
+                "observed_hex": "fc",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 173,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "43f730a89f12f7c33ca14573ec2fb942afb2c377c94d63141aedb44c4243b920",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "ff",
+                "index": 0,
+                "input_hex": "aef3077caba404bafa62715525916fd73d49d142aef5363ed293e84245a3f031",
+                "observed_hex": "ff",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 174,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "1144998a036343c9e542cc954cd438631baaf2793e3c65e98219a6e26a43d671",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "fe",
+                "index": 0,
+                "input_hex": "afb77c5df0a9b0e8c47d7d7d1cb9399dbe80c90c1e0c58a26fecd3bf0429b875",
+                "observed_hex": "fe",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 175,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "c4861efa31ebc43019c673d58cf787d70f1616ffc329a38c6530fdf4be79d140",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "e1",
+                "index": 0,
+                "input_hex": "b0f9e49175df00d5694642558e6f270d95f0623cf57de864e76250df1ec1c79c",
+                "observed_hex": "e1",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 176,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "28dadd3949b6499538714b20a08476e25303345705fab72d6fca0e8dc9913653",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "e0",
+                "index": 0,
+                "input_hex": "b1b8365431cab96108eb9f489f726fc5f88bbe3a3551e825731e1ec52de6392f",
+                "observed_hex": "e0",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 177,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "de166e68702fb9b16730a4ce438e0a722bde5e29503a0e2775c7a4f869aff329",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "e3",
+                "index": 0,
+                "input_hex": "b235f2f6a4c30e8a1ee2860b994291f342e68ab389ca322246822f7efdfa5969",
+                "observed_hex": "e3",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 178,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "a2fb393826ce95fd6ccfee147643644c8839a598638e3065ac2e765ee95a99fd",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "e2",
+                "index": 0,
+                "input_hex": "b3281590e7994851d8da4e9b75cd76cfea6805e7a696179e232dea04abc5a027",
+                "observed_hex": "e2",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 179,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "89704832f0b8de26f27ee4f5f9b8ec18cd1fda23d26bc3f81725e28f09b29dbb",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "e5",
+                "index": 0,
+                "input_hex": "b420d76c873c99a7131b988dc39be0a573e3f9f48c1610f35bf1b94b9c6c279b",
+                "observed_hex": "e5",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 180,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "95d3221f76840422050a374c20ef3b8430844dcf9fc441633520c09c4c6b1438",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "e4",
+                "index": 0,
+                "input_hex": "b59bde82e1343d5969433981236a128222f07bd09fa0a6aa99e9875a81154518",
+                "observed_hex": "e4",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 181,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "7429c54b7ebcd17e62da4458f4d1a4211262215f7161c546d0e0132f566cfde1",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "e7",
+                "index": 0,
+                "input_hex": "b60ec3be6a1661d1968b3923e7ea4727d08f0417a4f8f648126032ffae8bf876",
+                "observed_hex": "e7",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 182,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "25e77b6c15f65b4f0507117ddc3422772dd9286c532ad4a8375c2512472a3a45",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "e6",
+                "index": 0,
+                "input_hex": "b7c7a2dfa663725bff7c843c7602c23220e333f39859e5d44dcbd5a7c28fc246",
+                "observed_hex": "e6",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 183,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "1e26dc30e33f7cc8619c1365c1bfc2c520d886a9465aaaddfa587bbc94d16d72",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "e9",
+                "index": 0,
+                "input_hex": "b8ad7d208664ba87dc57cdcefadd1a977782419ad8ff02e075b8ffa2d3679b03",
+                "observed_hex": "e9",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 184,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "84b3b4d4cec9c666c5bc3d4770b6ebe2430c8fabc3beb4f8c25ffde3980edc3a",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "e8",
+                "index": 0,
+                "input_hex": "b95af764d0f69cf72b96806beb353c6b820422a97fdca26f82353053565b6e91",
+                "observed_hex": "e8",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 185,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "140ce1d4c008112a58f1b71d17defa3380b85035730b7e30fafc215807578825",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "eb",
+                "index": 0,
+                "input_hex": "ba14d53b9e2107703690c73ba132aa19b7340ede838eb8013570785f45d89ff5",
+                "observed_hex": "eb",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 186,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "47024fb1aceab327683b26c6596ad25fd044c810afe4da80ff0f2044f492ead9",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "ea",
+                "index": 0,
+                "input_hex": "bba98a8b5eb1f9f674f54ebcf71ad5461d208899238944969ef0413fb0c7b18a",
+                "observed_hex": "ea",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 187,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "5fbc813206d0dd0f4b4d5ee20a7e43f2924ddee058b723e532992df612bd4737",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "ed",
+                "index": 0,
+                "input_hex": "bcdce67a8b56031f888f47f3035e131948d4badc3031718bba2f87faf5cd1eaa",
+                "observed_hex": "ed",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 188,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "9e27f573a71119658ac1fe285c05961c54fa6a5792bc87cfe0d7a86412064346",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "ec",
+                "index": 0,
+                "input_hex": "bd84b7e8ea5c3848a6ddcb7b7ba19763eaa0aca0b40ad8cd51ae3e4a9a95a49d",
+                "observed_hex": "ec",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 189,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "423c800744c85620869046e4d6a5a79dbee2665255be28377858162b07fc85b9",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "ef",
+                "index": 0,
+                "input_hex": "be81ddc5ecf20d41f23233fc3387c3e7a6a851a18d1ce8f6c00038fbe9da6a71",
+                "observed_hex": "ef",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 190,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "ea1a94f16dd9a3bc1517f3780115016b917b56ff8bb446a94ca791427d1ba95b",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "ee",
+                "index": 0,
+                "input_hex": "bf655f809598d0b781b21a243ca6646a3cdf9d2de6396e534531be854fedb249",
+                "observed_hex": "ee",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 191,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "23da25d3e467030922506b37b36cdba015b15f54f4984eaca909780798ae4912",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "91",
+                "index": 0,
+                "input_hex": "c0495a0fd7adef47c7f38455afa7bfadde8ff6d67a6f250cfb112eccc6d406db",
+                "observed_hex": "91",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 192,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "fe80b423e260951083287293d9526ea9f3475f40786f8f427ae95ce227e32480",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "90",
+                "index": 0,
+                "input_hex": "c14047b607dff92429120a8898364e6117be1b9f675773d6a2ee95526850a02d",
+                "observed_hex": "90",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 193,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "f957dfe335b092ce9f2744e512d1b4fae5ee836317607c0f4db9d17cecacb4e6",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "93",
+                "index": 0,
+                "input_hex": "c2feeb06432316b9ae9b00db52e336759b899f30ced6108294bff14389ab58d7",
+                "observed_hex": "93",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 194,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "17f962d2e62fee06ad231c1601ad95a94cc825b8bcf00a6ce5218fd8cf8a8f50",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "92",
+                "index": 0,
+                "input_hex": "c31cf91d25a7465bd5c672c6caa4afa5c2b62373b388e859eff75d46c9c1748a",
+                "observed_hex": "92",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 195,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "2086cdcb63860a76487b3c8d90728d342a66d4b9623c46a934e07a5c1cbc76a5",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "95",
+                "index": 0,
+                "input_hex": "c4655836a08b6d479e1c38a1dddce4784561024b4a679d63d870fa63aa61b125",
+                "observed_hex": "95",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 196,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "55b9f06547cb5a8bb3d98c12ec503c6c2e00eac916f89abb85d10f0419803750",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "94",
+                "index": 0,
+                "input_hex": "c5445be77d1ff323e9b20790561bc13cb074bf03a6f7156855c025c4d45e9135",
+                "observed_hex": "94",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 197,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "119e9013a55d51d375446484fdd938c3a81fb24b9ef87460ac4e0b98b8ab6e0e",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "97",
+                "index": 0,
+                "input_hex": "c6b3dfe718aa2729fcad068a9cc40c2dd41f30d9b9c293f60fd780e7715fbf0d",
+                "observed_hex": "97",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 198,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "c854181433596a4b84dce8be360be27f2a18aedf4557ee0715418f556d565972",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "96",
+                "index": 0,
+                "input_hex": "c71f8bd1a1319cc3c73f4895823010fa74367dd6c994296a3cecc9c12e83ac82",
+                "observed_hex": "96",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 199,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "62e896e06e001871d51d46411eb949c0021b929af84d259681fab0360911423f",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "99",
+                "index": 0,
+                "input_hex": "c8838975cce856105edfe7d9d47d4cf8296a3ba180a23e2b4785022e86a70190",
+                "observed_hex": "99",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 200,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "a0f7d0e28c65a45dde37eb2f7a65b8080d4f4493f3549ab39cfbfcc2812ea359",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "98",
+                "index": 0,
+                "input_hex": "c99c849293940f599aa08bc8070a1e993a0dc8e57b611c7a7357de3d69c3affe",
+                "observed_hex": "98",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 201,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "8911c69305a7dad2029d6e0a8e4b6aa5a4530027e4dbf68638371c5c4b62a639",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "9b",
+                "index": 0,
+                "input_hex": "cabea8bd1b4430e73f012ecc9211057623acf0ba49a98274e9665d7d3dd1da1d",
+                "observed_hex": "9b",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 202,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "6c3e01aa2196efd7d655ae48ad9a989d7876524ed252dc3367a8975ad4798260",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "9a",
+                "index": 0,
+                "input_hex": "cb5a6d8889e1788fc9a812da3acbf81946598e44784b2be0e75b487852063ccc",
+                "observed_hex": "9a",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 203,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "85f92a7dbc19fddffe39caf259ee56161f0bc4573ff9a96eed6545933b2aa7dd",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "9d",
+                "index": 0,
+                "input_hex": "ccb43769d5cf8d46671839cfe6da92ea371e7e24e89153ed354c2f9ddda1cd2c",
+                "observed_hex": "9d",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 204,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "c7a2bd6ab2b43e4ec8774f6d04cc11ad6eabf2928c0c416be3fa2c53f532758f",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "9c",
+                "index": 0,
+                "input_hex": "cd4a1205b17bdb8966791134e1e7905611daae2629094e3fb4067e40ebd4f69a",
+                "observed_hex": "9c",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 205,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "89abb2ac81b8d947981dd785e1fe5323ab66766855fa63d5c1fe0c1463aa9101",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "9f",
+                "index": 0,
+                "input_hex": "ceded704af1ea4b110e03237f05a7fe828e81173f629eeb03c556d0ada0a5722",
+                "observed_hex": "9f",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 206,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "49926c664916a29936803c53e43298813bf50416656b8f578a49190a04f35e43",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "9e",
+                "index": 0,
+                "input_hex": "cfe3f99cc54860c6158bf0ce05d2c7dfeae84fceeaabdcf1a4e9d8c65912051c",
+                "observed_hex": "9e",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 207,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "27721f5407b223b5157836df3418bc9fca4ab85151152e58e266e5dfb367ecb4",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "81",
+                "index": 0,
+                "input_hex": "d0d07e51f921c3f346c02aaed348df1b8e39ccec740bd9baaff066560e5df3eb",
+                "observed_hex": "81",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 208,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "daff63d50d89b776198bf6705816dc904a9b26cd07393e6e3fd939a6ac7117f0",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "80",
+                "index": 0,
+                "input_hex": "d1484337a84010c9aa0d91709238d71def232be8979f97da22268d48392be23c",
+                "observed_hex": "80",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 209,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "67a4a9e29330468347e7036eb13b195422e007d6cb7d7e5442b83b4ccec542af",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "83",
+                "index": 0,
+                "input_hex": "d2918762349b6c3c0fec89a60f8f18891badd2dd4b69e36400bf66eaf0a25f22",
+                "observed_hex": "83",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 210,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "77358ab2921d4fb7089f8dfd60305c307e2d4ffc19785ff29e41b1dc7cba6153",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "82",
+                "index": 0,
+                "input_hex": "d3319d1555661611bc05ddb3dc7b50a64e85a12f52de1c2abf6edb1bb44c729a",
+                "observed_hex": "82",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 211,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "535c83615c6dd26d295a7625edfbe925a24deca6224dfc7909baa309f9fce157",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "85",
+                "index": 0,
+                "input_hex": "d403f065a0d45199788ce3a320b9b332c3bf9111e3984dc916f59916859d8d1d",
+                "observed_hex": "85",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 212,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "a0dbff5888a9c203408a6cd3e65d459ab09494443b995f2902ac593ff88497a2",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "84",
+                "index": 0,
+                "input_hex": "d5cbdf19936231eadc73aabace66eede8f43e3d3d065f1c564fff18ef92fb8fe",
+                "observed_hex": "84",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 213,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "6f666971761d8bf1d3e9c33dff4a45c4fea57d865c0039aa44187f42f850dcb1",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "87",
+                "index": 0,
+                "input_hex": "d6684b2ea203ca23c174436cb9f83e5ca99c78e8facdac94d06297f7d80f3af2",
+                "observed_hex": "87",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 214,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "a0addf01f50e4e66cd7f8d91d21849381be550a7bae09f618560b4ec2c53e151",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "86",
+                "index": 0,
+                "input_hex": "d74df84a581483305e8c8e517e386e5ac68582a5d7d6d0a56dff9af4df4bfe3a",
+                "observed_hex": "86",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 215,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "0a5b5c2587c936b836c3ee2122338490ad2188fcf18b999bf3714aa618b73c0c",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "89",
+                "index": 0,
+                "input_hex": "d8015086a0552669dcfb74f0df4066022a01323765277dad380f56593f50b774",
+                "observed_hex": "89",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 216,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "6104b6229a0af7a16aae4de7b12a41bfc00198325300733df8a99dabe8ce6b83",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "88",
+                "index": 0,
+                "input_hex": "d952d7d9b66157f9ebf5e1080b2f2b6b0d0b878fabc0fbb4578324be95196cfd",
+                "observed_hex": "88",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 217,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "3220730ebe9315eaaf94d958910038e5e89436f92b314be7004113610e3a53a8",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "8b",
+                "index": 0,
+                "input_hex": "da93e5de803773d78ef53e40d37f9f29a5324660ab2815f43bc091f4cee4ab4c",
+                "observed_hex": "8b",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 218,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "aa2b779fd5e12efa5a99cdeb94b703ca4cfc3fd9bb4dbfed9028af9458abc7c0",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "8a",
+                "index": 0,
+                "input_hex": "db6e78621003557d472156cfa9f68fa5315fd9d1dddef28359ee86195294fdfc",
+                "observed_hex": "8a",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 219,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "55d74e55ad00653e7a8c7916be4e0cd1ea67721700e8527d73072d19c64a8981",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "8d",
+                "index": 0,
+                "input_hex": "dc52ee960acada5a84f0ba14cdbf0a393c183f6a403ffd8f970bfc5df1cf7dd1",
+                "observed_hex": "8d",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 220,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "16308651fd2c9d3e6c21a7058486077e75167936e555d0a69f8b9c826da31237",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "8c",
+                "index": 0,
+                "input_hex": "dd9692059c7121d971f8c874a149abffc651f74cb9a8be612fe3935e528fd516",
+                "observed_hex": "8c",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 221,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "a6df716a097db13f4827d57583f700706cf97f22821976ad813b95f1584fe96d",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "8f",
+                "index": 0,
+                "input_hex": "ded5251c66253416bf8dd063139cc3333cceafc7b9c599dd1cf494441386181f",
+                "observed_hex": "8f",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 222,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "805e86801d3a0aec7226157b3417f515e931a18293bc984d9b3ad4d73ce8202c",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "8e",
+                "index": 0,
+                "input_hex": "dfcff9d8ecf627a8c632494762c7ee26a0356c546474bf890fb202b5af83e5ef",
+                "observed_hex": "8e",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 223,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "a0ed7b8d68477fc93393eca111007b2a888fa3a5a354ec07e19f84538ae1e137",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "b1",
+                "index": 0,
+                "input_hex": "e03317c418cb4bb302d0d0ea52d09e4301be8a4df9b98d4a0de5aaf8c8dca5bd",
+                "observed_hex": "b1",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 224,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "a95e7c97b16653d220153287cd21a5ccf7d5e5a84612aeb81ccadb2b72c2866a",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "b0",
+                "index": 0,
+                "input_hex": "e1557ee09b713bfe805ed81d8b750b18541432e039ee7c38e82ea5ca332acae4",
+                "observed_hex": "b0",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 225,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "950625ecb3b110cac7c0c4a6c33026242feabeb588f98d962199662507b1616f",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "b3",
+                "index": 0,
+                "input_hex": "e26d6ae84679cbe928e5d18470e79df822ff9d54883727e44651e11f4bd17086",
+                "observed_hex": "b3",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 226,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "1b85b50574393d99055aaf3c2318e70a6551af064a1f4248cc033e2f98a5a90b",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "b2",
+                "index": 0,
+                "input_hex": "e3a5742887e1d2962d232ff7ddc77b1f4ac3dec5472e25553b35c7cc36ee1ce2",
+                "observed_hex": "b2",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 227,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "7e1160f305928c58b27ff477615eae9bd94ecd29e58f02f8f2b51101fc8a8917",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "b5",
+                "index": 0,
+                "input_hex": "e4f7c81ee10f6ad4fd165d88a6fdbd52ac3b3fbbbdc4b46ba0d6cdf6fd5f6063",
+                "observed_hex": "b5",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 228,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "0004bb84ed4a73ece74db84c6162237079472d060075a0f1b9e92e1ae9ad130a",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "b4",
+                "index": 0,
+                "input_hex": "e5b85d596dc4eafad9c8ac54a2b0a35e17654b5860e50d06e58348396acc3225",
+                "observed_hex": "b4",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 229,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "411c4e91ae9352a9aa436199d104e2e6cf08e7c99499ba7fc1b0571b8f0d0448",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "b7",
+                "index": 0,
+                "input_hex": "e644a67c3ce65863864b5f5c12f226929463b3947fb0550538f452abfee47bfd",
+                "observed_hex": "b7",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 230,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "d7b65f3289dcd5ca09f1a3455cb615a5594ae1190ec7362c493bf902fed462cd",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "b6",
+                "index": 0,
+                "input_hex": "e76e0d5519fa1be7c7956a8004d5fbe8fdbd50e187abfac0169ea1e1a46434e2",
+                "observed_hex": "b6",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 231,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "5bbc6049aead0a162c493b7e032f14ee75343b09e0fa94d6e4aba16e8e66312c",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "b9",
+                "index": 0,
+                "input_hex": "e832dd8f4d329f52d0ada3c79bcb3b8c22136c2e8d08295de8ceeea2e31e3d0f",
+                "observed_hex": "b9",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 232,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "fe67ed31e89d33c0b32d81853c4edacd1f78213facf127a5d62024b55958e94a",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "b8",
+                "index": 0,
+                "input_hex": "e953df1e8c058eec0ec4081edc4c8878e7101f30213bf663aa766b15f2ae6583",
+                "observed_hex": "b8",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 233,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "08178c5bec3115f16ad41a867f8ed187f833091565452f30567f3acc9388a267",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "bb",
+                "index": 0,
+                "input_hex": "ea794d8a206d334fde8e2ed4b6157a4caee53cc123d163782e02ab7a07adf071",
+                "observed_hex": "bb",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 234,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "4c957647f517fe5b94105c07f852d4f4f555338db5c700644cf7989f30992139",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "ba",
+                "index": 0,
+                "input_hex": "ebb3feaacb2c7407648d0c7b0c013576075146d31af15d00c8be258c0f1b84f9",
+                "observed_hex": "ba",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 235,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "9debfedac280d7c08373effffec9b21c66a8b9bc07b3acffdfc1525644aec4f5",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "bd",
+                "index": 0,
+                "input_hex": "ece4fed74c018677e49d5a2216d0062bae6b53a9ee58ab7a833a80c718789f1b",
+                "observed_hex": "bd",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 236,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "2f9a547fb9b56ef131ed9d64ed9a5034010eedf0365c9cfb51211314a217523f",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "bc",
+                "index": 0,
+                "input_hex": "edf2d37921f3142fb469808a7f5e3bd6d95f3cc604c7c1eb87eaa62dcefa581b",
+                "observed_hex": "bc",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 237,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "3bf220a5811dec0f0faff4d1b7c0720472ba9f918134115c32d2a46c3722f019",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "bf",
+                "index": 0,
+                "input_hex": "ee8ada9188e8b0cb7b9d2d7d7b82126af0713b6b081d436ae557e76fb32d5c95",
+                "observed_hex": "bf",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 238,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "d47ff072e283d57bea979aeb6de42c3b5d9f048f07376e0aac8a53997be1a9c2",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "be",
+                "index": 0,
+                "input_hex": "ef85ef4c7da8e83c0a8044d7c65d5f5372858b6fbecda9ed4a06d556171cb52e",
+                "observed_hex": "be",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 239,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "e76fb055672597957f2171ec87af00dcd4a05647892bafc3d5689e4a078b5d07",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "a1",
+                "index": 0,
+                "input_hex": "f01e2afb4f43122437c08b8150127f21f969aeb9b697cc2396bf7d361f22611b",
+                "observed_hex": "a1",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 240,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "ed8787641171af46a686cb3963d7a10864194b6983b28ceb80ea5d9ae1444ee3",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "a0",
+                "index": 0,
+                "input_hex": "f19134c15e082d550d62d5c2792e1ca98fe1566069972dbe16467d42bef4492d",
+                "observed_hex": "a0",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 241,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "a70801683d466fc368c81ff8b643a56cf692596dbf433228345f53e627de9978",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "a3",
+                "index": 0,
+                "input_hex": "f203b8872cb286f3d1c24bf232618fed23ee6a0d965d1acf0630202db00a542d",
+                "observed_hex": "a3",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 242,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "b6686a9b5f3ef74ed8423244a8e57ad2aa1a4b776e72357d332a3b102aedb1b4",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "a2",
+                "index": 0,
+                "input_hex": "f38df788448799188ad109b94daf3ef3ce7d2f523dd68690e509702e23b36a0d",
+                "observed_hex": "a2",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 243,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "3a6d8551c6d0014a5fbeb95c12208c9e24c9a85fb5de2fddcad9470464023433",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "a5",
+                "index": 0,
+                "input_hex": "f4539a8d66d0ae0a71874739de84aa08690ba5c87c5949718be266abf21ee4d5",
+                "observed_hex": "a5",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 244,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "bdd5e74d2eb47d71b8729003bd8e40b4121d316b9e3de35bca860c442c5ebee5",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "a4",
+                "index": 0,
+                "input_hex": "f54d26fadca398359b1adf95cf3eaceede2ca4e1ddc6ae82aa2409b83770dadd",
+                "observed_hex": "a4",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 245,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "cef0b8b07c4eb6357caa1dabe132033b5158778463921a875a6b6ac59a51d925",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "a7",
+                "index": 0,
+                "input_hex": "f6feb95b1ccfc4771a0ef0639e8bd9ffb37ce430e30fe0d0ef80bf79b9b534f2",
+                "observed_hex": "a7",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 246,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "0f72d0deeabbd469882339bca5b59e3f0acc2a672e931758b4348afa0dd451c9",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "a6",
+                "index": 0,
+                "input_hex": "f7d66909307f434cd45d3aba2294e5566ef4416c619da9b327b5d2b7bf6d6b61",
+                "observed_hex": "a6",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 247,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "504df7c8d81fbf810dfacc4cefc531fa28a3958c67f8448647919ef866bb9037",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "a9",
+                "index": 0,
+                "input_hex": "f85999f196c2de3e530a26f4613dfbfc5aa24c6f4b5505418edc156d1aeeecd3",
+                "observed_hex": "a9",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 248,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "d4ca292166d791cf4757795c25f81ac300a3f696923b17f9d86cd9680f7e1858",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "a8",
+                "index": 0,
+                "input_hex": "f94cdb8f931c4531a6182bf54837a3b4b00dea2b0a154b0734573715f99ab16b",
+                "observed_hex": "a8",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 249,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "d535c0fd3c56eadbcb7fe4fa4129cb9b7e740662cda77ea9b7eb84e026598d9b",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "ab",
+                "index": 0,
+                "input_hex": "faaf9db86ae7000640e7b5a052d46e3d92c4f4cf1cc8c31a67099296fa4d3c87",
+                "observed_hex": "ab",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 250,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "c987c50a2874d20c428dc0ec2bb80e00238ea17b86abba9ac285f6d8b092abec",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "aa",
+                "index": 0,
+                "input_hex": "fbd59e6a3011ab5f61b17e8bf3a067a777ae99db36d4cfb53e1aac201f4b423a",
+                "observed_hex": "aa",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 251,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "cb4fbee6315087feed925a03eaa681d635c792524e17d123712970b46ca4ddc8",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "ad",
+                "index": 0,
+                "input_hex": "fcd26d507097d18ccd8a787eeb162b4f0008a991976808f735bf7f0fa52578e8",
+                "observed_hex": "ad",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 252,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "8a0cb8d49ffae69d9957cad9c753c9f7b476aafdaebfccb576ca89a01c0acfda",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "ac",
+                "index": 0,
+                "input_hex": "fdccd14fad04f4e2d58bfab8995ee8caa91eec698608a88338af74e38e2e0fd1",
+                "observed_hex": "ac",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 253,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "bddea60e8e42a7376194ee6c93fb795094b4d8b303ad92f993ff94670e33f68a",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "af",
+                "index": 0,
+                "input_hex": "fe69d9bccd37e06892d1924d1b1f08dbf913873b5dae3914ed17f4d6009316a3",
+                "observed_hex": "af",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 254,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "515f07fb5eefdff596dd4674d9462f5f83a5a410adf28f69d96a3fc4b3c40397",
+            "total_cases": 1
+          },
+          {
+            "cases": [
+              {
+                "correct": true,
+                "expected_hex": "ae",
+                "index": 0,
+                "input_hex": "ff21fc7b08299a7cd4543d85a7688d4676df7de6ba724fbb38a7c2a6eaf970bc",
+                "observed_hex": "ae",
+                "status": "Halted"
+              }
+            ],
+            "correct_cases": 1,
+            "epoch": 255,
+            "failure": null,
+            "passed": true,
+            "seed_hex": "e0b5e6e865a34bc4bbc6b5dd656078e62b6a8aaa355cc492694cee93029f9952",
+            "total_cases": 1
+          }
+        ],
+        "passed": true,
+        "required_correct": 1,
+        "rung_id": "L2.X2048.xor-1-len2048"
+      },
+      "program": "research/astra-2026-09-06/compact/variant-r88-k4/candidate.mal",
+      "program_len": 2028,
+      "program_sha256": "cb28ec05a4d9d8780273ed79eb49a6be4b9fcd7427e68578e5758f860a4a4015"
+    }
+  ],
+  "rung_id": "L2.X2048.xor-1-len2048",
+  "schema": "malbolge-rungs.verify.v1"
+}

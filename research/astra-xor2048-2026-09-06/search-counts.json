@@ -1,0 +1,18 @@
+{
+  "table-phase-sweep.jsonl": 40,
+  "placement-sweep.jsonl": 200,
+  "layout-sweep.jsonl": 1109,
+  "events.jsonl": 3,
+  "cyclic-sweep.jsonl": 471,
+  "compact/sweep.jsonl": 1905,
+  "compact/sweep-exact.jsonl": 1905,
+  "compact/focus255.jsonl": 44,
+  "compact/tail2-sweep.jsonl": 126,
+  "compact/evolve5.jsonl": 8001,
+  "compact/evolve-nop5.jsonl": 656,
+  "compact/evolve-tail2.jsonl": 354,
+  "compact/tail-sweep.jsonl": 650,
+  "compact/sweep6.jsonl": 614,
+  "compact/evolve6.jsonl": 301,
+  "compact/variants-sweep.jsonl": 280
+}

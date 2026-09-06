@@ -1,0 +1,60 @@
+{
+  "artifacts": [
+    "research/astra-xor2048-2026-09-06/manifest.json",
+    "research/astra-xor2048-2026-09-06/reproduce.py",
+    "research/astra-xor2048-2026-09-06/layout.json",
+    "research/astra-xor2048-2026-09-06/dispatcher.mal",
+    "research/astra-xor2048-2026-09-06/config.json",
+    "research/astra-xor2048-2026-09-06/allowed.txt",
+    "research/astra-xor2048-2026-09-06/table_dp.c",
+    "research/astra-xor2048-2026-09-06/tail2_table_dp.c",
+    "research/astra-xor2048-2026-09-06/native-verify.json",
+    "research/astra-xor2048-2026-09-06/single-byte-input-verification.jsonl",
+    "research/astra-xor2048-2026-09-06/search-milestones.jsonl",
+    "research/astra-xor2048-2026-09-06/final-neighborhood.jsonl",
+    "research/astra-xor2048-2026-09-06/search-counts.json"
+  ],
+  "best_candidate": {
+    "claimed_correct_cases": 256,
+    "claimed_total_cases": 256,
+    "program": "solutions/xor-1-len2048/gpt-6-astra.mal"
+  },
+  "budget": {
+    "note": "Counts include diagnostic optimizer trials, not independent model attempts. Native verification was performed on retained milestones and the final solution.",
+    "search_counts_artifact": "research/astra-xor2048-2026-09-06/search-counts.json"
+  },
+  "builds_on": [
+    "docs/attempts/2026-08-13-codex-profound-xor-256.json",
+    "docs/attempts/2026-09-05-fable5-xor-1.json",
+    "docs/attempts/2026-09-05-fable5-rotate-1.json"
+  ],
+  "date": "2026-09-06",
+  "file": "docs/attempts/2026-09-06-gpt-6-astra-xor-2048.json",
+  "manifest": {
+    "allocation_cap_fraction": "1/6",
+    "base_commit": "1e0b415e4da674c1f2539795e8b0dd31bc552623",
+    "model_version": "GPT-6 Astra",
+    "native_steps_each_input": 1148,
+    "source_bytes": 2028,
+    "wall_seconds_to_solve_approx": 7240,
+    "weekly_meter_note": "Coarse account-wide usage, not an exact Astra-only token quota.",
+    "weekly_usage_percent_at_solve": 7,
+    "weekly_usage_percent_initial": 5
+  },
+  "outcome": "solved",
+  "report": "docs/attempts/2026-09-06-gpt-6-astra-xor-2048.md",
+  "rung_digest": "c20fdcf58bfaaab5",
+  "rung_id": "L2.X2048.xor-1-len2048",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "GPT-6 Astra",
+    "harness": "codex",
+    "harness_short": null,
+    "harness_url": null,
+    "model": "GPT-6 Astra",
+    "notes": null,
+    "provider": "OpenAI",
+    "type": "llm-agent"
+  },
+  "summary": "Solved exhaustive first-byte XOR in 2,028 bytes and 1,148 native steps per input. A jointly synthesized overlapping data table feeds eight passes through shared CRAZY/ROT code; an exact absorbing MOVD router and two final CRAZY operations complete all 256 cases."
+}

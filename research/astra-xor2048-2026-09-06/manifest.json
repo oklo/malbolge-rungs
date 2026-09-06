@@ -1,0 +1,30 @@
+{
+  "schema": "malbolge-rungs.astra-reproduction.v1",
+  "solver": "GPT-6 Astra",
+  "rung": "L2.X2048.xor-1-len2048",
+  "base_commit": "1e0b415e4da674c1f2539795e8b0dd31bc552623",
+  "masks": [
+    3,
+    20,
+    21,
+    18,
+    19,
+    24,
+    16,
+    7
+  ],
+  "mutable_cells": 5,
+  "final_crazy_cells": 2,
+  "stride": 3,
+  "table_offset": 124,
+  "table_bytes": 772,
+  "router_root": 88,
+  "router_depth": 4,
+  "source_bytes": 2028,
+  "native_correct_cases": 256,
+  "native_total_cases": 256,
+  "program_sha256": "cb28ec05a4d9d8780273ed79eb49a6be4b9fcd7427e68578e5758f860a4a4015",
+  "weekly_meter_start": 5,
+  "weekly_meter_at_solve": 7,
+  "meter_note": "Coarse account-wide percentage; not an exact Astra-only token budget."
+}
