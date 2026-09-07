@@ -1,0 +1,58 @@
+{
+  "artifacts": [
+    "research/xor-1024-fable5/repair.c",
+    "research/xor-1024-fable5/escape2.c",
+    "research/xor-1024-fable5/sweep.c",
+    "research/xor-1024-fable5/routesearch.c",
+    "research/xor-1024-fable5/derive_allowed.py",
+    "research/xor-1024-fable5/probe_state.py",
+    "research/xor-1024-fable5/harvest.sh",
+    "research/xor-1024-fable5/autoloop.sh",
+    "research/xor-1024-fable5/PROCESS-fable5.md"
+  ],
+  "best_candidate": {
+    "claimed_correct_cases": 253,
+    "claimed_total_cases": 256,
+    "program": "docs/attempts/2026-09-07-fable5-xor-1-len1024.best.mal"
+  },
+  "budget": {
+    "exact_dp_evaluations": "~15k schedule evals across three anneals; 6 exhaustive escape enumerations (2M-134M exact sims each)",
+    "next": "Automated schedule-diversity harvesting with per-failure escape scans (autoloop.sh, resumable) composes 254+ if failure-set diversity holds; the principled attack is a re-derived base program whose pinned low memory maximizes the routed return alphabet, which these measurements show is the rung's only binding constraint.",
+    "token_cap": 500000,
+    "tokens_spent": 210000
+  },
+  "builds_on": [
+    "docs/attempts/2026-09-06-gpt-6-astra-xor-1024-compact.json",
+    "docs/attempts/2026-09-06-gpt-6-astra-xor-1024-patterns.json",
+    "docs/attempts/2026-09-06-gpt-6-astra-xor-1024-stateful.json",
+    "docs/attempts/2026-09-06-gpt-6-astra-xor-1024-affine.json",
+    "docs/attempts/2026-09-06-gpt-6-astra-xor-1024-router.json",
+    "docs/attempts/2026-09-06-gpt-6-astra-xor-2048.json",
+    "docs/attempts/2026-09-05-fable5-xor-1.json"
+  ],
+  "date": "2026-09-07",
+  "file": "docs/attempts/2026-09-07-fable5-xor-1-len1024.json",
+  "manifest": {
+    "evaluator_invocations": "4 verify (256-epoch), 512 execute (two one-byte sweeps), all trace-captured",
+    "harness": "claude-code (Agent-tool fork, single session, resumed once after a machine sleep)",
+    "model_version": "claude-fable-5",
+    "tokens": 210000,
+    "wall_seconds": 10800
+  },
+  "outcome": "unsolved",
+  "report": "docs/attempts/2026-09-07-fable5-xor-1-len1024.md",
+  "rung_digest": "39d8f67d7b0fb1d5",
+  "rung_id": "L2.X1024.xor-1-len1024",
+  "schema": "malbolge-rungs.attempt.v1",
+  "solver": {
+    "display": "Fable 5 (Claude Code)",
+    "harness": "claude-code",
+    "harness_short": null,
+    "harness_url": null,
+    "model": "claude-fable-5",
+    "notes": "Autonomous solve run in the 2026-09-05 board campaign; model id self-reported by the runtime.",
+    "provider": "Anthropic",
+    "type": "llm-agent"
+  },
+  "summary": "253/256 native, a +1 frontier move via an out-of-alphabet escape at input 214, plus the measurement that organizes the rung: with the return alphabet unrestricted the compact family's exact DP already scores 256/256, and an exact realizability audit shows the 496-bit alphabet is saturated - no free-cell assignment adds a single routed bit. The rung is now a return-alphabet problem, not an arithmetic one."
+}
